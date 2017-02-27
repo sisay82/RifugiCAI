@@ -1,3 +1,14 @@
+# IDEs
+.idea
+.vscode
+
+# compiled output
+dist
+tmp
+deploy
+screenshots
+
+
 # Logs
 logs
 *.log
@@ -29,6 +40,7 @@ build/Release
 # Dependency directories
 node_modules
 jspm_packages
+bower_components
 
 # Optional npm cache directory
 .npm
