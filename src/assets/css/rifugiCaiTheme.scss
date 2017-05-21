@@ -1,0 +1,8 @@
+@import '../../core/style/core-themes';
+
+$primary: bc-palette($bc-grey-cai, 800);
+$accent:  bc-palette($bc-teal, 400, A100, A400);
+$warn:    bc-palette($bc-red, 600);
+$theme:   bc-light-theme($primary, $accent, $warn);
+
+@include bc-theme($theme);

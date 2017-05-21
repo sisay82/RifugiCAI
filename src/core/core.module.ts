@@ -1,0 +1,33 @@
+import { NgModule } from '@angular/core';
+
+import {BcNavbarModule} from './navbar/navbar.module';
+import {BcAvatarModule} from './avatar/avatar.module';
+
+// import { FilterService } from './services/filter.service';
+// import { SorterService } from './services/sorter.service';
+// import { TrackByService } from './services/trackby.service';
+
+import { CapitalizePipe } from './pipes/capitalize.pipe';
+import { TrimPipe } from './pipes/trim.pipe';
+
+const COMPONENTS_MODULES = [
+    BcAvatarModule,
+    BcNavbarModule
+];
+const PIPES_MODULES = [
+    CapitalizePipe,
+    TrimPipe
+];
+// const SERVICES_MODULES = [
+//     FilterService,
+//     SorterService,
+//     TrackByService
+// ];
+
+@NgModule({
+    imports: COMPONENTS_MODULES,
+    declarations: PIPES_MODULES,
+    // providers: SERVICES_MODULES,
+    exports: [].concat(COMPONENTS_MODULES, PIPES_MODULES)
+})
+export class CoreModule { }

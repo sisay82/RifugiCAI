@@ -1,0 +1,181 @@
+$black: #000000;
+$white: #ffffff;
+$black-87alpha: rgba(black, 0.87);
+$white-87alpha: rgba(white, 0.87);
+$black-12alpha: rgba(black,  0.12);
+$white-12alpha: rgba(white, 0.12);
+$black-6alpha: rgba(black, 0.06);
+$white-6alpha: rgba(white, 0.06);
+
+$black-4alpha: rgba(black, 0.04);
+$black-38alpha: rgba(black,  0.38);
+$black-54alpha: rgba(black,  0.54);
+
+$white-4alpha: rgba(white, 0.04);
+$white-30alpha: rgba(white, 0.3);
+$white-70alpha: rgba(white, 0.7);
+
+$bc-grey-cai: (
+  0: #ffffff,
+  50: #ededed,
+  100: #e6e6e6,
+  200: #dbdbdb,
+  300: #d1d1d1,
+  400: #adadad,
+  500: #8f8f8f,
+  600: #666666,
+  700: #525252,
+  800: #333333,
+  900: #121212,
+  1000: #000000,
+  A100: #ffffff,
+  A200: #eeeeee,
+  A400: #bdbdbd,
+  A700: #616161,
+  contrast: (
+    0: $black-87alpha,
+    50: $black-87alpha,
+    100: $black-87alpha,
+    200: $black-87alpha,
+    300: $black-87alpha,
+    400: $black-87alpha,
+    500: $white-87alpha,
+    600: $white-87alpha,
+    700: $white-87alpha,
+    800: $white-87alpha,
+    900: $white-87alpha,
+    1000: $white-87alpha,
+    A100: $black-87alpha,
+    A200: $black-87alpha,
+    A400: $black-87alpha,
+    A700: $white-87alpha,
+  )
+);
+
+$bc-teal: (
+  50: #e0f2f1,
+  100: #b2dfdb,
+  200: #80cbc4,
+  300: #4db6ac,
+  400: #26a69a,
+  500: #009688,
+  600: #00897b,
+  700: #00796b,
+  800: #00695c,
+  900: #004d40,
+  A100: #a7ffeb,
+  A200: #64ffda,
+  A400: #1de9b6,
+  A700: #00bfa5,
+  contrast: (
+    50: $black-87alpha,
+    100: $black-87alpha,
+    200: $black-87alpha,
+    300: $black-87alpha,
+    400: $black-87alpha,
+    500: white,
+    600: white,
+    700: white,
+    800: $white-87alpha,
+    900: $white-87alpha,
+    A100: $black-87alpha,
+    A200: $black-87alpha,
+    A400: $black-87alpha,
+    A700: $black-87alpha,
+  )
+);
+
+$bc-red: (
+  50: #ffebee,
+  100: #ffcdd2,
+  200: #ef9a9a,
+  300: #e57373,
+  400: #ef5350,
+  500: #f44336,
+  600: #e53935,
+  700: #d32f2f,
+  800: #c62828,
+  900: #b71c1c,
+  A100: #ff8a80,
+  A200: #ff5252,
+  A400: #ff1744,
+  A700: #d50000,
+  contrast: (
+    50: $black-87alpha,
+    100: $black-87alpha,
+    200: $black-87alpha,
+    300: $black-87alpha,
+    400: $black-87alpha,
+    500: white,
+    600: white,
+    700: white,
+    800: $white-87alpha,
+    900: $white-87alpha,
+    A100: $black-87alpha,
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+// Background palette for light themes.
+$bc-light-theme-background: (
+  status-bar: map_get($bc-grey-cai, 300),
+  app-bar:    map_get($bc-grey-cai, 100),
+  background: map_get($bc-grey-cai, 50),
+  hover:      $black-4alpha,
+  card:       $white,
+  dialog:     $white,
+  disabled-button: $black-12alpha,
+  raised-button: $white,
+  focused-button: $black-6alpha,
+  selected-button: map_get($bc-grey-cai, 300),
+  selected-disabled-button: map_get($bc-grey-cai, 400),
+  disabled-button-toggle: map_get($bc-grey-cai, 200),
+);
+
+// Background palette for dark themes.
+$bc-dark-theme-background: (
+  status-bar: $black,
+  app-bar:    map_get($bc-grey-cai, 800),
+  background: #303030,
+  hover:      $white-4alpha,
+  card:       map_get($bc-grey-cai, 700),
+  dialog:     map_get($bc-grey-cai, 700),
+  disabled-button: $white-12alpha,
+  raised-button: map-get($bc-grey-cai, 700),
+  focused-button: $white-6alpha,
+  selected-button: map_get($bc-grey-cai, 800),
+  selected-disabled-button: map_get($bc-grey-cai, 700),
+  disabled-button-toggle: map_get($bc-grey-cai, 900),
+);
+
+// Foreground palette for light themes.
+$bc-light-theme-foreground: (
+  base:            $black,
+  divider:         $black-12alpha,
+  dividers:        $black-12alpha,
+  disabled:        $black-38alpha,
+  disabled-button: $black-38alpha,
+  disabled-text:   $black-38alpha,
+  hint-text:       $black-38alpha,
+  secondary-text:  $black-54alpha,
+  icon:            $black-54alpha,
+  icons:           $black-54alpha,
+  text:            $black-87alpha
+);
+
+// Foreground palette for dark themes.
+$bc-dark-theme-foreground: (
+  base:            $white,
+  divider:         $white-12alpha,
+  dividers:        $white-12alpha,
+  disabled:        $white-30alpha,
+  disabled-button: $white-30alpha,
+  disabled-text:   $white-30alpha,
+  hint-text:       $white-30alpha,
+  secondary-text:  $white-70alpha,
+  icon:            $white,
+  icons:           $white,
+  text:            $white
+);

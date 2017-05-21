@@ -1,0 +1,234 @@
+// @import '../style/constants';
+
+// $bc-list-top-padding: 8px;
+// $bc-list-side-padding: 16px;
+
+// // Normal list variables
+// $bc-list-font-size: 16px;
+// $bc-list-secondary-font: 14px;
+
+// // height for single-line lists
+// $bc-list-base-height: 48px;
+// // height for single-line lists with avatars
+// $bc-list-avatar-height: 56px;
+// // spec requires two- and three-line lists be taller
+// $bc-list-two-line-height: 72px;
+// $bc-list-three-line-height: 88px;
+// $bc-list-avatar-size: 40px;
+// $bc-list-icon-size: 24px;
+
+// // Dense list variables
+// $bc-dense-top-padding: 4px;
+// $bc-dense-font-size: 13px;
+// $bc-dense-base-height: 40px;
+// $bc-dense-avatar-height: 48px;
+// $bc-dense-two-line-height: 60px;
+// $bc-dense-three-line-height: 76px;
+// $bc-dense-list-icon-size: 20px;
+// // This mixin will ensure that lines that overflow the container will hide the overflow and
+// // truncate neatly with an ellipsis.
+// @mixin bc-truncate-line() {
+//   white-space: nowrap;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+// }
+
+// // Mixin to provide all mat-line styles, changing secondary font size based on whether the list
+// // is in dense mode.
+// @mixin bc-line-base($secondary-font-size) {
+//   .mat-line {
+//     @include mat-truncate-line();
+//     display: block;
+//     box-sizing: border-box;
+
+//     // all lines but the top line should have smaller text
+//     &:nth-child(n+2) {
+//       font-size: $secondary-font-size;
+//     }
+//   }
+// }
+
+// // This mixin normalizes default element styles, e.g. font weight for heading text.
+// @mixin bc-normalize-text() {
+//   & > * {
+//     margin: 0;
+//     padding: 0;
+//     font-weight: normal;
+//     font-size: inherit;
+//   }
+// }
+
+// // This mixin provides base styles for the wrapper around mat-line elements in a list.
+// @mixin bc-line-wrapper-base() {
+//   @include bc-normalize-text();
+
+//   display: flex;
+//   flex-direction: column;
+//   width: 100%;
+//   box-sizing: border-box;
+//   overflow: hidden;
+
+//   // Must remove wrapper when lines are empty or it takes up horizontal
+//   // space and pushes other elements to the right.
+//   &:empty {
+//     display: none;
+//   }
+// }
+
+// // all list-item styles, font size and height based are for define the dense mode desired
+// @mixin bc-list-item-base($font-size, $base-height, $avatar-height,
+//   $two-line-height, $three-line-height, $icon-size) {
+
+//   display: block;
+
+//   .bc-list-item-content {
+//     display: flex;
+//     flex-direction: row;
+//     align-items: center;
+//     font-family: $bc-font-family;
+//     box-sizing: border-box;
+//     font-size: $font-size;
+//     height: $base-height;
+//     padding: 0 $bc-list-side-padding;
+//     position: relative;
+//   }
+
+//   &.bc-list-item-avatar .bc-list-item-content {
+//     height: $avatar-height;
+//   }
+
+//   &.bc-2-line .bc-list-item-content {
+//     height: $two-line-height;
+//   }
+
+
+//   &.bc-3-line .bc-list-item-content {
+//     height: $three-line-height;
+//   }
+
+//   // list items with more than 3 lines should expand to match
+//   // the height of its contained text
+//   &.bc-multi-line .bc-list-item-content {
+//     height: 100%;
+//     padding: 8px $bc-list-side-padding;
+//   }
+
+//   .bc-list-text {
+//     @include bc-line-wrapper-base();
+//     padding: 0 $bc-list-side-padding;
+
+//     &:first-child {
+//       padding: 0;
+//     }
+//   }
+
+//   .bc-list-avatar {
+//     flex-shrink: 0;
+//     width: $bc-list-avatar-size;
+//     height: $bc-list-avatar-size;
+//     border-radius: 50%;
+//   }
+
+//   .bc-list-icon {
+//     width: $icon-size;
+//     height: $icon-size;
+//     font-size: $icon-size;
+//     box-sizing: content-box;
+//     border-radius: 50%;
+//     padding: 4px;
+//   }
+// }
+
+// // This mixin provides all subheader styles, adjusting heights and padding
+// // based on whether the list is in dense mode.
+// @mixin bc-subheader-base($top-padding, $secondary-size, $base-height) {
+//   display: block;
+//   box-sizing: border-box;
+//   height: $base-height;
+//   padding: $bc-list-side-padding;
+//   margin: 0;
+
+//   font-family: $bc-font-family;
+//   font-size: $secondary-size;
+//   font-weight: 500;
+
+//   &:first-child {
+//     margin-top: -$top-padding;
+//   }
+// }
+
+// .bc-list, .bc-nav-list {
+//   padding-top: $bc-list-top-padding;
+//   display: block;
+
+//   .bc-subheader {
+//     @include bc-subheader-base(
+//       $bc-list-top-padding,
+//       $bc-list-secondary-font,
+//       $bc-list-base-height
+//     );
+//   }
+
+
+//   .bc-list-item {
+//     @include bc-list-item-base(
+//       $bc-list-font-size,
+//       $bc-list-base-height,
+//       $bc-list-avatar-height,
+//       $bc-list-two-line-height,
+//       $bc-list-three-line-height,
+//       $bc-list-icon-size
+//     );
+
+//     @include bc-line-base($bc-list-secondary-font);
+//   }
+// }
+
+
+// .bc-list[dense], .bc-nav-list[dense] {
+//   padding-top: $bc-dense-top-padding;
+//   display: block;
+
+//   .bc-subheader {
+//     @include bc-subheader-base(
+//       $bc-dense-top-padding,
+//       $bc-dense-font-size,
+//       $bc-dense-base-height
+//     );
+//   }
+
+//   .bc-list-item {
+//     @include bc-list-item-base(
+//       $bc-dense-font-size,
+//       $bc-dense-base-height,
+//       $bc-dense-avatar-height,
+//       $bc-dense-two-line-height,
+//       $bc-dense-three-line-height,
+//       $bc-dense-list-icon-size
+//     );
+
+//     @include bc-line-base($bc-dense-font-size);
+//   }
+// }
+
+// .bc-divider {
+//   display: block;
+//   border-top-style: solid;
+//   border-top-width: 1px;
+//   margin: 0;
+// }
+
+// .bc-nav-list {
+//   a {
+//     text-decoration: none;
+//     color: inherit;
+//   }
+
+//   .bc-list-item-content {
+//     cursor: pointer;
+
+//     &:hover, &.bc-list-item-focus {
+//       outline: none;
+//     }
+//   }
+// }
