@@ -2,16 +2,18 @@ import {
   Component,
   ElementRef,
   Renderer2,
-  Input
+  Input,
+  ViewEncapsulation
 } from '@angular/core';
 
 @Component({
   selector: '[bc-avatar]',
-  styleUrls: ['avatar.directive.scss'],
+  styleUrls: ['avatar.component.scss'],
   template: '',
   host: {
     '[class.bc-avatar]': 'true'
-  }
+  },
+  encapsulation: ViewEncapsulation.None
 })
 export class BcAvatar {
 
@@ -24,11 +26,13 @@ export class BcAvatar {
   @Input("bc-avatar")
   set in(value: string) {
     var className: string;
-    switch (`${value}`.toUpperCase()) {
-      case "SQUARE":
+    switch (`${value}`.toLowerCase()) {
+      case "square":
         className = "";
-      case "ROUNDED-CORNER":
+        break;
+      case "rounded-corner":
         className = "img-rounded";
+        break;
       default:
         className = "img-circle";
     }
