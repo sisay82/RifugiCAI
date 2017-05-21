@@ -1,0 +1,16 @@
+@import '../style/theme';
+
+@mixin bc-divider-theme($theme) {
+  $foreground: map-get($theme, foreground);
+
+  .bc-divider {
+    border-top-color: bc-color($foreground, divider);
+  }
+}
+
+.bc-divider {
+    display: block;
+    border-top-style: solid;
+    border-top-width: 1px;
+    margin: 0;
+}
