@@ -1,7 +1,7 @@
 <bc-navbar>
   <ul class="nav navbar-nav">
     <li class="navbar-item">
-      <a href="#"  class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>
+      <a href="#" class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>
     </li>
     <li class="navbar-item">
       <a href="#" class="btn btn-default"><i class="fa fa-map" aria-hidden="true"></i>  Map View</a>
@@ -9,12 +9,14 @@
   </ul>
   <span class="bc-navbar-filler"></span>
   <div>
-  <input type="text" class="form-control" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-    placeholder="&#xF002; Search for shelter, municipality" />
+    <input type="text" name="filterList" class="form-control" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+      placeholder="&#xF002; Search for shelter, municipality" [(ngModel)]="filterText" (keyup)="filterChanged(filterText)"/>
   </div>
 </bc-navbar>
-<div style="overflow-y: scroll; overflow-x: hidden; height:600px">
-  <h1 *ngFor="let item of [1,2,3,4,5,6,7,8,9,0,11,12,13,14,15]">
-    Rifugio Battisti
-  </h1>
-</div>
+<bc-list>
+  <bc-list-item *ngFor="let item of filteredShelter">
+    <div style="display: flex; flex-flow: row nowrap;  align-items: flex-start; flex:1;">
+      <div style="flex:1; padding:8px; font-weight: 500;">{{item.name}}</div><div style="flex:1; padding:8px;">{{item.municipality}}</div><div style="flex:1; padding:8px;">{{item.province}}</div><div style="flex:1; padding:8px;">{{item.region}}</div>
+    </div>
+  </bc-list-item>
+</bc-list>

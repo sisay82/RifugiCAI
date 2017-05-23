@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
 
-import {BcAvatarModule} from './avatar/avatar.module';
-import {BcDividerModule} from './divider/divider.module';
-import {BcNavbarModule} from './navbar/navbar.module';
+import { BcAvatarModule } from './avatar/avatar.module';
+import { BcDividerModule } from './divider/divider.module';
+import { BcNavbarModule } from './navbar/navbar.module';
+import { BcListModule } from './list/list.module';
+
 
 // import { FilterService } from './services/filter.service';
 // import { SorterService } from './services/sorter.service';
@@ -14,7 +16,8 @@ import { TrimPipe } from './pipes/trim.pipe';
 const COMPONENTS_MODULES = [
     BcAvatarModule,
     BcDividerModule,
-    BcNavbarModule
+    BcNavbarModule,
+    BcListModule
 ];
 const PIPES_MODULES = [
     CapitalizePipe,

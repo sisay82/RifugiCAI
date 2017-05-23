@@ -1,46 +1,17 @@
-// import {NgModule} from '@angular/core';
-// import {MdLineModule, MdRippleModule, MdCommonModule} from '../core';
-// import {
-//   MdList,
-//   MdListItem,
-//   MdListDivider,
-//   MdListAvatarCssMatStyler,
-//   MdListIconCssMatStyler,
-//   MdListCssMatStyler,
-//   MdNavListCssMatStyler,
-//   MdDividerCssMatStyler,
-//   MdListSubheaderCssMatStyler,
-// } from './list';
+import { NgModule } from '@angular/core';
+
+import {
+    BcListItem,
+} from './list-item.component';
 
 
-// @NgModule({
-//   imports: [MdLineModule, MdRippleModule, MdCommonModule],
-//   exports: [
-//     MdList,
-//     MdListItem,
-//     MdListDivider,
-//     MdListAvatarCssMatStyler,
-//     MdLineModule,
-//     MdCommonModule,
-//     MdListIconCssMatStyler,
-//     MdListCssMatStyler,
-//     MdNavListCssMatStyler,
-//     MdDividerCssMatStyler,
-//     MdListSubheaderCssMatStyler,
-//   ],
-//   declarations: [
-//     MdList,
-//     MdListItem,
-//     MdListDivider,
-//     MdListAvatarCssMatStyler,
-//     MdListIconCssMatStyler,
-//     MdListCssMatStyler,
-//     MdNavListCssMatStyler,
-//     MdDividerCssMatStyler,
-//     MdListSubheaderCssMatStyler,
-//   ],
-// })
-// export class MdListModule {}
+@NgModule({
+    exports: [
+        BcListItem
+    ],
+    declarations: [
+        BcListItem
+    ],
+})
+export class BcListItemModule { }
 
-
-// export * from './list';

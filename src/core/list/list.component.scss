@@ -1,14 +1,14 @@
-// @import '../style/constants';
+@import '../style/constants';
 
 // $bc-list-top-padding: 8px;
-// $bc-list-side-padding: 16px;
+$bc-list-side-padding: 16px;
 
 // // Normal list variables
-// $bc-list-font-size: 16px;
+$bc-list-font-size: 16px;
 // $bc-list-secondary-font: 14px;
 
 // // height for single-line lists
-// $bc-list-base-height: 48px;
+$bc-list-base-height: 48px;
 // // height for single-line lists with avatars
 // $bc-list-avatar-height: 56px;
 // // spec requires two- and three-line lists be taller
@@ -81,17 +81,17 @@
 
 //   display: block;
 
-//   .bc-list-item-content {
-//     display: flex;
-//     flex-direction: row;
-//     align-items: center;
-//     font-family: $bc-font-family;
-//     box-sizing: border-box;
-//     font-size: $font-size;
-//     height: $base-height;
-//     padding: 0 $bc-list-side-padding;
-//     position: relative;
-//   }
+  .bc-list-item-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-family: $bc-font-family;
+    box-sizing: border-box;
+    font-size: $bc-list-font-size;
+    height: $bc-list-base-height;
+    padding: 0 $bc-list-side-padding;
+    position: relative;
+  }
 
 //   &.bc-list-item-avatar .bc-list-item-content {
 //     height: $avatar-height;
