@@ -1,6 +1,6 @@
 export namespace Enums{
     //tipo rifugio
-    export enum Tipo_Rif
+    export enum Shelter_Type
     {
         Bivacco,
         Rifugio_Custodito,
@@ -10,7 +10,7 @@ export namespace Enums{
     }
 
     //tipo rifugio regionale
-    export enum Tipo_Reg
+    export enum Regional_Type
     {
         Escursionistico,
         Aplinistico,
@@ -19,7 +19,7 @@ export namespace Enums{
     }
 
     //categoria rifugio
-    export enum Tipo_Cat
+    export enum Shelter_Category
     {
         A,
         B,
@@ -28,7 +28,7 @@ export namespace Enums{
     }
 
     //coerenza tipologica
-    export enum Tipo_Coe
+    export enum Typo_consistency
     {
         Piena,
         Parziale,
@@ -37,7 +37,7 @@ export namespace Enums{
     }
 
     //tipo fonte risorsa
-    export enum Tipo_Fonte
+    export enum Source_Type
     {
         Energetica,
         Idrica,
@@ -45,7 +45,7 @@ export namespace Enums{
     }
 
     //tipo custodia
-    export enum Tipo_Cust
+    export enum Custody_Type
     {
         Diretta,
         Affitto_a_Gestore,

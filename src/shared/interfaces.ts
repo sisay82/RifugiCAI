@@ -1,125 +1,116 @@
 import { Enums } from './enums'
 
-export interface IAnagrafica{
-    nome:String,
-    tipo_rifugio?:Enums.Tipo_Rif,
-    tipo_regionale?:Enums.Tipo_Reg,
-    categoria?:Enums.Tipo_Cat,
-    indirizzo:{
+export interface IRegistry{
+    shelter_type?:Enums.Shelter_Type,
+    regional_type?:Enums.Regional_Type,
+    category?:Enums.Shelter_Category,
+    address:{
         via:{type:String,required:true},
-        numero:{type:Number,required:true},
+        number:{type:Number,required:true},
         cap:{type:Number,required:true},
-        citta:{type:String,required:true},
-        stato:{type:String,required:true}
+        city:{type:String,required:true},
+        country:{type:String,required:true}
     },
-    tel_fisso?:[String],
-    tel_mobile?:[String],
-    ind_mail?:[String],
-    ind_web?:String,
-    descrizione?:String,
-    data_inserimento?:Date,
-    tipo_custodia?:Enums.Tipo_Cust,
-    custode?:String,//ObjectID
-    proprietario?:String
+    fixed_phone?:[String],
+    mobile_phone?:[String],
+    email_address?:[String],
+    web_address?:String,
+    description?:String,
+    insert_date?:Date,
+    custody_type?:Enums.Custody_Type,
+    custodian?:String,//ObjectID
+    owner?:String
 }
 
-export interface IApertura{
-    data_apertura:Date,
-    data_chiusura:Date,
-    tipo_apertura:String
+export interface IOpening{
+    opening_date:Date,
+    closure_date:Date,
+    opening_type:String
 }
 
 
 export interface ILog{
-    stato:String,
-    utente:String,
-    data_ag?:Date
+    state:String,
+    user:String,
+    update_date?:Date
 }
 
-export interface IGeografici{
-    valle?:String,
-    com_montana?:String,
-    gruppo_montuoso?:String,
-    quota?:Number,
-    coordinate?:{
-        latitudine:Number,
-        longitudine:Number
+export interface IGeographic{
+    valley?:String,
+    mountain_community?:String,
+    mountain_group?:String,
+    quote?:Number,
+    coordinates?:{
+        latitude:Number,
+        longitude:Number
     },
-    dati_aggiuntivi?:[{
-        chiave:String,
-        valore:String
+    additional_data?:[{
+        key:String,
+        value:String
     }]
 }
 
-export interface ICatastali{
-    reg_edilizia?:Boolean,
-    anno_costruzione?:Number,
-    coer_tipologica?:{type:Enums.Tipo_Coe},
-    coer_materica?:Boolean,
-    reg_urbanistica?:Boolean,
-    consistenza_c_principale?:String,
-    consistenza_c_secondari?:String,
-    classe_catastale?:String,
-    reg_antincendio?:Boolean,
-    classe_energetica?:String,
-    certificazione?:String,
-    energia_necessaria?:Number,
-    cert_green?:Boolean,
-    smaltimento_rifiuti?:String,
-    raccolta_differenziata?:Boolean,
-    smaltimento_reflui?:String,
-    adeguamento_reflui?:Boolean,
-    fonti_risorse?:[{
-        tipo:{type:Enums.Tipo_Fonte},
-        nome_fonte:String,
-        descrizione?:String,
-        valore?:Number
+export interface ICadastral{
+    construction_reg?:Boolean,
+    construction_year?:Number,
+    typological_consistency?:{type:Enums.Typo_consistency},
+    material_consistency?:Boolean,
+    urban_regularity?:Boolean,
+    main_body_consistency?:String,
+    secondary_body_consistency?:String,
+    cadastral_class?:String,
+    fire_regulation?:Boolean,
+    energy_class?:String,
+    certification?:String,
+    necessary_energy?:Number,
+    green_certification?:Boolean,
+    garbage_disposal?:String,
+    recycling?:Boolean,
+    waste_disposal?:String,
+    waste_adjustment?:Boolean,
+    resources_sources?:[{
+        type:{type:Enums.Source_Type},
+        source_name:String,
+        description?:String,
+        value?:Number
     }]
 }
 
-export interface IAmministrativi{
-    codice_rifugio:Number,
-    data_inizio_contratto?:Date,
-    data_fine_contratto?:Date,
-    durata_contratto?:Number,
-    canone_contratto?:Number,
-    titolo_possesso?:String,
-    codice_sezione?:String
+export interface IAdministrative{
+    shelter_code:Number,
+    contract_start_date?:Date,
+    contract_end_date?:Date,
+    contract_duration?:Number,
+    contract_fee?:Number,
+    possession_title?:String,
+    section_code?:String
 }
 
 export interface IShelter {
-    id?:String,
-    name:String
-}
-
-export interface IRifugiot{
     id:String,
-    anagrafica:IAnagrafica,    
-    amministrativi?:IAmministrativi,
-    aperture?:[{IApertura}],
-    dati_geografici?:IGeografici,
-    dati_catastali?:ICatastali,
+    name:String,
+    registry:IRegistry,    
+    administrative?:IAdministrative,
+    openings?:[{IOpening}],
+    geographic_data?:IGeographic,
+    cadastral_data?:ICadastral,
     logs?:[{ILog}],
-    servizi?:[{
-        servizio:String,
-        prezzo:Number,
-        disponibilita:Number
-    }]
+    services?:[{IService}]
 }
 
 export interface ITag{
-    chiave:String;
-    valore:String;
+    key:String;
+    value:String;
 }
 
-export interface IServizio{
-    nome_servizio:String;
-    categ_servizio?:String;
-    descrizione?:String;
+export interface IService{
+    service_name:String;
+    service_category?:String;
+    description?:String;
     tags?:[ITag];
 }
 
-export interface IUtente{
-    nome:String;
-    valore:String;
+export interface IUser{
+    name:String;
+    value:String;
 }
