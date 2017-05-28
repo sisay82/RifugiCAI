@@ -5,8 +5,15 @@
     <span class="bc-navbar-filler"></span>
     <span class="button"><a href="#" class=""><i class="fa fa-sign-in" aria-hidden="true"></i> login</a></span>
   </bc-navbar>
-  <router-outlet></router-outlet>
-  <!-- Routed views go here -->
+
+<div style="display: flex;">
+      <bc-menu ></bc-menu>
+      <router-outlet> </router-outlet>
+</div>
+
+   <!--
+
+ Routed views go here -->
   <!--<bc-spinner></bc-spinner>
   <bc-toast></bc-toast>
   <bc-modal></bc-modal>-->

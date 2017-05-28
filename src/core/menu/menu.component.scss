@@ -1,0 +1,45 @@
+@import '../style/palette';
+@import '../style/typography';
+@import '../style/theme';
+
+.bc-list-button{
+    background-color: white;
+    border-color: white;
+    color:rgba(black, 0.87);
+}
+
+.bc-list-button:hover{
+    color:#26a69a;
+}
+
+.bc-menu-select{
+    background: map_get($bc-grey-cai, 50);
+    display: block;
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    width:200px;
+    height: 100%;
+}   
+
+.bc-menu-item-content{
+    white-space: nowrap;
+    text-align: left;
+    color:rgba(black, 0.87);
+    height: 100%;
+    padding:10px 16px;
+    line-height: 1;
+    cursor:pointer;
+    font-size: 14px;
+    font-family:"roboto";
+    font-weight: 500;
+    margin:0px 5px;
+}
+
+.bc-menu-item-content:hover{
+    background-color: #26a69a;
+}
+
+.bc-menu-item-content:focus{
+    background-color: #26a69a;
+
+}

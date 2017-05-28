@@ -1,0 +1,13 @@
+<button *ngIf="checkWinPlatform()" class="btn btn-primary bc-list-button" type="button" (click)="toggleMenu()">
+    <i class="fa fa-bars" aria-hidden="true"></i>
+ </button>
+
+<div [@slideLeftRight]="menuState" class="bc-menu-select" id="side-menu" [style.visibility]="_visibility">
+    <ul class="nav flex-column">
+        <bc-menu-layer *ngFor="let l of layer">
+            <bc-menu-item *ngFor="let item of l.lay">
+                <div class="bc-menu-item-content" (click)="clickEvent(item);"><i class="fa {{item.icon}}" aria-hidden="true"></i> {{item.name}}</div>
+            </bc-menu-item>
+        </bc-menu-layer>
+    </ul>
+</div>
