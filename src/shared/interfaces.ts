@@ -1,5 +1,16 @@
 import { Enums } from './enums'
 
+export interface IMenuElement{
+    layers:[{
+        layerName?:String,
+        elements:[{
+            name:String,
+            icon:String,
+            link:String
+        }]
+    }];
+}
+
 export interface IRegistry{
     shelter_type?:Enums.Shelter_Type,
     regional_type?:Enums.Regional_Type,

@@ -1,11 +1,13 @@
 
 import {
-  Component, trigger, state, style, transition, animate
+  Component, trigger, state, style, transition, animate, Input
 } from '@angular/core';
 import {
   Animations
-} from './menu-animations'
-
+} from './menu-animations';
+import { 
+  IMenuElement
+} from '../../shared/interfaces';
 
 @Component({
   moduleId: module.id,
@@ -16,24 +18,7 @@ import {
 })
 export class BcMenu {
   menuState:string = 'left';
-  layer:any[]=[
-    {lay:[
-      {name:"Dati geografici",icon:"fa-map-signs",link:"geographics"},
-      {name:"Servizi",icon:"fa-home",link:"#"},
-      {name:"Contatti e apertura",icon:"fa-phone",link:"#"},
-      {name:"Proprietá e gestione",icon:"fa-user",link:"#"},
-      {name:"Dati catastali",icon:"fa-book",link:"#"}
-      ]},
-    {lay:[
-      {name:"Documenti",icon:"fa-file-pdf-o",link:"#"},
-      {name:"Immagini",icon:"fa-picture-o",link:"#"}
-      ]},
-    {lay:[
-      {name:"Economia",icon:"fa-certificate",link:"#"},
-      {name:"Richiesta contributi",icon:"fa-eur",link:"#"},
-      {name:"Fruizione",icon:"fa-bar-chart",link:"#"}
-    ]}
-  ];
+  @Input() menuElements: IMenuElement;
 
   checkWinPlatform(){
     if(navigator.userAgent.indexOf("Win")>-1){
