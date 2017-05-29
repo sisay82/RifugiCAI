@@ -20,6 +20,16 @@ export class BcMenu {
   menuState:string = 'left';
   @Input() menuElements: IMenuElement;
 
+  constructor(){//DEFAULT
+    this.menuElements={
+      layers:[{
+        layerName:"Default",
+        elements:[
+          {name:"No Menu Provided",icon:"",link:"#"}
+        ]}
+      ]
+    };
+  }
   checkWinPlatform(){
     if(navigator.userAgent.indexOf("Win")>-1){
       this.menuState='right';
