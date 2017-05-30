@@ -1,10 +1,11 @@
 <bc-navbar>
   <ul class="nav navbar-nav">
     <li class="navbar-item">
-      <a href="#" class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>
+      <bc-button [button]="list_view_button"></bc-button>
+    <!--  <a href="#" class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>-->
     </li>
     <li class="navbar-item">
-      <a href="#" class="btn btn-default"><i class="fa fa-map" aria-hidden="true"></i>  Map View</a>
+      <bc-button [button]="map_view_button"></bc-button>
     </li>
   </ul>
   <span class="bc-navbar-filler"></span>
