@@ -37,6 +37,14 @@ export class BcMenu {
     return (navigator.userAgent.indexOf("Win")==-1);
   }
 
+  getClass(){
+    if(navigator.userAgent.indexOf("Win")>-1){
+      return "";
+    }else{
+      return "bc-list-overlap";
+    }
+  }
+
   clickEvent(obj:any){
       console.log(obj.link);
   }
