@@ -1,9 +1,10 @@
 @import '../style/palette';
 
+$button_margin: 1px 1px;
 
 .bc-button{
     border: none;
-    margin: 1px 1px;
+    margin: $button_margin;
 }
 
 .dark-theme-button:enabled{

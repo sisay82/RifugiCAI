@@ -8,7 +8,7 @@ import {IButton} from '../../shared/interfaces';
 })
 export class BcShelterList {
     list_view_button:IButton={ref:'#',icon:'fa fa-th-list',text:'Lista',enabled:true,dark_theme:false};
-    map_view_button:IButton={ref:'#',icon:'fa fa-map',text:'Mappa',enabled:true,dark_theme:false};
+    map_view_button:IButton={ref:'#',icon:'fa fa-map-marker',text:'Mappa',enabled:true,dark_theme:false};
 
     filterText: string = "";
     filteredShelter: any[] = [];

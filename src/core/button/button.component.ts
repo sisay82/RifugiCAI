@@ -20,6 +20,14 @@ export class BcButton{
         }
     }
 
+    checkPlatform(){
+        if(navigator.userAgent.indexOf("Win")>-1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     getClass(){
         let ret_class="btn btn-default bc-button";
         if(this.button.enabled===undefined){
