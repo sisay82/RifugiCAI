@@ -54,6 +54,7 @@
     "@angular/router": "^4.0.2",
     "@angular/upgrade": "^4.0.2",
     "core-js": "^2.4.1",
+    "leaflet": "^1.0.3",
     "rxjs": "^5.3.0",
     "zone.js": "^0.8.5"
   },

@@ -19,7 +19,7 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "./assets/css/rifugiCai.css","./assets/css/rifugiCaiTheme.scss"
+        "./assets/css/rifugiCai.css","./assets/css/rifugiCaiTheme.scss","../node_modules/leaflet/dist/leaflet.css"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
