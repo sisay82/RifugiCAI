@@ -1,7 +1,7 @@
 
-<button type="button" (click)="moveMap()">button</button>
-
-<div id="map" style="height: 400px;width:600px;">
-
+<div id="map" style="z-index:2;position:relative;overflow:hidden;">
+    <div [hidden]="!expanded" style="position:absolute;top:15px;width:100%;text-align:right;z-index:410">
+        <i (click)="clickCloseEvent($event)" class="fa fa-times" style="font-size: 25px;padding-right: 15px"></i>
+    </div>
 
 </div>
