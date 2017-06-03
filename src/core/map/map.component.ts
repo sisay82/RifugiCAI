@@ -11,7 +11,7 @@ import { IMarker } from '../../shared/interfaces';
     providers:[ShelterService]
 })
 export class BcMap implements OnInit{
-    @Input() disableExpansion:boolean=false;
+    @Input() enableExpansion:boolean=false;
     @Input() iconSize:string="18px";
     @Input() windowSize:{width:string,height:string}={width:'800px',height:'600px'};
     @Input() initialCenter:L.LatLng=L.latLng(41.9051,12.4879);
@@ -31,27 +31,32 @@ export class BcMap implements OnInit{
 
     constructor(public shelterService:ShelterService){
         this.divIcon =L.divIcon({
-            className:'',
-            html:'<i class="fa fa-map-marker" style="font-size:'+this.iconSize+';"></i>',
-            iconAnchor:[0,0],
+            className:"",
             iconSize:null,
+            html:'<style>.bc-marker:hover{color:#26a69a;} .bc-marker{font-size:'+this.iconSize+';} </style><div class="fa fa-map-marker bc-marker"></div>',
+            iconAnchor:[0,0],
             popupAnchor:[0,0]
+            
         });
 
     }
 
     ngOnInit(){
         this.getMapInit('map');
-        document.getElementById("map").style.width=this.windowSize.width;
-        document.getElementById("map").style.height=this.windowSize.height;
+     //   document.getElementById("map").style.width=this.windowSize.width;
+      //  document.getElementById("map").style.height=this.windowSize.height;
         this.map.invalidateSize();
-        this.map.setView(this.initialCenter,5);
+        this.map.setView(this.initialCenter,6);
 
         this.markRegions();
+
     }
 
     addMarker(marker:L.Marker){
-        this.markerPane.addLayer(marker)
+        this.markerPane.addLayer(marker);
+       // document.getElementById("marker").className="bc-marker";
+        //L.DomUtil.addClass(,"bc-marker");
+
     }
 
     getMapInit(mapElement:string){
@@ -61,7 +66,7 @@ export class BcMap implements OnInit{
         }).addTo(this.map);
         this.map.on("zoom",this.zoomEvent,this);
         this.markerPane.addTo(this.map);
-        if(!this.disableExpansion)
+        if(this.enableExpansion)
             this.map.on("click",this.clickEvent,this);
     }
 
@@ -76,8 +81,13 @@ export class BcMap implements OnInit{
     markRegions(){
         for(let item of BcMap.latLngCountries){       
             let shelterCount:number = this.shelterService.getConutryMarkers(item.optional.id).length;
-            this.addMarker(L.marker(item.latLng,{icon:this.divIcon}).bindPopup(shelterCount.toString()));
+            this.addMarker(L.marker(item.latLng,{icon:this.divIcon}).bindPopup(shelterCount.toString()).on("click",this.openPopupRegion,this));
         }
+    }
+
+    openPopupRegion(event:L.Event){
+        console.log(event.target);
+        this.map.setView(event.target._latlng,8);
     }
 
     removeMarkers(){
@@ -85,7 +95,7 @@ export class BcMap implements OnInit{
     }
 
     zoomEvent(event:L.Event){
-        if(event.target.getZoom()>5){
+        if(event.target.getZoom()>6){
             this.removeMarkers();
             this.popolateMarkers(
                 this.shelterService.getShelters(
