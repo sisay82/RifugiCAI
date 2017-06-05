@@ -12,7 +12,7 @@ import { IMarker } from '../../shared/interfaces';
 })
 export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
-    @Input() normalIconSize:string="18px";
+    @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
     @Input() windowSize:{width:string,height:string}={width:'800px',height:'600px'};
     @Input() initialCenter:L.LatLng=L.latLng(41.9051,12.4879);
@@ -53,9 +53,9 @@ export class BcMap implements OnInit{
         this.normalIcon=L.divIcon({
             className:'',
             iconSize:null,
-            iconAnchor:[0,0],
+            iconAnchor:[this.normalIconSize/4,this.normalIconSize],
             popupAnchor:[0,0],
-            html:'<style>.bc-marker:hover{color:#26a69a;} .bc-marker{font-size:'+this.normalIconSize+';} </style><div style="position:relative" class="fa fa-map-marker bc-marker"></div>'
+            html:'<style>.bc-marker:hover{color:#26a69a;} .bc-marker{font-size:'+this.normalIconSize+'px;} </style><div style="position:relative" class="fa fa-map-marker bc-marker"></div>'
         });
     }
 
@@ -72,9 +72,6 @@ export class BcMap implements OnInit{
 
     addMarker(marker:L.Marker){
         this.markerPane.addLayer(marker);
-       // document.getElementById("marker").className="bc-marker";
-        //L.DomUtil.addClass(,"bc-marker");
-
     }
 
     getMapInit(mapElement:string){
@@ -83,6 +80,9 @@ export class BcMap implements OnInit{
             attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
         }).addTo(this.map);
         this.map.on("zoom",this.zoomEvent,this);
+        this.map.on("click",function(e:L.MouseEvent){
+            e.target.eachLayer(function(layer){layer.closeTooltip()})
+        });
         this.markerPane.addTo(this.map);
         if(this.enableExpansion)
             this.map.on("click",this.clickEvent,this);
@@ -98,26 +98,21 @@ export class BcMap implements OnInit{
 
     markRegions(){
         for(let item of BcMap.latLngCountries){       
-           // let shelterCount:number = this.shelterService.getConutryMarkers(item.optional.id).length;
-            let shelterCount:number =1;
-            let fontSize:number = 21-Math.log10(shelterCount)*2.7;
-            let topPos:number = Math.pow(Math.log10(shelterCount),2.5)+30;
-            console.log(topPos);
+            let shelterCount:number = this.shelterService.getConutryMarkers(item.optional.id).length;
             let regionIcon= L.divIcon({
                 className:'',
                 iconSize:null,
                 iconAnchor:[this.regionIconSize/4,this.regionIconSize],
                 popupAnchor:[0,0],
-                html:'<style>.bc-marker:hover{color:#26a69a;} .bc-marker{font-size:'+this.regionIconSize+'px;} .bc-marker-content{font-family:"Roboto, sans-serif !default";} .bc-marker:hover .bc-marker-content{color:black;}</style><div style="position:relative" class="fa fa-map-marker bc-marker"><div class="bc-marker-content" style="position:absolute;z-index:-1;background:white;top:19.5%;text-align:center;left:20%;width:60%;height:30%;"><div style="font-size:'+fontSize+'%;transform: translateY('+topPos+'%);">'+shelterCount+'</div></div></div>'
+                html:'<style>.bc-marker:hover{color:#26a69a;} .bc-marker{font-size:'+this.regionIconSize+'px;} .bc-marker-content{font-family:Roboto,Helvetica Neue, sans-serif;} .bc-marker:hover .bc-marker-content{color:black;}</style><div style="position:relative" class="fa fa-map-marker bc-marker"><div class="bc-marker-content" style="position:absolute;z-index:-1;background:white;top:18%;text-align:center;left:20%;width:60%;height:35%;"><div style="font-size:20%;transform: translateY(35%);">'+shelterCount+'</div></div></div>'
             });
 
-            this.addMarker(L.marker(item.latLng,{icon:regionIcon}).bindPopup(shelterCount.toString()).on("click",this.openPopupRegion,this));
+            this.addMarker(L.marker(item.latLng,{icon:regionIcon}).on("click",this.openPopupRegion,this));
         }
     }
 
     openPopupRegion(event:L.Event){
-        console.log(event.target);
-        this.map.setView(event.target._latlng,8);
+        this.map.setView(event.target._latlng,9);
     }
 
     removeMarkers(){
@@ -125,11 +120,24 @@ export class BcMap implements OnInit{
     }
 
     zoomEvent(event:L.Event){
-        if(event.target.getZoom()>8){
+        if(event.target.getZoom()>7){
+            let markers:any[]=[];
+            let popups:any[]=[];
             this.removeMarkers();
-            this.popolateMarkers(
-                this.shelterService.getShelters(
-                    event.target.getCenter(),10));
+            for(let shelter of this.shelterService.getShelters(event.target.getCenter(),10)){
+                let popup:string=`<div style="width:250px;height:200px;background:white;border:1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
+                                <div style="width:100%;height:50px;background:black;font-family:inherit;font-size:inherit;text-align:center;color:white;position:relative">
+                                <div style="top:20%;position:relative">`+shelter.name+`</div></div><div style="width:100%;height:150px;top:50px;"><div style="text-align:center;position:relative;top:25%">`
+                                +shelter.collective+`, `+shelter.district+`</br>`+shelter.country+`</div></div></div>`;
+                let tooltip:L.Tooltip=L.tooltip({permanent:true,offset:[50,-50],interactive:true}).setContent(popup);
+                let mark=L.marker(shelter.latLng,{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
+                    this.map.eachLayer(function(layer){layer.closeTooltip()})
+                    e.target.toggleTooltip();
+                },this);
+                
+                this.addMarker(mark);
+                this.map.closeTooltip(tooltip);
+            }                
         }else{
             this.removeMarkers();
             this.markRegions();
@@ -138,11 +146,9 @@ export class BcMap implements OnInit{
 
     clickEvent(event:MouseEvent){   
         if(!this.expanded){
-            document.getElementById("map").style.width="100%";
-            document.getElementById("map").style.height="100%";
-            document.getElementById("map").style.position="absolute";
             this.expanded=true;
-            this.map.off("click");
+            this.map.off("click",this.clickEvent);
+            this.map.closeTooltip();
             this.map.invalidateSize();
         }else{this.expanded=false;}
     }
