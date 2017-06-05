@@ -14,7 +14,7 @@ export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
     @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
-    @Input() windowSize:{width:string,height:string}={width:'800px',height:'600px'};
+    @Input() windowSize;
     @Input() initialCenter:L.LatLng=L.latLng(41.9051,12.4879);
 
     public static latLngCountries: IMarker[]=[
@@ -61,8 +61,10 @@ export class BcMap implements OnInit{
 
     ngOnInit(){
         this.getMapInit('map');
-       // document.getElementById("map").style.width=this.windowSize.width;
-      //  document.getElementById("map").style.height=this.windowSize.height;
+        if(this.enableExpansion&& this.windowSize!=undefined){
+            document.getElementById("map").style.width=this.windowSize.width;
+            document.getElementById("map").style.height=this.windowSize.height;
+        }
         this.map.invalidateSize();
         this.map.setView(this.initialCenter,6);
 
