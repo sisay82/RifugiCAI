@@ -1,3 +1,4 @@
+import * as L from 'leaflet';
 export interface IMarker{
     latLng:L.LatLng,
     popup:string,
