@@ -24,5 +24,8 @@ $button_margin: 1px 1px;
 }
 
 .bc-button:hover:enabled{
-    color:map-get($bc-teal , 400 );
+    color:map-get($bc-teal,400);
+    border-width: 1px;
+    border-color: map-get($bc-teal,400);
+    border-style:solid;
 }
