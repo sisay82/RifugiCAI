@@ -121,18 +121,18 @@ export class BcMap implements OnInit{
 
     zoomEvent(event:L.Event){
         if(event.target.getZoom()>7){
-            let markers:any[]=[];
-            let popups:any[]=[];
             this.removeMarkers();
             for(let shelter of this.shelterService.getShelters(event.target.getCenter(),10)){
-                let popup:string=`<div style="width:250px;height:200px;background:white;border:1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
+                let popup:string=`<div style="width:250px;height:150px;background:white;border:0.1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
                                 <div style="width:100%;height:50px;background:black;font-family:inherit;font-size:inherit;text-align:center;color:white;position:relative">
-                                <div style="top:20%;position:relative">`+shelter.name+`</div></div><div style="width:100%;height:150px;top:50px;"><div style="text-align:center;position:relative;top:25%">`
+                                <div style="top:20%;position:relative">`+shelter.name+`</div></div><div style="width:100%;height:100px;top:50px;"><div style="text-align:center;position:relative;top:20%">`
                                 +shelter.collective+`, `+shelter.district+`</br>`+shelter.country+`</div></div></div>`;
-                let tooltip:L.Tooltip=L.tooltip({permanent:true,offset:[50,-50],interactive:true}).setContent(popup);
+                let tooltip:L.Tooltip=L.tooltip({permanent:true,direction:"right",offset:[50,-50],interactive:true}).setContent(popup);
                 let mark=L.marker(shelter.latLng,{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
-                    this.map.eachLayer(function(layer){layer.closeTooltip()})
-                    e.target.toggleTooltip();
+                    let isOpen=e.target.isTooltipOpen();
+                    this.map.eachLayer(function(layer){layer.closeTooltip()})               
+                    if(!isOpen)
+                        e.target.toggleTooltip();    
                 },this);
                 
                 this.addMarker(mark);
@@ -147,6 +147,9 @@ export class BcMap implements OnInit{
     clickEvent(event:MouseEvent){   
         if(!this.expanded){
             this.expanded=true;
+            document.getElementById("map").style.width="100%";
+            document.getElementById("map").style.height="100%";
+            document.getElementById("map").style.position="absolute";
             this.map.off("click",this.clickEvent);
             this.map.closeTooltip();
             this.map.invalidateSize();
