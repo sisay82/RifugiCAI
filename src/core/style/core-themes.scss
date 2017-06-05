@@ -1,9 +1,10 @@
 // Import all the components themes.
 @import '../navbar/navbar.component';
 @import '../divider/divider.component';
-
+@import '../list/list.component';
 // Create a full theme.
 @mixin bc-theme($theme) {
   @include bc-navbar-theme($theme);
   @include bc-divider-theme($theme);
+  @include bc-list-theme($theme);
 }
