@@ -5,6 +5,7 @@ import { BcDividerModule } from './divider/divider.module';
 import { BcNavbarModule } from './navbar/navbar.module';
 import { BcListModule } from './list/list.module';
 import { BcMapModule } from './map/map.module';
+import { BcButtonModule } from './button/button.module';
 
 // import { FilterService } from './services/filter.service';
 // import { SorterService } from './services/sorter.service';
@@ -18,7 +19,8 @@ const COMPONENTS_MODULES = [
     BcDividerModule,
     BcNavbarModule,
     BcListModule,
-    BcMapModule
+    BcMapModule,
+    BcButtonModule
 ];
 const PIPES_MODULES = [
     CapitalizePipe,

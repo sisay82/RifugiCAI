@@ -1,0 +1,28 @@
+@import '../style/palette';
+
+$button_margin: 1px 1px;
+
+.bc-button{
+    border: none;
+    margin: $button_margin;
+}
+
+.dark-theme-button:enabled{
+    background:map-get($bc-light-theme-background,raised-button);
+}
+
+.dark-theme-button:disabled{
+    background:map-get($bc-light-theme-background,disabled-button);
+}
+
+.light-theme-button:enabled{
+    background:map-get($bc-light-theme-background,raised-button);
+}
+
+.light-theme-button:disabled{
+    background:map-get($bc-light-theme-background,disabled-button);
+}
+
+.bc-button:hover:enabled{
+    color:map-get($bc-teal , 400 );
+}
