@@ -1,4 +1,4 @@
-import { Component, Input, Injectable, OnInit } from '@angular/core';
+import { Component, Input, Injectable, OnInit,Optional } from '@angular/core';
 import {IButton} from '../../shared/interfaces';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
@@ -19,23 +19,24 @@ export class BcButtonService{
     moduleId:module.id,
     selector:'bc-button',
     templateUrl: 'button.component.html',
-    styleUrls: ['button.component.scss'],
-    
+    styleUrls: ['button.component.scss']    
 })
 export class BcButton{
     @Input() button:IButton;
     local_style:string;
     private _selected:Boolean;
 
-    constructor(private router:Router,private _button_service: BcButtonService){
+    constructor(private router:Router,@Optional() private _button_service: BcButtonService){
         this.local_style=this.getClass();
     }
 
     btnClick(){
-        this._selected=true;
-        this._button_service.onChildSelect();
-        let style=this.getClass();
-        this.local_style=style.concat(" bc-selected-button-light");
+        if(this._button_service!=undefined){
+            this._selected=true;
+            this._button_service.onChildSelect();
+            let style=this.getClass();
+            this.local_style=style.concat(" bc-selected-button-light");
+        }
         if(this.button.action==undefined){
             this.router.navigateByUrl(this.button.ref);
         }else{
