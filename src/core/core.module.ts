@@ -6,7 +6,7 @@ import { BcNavbarModule } from './navbar/navbar.module';
 import { BcListModule } from './list/list.module';
 import { BcMapModule } from './map/map.module';
 import { BcButtonModule } from './button/button.module';
-
+import { BcSelectGroupModule } from './button/selectGroup.module';
 // import { FilterService } from './services/filter.service';
 // import { SorterService } from './services/sorter.service';
 // import { TrackByService } from './services/trackby.service';
@@ -20,7 +20,7 @@ const COMPONENTS_MODULES = [
     BcNavbarModule,
     BcListModule,
     BcMapModule,
-    BcButtonModule
+    BcSelectGroupModule
 ];
 const PIPES_MODULES = [
     CapitalizePipe,
