@@ -7,6 +7,13 @@ $button_margin: 1px 1px;
     margin: $button_margin;
 }
 
+.bc-selected-button-light{
+    color:map-get($bc-teal,400);
+    border-width: 1px;
+    border-color: map-get($bc-teal,400);
+    border-style:solid;
+}
+
 .dark-theme-button:enabled{
     background:map-get($bc-light-theme-background,raised-button);
 }
