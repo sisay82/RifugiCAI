@@ -5,7 +5,12 @@
       <span class="bc-navbar-filler"></span>
       <span class="button"><a href="#" class=""><i class="fa fa-sign-in" aria-hidden="true"></i> login</a></span>
     </bc-navbar>
-
+    <div class="navbar-item" style="z-index: 10;position:absolute;height:55px;left:50px;padding-top:10px;display:inline-block">
+      <bc-select-group class="navbar-item">
+        <bc-button [button]="list_view_button"></bc-button>
+        <bc-button [button]="map_view_button"></bc-button>
+      </bc-select-group>
+    </div>
   <router-outlet></router-outlet>
   <!-- Routed views go here -->
   <!--

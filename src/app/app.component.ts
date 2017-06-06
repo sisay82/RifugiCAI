@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {IButton} from '../shared/interfaces';
 
 @Component({ 
   moduleId: module.id,
@@ -7,5 +8,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+    list_view_button:IButton={ref:'#',icon:'fa fa-th-list',text:'Lista',enabled:true,dark_theme:false};
+    map_view_button:IButton={ref:'map',icon:'fa fa-map-marker',text:'Mappa',enabled:true,dark_theme:false};
 
 }
