@@ -5,8 +5,6 @@ import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class BcButtonService{
-
-
     private selectSource = new Subject<string>();
     select$ = this.selectSource.asObservable();
 
@@ -23,8 +21,9 @@ export class BcButtonService{
 })
 export class BcButton{
     @Input() button:IButton;
-    local_style:string;
+    @Input() pre_selected:Boolean;
     private _selected:Boolean;
+    local_style:string;
 
     constructor(private router:Router,@Optional() private _button_service: BcButtonService){
         this.local_style=this.getClass();
@@ -60,6 +59,11 @@ export class BcButton{
 
     ngOnInit(){
         this.local_style=this.getClass();
+        console.log(this.pre_selected);
+        if(this.pre_selected!=undefined&&this.pre_selected){
+            let style=this.getClass();
+            this.local_style=style.concat(" bc-selected-button-light");
+        }
     }
 
     getClass(){
