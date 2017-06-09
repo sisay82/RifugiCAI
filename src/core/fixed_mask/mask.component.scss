@@ -1,0 +1,42 @@
+@import '../style/palette';
+
+.bc-return-icon:hover{
+    color: map-get($bc-teal,400);
+    cursor: pointer;
+}
+
+.bc-mask-container{
+    height:150px;
+    width:100%;
+    background-color: map-get($bc-light-theme-background,background);
+    font-style: Roboto, Helvetica Neue, sans-serif;
+    position:relative;
+}
+
+.bc-mask-top{
+    font-size:24px;
+    line-height: 32px;
+    font-weight: 400;
+}
+
+.bc-mask-line{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    position:relative;
+    height:33%;
+    width:100%;
+}
+
+.bc-mask-title{
+    font-size:20px;
+    line-height: 20px;
+    font-weight: 500;
+}
+
+.bc-mask-content{
+    font-size:14px;
+    line-height: 24px;
+    font-weight: 500;
+    padding-left:4px;
+}
