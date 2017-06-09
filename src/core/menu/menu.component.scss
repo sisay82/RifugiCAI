@@ -1,0 +1,30 @@
+@import '../style/palette';
+@import '../style/constants';
+@import '../style/typography';
+
+$accent:map_get($bc-teal,400);
+$font-style:bc-typography-style(14px,14px,500);
+$menu-width:200px;
+
+.bc-list-overlap{
+    position: absolute;
+    z-index: 1;
+}
+
+.bc-list-button{
+    background-color: map_get($bc-grey-cai, 0);
+    border-color: map_get($bc-grey-cai, 0);
+    color:map_get(map_get($bc-grey-cai,contrast),A400);
+}
+
+.bc-list-button:hover{
+    color:$accent;
+}
+
+.bc-menu-select{
+    background: map_get($bc-light-theme-background, background);
+    display: block;
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    width:$menu-width;
+}   
