@@ -1,11 +1,9 @@
 <bc-navbar>
-  <ul class="nav navbar-nav">
-    <li class="navbar-item">
-      <a href="#" class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>
-    </li>
-    <li class="navbar-item">
-      <a href="#" class="btn btn-default"><i class="fa fa-map" aria-hidden="true"></i>  Map View</a>
-    </li>
+  <ul class="nav">
+    <bc-select-group class="navbar-item">
+      <bc-button [button]="list_view_button"></bc-button>
+      <bc-button [button]="map_view_button"></bc-button>
+    </bc-select-group>
   </ul>
   <span class="bc-navbar-filler"></span>
   <div>
@@ -14,9 +12,7 @@
   </div>
 </bc-navbar>
 <bc-list>
-  <bc-list-item *ngFor="let item of filteredShelter">
-    <div style="display: flex; flex-flow: row nowrap;  align-items: flex-start; flex:1;">
+  <a bc-list-item *ngFor="let item of filteredShelter" >
       <div style="flex:1; padding:8px; font-weight: 500;">{{item.name}}</div><div style="flex:1; padding:8px;">{{item.municipality}}</div><div style="flex:1; padding:8px;">{{item.province}}</div><div style="flex:1; padding:8px;">{{item.region}}</div>
-    </div>
-  </bc-list-item>
+  </a>
 </bc-list>
