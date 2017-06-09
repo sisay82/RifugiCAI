@@ -7,16 +7,21 @@
 
 .bc-mask-container{
     height:150px;
-    width:100%;
     background-color: map-get($bc-light-theme-background,background);
     font-style: Roboto, Helvetica Neue, sans-serif;
     position:relative;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    width: 100%;
+    display: inline-block;
+
 }
 
 .bc-mask-top{
-    font-size:24px;
-    line-height: 32px;
-    font-weight: 400;
+    font-size:20px;
+    line-height: 20px;
+    font-weight: 500;
 }
 
 .bc-mask-line{
@@ -29,9 +34,11 @@
 }
 
 .bc-mask-title{
-    font-size:20px;
-    line-height: 20px;
+    font-size:16px;
+    line-height: 24px;
     font-weight: 500;
+    display: flex;
+    flex-direction: row;
 }
 
 .bc-mask-content{
@@ -39,4 +46,6 @@
     line-height: 24px;
     font-weight: 500;
     padding-left:4px;
+    display: flex;
+    flex-direction: row;
 }
