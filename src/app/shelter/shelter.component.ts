@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {IShelter} from '../../shared/interfaces';
 import { ActivatedRoute } from '@angular/router';
 import {ShelterService} from '../../core/shelter/shelter.service'
+import {IMenuElement}from '../../shared/interfaces';
 
 @Component({
     moduleId: module.id,
@@ -13,6 +14,29 @@ import {ShelterService} from '../../core/shelter/shelter.service'
 })
 export class BcShelter {
     shelter:IShelter={id:"id",name:"nome",registry:{address:{via:"via",number:1,cap:1,city:"cittá",collective:"comune",country:"regione",district:"provincia"}}};
+    appMenuElements:IMenuElement={
+    layers:[{
+        layerName:"Publics",
+        elements:[
+            {name:"Dati geografici",icon:"fa-map-signs",link:"geographics"},
+            {name:"Servizi",icon:"fa-home",link:"#"},
+            {name:"Contatti e apertura",icon:"fa-phone",link:"#"},
+            {name:"Proprietá e gestione",icon:"fa-user",link:"#"},
+            {name:"Dati catastali",icon:"fa-book",link:"#"}
+            ]},{
+        layerName:"Documents",
+        elements:[
+            {name:"Documenti",icon:"fa-file-pdf-o",link:"#"},
+            {name:"Immagini",icon:"fa-picture-o",link:"#"}
+            ]},{
+        layerName:"Economy",
+        elements:[
+            {name:"Economia",icon:"fa-certificate",link:"#"},
+            {name:"Richiesta contributi",icon:"fa-eur",link:"#"},
+            {name:"Fruizione",icon:"fa-bar-chart",link:"#"}
+        ]}
+        ]
+    };
 
     constructor(private shelterService:ShelterService,private route:ActivatedRoute){}
 
