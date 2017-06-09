@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {IMenuElement}from '../shared/interfaces';
+import {IMenu}from '../shared/interfaces';
 @Component({ 
   moduleId: module.id,
   selector: 'bc-app-component',
@@ -8,7 +8,7 @@ import {IMenuElement}from '../shared/interfaces';
 })
 export class AppComponent {
 
-  appMenuElements:IMenuElement={
+  appMenuElements:IMenu={
     layers:[{
       layerName:"Publics",
       elements:[

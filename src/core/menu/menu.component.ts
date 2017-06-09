@@ -1,26 +1,42 @@
 
 import {
-  Component, trigger, state, style, transition, animate, Input
+  Component, trigger, state, style, transition, animate, Input, QueryList,ViewChildren
 } from '@angular/core';
 import {
   Animations
 } from './menu-animations';
 import { 
-  IMenuElement
+  IMenu
 } from '../../shared/interfaces';
+import {
+  BcMenuItem,BcItemService
+} from './menu-item.component';
+
 
 @Component({
   moduleId: module.id,
   selector: 'bc-menu',
   templateUrl: 'menu.component.html',
   styleUrls: ['menu.component.scss'],
-  animations: [Animations.slideLeftRight]
+  animations: [Animations.slideLeftRight],
+  providers:[BcItemService]
 })
 export class BcMenu {
+  current_check:BcMenuItem;
+  @ViewChildren(BcMenuItem) _list_layers: QueryList<BcMenuItem>;
   menuState:string = 'left';
-  @Input() menuElements: IMenuElement;
+  @Input() menuElements: IMenu;
 
-  constructor(){//DEFAULT
+  ngAfterContentInit(){
+    this._layer_service.select$.subscribe(item=>{
+      if(this.current_check!=undefined){
+        this.current_check.itemUncheck();
+      }
+      this.current_check=this._layer_service.current_select;
+    });
+  }
+
+  constructor(private _layer_service:BcItemService){
     this.menuElements={
       layers:[{
         layerName:"Default",
@@ -30,6 +46,7 @@ export class BcMenu {
       ]
     };
   }
+  
   checkWinPlatform(){
     if(navigator.userAgent.indexOf("Win")>-1){
       this.menuState='right';
@@ -43,10 +60,6 @@ export class BcMenu {
     }else{
       return "bc-list-overlap";
     }
-  }
-
-  clickEvent(obj:any){
-      console.log(obj.link);
   }
 
   toggleMenu(){

@@ -1,14 +1,18 @@
 import { Enums } from './enums'
 
 export interface IMenuElement{
-    layers:[{
-        layerName?:String,
-        elements:[{
-            name:String,
-            icon:String,
-            link:String
-        }]
-    }];
+    name:String,
+    icon:String,
+    link:String
+}
+
+export interface IMenuLayer{
+    layerName?:String,
+    elements:[IMenuElement]
+}
+
+export interface IMenu{
+    layers:[IMenuLayer];
 }
 
 export interface IRegistry{

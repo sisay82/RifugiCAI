@@ -5,8 +5,6 @@ import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class BcButtonService{
-
-
     private selectSource = new Subject<string>();
     select$ = this.selectSource.asObservable();
 

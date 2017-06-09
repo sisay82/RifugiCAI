@@ -22,8 +22,6 @@ export class BcSelectGroup{
     }
 
     childClick(child:BcButton){
-        console.log("A");
-        console.log(child);
         if(this.current_check!=null&&this.current_check!=undefined)
             this.current_check.btnUncheck();
         this.current_check=child;
