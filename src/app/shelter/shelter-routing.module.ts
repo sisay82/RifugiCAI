@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BcShelterList } from './shelterList.component';
+import { BcShelter } from './shelter.component';
 
 const sheltersRoutes: Routes = [
-    { path: 'list', pathMatch: 'full', component: BcShelterList }
+    { path: 'shelter/:name', pathMatch: 'full', component: BcShelter }
 ];
 @NgModule({
     imports: [
@@ -13,4 +13,4 @@ const sheltersRoutes: Routes = [
         RouterModule
     ]
 })
-export class ShelterListRoutingModule { }
+export class ShelterRoutingModule { }

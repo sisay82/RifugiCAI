@@ -8,6 +8,6 @@ import {IButton} from '../../shared/interfaces';
   styleUrls: ['./shelterMap.component.scss']
 })
 export class BcShelterMap {
-    list_view_button:IButton={ref:'#',icon:'fa fa-th-list',text:'Lista',enabled:true,dark_theme:false};
+    list_view_button:IButton={ref:'list',icon:'fa fa-th-list',text:'Lista',enabled:true,dark_theme:false};
     map_view_button:IButton={ref:'map',icon:'fa fa-map-marker',text:'Mappa',enabled:true,dark_theme:false};
 }

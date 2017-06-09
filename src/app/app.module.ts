@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ShelterListModule } from './shelterList/shelterList.module';
 import { ShelterMapModule } from './shelterMap/shelterMap.module';
+import { ShelterModule } from './shelter/shelter.module';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
@@ -15,6 +16,7 @@ import { FormsModule } from '@angular/forms';
         BrowserModule,
         CoreModule,
         ShelterListModule,
+        ShelterModule,
         ShelterMapModule,
         FormsModule,
         AppRoutingModule,

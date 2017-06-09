@@ -21,11 +21,13 @@ export interface IRegistry{
     regional_type?:Enums.Regional_Type,
     category?:Enums.Shelter_Category,
     address:{
-        via:{type:String,required:true},
-        number:{type:Number,required:true},
-        cap:{type:Number,required:true},
-        city:{type:String,required:true},
-        country:{type:String,required:true}
+        via:String,
+        number:Number,
+        cap:Number,
+        city:String,
+        collective:String,
+        district:String,
+        country:String
     },
     fixed_phone?:[String],
     mobile_phone?:[String],
@@ -56,8 +58,8 @@ export interface IGeographic{
     mountain_group?:String,
     quote?:Number,
     coordinates?:{
-        latitude:Number,
-        longitude:Number
+        latitude:number,
+        longitude:number
     },
     additional_data?:[{
         key:String,

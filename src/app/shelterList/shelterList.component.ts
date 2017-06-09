@@ -8,14 +8,14 @@ import {IButton} from '../../shared/interfaces';
     styleUrls: ['shelterList.component.scss']
 })
 export class BcShelterList {
-    list_view_button:IButton={ref:'#',icon:'fa fa-th-list',text:'Lista',enabled:true,dark_theme:false};
+    list_view_button:IButton={ref:'list',icon:'fa fa-th-list',text:'Lista',enabled:true,dark_theme:false};
     map_view_button:IButton={ref:'map',icon:'fa fa-map-marker',text:'Mappa',enabled:true,dark_theme:false};
 
     filterText: string = "";
     filteredShelter: any[] = [];
 
     rifugiSample: any[] = [{
-        name: "Sassolungo/Giuliani Reginaldo",
+        name: "Sassolungo-Giuliani Reginaldo",
         municipality: "Selva di Val Gardena",
         province: "Bolzano",
         region: "Trentino-Alto Adige"

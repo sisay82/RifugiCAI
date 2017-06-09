@@ -128,9 +128,9 @@ export class BcMap implements OnInit{
                 let popup:string=`<div style="width:250px;height:150px;background:white;border:0.1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
                                 <div style="width:100%;height:50px;background:black;font-family:inherit;font-size:inherit;text-align:center;color:white;position:relative">
                                 <div style="top:20%;position:relative">`+shelter.name+`</div></div><div style="width:100%;height:100px;top:50px;"><div style="text-align:center;position:relative;top:20%">`
-                                +shelter.collective+`, `+shelter.district+`</br>`+shelter.country+`</div></div></div>`;
+                                +shelter.registry.address.collective+`, `+shelter.registry.address.district+`</br>`+shelter.registry.address.country+`</div></div></div>`;
                 let tooltip:L.Tooltip=L.tooltip({permanent:true,direction:"right",offset:[50,-50],interactive:true}).setContent(popup);
-                let mark=L.marker(shelter.latLng,{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
+                let mark=L.marker([shelter.geographic_data.coordinates.latitude,shelter.geographic_data.coordinates.longitude],{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
                     let isOpen=e.target.isTooltipOpen();
                     this.map.eachLayer(function(layer){layer.closeTooltip()})               
                     if(!isOpen)

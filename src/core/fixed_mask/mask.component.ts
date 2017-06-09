@@ -19,6 +19,6 @@ export class BcMask {
   return(){
     if(this.ref!=undefined)
       this.router.navigateByUrl(this.ref);
-    else this.router.navigateByUrl("#");
+    else this.router.navigateByUrl("list");
   }
 }

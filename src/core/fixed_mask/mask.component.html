@@ -15,7 +15,7 @@
         </div>
         <div style="flex:1;padding:4px;display:flex;flex-direction:row">
             <div class="bc-mask-title">Sezione:</div>
-            <div class="bc-mask-content">{{shelter?.administrative.section_code || '----'}}</div>
+            <div class="bc-mask-content">{{shelter?.administrative?.section_code || '----'}}</div>
         </div>
         <div style="flex:1;padding:4px;display:flex;flex-direction:row">
             <div class="bc-mask-title">Proprietà:</div>
@@ -37,7 +37,7 @@
         </div>
         <div style="flex:1;padding:32px;display:flex;flex-direction:row">
             <div class="bc-mask-title">Aggiornato il:</div>
-            <div class="bc-mask-content">{{shelter?.logs[shelter.logs-1].update_date || '----'}}</div>
+            <div class="bc-mask-content">{{shelter.logs?(shelter.logs[shelter.logs-1].update_date):'----'}}</div>
         </div>
     </div>
     <bc-divider></bc-divider>
