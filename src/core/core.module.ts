@@ -4,6 +4,7 @@ import { BcAvatarModule } from './avatar/avatar.module';
 import { BcDividerModule } from './divider/divider.module';
 import { BcNavbarModule } from './navbar/navbar.module';
 import { BcListModule } from './list/list.module';
+import { BcDetailsModule } from './details/details.module';
 
 
 // import { FilterService } from './services/filter.service';
@@ -17,7 +18,8 @@ const COMPONENTS_MODULES = [
     BcAvatarModule,
     BcDividerModule,
     BcNavbarModule,
-    BcListModule
+    BcListModule,
+    BcDetailsModule
 ];
 const PIPES_MODULES = [
     CapitalizePipe,
