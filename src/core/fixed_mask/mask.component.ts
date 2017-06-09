@@ -1,7 +1,8 @@
 import {
   Component, Input
 } from '@angular/core';
-/*import { IShelter } from '../../shared/interfaces'*/
+import { IShelter } from '../../shared/interfaces';
+import {Router} from '@angular/router';
 
 @Component({
     moduleId: module.id,
@@ -10,20 +11,14 @@ import {
     styleUrls: ['mask.component.scss']
 })
 export class BcMask {
-  @Input() shelter;
+  @Input() shelter:IShelter;
+  @Input() ref:string;
 
-  constructor(){
-    this.shelter={
-      name:"Nome Rifugio",
-      collective:"Comune Rifugio",
-      id:"---",
-      type:"---",
-      section:"---",
-      property:"---",
-      category:"---",
-      to_region:"---",
-      insert_date:"---",
-      update_date:"---"
-    }
+  constructor(private router:Router){}
+
+  return(){
+    if(this.ref!=undefined)
+      this.router.navigateByUrl(this.ref);
+    else this.router.navigateByUrl("#");
   }
 }

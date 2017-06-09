@@ -28,7 +28,6 @@ export interface IOpening{
     opening_type:String
 }
 
-
 export interface ILog{
     state:String,
     user:String,
