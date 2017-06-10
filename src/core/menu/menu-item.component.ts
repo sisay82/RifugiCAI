@@ -1,4 +1,4 @@
-import {Component,Injectable,Input} from '@angular/core';
+import {Component,Injectable,Input,OnInit} from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { IMenuElement } from '../../shared/interfaces';
 
@@ -45,5 +45,11 @@ export class BcMenuItem {
     getClass(){
         let ret_class="bc-menu-item-content";
         return ret_class;
+    }
+
+    ngOnInit(){
+        if(this.menu_item.default!=undefined){
+             this.clickItem();
+         }
     }
 }

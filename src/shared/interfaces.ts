@@ -3,7 +3,8 @@ import { Enums } from './enums'
 export interface IMenuElement{
     name:String,
     icon:String,
-    link:String
+    link:String,
+    default?:boolean
 }
 
 export interface IMenuLayer{
