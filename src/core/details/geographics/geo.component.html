@@ -1,4 +1,4 @@
-<div class="bc-h5" style="display:block;margin-left:4px;background:white">
+<div class="bc-h5" style="display:block;margin-left:4px;background:white;line-height:1">
     <div class="bc-detail-title">Posizione</div>
     <div style="display:flex;flex-direction:row">
         <div style="flex:1;white-space:nowrap;padding-right:4px">Località: {{data?(data.registry?(data.registry.address.city):'----'):'----'}}</div>
@@ -31,7 +31,7 @@
     <div style="display:flex;flex-direction:row">
         <div style="flex:1;white-space:nowrap;padding-right:4px">Sito: {{data?(data.registry?(data.registry.web_address || '----'):'----'):'----'}}</div>
     </div>
-    <div style="width: 100%;height:100%;position:absolute">
-        <bc-map [initialCenter]="getCenter()" [openTooltipCenter]=true [initialZoom]="getZoom()" [enableExpansion]=true [windowSize]="{width:'100%',height:'256px'}"></bc-map>
+    <div style="width: 100%;height:256px;position:absolute">
+        <bc-map [initialCenter]="getCenter()" [openTooltipCenter]=true [initialZoom]="getZoom()" [enableExpansion]=false></bc-map>
     </div>
 </div>

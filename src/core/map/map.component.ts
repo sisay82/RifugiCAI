@@ -14,7 +14,7 @@ export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
     @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
-    @Input() windowSize:{width:string,height:string}={width:'100%',height:'256px'};
+    @Input() windowSize:{width:string,height:string};
     @Input() initialCenter:L.LatLng|L.LatLngExpression=L.latLng(41.9051,12.4879);
     @Input() initialZoom:number=6;
     @Input() openTooltipCenter:boolean=false;
@@ -65,12 +65,14 @@ export class BcMap implements OnInit{
 
     ngOnInit(){
         this.getMapInit('map');
-        document.getElementById("map").style.width=this.windowSize.width;
-        document.getElementById("map").style.height=this.windowSize.height;
+        if(this.windowSize){
+            document.getElementById("map").style.width=this.windowSize.width;
+            document.getElementById("map").style.height=this.windowSize.height;
+        }
         this.map.invalidateSize();
         this.map.setView(this.initialCenter,this.initialZoom);
-
-        this.markRegions();
+        if(this.initialZoom<=7)
+            this.markRegions();
         if(this.openTooltipCenter){
             this.map.eachLayer(function(layer){
                 if(layer.getTooltip()!=undefined){
