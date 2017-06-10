@@ -14,7 +14,7 @@ export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
     @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
-    @Input() windowSize:{width:string,height:string}={width:'100%',height:'256px'};
+    @Input() windowSize:{width:string,height:string};
     @Input() initialCenter:L.LatLng|L.LatLngExpression=L.latLng(41.9051,12.4879);
     @Input() initialZoom:number=6;
     @Input() openTooltipCenter:boolean=false;
