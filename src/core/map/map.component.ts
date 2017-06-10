@@ -14,8 +14,9 @@ export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
     @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
-    @Input() windowSize:{width:string,height:string}={width:'800px',height:'600px'};
-    @Input() initialCenter:L.LatLng=L.latLng(41.9051,12.4879);
+    @Input() windowSize:{width:string,height:string}={width:'100%',height:'256px'};
+    @Input() initialCenter:L.LatLng|L.LatLngExpression=L.latLng(41.9051,12.4879);
+    private _toggle:boolean=false;
 
     public static latLngCountries: IMarker[]=[
         {latLng:new L.LatLng(45.7372,7.3206),popup:"",optional:{id:"Valle d'Aosta"}},
@@ -61,8 +62,8 @@ export class BcMap implements OnInit{
 
     ngOnInit(){
         this.getMapInit('map');
-       // document.getElementById("map").style.width=this.windowSize.width;
-      //  document.getElementById("map").style.height=this.windowSize.height;
+        document.getElementById("map").style.width=this.windowSize.width;
+        document.getElementById("map").style.height=this.windowSize.height;
         this.map.invalidateSize();
         this.map.setView(this.initialCenter,6);
 
@@ -145,24 +146,28 @@ export class BcMap implements OnInit{
     }
 
     clickEvent(event:MouseEvent){   
-        if(!this.expanded){
-            this.expanded=true;
-            document.getElementById("map").style.width="100%";
-            document.getElementById("map").style.height="100%";
-            document.getElementById("map").style.position="absolute";
-            this.map.off("click",this.clickEvent);
-            this.map.closeTooltip();
-            this.map.invalidateSize();
-        }else{this.expanded=false;}
+        if(!this._toggle){
+            if(!this.expanded){
+                this.expanded=true;
+                this._toggle=true;
+                document.getElementById("map").style.width="100%";
+                document.getElementById("map").style.height="100%";
+                document.getElementById("map").style.position="absolute";
+                this.map.closeTooltip();
+                this.map.invalidateSize();
+            }else{
+                this.expanded=false;
+            }
+        }
     }
 
-    clickCloseEvent(event:Event){        
-        if(this.expanded){
+    clickCloseEvent(event:Event){    
+        if(this._toggle){
             document.getElementById("map").style.width=this.windowSize.width;
             document.getElementById("map").style.height=this.windowSize.height;
             document.getElementById("map").style.position="relative";
             this.map.invalidateSize();
-            this.map.on("click",this.clickEvent,this);
+            this._toggle=false;
         }
     }
 
