@@ -18,7 +18,7 @@ export class BcShelter {
     layers:[{
         layerName:"Publics",
         elements:[
-            {name:"Dati geografici",icon:"fa-map-signs",link:"geographics"},
+            {name:"Dati geografici",icon:"fa-map-signs",link:"geographics",default:true},
             {name:"Servizi",icon:"fa-home",link:"#"},
             {name:"Contatti e apertura",icon:"fa-phone",link:"#"},
             {name:"Proprietá e gestione",icon:"fa-user",link:"#"},
