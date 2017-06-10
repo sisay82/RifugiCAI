@@ -71,8 +71,8 @@ export class BcMap implements OnInit{
         }
         this.map.invalidateSize();
         this.map.setView(this.initialCenter,this.initialZoom);
-
-        this.markRegions();
+        if(this.initialZoom<=7)
+            this.markRegions();
         if(this.openTooltipCenter){
             this.map.eachLayer(function(layer){
                 if(layer.getTooltip()!=undefined){
