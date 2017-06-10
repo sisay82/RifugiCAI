@@ -20,6 +20,10 @@ $menu-width:200px;
     margin:0px 5px;
 }
 
+.bc-menu-item-select{
+    background-color: $accent;
+}
+
 .bc-menu-item-content:hover{
     background-color: $accent;
 }

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+
 import {IButton} from '../shared/interfaces';
+import {IMenu}from '../shared/interfaces';
 @Component({ 
   moduleId: module.id,
   selector: 'bc-app-component',

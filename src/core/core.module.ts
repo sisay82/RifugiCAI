@@ -25,7 +25,8 @@ const COMPONENTS_MODULES = [
     BcMapModule,
     BcSelectGroupModule,
     BcMaskModule,
-    BcMenuModule
+    BcMenuModule,
+    BcButtonModule
 ];
 const PIPES_MODULES = [
     CapitalizePipe,

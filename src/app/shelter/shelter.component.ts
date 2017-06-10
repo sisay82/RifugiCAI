@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {IShelter} from '../../shared/interfaces';
 import { ActivatedRoute } from '@angular/router';
 import {ShelterService} from '../../core/shelter/shelter.service'
-import {IMenuElement}from '../../shared/interfaces';
+import {IMenu}from '../../shared/interfaces';
 
 @Component({
     moduleId: module.id,
@@ -14,7 +14,7 @@ import {IMenuElement}from '../../shared/interfaces';
 })
 export class BcShelter {
     shelter:IShelter={id:"id",name:"nome",registry:{address:{via:"via",number:1,cap:1,city:"cittá",collective:"comune",country:"regione",district:"provincia"}}};
-    appMenuElements:IMenuElement={
+    appMenuElements:IMenu={
     layers:[{
         layerName:"Publics",
         elements:[
