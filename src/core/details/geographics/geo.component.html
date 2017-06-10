@@ -1,0 +1,37 @@
+<div class="bc-h5" style="display:block;margin-left:4px;background:white">
+    <div class="bc-detail-title">Posizione</div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Località: {{data?(data.registry?(data.registry.address.city):'----'):'----'}}</div>
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Comune: {{data?(data.registry?(data.registry.address.collective):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Provincia: {{data?(data.registry?(data.registry.address.district):'----'):'----'}}</div>
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Regione: {{data?(data.registry?(data.registry.address.country):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Ente Sovracomunale di Competenza: {{data?(data.administrative?(data.administrative.section_code || '----'):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Gruppo Montuoso: {{data?(data.geographic_data?(data.geographic_data.mountain_group || '----'):'----'):'----'}}</div>
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Valle: {{data?(data.geographic_data?(data.geographic_data.valley || '----'):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Quota: {{data?(data.geographic_data?(data.geographic_data.quote || '----'):'----'):'----'}}</div>
+        <div style="flex:1;white-space:nowrap;padding-right:4px">UTM WGS84: ({{data?(data.geographic_data?(data.geographic_data.coordinates.latitude):'----'):'----'}},{{data?(data.geographic_data?(data.geographic_data.coordinates.longitude):'----'):'----'}})</div>
+    </div>
+    <bc-divider></bc-divider>
+    <div class="bc-detail-title">Altro</div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Zona Tutelata: {{data?(data.geographic_data?(data.geographic_data.additional_data?(data.geographic_data.additional_data['area_protection'] || '----'):'----'):'----'):'----'}}</div>
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Comprensorio Sciistico: {{data?(data.geographic_data?(data.geographic_data.additional_data?(data.geographic_data.additional_data['ski_area'] || '----'):'----'):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Commissione Regionale: {{data?(data.administrative?(data.administrative.section_code || '----'):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1;white-space:nowrap;padding-right:4px">Sito: {{data?(data.registry?(data.registry.web_address || '----'):'----'):'----'}}</div>
+    </div>
+    <div style="width: 100%;height:100%;position:absolute">
+    <bc-map [initialCenter]="getCenter()" [initialZoom]="getZoom()" [enableExpansion]=true [windowSize]="{width:'100%',height:'256px'}"></bc-map>
+    </div>
+</div>

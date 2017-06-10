@@ -4,6 +4,7 @@ import { BcAvatarModule } from './avatar/avatar.module';
 import { BcDividerModule } from './divider/divider.module';
 import { BcNavbarModule } from './navbar/navbar.module';
 import { BcListModule } from './list/list.module';
+import { BcDetailsModule } from './details/details.module';
 import { BcMapModule } from './map/map.module';
 import { BcButtonModule } from './button/button.module';
 import { BcSelectGroupModule } from './button/selectGroup.module';
@@ -26,7 +27,8 @@ const COMPONENTS_MODULES = [
     BcSelectGroupModule,
     BcMaskModule,
     BcMenuModule,
-    BcButtonModule
+    BcButtonModule,
+    BcDetailsModule,
 ];
 const PIPES_MODULES = [
     CapitalizePipe,

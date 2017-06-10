@@ -1,4 +1,11 @@
 <div style="line-height:0">
     <bc-mask [shelter]="shelter"></bc-mask>
-    <bc-menu [menuElements]="appMenuElements"></bc-menu>
+    <div style="display:flex;flex-direction:row;position:relative">
+        <div style="position:relative;z-index:2000">
+            <bc-menu [menuElements]="appMenuElements"></bc-menu>
+        </div>
+        <div style="width:100%;position:relative">
+            <bc-geo [data]="shelter"></bc-geo>
+        </div>
+    </div>
 </div>
