@@ -13,7 +13,7 @@ import { ShelterListModule } from './shelterList/shelterList.module';
         BrowserModule,
         CoreModule,
         ShelterListModule,
-        AppRoutingModule,
+      /*  AppRoutingModule,*/
     ],
     providers: [],
     declarations: [AppComponent],

@@ -5,11 +5,13 @@ export interface IRegistry{
     regional_type?:Enums.Regional_Type,
     category?:Enums.Shelter_Category,
     address:{
-        via:{type:String,required:true},
-        number:{type:Number,required:true},
-        cap:{type:Number,required:true},
-        city:{type:String,required:true},
-        country:{type:String,required:true}
+        via:String,
+        number:Number,
+        cap:Number,
+        city:String,
+        country:String,
+        collective:String,
+        district:String
     },
     fixed_phone?:[String],
     mobile_phone?:[String],
@@ -113,4 +115,10 @@ export interface IService{
 export interface IUser{
     name:String;
     value:String;
+}
+
+export interface IMarker{
+    latLng:L.LatLng,
+    popup:string,
+    optional?:any
 }
