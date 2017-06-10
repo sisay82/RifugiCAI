@@ -17,6 +17,7 @@ export class BcMap implements OnInit{
     @Input() windowSize:{width:string,height:string}={width:'100%',height:'256px'};
     @Input() initialCenter:L.LatLng|L.LatLngExpression=L.latLng(41.9051,12.4879);
     @Input() initialZoom:number=6;
+    @Input() openTooltipCenter:boolean=false;
     private _toggle:boolean=false;
 
     public static defaultCenter:L.LatLng=L.latLng(41.9051,12.4879);
@@ -70,7 +71,17 @@ export class BcMap implements OnInit{
         this.map.setView(this.initialCenter,this.initialZoom);
 
         this.markRegions();
-        this.map.eachLayer(function(layer){layer.closeTooltip()});
+        if(this.openTooltipCenter){
+            this.map.eachLayer(function(layer){
+                if(layer.getTooltip()!=undefined){
+                    if(layer.getTooltip().getLatLng().equals(this.initialCenter)){
+                        layer.openTooltip();
+                    }else{
+                        layer.closeTooltip()
+                    }
+                }
+            },this);
+        }
     }
 
     addMarker(marker:L.Marker){
