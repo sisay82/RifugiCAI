@@ -14,4 +14,12 @@ export class BcGeo {
 
   constructor(){}
 
+  getCenter(){
+    if(this.data!=undefined && this.data.geographic_data!=undefined && this.data.geographic_data.coordinates!=undefined){
+      return [this.data.geographic_data.coordinates.latitude,this.data.geographic_data.coordinates.longitude];
+    }else{
+      return [41.9051,12.4879];//default
+    }
+  }
+
 }

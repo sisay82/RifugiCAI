@@ -31,7 +31,7 @@
     <div style="display:flex;flex-direction:row">
         <div style="flex:1;white-space:nowrap;padding-right:4px">Sito: {{data?(data.registry?(data.registry.web_address):'----'):'----'}}</div>
     </div>
-    <div style="width: 100%;height:256px">
-    <bc-map [enableExpansion]=true [windowSize]="{width:'100%',height:'256px'}"></bc-map>
+    <div style="width: 100%;height:100%;position:absolute">
+    <bc-map [initialCenter]="getCenter()" [enableExpansion]=true [windowSize]="{width:'100%',height:'256px'}"></bc-map>
     </div>
 </div>
