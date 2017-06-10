@@ -16,8 +16,10 @@ export class BcMap implements OnInit{
     @Input() regionIconSize:number=60;
     @Input() windowSize:{width:string,height:string}={width:'100%',height:'256px'};
     @Input() initialCenter:L.LatLng|L.LatLngExpression=L.latLng(41.9051,12.4879);
+    @Input() initialZoom:number=6;
     private _toggle:boolean=false;
 
+    public static defaultCenter:L.LatLng=L.latLng(41.9051,12.4879);
     public static latLngCountries: IMarker[]=[
         {latLng:new L.LatLng(45.7372,7.3206),popup:"",optional:{id:"Valle d'Aosta"}},
         {latLng:new L.LatLng(45.0667,7.7),popup:"",optional:{id:"Piemonte"}},
@@ -65,10 +67,10 @@ export class BcMap implements OnInit{
         document.getElementById("map").style.width=this.windowSize.width;
         document.getElementById("map").style.height=this.windowSize.height;
         this.map.invalidateSize();
-        this.map.setView(this.initialCenter,6);
+        this.map.setView(this.initialCenter,this.initialZoom);
 
         this.markRegions();
-
+        this.map.eachLayer(function(layer){layer.closeTooltip()});
     }
 
     addMarker(marker:L.Marker){
@@ -138,7 +140,7 @@ export class BcMap implements OnInit{
                 
                 this.addMarker(mark);
                 this.map.closeTooltip(tooltip);
-            }                
+            }
         }else{
             this.removeMarkers();
             this.markRegions();
