@@ -1,0 +1,34 @@
+<div class="bc-h5" style="display:block;margin-left:4px;background:white">
+    <div class="bc-detail-title">Position</div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1">Località: {{data?(data.registry?(data.registry.address.city):'----'):'----'}}</div>
+        <div style="flex:1">Comune: {{data?(data.registry?(data.registry.address.collective):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1">Provincia: {{data?(data.registry?(data.registry.address.district):'----'):'----'}}</div>
+        <div style="flex:1">Regione: {{data?(data.registry?(data.registry.address.country):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1">Ente Sovracomunale di Competenza: {{data?(data.administrative?(data.administrative.section_code):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1">Gruppo Montuoso: {{data?(data.geographic_data?(data.geographic_data.mountain_group):'----'):'----'}}</div>
+        <div style="flex:1">Valle: {{data?(data.geographic_data?(data.geographic_data.valley):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1">Quota: {{data?(data.geographic_data?(data.geographic_data.quote):'----'):'----'}}</div>
+        <div style="flex:1">UTM WGS84: {{data?(data.geographic_data?(data.geographic_data.coordinates.latitude):'----'):'----'}},{{data?(data.geographic_data?(data.geographic_data.coordinates.longitude):'----'):'----'}}</div>
+    </div>
+    <bc-divider></bc-divider>
+    <div class="bc-detail-title">Altro</div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1">Zona Tutelata: {{data?(data.geographic_data?(data.geographic_data.additional_data?(data.geographic_data.additional_data['area_protection']):'----'):'----'):'----'}}</div>
+        <div style="flex:1">Comprensorio Sciistico: {{data?(data.geographic_data?(data.geographic_data.additional_data?(data.geographic_data.additional_data['ski_area']):'----'):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1">Commissione Regionale: {{data?(data.administrative?(data.administrative.section_code):'----'):'----'}}</div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="flex:1">Sito: {{data?(data.registry?(data.registry.web_address):'----'):'----'}}</div>
+    </div>
+</div>

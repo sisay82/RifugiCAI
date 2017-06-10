@@ -1,6 +1,7 @@
 import {
-  Component,
+  Component,Input
 } from '@angular/core';
+import { IShelter } from '../../../shared/interfaces'
 
 @Component({
   moduleId: module.id,
@@ -9,4 +10,8 @@ import {
   styleUrls: ['geo.component.scss'],
 })
 export class BcGeo {
+  @Input() data:IShelter;
+
+  constructor(){}
+
 }
