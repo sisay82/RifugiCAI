@@ -18,22 +18,22 @@ export class BcShelter {
     layers:[{
         layerName:"Publics",
         elements:[
-            {name:"Dati geografici",icon:"fa-map-signs",link:"geographics",default:true},
-            {name:"Servizi",icon:"fa-home",link:"#"},
-            {name:"Contatti e apertura",icon:"fa-phone",link:"#"},
-            {name:"Proprietá e gestione",icon:"fa-user",link:"#"},
-            {name:"Dati catastali",icon:"fa-book",link:"#"}
+            {name:"Dati geografici",icon:"fa-map-signs",link:[{outlets:({'content': ['geographic']})}],default:true},
+            {name:"Servizi",icon:"fa-home",link:[{outlets:({'content': ['services']})}]},
+            {name:"Contatti e apertura",icon:"fa-phone",link:[{outlets:({'content': ['contacts']})}]},
+            {name:"Proprietá e gestione",icon:"fa-user",link:[{outlets:({'content': ['management']})}]},
+            {name:"Dati catastali",icon:"fa-book",link:[{outlets:({'content': ['cadastral']})}]}
             ]},{
         layerName:"Documents",
         elements:[
-            {name:"Documenti",icon:"fa-file-pdf-o",link:"#"},
-            {name:"Immagini",icon:"fa-picture-o",link:"#"}
+            {name:"Documenti",icon:"fa-file-pdf-o",link:[{outlets:({'content': ['documents']})}]},
+            {name:"Immagini",icon:"fa-picture-o",link:[{outlets:({'content': ['images']})}]}
             ]},{
         layerName:"Economy",
         elements:[
-            {name:"Economia",icon:"fa-certificate",link:"#"},
-            {name:"Richiesta contributi",icon:"fa-eur",link:"#"},
-            {name:"Fruizione",icon:"fa-bar-chart",link:"#"}
+            {name:"Economia",icon:"fa-certificate",link:[{outlets:({'content': ['economy']})}]},
+            {name:"Richiesta contributi",icon:"fa-eur",link:[{outlets:({'content': ['contribution']})}]},
+            {name:"Fruizione",icon:"fa-bar-chart",link:[{outlets:({'content': ['use']})}]}
         ]}
         ]
     };

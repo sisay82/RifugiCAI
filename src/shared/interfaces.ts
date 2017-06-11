@@ -19,7 +19,7 @@ export interface IButton {
 export interface IMenuElement{
     name:String,
     icon:String,
-    link:String,
+    link:any,
     default?:boolean
 }
 

@@ -1,6 +1,7 @@
 import {Component,Injectable,Input,OnInit} from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { IMenuElement } from '../../shared/interfaces';
+import { Router,ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class BcItemService{
@@ -25,12 +26,13 @@ export class BcMenuItem {
     private _selected:Boolean;
     local_style:string;
 
-    constructor(private _item_service: BcItemService){
+    constructor(private _item_service: BcItemService, private _router:Router,private _route:ActivatedRoute){
          this.local_style=this.getClass();
     }   
 
     clickItem(){
         if(this._item_service!=undefined){
+            this._router.navigate(this.menu_item.link,{relativeTo:this._route});
             this._selected=true;
             this._item_service.onSelect(this);
             let style=this.getClass();

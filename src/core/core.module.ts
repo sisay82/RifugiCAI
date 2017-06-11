@@ -29,6 +29,7 @@ const COMPONENTS_MODULES = [
     BcMenuModule,
     BcButtonModule,
     BcDetailsModule,
+
 ];
 const PIPES_MODULES = [
     CapitalizePipe,

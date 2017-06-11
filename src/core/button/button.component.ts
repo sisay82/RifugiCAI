@@ -59,7 +59,6 @@ export class BcButton{
 
     ngOnInit(){
         this.local_style=this.getClass();
-        console.log(this.pre_selected);
         if(this.pre_selected!=undefined&&this.pre_selected){
             let style=this.getClass();
             this.local_style=style.concat(" bc-selected-button-light");

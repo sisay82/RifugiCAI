@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
         ShelterModule,
         ShelterMapModule,
         FormsModule,
-        AppRoutingModule,
+        AppRoutingModule
     ],
     providers: [],
     declarations: [AppComponent],
