@@ -1,0 +1,23 @@
+<div>
+    <div style="display: flex;flex-direction:row;align-items:center">
+        <div class="bc-h6 bc-service-title" style="flex:1">{{item.service_name}}</div>
+        <div class="bc-h6" style="flex:15">Categoria: {{item.service_category?(item.service_category):'---'}}</div>
+    </div>
+
+    <div style="display: flex;flex-direction:row">
+        <div *ngFor="let t of item.tags" style="display: flex;flex-direction:row;align-items:center;flex:1">
+            <div class="bc-body-strong bc-tag-title">{{t.key}}:</div>
+            <div class="bc-body bc-tag-value">{{t.value}}</div>
+        </div>
+    </div>
+
+    <div *ngIf="item.description!=undefined" class="bc-h6 bc-tag-value">{{item.description}}</div>
+
+    <div>
+        <div *ngFor="let option of item.options" class="bc-body" style="display: flex;flex-direction:row">
+            <i class="fa fa-circle"></i>
+            <div style="margin-left:2px">{{option}}</div>
+        </div>
+    </div>
+
+</div>
