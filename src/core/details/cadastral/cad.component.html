@@ -1,0 +1,79 @@
+<div style="display:block;margin-left:4px;background:white">
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Anno di Costruzione:</div>
+            <div class="bc-body">{{data.construction_year?(data.construction_year):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Anno di Ristrutturazione:</div>
+            <div class="bc-body">{{data.reconstruction_year?(data.reconstruction_year):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Codice Catastale:</div>
+            <div class="bc-body">{{data.cadastral_code?(data.cadastral_code):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Classe Catastale:</div>
+            <div class="bc-body">{{data.cadastral_class?(data.cadastral_class):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Certificazione:</div>
+            <div class="bc-body">{{data.certification?(data.certification):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Consistenza Tipologica:</div>
+            <div class="bc-body">{{data.typological_consistency?(getTypoValue(typological_consistency)):'----'}}</div>
+        </div>
+    </div>
+    <bc-divider></bc-divider>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Classe Energetica:</div>
+            <div class="bc-body">{{data.energy_class?(data.energy_class):'----'}}</div>
+        </div>        
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div class="bc-body" *ngIf="data.fire_regulation!=undefined&&data.fire_regulation==true">Regolarità Antincendio</div>       
+        <div class="bc-body" *ngIf="data.urban_regularity!=undefined&&data.urban_regularity==true">Regolarità Urbana</div>       
+        <div class="bc-body" *ngIf="data.green_certification!=undefined&&data.green_certification==true">Green</div>       
+        <div class="bc-body" *ngIf="data.recycling!=undefined&&data.recycling==true">Riciclaggio</div>       
+        <div class="bc-body" *ngIf="data.waste_adjustment!=undefined&&data.waste_adjustment==true">Scarico a Norma</div>       
+    </div>
+    <div>
+        <div class="bc-body" *ngFor="let t of data.resources_sources">
+            <i style="font-size:14px" class="fa fa-circle"></i>
+            {{t.source_name}},{{getSourceValue(t)}}
+        </div>      
+    </div>
+    <bc-divider></bc-divider>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Smaltimento Reflui:</div>
+            <div class="bc-body">{{data.waste_disposal?(data.waste_disposal):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Smaltimento Rifiuti:</div>
+            <div class="bc-body">{{data.garbage_disposal?(data.garbage_disposal):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Energia Necessaria:</div>
+            <div class="bc-body">{{data.necessary_energy?(data.necessary_energy):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Consistenza Corpo Principale:</div>
+            <div class="bc-body">{{data.main_body_consistency?(data.main_body_consistency):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Consistenza Corpi Secondari:</div>
+            <div class="bc-body">{{data.secondary_body_consistency?(data.secondary_body_consistency):'----'}}</div>
+        </div>
+    </div>
+</div>

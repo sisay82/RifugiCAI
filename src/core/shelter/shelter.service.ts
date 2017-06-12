@@ -27,6 +27,10 @@ export class ShelterService{
         {service_name:'serv5'},
     ];
 
+    getCadastralsByName(name:string):Interfaces.ICadastral{
+        return {};
+    }
+
     getAdminByName(name:string):Interfaces.IAdministrative{
         return this.shelters[0].administrative;
     }

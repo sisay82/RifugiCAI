@@ -90,12 +90,14 @@ export interface IGeographic{
 export interface ICadastral{
     construction_reg?:Boolean,
     construction_year?:Number,
-    typological_consistency?:{type:Enums.Typo_consistency},
+    reconstruction_year?:Number,
+    typological_consistency?:Enums.Typo_consistency,
     material_consistency?:Boolean,
     urban_regularity?:Boolean,
     main_body_consistency?:String,
     secondary_body_consistency?:String,
     cadastral_class?:String,
+    cadastral_code?:String,
     fire_regulation?:Boolean,
     energy_class?:String,
     certification?:String,
@@ -106,7 +108,7 @@ export interface ICadastral{
     waste_disposal?:String,
     waste_adjustment?:Boolean,
     resources_sources?:[{
-        type:{type:Enums.Source_Type},
+        type:Enums.Source_Type,
         source_name:String,
         description?:String,
         value?:Number
