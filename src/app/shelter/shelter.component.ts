@@ -13,7 +13,7 @@ import {IMenu}from '../../shared/interfaces';
 
 })
 export class BcShelter {
-    shelter:IShelter={id:"id",name:"nome",registry:{address:{via:"via",number:1,cap:1,city:"cittá",collective:"comune",country:"regione",district:"provincia"}}};
+    shelter:IShelter={name:"nome",registry:{id:"id",address:{via:"via",number:1,cap:1,city:"cittá",collective:"comune",country:"regione",district:"provincia"}}};
     appMenuElements:IMenu={
     layers:[{
         layerName:"Publics",
@@ -42,10 +42,7 @@ export class BcShelter {
 
     ngOnInit(){
         this.route.params.subscribe(params=>{
-            this.shelter=this.shelterService.getByName(params['name']);
-            
-            //hardcoded
-            this.shelter.name=params['name'];
+            this.shelter={name:params['name'],registry:this.shelterService.getHeaderByName(params['name'])};
         });
     }
 }

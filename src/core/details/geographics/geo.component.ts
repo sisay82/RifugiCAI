@@ -17,7 +17,7 @@ export class BcGeo {
   data:IShelter;
 
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute){
-    this.data={id:"id3",name:"Shelter3",geographic_data:{coordinates:{latitude:43.14,longitude:11.42}}, registry:{address:{via:"via",number:1,cap:1,city:"city",collective:"Comune1",country:"Regione1",district:"Provincia1"}}};
+    this.data={name:"Shelter3",geographic_data:{coordinates:{latitude:43.14,longitude:11.42}}, registry:{id:"id3",address:{via:"via",number:1,cap:1,city:"city",collective:"Comune1",country:"Regione1",district:"Provincia1"}}};
   }
 
   getCenter(){
@@ -38,7 +38,11 @@ export class BcGeo {
 
   ngOnInit(){
     this._route.parent.params.subscribe(params=>{
-      this.data=this.shelterService.getByName(params['name']);
+      this.data={name:params['name'],
+                registry:this.shelterService.getHeaderByName(params['name']),
+                geographic_data:this.shelterService.getGeographicByName(params['name'])
+              };
+
     });
   }
 
