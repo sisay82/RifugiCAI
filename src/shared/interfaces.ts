@@ -33,6 +33,7 @@ export interface IMenu{
 }
 
 export interface IRegistry{
+    id:String,
     shelter_type?:Enums.Shelter_Type,
     regional_type?:Enums.Regional_Type,
     category?:Enums.Shelter_Category,
@@ -45,15 +46,21 @@ export interface IRegistry{
         district:String,
         country:String
     },
-    fixed_phone?:[String],
-    mobile_phone?:[String],
-    email_address?:[String],
-    web_address?:String,
+    section_code?:String,
     description?:String,
     insert_date?:Date,
     custody_type?:Enums.Custody_Type,
     custodian?:String,//ObjectID
     owner?:String
+}
+
+export interface IContacts{
+    openings?:[IOpening],
+    fixed_phone?:String,
+    mobile_phone?:String,
+    mail_pec?:String,
+    email_address?:String,
+    web_address?:String,
 }
 
 export interface IOpening{
@@ -116,15 +123,13 @@ export interface IAdministrative{
     contract_duration?:Number,
     contract_fee?:Number,
     possession_title?:String,
-    section_code?:String
 }
 
 export interface IShelter {
-    id:String,
     name:String,
     registry:IRegistry,    
     administrative?:IAdministrative,
-    openings?:[{IOpening}],
+    contacts?:IContacts,
     geographic_data?:IGeographic,
     cadastral_data?:ICadastral,
     logs?:[{ILog}],

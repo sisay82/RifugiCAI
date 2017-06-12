@@ -9,7 +9,7 @@
         <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Regione:</div> {{data?(data.registry?(data.registry.address.country):'----'):'----'}}</div>
     </div>
     <div style="display:flex;flex-direction:row">
-        <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Ente Sovracomunale di Competenza:</div> {{data?(data.administrative?(data.administrative.section_code || '----'):'----'):'----'}}</div>
+        <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Ente Sovracomunale di Competenza:</div> {{data?(data.registry?(data.registry.section_code || '----'):'----'):'----'}}</div>
     </div>
     <div style="display:flex;flex-direction:row">
         <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Gruppo Montuoso:</div> {{data?(data.geographic_data?(data.geographic_data.mountain_group || '----'):'----'):'----'}}</div>
@@ -26,7 +26,7 @@
         <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Comprensorio Sciistico:</div> {{data?(data.geographic_data?(data.geographic_data.additional_data?(data.geographic_data.additional_data['ski_area'] || '----'):'----'):'----'):'----'}}</div>
     </div>
     <div style="display:flex;flex-direction:row">
-        <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Commissione Regionale:</div> {{data?(data.administrative?(data.administrative.section_code || '----'):'----'):'----'}}</div>
+        <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Commissione Regionale:</div> {{data?(data.registry?(data.registry.section_code || '----'):'----'):'----'}}</div>
     </div>
     <div style="display:flex;flex-direction:row;padding-bottom:4px">
         <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Sito:</div> {{data?(data.registry?(data.registry.web_address || '----'):'----'):'----'}}</div>
