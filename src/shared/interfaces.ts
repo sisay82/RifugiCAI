@@ -141,6 +141,7 @@ export interface IService{
     service_category?:String;
     description?:String;
     tags?:[ITag];
+    options?:[String]
 }
 
 export interface IUser{
