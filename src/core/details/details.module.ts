@@ -6,9 +6,10 @@ import { BcContactModule } from './contacts/contact.module';
 import { BcDetails } from "./details.component";
 import { RouterModule, Routes } from '@angular/router';
 import { BcManageModule } from "./management/manage.module";
+import { BcCadastralModule } from "./cadastral/cad.module";
 
 @NgModule({
-    imports: [RouterModule,BcGeoModule,BcServModule,BcContactModule,BcManageModule],
+    imports: [RouterModule,BcGeoModule,BcServModule,BcContactModule,BcCadastralModule,BcManageModule],
     declarations:[BcDetails],
     exports: [BcGeoModule,BcDetails]
 })
