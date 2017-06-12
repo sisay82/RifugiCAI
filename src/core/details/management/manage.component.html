@@ -1,0 +1,68 @@
+<div style="display:block;margin-left:4px;background:white">
+    <div class="bc-detail-title bc-h6">Proprietà:</div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Codice Rifugio:</div>
+            <div class="bc-body">{{data.shelter_code?(data.shelter_code):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">P.IVA:</div>
+            <div class="bc-body">{{data.p_iva?(data.p_iva):'------------'}}</div>
+        </div>
+    </div>
+    <bc-divider></bc-divider>
+    <div class="bc-detail-title bc-h6">Gestione:</div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Proprietario:</div>
+            <div class="bc-body">{{data.owner?(data.owner):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Custode:</div>
+            <div class="bc-body">{{data.custodian?(data.custodian):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Titolo di Possesso:</div>
+            <div class="bc-body">{{data.possession_title?(data.possession_title):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Tipo Custodia:</div>
+            <div class="bc-body">{{getValue()}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Data Inizio Contratto:</div>
+            <div class="bc-body">{{data.contract_start_date?(data.contract_start_date | date:"dd/MM/yy" ):'------------'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Data Fine Contratto:</div>
+            <div class="bc-body">{{data.contract_end_date?(data.contract_end_date | date:"dd/MM/yy" ):'------------'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Durata Contratto:</div>
+            <div class="bc-body">{{data.contract_duration?(data.contract_duration):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Canone Contratto:</div>
+            <div class="bc-body">{{data.contract_fee?(data.contract_fee):'------------'}}</div>
+        </div>
+    </div>
+    <bc-divider></bc-divider>
+    <div class="bc-detail-title bc-h6">Ritiro Chiavi:</div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Nome:</div>
+            <div class="bc-body">{{data.key_collect?(data.key_collect.name):'------------'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Telefono:</div>
+            <div class="bc-body">{{data.key_collect?(data.key_collect.phone?(data.key_collect.phone):'------------'):'------------'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Mail:</div>
+            <div class="bc-body">{{data.key_collect?(data.key_collect.mail?(data.key_collect.mail):'------------'):'------------'}}</div>
+        </div>
+    </div>
+
+</div>
