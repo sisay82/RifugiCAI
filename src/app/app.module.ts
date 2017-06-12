@@ -7,13 +7,15 @@ import { AppComponent } from './app.component';
 
 import { AppRoutingModule } from './app-routing.module';
 import { ShelterListModule } from './shelterList/shelterList.module';
+import { ShelterModule } from './shelter/shelter.module';
 
 @NgModule({
     imports: [
         BrowserModule,
         CoreModule,
         ShelterListModule,
-      /*  AppRoutingModule,*/
+        ShelterModule,
+        AppRoutingModule,
     ],
     providers: [],
     declarations: [AppComponent],

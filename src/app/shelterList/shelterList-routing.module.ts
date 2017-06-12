@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BcShelterList } from './shelterList.component';
 
 const sheltersRoutes: Routes = [
-    { path: '', pathMatch: 'full', component: BcShelterList }
+  //  { path: '', pathMatch: 'full', component: BcShelterList }
 ];
 @NgModule({
     imports: [
