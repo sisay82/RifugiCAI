@@ -1,25 +1,66 @@
-import { Enums } from './enums'
+import * as L from 'leaflet';
+import { Enums } from './enums';
+
+export interface IMarker{
+    latLng:L.LatLng,
+    popup:string,
+    optional?:any
+}
+
+export interface IButton {
+    ref:string;
+    icon?:string;
+    dark_theme?:Boolean;
+    text?:string;
+    enabled?:Boolean;
+    action?:Function;
+}
+
+export interface IMenuElement{
+    name:String,
+    icon:String,
+    link:any,
+    default?:boolean
+}
+
+export interface IMenuLayer{
+    layerName?:String,
+    elements:[IMenuElement]
+}
+
+export interface IMenu{
+    layers:[IMenuLayer];
+}
 
 export interface IRegistry{
+    id:String,
     shelter_type?:Enums.Shelter_Type,
     regional_type?:Enums.Regional_Type,
     category?:Enums.Shelter_Category,
     address:{
-        via:{type:String,required:true},
-        number:{type:Number,required:true},
-        cap:{type:Number,required:true},
-        city:{type:String,required:true},
-        country:{type:String,required:true}
+        via:String,
+        number:Number,
+        cap:Number,
+        city:String,
+        collective:String,
+        district:String,
+        country:String
     },
-    fixed_phone?:[String],
-    mobile_phone?:[String],
-    email_address?:[String],
-    web_address?:String,
+    section_code?:String,
     description?:String,
     insert_date?:Date,
     custody_type?:Enums.Custody_Type,
     custodian?:String,//ObjectID
     owner?:String
+}
+
+export interface IContacts{
+    openings?:[IOpening],
+    fixed_phone?:String,
+    mobile_phone?:String,
+    mail_pec?:String,
+    email_address?:String,
+    web_address?:String,
 }
 
 export interface IOpening{
@@ -40,8 +81,8 @@ export interface IGeographic{
     mountain_group?:String,
     quote?:Number,
     coordinates?:{
-        latitude:Number,
-        longitude:Number
+        latitude:number,
+        longitude:number
     },
     additional_data?:[{
         key:String,
@@ -82,15 +123,13 @@ export interface IAdministrative{
     contract_duration?:Number,
     contract_fee?:Number,
     possession_title?:String,
-    section_code?:String
 }
 
 export interface IShelter {
-    id:String,
     name:String,
     registry:IRegistry,    
     administrative?:IAdministrative,
-    openings?:[{IOpening}],
+    contacts?:IContacts,
     geographic_data?:IGeographic,
     cadastral_data?:ICadastral,
     logs?:[{ILog}],
@@ -107,6 +146,7 @@ export interface IService{
     service_category?:String;
     description?:String;
     tags?:[ITag];
+    options?:[String]
 }
 
 export interface IUser{

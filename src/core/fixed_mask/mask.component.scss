@@ -13,8 +13,6 @@
     background-color: map-get($bc-light-theme-background,background);
     font-style: Roboto, Helvetica Neue, sans-serif;
     position:relative;
-    overflow-x: scroll;
-    overflow-y: hidden;
     white-space: nowrap;
     width: 100%;
     display: inline-block;

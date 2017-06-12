@@ -7,33 +7,33 @@
     <div class="bc-mask-line" style="margin-left:10px">
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title bc-body-strong">ID:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.id || '---'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.registry?.id || '---'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Tipo:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry.shelter_type || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.registry?.shelter_type || '----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Sezione:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.administrative.section_code || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.registry?.section_code || '----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Proprietà:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry.custody_type || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.registry?.custody_type || '----'}}</div>
         </div>
     </div>
     <div class="bc-mask-line" style="margin-left:32px">
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Categoria:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry.category || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.registry?.category || '----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Per la regione:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry.regional_type || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.registry?.regional_type || '----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Inserito il:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry.insert_date || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.registry?.insert_date || '----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Aggiornato il:</div>
