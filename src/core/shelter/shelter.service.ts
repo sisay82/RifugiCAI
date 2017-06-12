@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
 import { IMarker, IShelter } from '../../shared/interfaces';
+
 @Injectable()
 export class ShelterService{
      shelters:IShelter[]=[
@@ -8,6 +9,10 @@ export class ShelterService{
         {id:"id2",name:"Shelter2",geographic_data:{coordinates:{latitude:43.4,longitude:11.5}},registry:{address:{via:"via",number:1,cap:1,city:"city",collective:"Comune1",country:"Regione1",district:"Provincia1"}}},
         {id:"id3",name:"Shelter3",geographic_data:{coordinates:{latitude:43.14,longitude:11.42}}, registry:{address:{via:"via",number:1,cap:1,city:"city",collective:"Comune1",country:"Regione1",district:"Provincia1"}}}
     ];
+
+    getByName(name:string):IShelter{
+        return this.shelters[0];
+    }
 
     /**
      * Return shelters in the area around @point

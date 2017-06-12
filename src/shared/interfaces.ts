@@ -1,4 +1,36 @@
-import { Enums } from './enums'
+import * as L from 'leaflet';
+import { Enums } from './enums';
+
+export interface IMarker{
+    latLng:L.LatLng,
+    popup:string,
+    optional?:any
+}
+
+export interface IButton {
+    ref:string;
+    icon?:string;
+    dark_theme?:Boolean;
+    text?:string;
+    enabled?:Boolean;
+    action?:Function;
+}
+
+export interface IMenuElement{
+    name:String,
+    icon:String,
+    link:any,
+    default?:boolean
+}
+
+export interface IMenuLayer{
+    layerName?:String,
+    elements:[IMenuElement]
+}
+
+export interface IMenu{
+    layers:[IMenuLayer];
+}
 
 export interface IRegistry{
     shelter_type?:Enums.Shelter_Type,
@@ -9,9 +41,9 @@ export interface IRegistry{
         number:Number,
         cap:Number,
         city:String,
-        country:String,
         collective:String,
-        district:String
+        district:String,
+        country:String
     },
     fixed_phone?:[String],
     mobile_phone?:[String],
@@ -30,7 +62,6 @@ export interface IOpening{
     opening_type:String
 }
 
-
 export interface ILog{
     state:String,
     user:String,
@@ -43,8 +74,8 @@ export interface IGeographic{
     mountain_group?:String,
     quote?:Number,
     coordinates?:{
-        latitude:Number,
-        longitude:Number
+        latitude:number,
+        longitude:number
     },
     additional_data?:[{
         key:String,
@@ -115,10 +146,4 @@ export interface IService{
 export interface IUser{
     name:String;
     value:String;
-}
-
-export interface IMarker{
-    latLng:L.LatLng,
-    popup:string,
-    optional?:any
 }
