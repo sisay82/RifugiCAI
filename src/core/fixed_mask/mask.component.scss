@@ -1,4 +1,7 @@
 @import '../style/palette';
+@import '../style/typography';
+
+@include bc-typography;
 
 .bc-return-icon:hover{
     color: map-get($bc-teal,400);
@@ -18,12 +21,6 @@
 
 }
 
-.bc-mask-top{
-    font-size:20px;
-    line-height: 20px;
-    font-weight: 500;
-}
-
 .bc-mask-line{
     display:flex;
     flex-direction: row;
@@ -34,17 +31,11 @@
 }
 
 .bc-mask-title{
-    font-size:16px;
-    line-height: 24px;
-    font-weight: 500;
     display: flex;
     flex-direction: row;
 }
 
 .bc-mask-content{
-    font-size:14px;
-    line-height: 24px;
-    font-weight: 500;
     padding-left:4px;
     display: flex;
     flex-direction: row;

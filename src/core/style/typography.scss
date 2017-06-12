@@ -1,5 +1,5 @@
 // Converts a typographic scale into CSS styles.
-@mixin bc-typography-scale-to-styles($config, $level) {
+@mixin bc-typography-level-to-styles($config, $level) {
   $font-size: map-get(map-get($config, $level), font-size);
   $font-weight: map-get(map-get($config, $level), font-weight);
   $line-height: map-get(map-get($config, $level), line-height);
