@@ -5,6 +5,7 @@ import { BcContact } from "./contacts/contact.component";
 import { BcServ } from "./services/serv.component";
 import { BcGeo } from "./geographics/geo.component";
 import { BcDetails } from "./details.component";
+import { BcManage } from "./management/manage.component";
 
 
 
@@ -21,7 +22,7 @@ export class DetailsRoutingModule {
     { path: 'geographic',component:BcGeo,outlet:'content'},
     { path: 'services', component: BcServ,outlet:'content' },
     { path: 'contacts', component: BcContact,outlet:'content' },
-    { path: 'management', component: BcGeo,outlet:'content' },
+    { path: 'management', component: BcManage,outlet:'content' },
     { path: 'cadastral', component: BcGeo,outlet:'content' },
     { path: 'documents', component: BcGeo,outlet:'content' },
     { path: 'images', component: BcGeo,outlet:'content' },

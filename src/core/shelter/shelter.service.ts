@@ -4,21 +4,8 @@ import * as Interfaces from '../../shared/interfaces';
 import { Enums } from '../../shared/enums';
 @Injectable()
 export class ShelterService{
-    /*
-export interface IAdministrative{
-    shelter_code:Number,
-    contract_start_date?:Date,
-    contract_end_date?:Date,
-    contract_duration?:Number,
-    contract_fee?:Number,
-    possession_title?:String,
-    custody_type?:Enums.Custody_Type,
-    custodian?:String,//ObjectID
-    owner?:String
-}
- */
      shelters:Interfaces.IShelter[]=[
-        {name:"Shelter1",administrative:{shelter_code:1,contract_start_date:new Date(0,0,1),contract_end_date:new Date(0,0,2),contract_duration:24,contract_fee:100,possession_title:'title',custody_type:Enums.Custody_Type.Diretta,custodian:'c1',owner:'ow1'},contacts:{fixed_phone:'11',mobile_phone:'12',mail_pec:'ep1',email_address:'m1',web_address:'w1',openings:[{opening_date:new Date(1,1,1),closure_date:new Date(1,1,2),opening_type:'t1'},{opening_date:new Date(1,2,1),closure_date:new Date(1,2,2),opening_type:'t2'}]},registry:{id:"id1",address:{via:"via",number:1,cap:1,city:"city1",collective:"Comune1",country:"Regione1",district:"Provincia1"}},geographic_data:{coordinates:{latitude:43.14,longitude:11.25}}},
+        {name:"Shelter1",administrative:{key_collect:{name:'n1',phone:'2',mail:'m2'},shelter_code:1,contract_start_date:new Date(0,0,1),p_iva:'a1b2',contract_end_date:new Date(0,0,2),contract_duration:24,contract_fee:100,possession_title:'title',custody_type:Enums.Custody_Type.Diretta,custodian:'c1',owner:'ow1'},contacts:{fixed_phone:'11',mobile_phone:'12',mail_pec:'ep1',email_address:'m1',web_address:'w1',openings:[{opening_date:new Date(1,1,1),closure_date:new Date(1,1,2),opening_type:'t1'},{opening_date:new Date(1,2,1),closure_date:new Date(1,2,2),opening_type:'t2'}]},registry:{id:"id1",address:{via:"via",number:1,cap:1,city:"city1",collective:"Comune1",country:"Regione1",district:"Provincia1"}},geographic_data:{coordinates:{latitude:43.14,longitude:11.25}}},
         {name:"Shelter2",geographic_data:{coordinates:{latitude:43.4,longitude:11.5}},registry:{id:"id2",address:{via:"via",number:2,cap:2,city:"city2",collective:"Comune2",country:"Regione2",district:"Provincia2"}}},
         {name:"Shelter3",geographic_data:{coordinates:{latitude:43.14,longitude:11.42}}, registry:{id:"id3",address:{via:"via",number:3,cap:3,city:"city3",collective:"Comune3",country:"Regione3",district:"Provincia3"}}}
     ];

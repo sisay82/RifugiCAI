@@ -4,12 +4,13 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { IAdministrative } from '../../../shared/interfaces'
 import {ShelterService} from '../../shelter/shelter.service'
+import { Enums } from '../../../shared/enums'
 
 @Component({
   moduleId: module.id,
-  selector: 'bc-geo',
-  templateUrl: 'geo.component.html',
-  styleUrls: ['geo.component.scss'],
+  selector: 'bc-manage',
+  templateUrl: 'manage.component.html',
+  styleUrls: ['manage.component.scss'],
   providers:[ShelterService]
 })
 export class BcManage {
@@ -22,6 +23,10 @@ export class BcManage {
       this.data=this.shelterService.getAdminByName(params['name']);
 
     });
+  }
+
+  getValue(){
+    return Object.keys(Enums.Custody_Type).find(k=>Enums.Custody_Type[k]===this.data.custody_type)
   }
 
 }

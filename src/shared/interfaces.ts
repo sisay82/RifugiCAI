@@ -119,10 +119,13 @@ export interface IAdministrative{
     contract_end_date?:Date,
     contract_duration?:Number,
     contract_fee?:Number,
+    p_iva?:String,
     possession_title?:String,
     custody_type?:Enums.Custody_Type,
     custodian?:String,//ObjectID
-    owner?:String
+    owner?:String,
+    key_collect?:IUser,
+
 }
 
 export interface IShelter {
@@ -151,5 +154,6 @@ export interface IService{
 
 export interface IUser{
     name:String;
-    value:String;
+    phone?:String;
+    mail?:String;
 }
