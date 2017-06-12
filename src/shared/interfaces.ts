@@ -49,9 +49,6 @@ export interface IRegistry{
     section_code?:String,
     description?:String,
     insert_date?:Date,
-    custody_type?:Enums.Custody_Type,
-    custodian?:String,//ObjectID
-    owner?:String
 }
 
 export interface IContacts{
@@ -123,6 +120,9 @@ export interface IAdministrative{
     contract_duration?:Number,
     contract_fee?:Number,
     possession_title?:String,
+    custody_type?:Enums.Custody_Type,
+    custodian?:String,//ObjectID
+    owner?:String
 }
 
 export interface IShelter {
