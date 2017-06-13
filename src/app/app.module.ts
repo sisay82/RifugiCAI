@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 
 import { AppRoutingModule } from './app-routing.module';
 import { ShelterListModule } from './shelterList/shelterList.module';
+import { BcMenuToggleModule } from '../core/menu/menu-toggle.module'
 
 @NgModule({
     imports: [
@@ -14,6 +15,7 @@ import { ShelterListModule } from './shelterList/shelterList.module';
         CoreModule,
         ShelterListModule,
         AppRoutingModule,
+        BcMenuToggleModule
     ],
     providers: [],
     declarations: [AppComponent],
