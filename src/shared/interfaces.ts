@@ -49,9 +49,6 @@ export interface IRegistry{
     section_code?:String,
     description?:String,
     insert_date?:Date,
-    custody_type?:Enums.Custody_Type,
-    custodian?:String,//ObjectID
-    owner?:String
 }
 
 export interface IContacts{
@@ -93,12 +90,14 @@ export interface IGeographic{
 export interface ICadastral{
     construction_reg?:Boolean,
     construction_year?:Number,
-    typological_consistency?:{type:Enums.Typo_consistency},
+    reconstruction_year?:Number,
+    typological_consistency?:Enums.Typo_consistency,
     material_consistency?:Boolean,
     urban_regularity?:Boolean,
     main_body_consistency?:String,
     secondary_body_consistency?:String,
     cadastral_class?:String,
+    cadastral_code?:String,
     fire_regulation?:Boolean,
     energy_class?:String,
     certification?:String,
@@ -109,7 +108,7 @@ export interface ICadastral{
     waste_disposal?:String,
     waste_adjustment?:Boolean,
     resources_sources?:[{
-        type:{type:Enums.Source_Type},
+        type:Enums.Source_Type,
         source_name:String,
         description?:String,
         value?:Number
@@ -122,7 +121,13 @@ export interface IAdministrative{
     contract_end_date?:Date,
     contract_duration?:Number,
     contract_fee?:Number,
+    p_iva?:String,
     possession_title?:String,
+    custody_type?:Enums.Custody_Type,
+    custodian?:String,//ObjectID
+    owner?:String,
+    key_collect?:IUser,
+
 }
 
 export interface IShelter {
@@ -151,5 +156,6 @@ export interface IService{
 
 export interface IUser{
     name:String;
-    value:String;
+    phone?:String;
+    mail?:String;
 }
