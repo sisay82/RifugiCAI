@@ -1,6 +1,5 @@
-
 import {
-  Component, trigger, state, style, transition, animate, Input, QueryList,ViewChildren
+  Component, trigger, state, style, transition, animate, Input, QueryList,ViewChildren,Injectable, Optional
 } from '@angular/core';
 import {
   Animations
@@ -11,7 +10,7 @@ import {
 import {
   BcMenuItem,BcItemService
 } from './menu-item.component';
-
+import { BcMenuService } from './menu-toggle.service'
 
 @Component({
   moduleId: module.id,
@@ -34,9 +33,15 @@ export class BcMenu {
       }
       this.current_check=this._layer_service.current_select;
     });
+
+    this._menu_service.select$.subscribe(item=>{
+      this.toggleMenu();
+    });
+
+    this.checkWinPlatform();
   }
 
-  constructor(private _layer_service:BcItemService){
+  constructor(private _layer_service:BcItemService,@Optional() private _menu_service:BcMenuService){
     this.menuElements={
       layers:[{
         layerName:"Default",

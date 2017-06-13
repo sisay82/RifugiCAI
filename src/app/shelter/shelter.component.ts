@@ -3,13 +3,14 @@ import {IShelter} from '../../shared/interfaces';
 import { ActivatedRoute } from '@angular/router';
 import {ShelterService} from '../../core/shelter/shelter.service'
 import {IMenu}from '../../shared/interfaces';
+import { BcMenuService } from '../../core/menu/menu-toggle.service'
 
 @Component({
     moduleId: module.id,
     selector: 'bc-shelter',
     templateUrl: 'shelter.component.html',
     styleUrls: ['shelter.component.scss'],
-    providers:[ShelterService]
+    providers:[ShelterService,BcMenuService]
 
 })
 export class BcShelter {
