@@ -26,7 +26,7 @@
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Consistenza Tipologica:</div>
-            <div class="bc-body">{{data.typological_consistency?(getTypoValue(typological_consistency)):'----'}}</div>
+            <div class="bc-body">{{getTypoValue(data.typological_consistency)||'----'}}</div>
         </div>
     </div>
     <bc-divider></bc-divider>
@@ -37,16 +37,16 @@
         </div>        
     </div>
     <div style="display: flex;flex-direction:row">
-        <div class="bc-body" *ngIf="data.fire_regulation!=undefined&&data.fire_regulation==true">Regolarità Antincendio</div>       
-        <div class="bc-body" *ngIf="data.urban_regularity!=undefined&&data.urban_regularity==true">Regolarità Urbana</div>       
-        <div class="bc-body" *ngIf="data.green_certification!=undefined&&data.green_certification==true">Green</div>       
-        <div class="bc-body" *ngIf="data.recycling!=undefined&&data.recycling==true">Riciclaggio</div>       
-        <div class="bc-body" *ngIf="data.waste_adjustment!=undefined&&data.waste_adjustment==true">Scarico a Norma</div>       
+        <div style="flex:1" class="bc-body" *ngIf="data.fire_regulation!=undefined&&data.fire_regulation==true">Regolarità Antincendio</div>       
+        <div style="flex:1" class="bc-body" *ngIf="data.urban_regularity!=undefined&&data.urban_regularity==true">Regolarità Urbana</div>       
+        <div style="flex:1" class="bc-body" *ngIf="data.green_certification!=undefined&&data.green_certification==true">Green</div>       
+        <div style="flex:1" class="bc-body" *ngIf="data.recycling!=undefined&&data.recycling==true">Riciclaggio</div>       
+        <div style="flex:1" class="bc-body" *ngIf="data.waste_adjustment!=undefined&&data.waste_adjustment==true">Scarico a Norma</div>       
     </div>
     <div>
-        <div class="bc-body" *ngFor="let t of data.resources_sources">
-            <i style="font-size:14px" class="fa fa-circle"></i>
-            {{t.source_name}},{{getSourceValue(t)}}
+        <div class="bc-body" *ngFor="let t of data.resources_sources" style="display:flex;flex-direction:row;align-items:center">
+            <i style="font-size:10px;margin-right:4px" class="fa fa-circle"></i>
+            <div>{{getSourceValue(t.type)}}: {{t.source_name}}</div>
         </div>      
     </div>
     <bc-divider></bc-divider>
