@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import {IMenu}from '../shared/interfaces';
+import { BcMenuService } from '../core/menu/menu-toggle.service'
+
 @Component({ 
   moduleId: module.id,
   selector: 'bc-app-component',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  providers:[BcMenuService]
 })
 export class AppComponent { 
 
@@ -31,7 +34,5 @@ export class AppComponent {
       ]}
     ]
   };
-
-
 
 }
