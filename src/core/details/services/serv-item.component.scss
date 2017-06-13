@@ -4,19 +4,6 @@
 @include bc-typography();
 
 .bc-service-title{
-    margin-top:4px;
-    margin-bottom: 4px;
     color:map-get($bc-teal,400 );
     font-weight: 500;
-}
-
-.bc-tag-title{
-    margin-top:4px;
-    margin-bottom: 4px;
-    margin-right: 4px;
-}
-
-.bc-tag-value{
-    margin-top:4px;
-    margin-bottom: 4px;
 }

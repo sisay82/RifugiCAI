@@ -6,16 +6,16 @@
 
     <div style="display: flex;flex-direction:row">
         <div *ngFor="let t of item.tags" style="display: flex;flex-direction:row;align-items:center;flex:1">
-            <div class="bc-body-strong bc-tag-title">{{t.key}}:</div>
-            <div class="bc-body bc-tag-value">{{t.value}}</div>
+            <div class="bc-body-strong" style="margin-right:4px">{{t.key}}:</div>
+            <div class="bc-body">{{t.value}}</div>
         </div>
     </div>
 
-    <div *ngIf="item.description!=undefined" class="bc-h6 bc-tag-value">{{item.description}}</div>
+    <div *ngIf="item.description!=undefined" class="bc-h6">{{item.description}}</div>
 
     <div>
-        <div *ngFor="let option of item.options" class="bc-body" style="display: flex;flex-direction:row;align-items:center">
-            <i class="fa fa-circle" style="font-size: 10px"></i>
+        <div *ngFor="let option of item.options" class="bc-body" style="margin-bottom:4px;display: flex;flex-direction:row;align-items:center">
+            <i class="fa fa-circle" style="font-size:6px"></i>
             <div style="margin-left:2px">{{option}}</div>
         </div>
     </div>

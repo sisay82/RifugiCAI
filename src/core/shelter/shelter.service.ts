@@ -12,7 +12,6 @@ export class ShelterService{
             registry:{id:"id1",address:{via:"via",number:1,cap:1,city:"city1",collective:"Comune1",country:"Regione1",district:"Provincia1"}},
             geographic_data:{coordinates:{latitude:43.14,longitude:11.25}}
         },
-
         {name:"Shelter2",geographic_data:{coordinates:{latitude:43.4,longitude:11.5}},registry:{id:"id2",address:{via:"via",number:2,cap:2,city:"city2",collective:"Comune2",country:"Regione2",district:"Provincia2"}}},
         {name:"Shelter3",geographic_data:{coordinates:{latitude:43.14,longitude:11.42}}, registry:{id:"id3",address:{via:"via",number:3,cap:3,city:"city3",collective:"Comune3",country:"Regione3",district:"Provincia3"}}}
     ];
