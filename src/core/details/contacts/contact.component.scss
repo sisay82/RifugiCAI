@@ -2,3 +2,9 @@
 @import '../../style/palette';
 
 @include bc-typography();
+
+.bc-detail-title{
+    margin-top:4px;
+    margin-bottom: 4px;
+    color:map-get($bc-teal,400 );
+}
