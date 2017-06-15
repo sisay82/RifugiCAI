@@ -32,8 +32,6 @@ export class BcNavbarRow { }
 export class BcNavbar {
 
     private _color: string;
-    private _fixed: string;
-
     constructor(private _elementRef: ElementRef, private _renderer: Renderer2) {
     }
 
@@ -45,16 +43,6 @@ export class BcNavbar {
 
     set color(value: string) {
         this._updateClass(this._elementRef.nativeElement, "_color", value);
-    }
-
-    @Input()
-    get fixed(): string {
-        return this._fixed;
-    }
-
-    set fixed(value: string) {
-        this._updateClass(this._elementRef.nativeElement, "_fixed", "fixed-" + value);
-        this._updateClass(this._elementRef.nativeElement.parentElement, "_fixed", "navbar-container-"+value);
     }
 
     private _updateClass(element: any, propertyName: string, newClassValue: string) {
