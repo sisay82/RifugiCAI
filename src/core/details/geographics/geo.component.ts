@@ -2,7 +2,7 @@ import {
   Component,Input,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter } from '../../../shared/interfaces'
+import { IShelter } from '../../../app/shared/types/interfaces'
 import {BcMap} from '../../map/map.component';
 import {ShelterService} from '../../shelter/shelter.service'
 

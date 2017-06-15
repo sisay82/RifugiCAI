@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {IShelter} from '../../shared/interfaces';
 import { ActivatedRoute } from '@angular/router';
-import {ShelterService} from '../../core/shelter/shelter.service'
-import {IMenu}from '../../shared/interfaces';
+import {ShelterService} from '../../../core/shelter/shelter.service'
+import {IMenu,IShelter}from '../../shared/types/interfaces';
 
 @Component({
     moduleId: module.id,

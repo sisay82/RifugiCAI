@@ -6,8 +6,8 @@ import { CoreModule } from '../core/core.module';
 import { AppComponent } from './app.component';
 
 import { AppRoutingModule } from './app-routing.module';
-import { ShelterListModule } from './shelterList/shelterList.module';
-import { ShelterModule } from './shelter/shelter.module';
+import { ShelterModule } from './shelter/shelterDetail/shelter.module';
+import { ShelterListModule } from './shelter/shelterList/shelterList.module';
 
 @NgModule({
     imports: [

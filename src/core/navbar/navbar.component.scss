@@ -1,4 +1,5 @@
 @import '../style/constants';
+@import '../style/vendor-prefixes';
 @import '../style/palette';
 @import '../style/theme';
 
@@ -16,22 +17,6 @@ $bc-navbar-row-padding: 4px !default;
   }
   .bc-navbar-row {
     height: $height;
-  }
-}
-
-@mixin bc-navbar-fixed($height, $position: top) {
-  .bc-navbar-container-#{$position} {
-    padding-#{$position}: $height;
-  }
-
-  .bc-navbar {
-      &.bc-fixed-#{$position} {
-        position: fixed;
-        border-radius: 2px;
-        #{$position}: 0px;
-        left: 0px;
-        right: 0px;
-    }
   }
 }
 
@@ -68,8 +53,8 @@ $bc-navbar-row-padding: 4px !default;
 .bc-navbar {
     width: 100%;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    @include flex-box;
+    @include flex-flow;
 
     // Font Styling
     font-size: $bc-navbar-font-size;
@@ -81,7 +66,6 @@ $bc-navbar-row-padding: 4px !default;
     img {
         display: inline;
     }
-
 
     .bc-navbar-filler {
         flex: 1 1 auto;
@@ -103,18 +87,12 @@ $bc-navbar-row-padding: 4px !default;
 
 // Set the default height for the navbar.
 @include bc-navbar-height($bc-navbar-height-default);
-@include bc-navbar-fixed($bc-navbar-height-default, top);
-@include bc-navbar-fixed($bc-navbar-height-default, bottom);
 
 @media ($bc-gt-xsmall) {
   @include bc-navbar-height($bc-navbar-height-desktop);
-  @include bc-navbar-fixed( $bc-navbar-height-desktop, top);
-  @include bc-navbar-fixed($bc-navbar-height-desktop, bottom);
 }
 
 @media ($bc-landscape) {
   @include bc-navbar-height($bc-navbar-height-landscape);
-  @include bc-navbar-fixed($bc-navbar-height-landscape, top);
-  @include bc-navbar-fixed($bc-navbar-height-landscape, bottom);
 }
 

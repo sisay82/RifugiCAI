@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ShelterService } from '../shelter/shelter.service';
 import * as L from 'leaflet';
 import { Map } from 'leaflet';
-import { IMarker } from '../../shared/interfaces';
+import { IMarker } from '../../app/shared/types/interfaces';
 @Component({
     moduleId:module.id,
     selector:'bc-map',

@@ -1,5 +1,12 @@
+import { ModuleWithProviders } from '@angular/core';
+import { Routes } from '@angular/router';
+import { Enums } from './enums'
 import * as L from 'leaflet';
-import { Enums } from './enums';
+
+export interface IPagedResults<T> {
+    totalRecords: number;
+    results: T;
+}
 
 export interface IMarker{
     latLng:L.LatLng,
@@ -131,6 +138,7 @@ export interface IAdministrative{
 }
 
 export interface IShelter {
+    id?:String,
     name:String,
     registry:IRegistry,    
     administrative?:IAdministrative,

@@ -3,29 +3,45 @@
 
 $bc-list-side-padding: 16px;
 
+@mixin bc-list-item-disable($accent, $background, $foreground){
+    &.disabled {
+        color: bc-color($foreground, 'text');
+        background: bc-color($background, 'disabled-button');
+        border-color: bc-color($background, 'disabled-button');
+    }
+}
+
+@mixin bc-list-item-active($accent, $background, $foreground){
+    &.active {
+        color: bc-color($accent, '500-contrast');
+        background: bc-color($accent);
+        border-color: bc-color($accent);
+
+        @include bc-list-item-disable($accent, $background, $foreground);
+    }
+}
+
 @mixin bc-list-item-theme($theme) {
     $accent: map-get($theme, accent);
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
-
     .bc-list-item {
         color: bc-color($foreground, 'text');
 
         &.list-group-item {
             color: bc-color($foreground, 'text');
             border-color: bc-color($foreground, divider);
-            &.active {
-                color: bc-color($accent, '500-contrast');
-                background: bc-color($accent);
-                border-color: bc-color($accent);
-            }
 
-            &.active:hover{
-                color: bc-color($accent, '100-contrast');
-                background: bc-color($accent, 100);
-                border-color: bc-color($accent, 100);
-            }
+            @include bc-list-item-disable($accent, $background, $foreground);
+            @include bc-list-item-active($accent, $background, $foreground);
+            //&.active:hover, &.active:focus{
+            //     color: bc-color($accent, '100-contrast');
+            //     background: bc-color($accent, 100);
+            //     border-color: bc-color($accent, 100);
+            //}
             &:hover, &:focus {
+                @include bc-list-item-disable($accent, $background, $foreground);
+                @include bc-list-item-active($accent, $background, $foreground);
                 color: bc-color($foreground, 'text');
                 background: bc-color($background, 'hover');
                 border-color: bc-color($background, 'hover');

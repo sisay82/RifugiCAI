@@ -2,9 +2,9 @@ import {
   Component,Input,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IAdministrative } from '../../../shared/interfaces'
+import { IAdministrative } from '../../../app/shared/types/interfaces'
 import {ShelterService} from '../../shelter/shelter.service'
-import { Enums } from '../../../shared/enums'
+import { Enums } from '../../../app/shared/types/enums'
 
 @Component({
   moduleId: module.id,

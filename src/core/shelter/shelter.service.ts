@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
-import * as Interfaces from '../../shared/interfaces';
-import { Enums } from '../../shared/enums';
+import * as Interfaces from '../../app/shared/types/interfaces';
+import { Enums } from '../../app/shared/types/enums';
 @Injectable()
 export class ShelterService{
      shelters:Interfaces.IShelter[]=[

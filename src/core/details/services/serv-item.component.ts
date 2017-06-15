@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit
 } from '@angular/core';
-import { IService } from '../../../shared/interfaces'
+import { IService } from '../../../app/shared/types/interfaces'
 
 @Component({
   moduleId: module.id,

@@ -2,7 +2,7 @@ import {
   Component,Input,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IContacts } from '../../../shared/interfaces'
+import { IContacts } from '../../../app/shared/types/interfaces'
 import {ShelterService} from '../../shelter/shelter.service'
 
 @Component({
