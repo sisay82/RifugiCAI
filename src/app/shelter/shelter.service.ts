@@ -8,6 +8,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
 import { IPagedResults, IShelter } from '../shared/types/interfaces';
+import { Enums  } from '../shared/types/enums';
 
 @Injectable()
 export class ShelterService {
@@ -38,7 +39,8 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
-    getShelter(id: number): Observable<IShelter> {
+    getShelter(id: number, section: Enums.ShelterSectionType): Observable<IShelter> {
+        let urlsString: String = section ? this.sheletersBaseUrl + '/' + id + '/' + section : this.sheletersBaseUrl + '/' + id;
         return this.http.get(this.sheletersBaseUrl + '/' + id)
             .map((res: Response) => {
                 let shelter = res.json();

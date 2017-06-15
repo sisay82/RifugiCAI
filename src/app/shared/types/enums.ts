@@ -1,7 +1,15 @@
-export namespace Enums{
+export namespace Enums {
+    //Type of section available for shelter request
+    export enum ShelterSectionType {
+        Geolocation = <any>"geolocation",
+        Contacts = <any>"contacts",
+        Services = <any>"services",
+        Management = <any>"management",
+        Cadastre = <any>"cadastre"
+    }
+
     //tipo rifugio
-    export enum Shelter_Type
-    {
+    export enum Shelter_Type {
         Bivacco,
         Rifugio_Custodito,
         Rifugio_Incustodito,
@@ -10,8 +18,7 @@ export namespace Enums{
     }
 
     //tipo rifugio regionale
-    export enum Regional_Type
-    {
+    export enum Regional_Type {
         Escursionistico,
         Aplinistico,
         Bivacco,
@@ -19,8 +26,7 @@ export namespace Enums{
     }
 
     //categoria rifugio
-    export enum Shelter_Category
-    {
+    export enum Shelter_Category {
         A,
         B,
         C,
@@ -28,8 +34,7 @@ export namespace Enums{
     }
 
     //coerenza tipologica
-    export enum Typo_consistency
-    {
+    export enum Typo_consistency {
         Piena,
         Parziale,
         Recuperabile,
@@ -37,16 +42,14 @@ export namespace Enums{
     }
 
     //tipo fonte risorsa
-    export enum Source_Type
-    {
+    export enum Source_Type {
         Energetica,
         Idrica,
         Riscaldamento
     }
 
     //tipo custodia
-    export enum Custody_Type
-    {
+    export enum Custody_Type {
         Diretta,
         Affitto_a_Gestore,
         Affito_Ramo_Azienda,
