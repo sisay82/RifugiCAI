@@ -67,6 +67,15 @@ export interface IContacts{
     web_address?:String,
 }
 
+export interface IContacts{
+    openings?:[IOpening],
+    fixed_phone?:String,
+    mobile_phone?:String,
+    mail_pec?:String,
+    email_address?:String,
+    web_address?:String,
+}
+
 export interface IOpening{
     opening_date:Date,
     closure_date:Date,
