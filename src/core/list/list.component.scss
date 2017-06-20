@@ -4,6 +4,8 @@
 $bc-list-top-padding: 8px;
 $bc-list-font-size: 16px;
 $bc-list-base-height: 48px;
+$bc-list-border-size: 1px;
+$bc-list-no-border: 0px;
 // // $bc-list-secondary-font: 14px;
 
 // // // height for single-line lists
@@ -20,6 +22,7 @@ $bc-list-base-height: 48px;
 $bc-dense-top-padding: 4px;
 $bc-dense-font-size: 13px;
 $bc-dense-base-height: 40px;
+
 // // $bc-dense-avatar-height: 48px;
 // // $bc-dense-two-line-height: 60px;
 // // $bc-dense-three-line-height: 76px;
@@ -35,40 +38,18 @@ $bc-dense-base-height: 40px;
   padding-top: $bc-list-top-padding;
   display: block;
 
-  // .mat-subheader {
-  // @include mat-subheader-base(
-  // $mat-list-top-padding,
-  // $mat-list-secondary-font,
-  // $mat-list-base-height
-  // );
-  // }
-
-
-  
-    @include bc-list-item-base(
-      $bc-list-font-size,
-      $bc-list-base-height
-    );
-
-  // @include mat-line-base($mat-list-secondary-font);
-}
-
-.bc-list[dense] {
-  padding-top: $bc-dense-top-padding;
-  display: block;
-
-  // .mat-subheader {
-  //   @include mat-subheader-base(
-  //     $mat-dense-top-padding,
-  //     $mat-dense-font-size,
-  //     $mat-dense-base-height
-  //   );
-  // }
-
   @include bc-list-item-base(
-    $bc-dense-font-size,
-    $bc-dense-base-height
+    $bc-list-font-size,
+    $bc-list-base-height
   );
-
-    // @include mat-line-base($mat-dense-font-size);
+  
+  &[no-border], &[data-no-border] {
+    @include bc-list-item-custom-border($bc-list-no-border);
+  }
+  &[dense], &[data-dense] {
+    @include bc-list-item-base(
+      $bc-dense-font-size,
+      $bc-dense-base-height
+    );
+  }
 }

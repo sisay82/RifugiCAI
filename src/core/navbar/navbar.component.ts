@@ -8,6 +8,7 @@ import {
     Renderer2,
 } from '@angular/core';
 
+import { HtmlStyler } from '../shared/types/html-styler';
 
 @Directive({
     selector: 'bc-navbar-row',
@@ -30,9 +31,11 @@ export class BcNavbarRow { }
     encapsulation: ViewEncapsulation.None
 })
 export class BcNavbar {
-
+    private _HtmlStyler: HtmlStyler;
     private _color: string;
+
     constructor(private _elementRef: ElementRef, private _renderer: Renderer2) {
+        this._HtmlStyler = new HtmlStyler(this, _elementRef, _renderer);
     }
 
     /** The color of the navbar. Can be primary, accent, or warn. */
@@ -42,25 +45,7 @@ export class BcNavbar {
     }
 
     set color(value: string) {
-        this._updateClass(this._elementRef.nativeElement, "_color", value);
+        let newClassName: string = (value != null && value != '') ? `bc-${value}` : null;
+        this._HtmlStyler.updateClass("_color", newClassName);
     }
-
-    private _updateClass(element: any, propertyName: string, newClassValue: string) {
-        if (propertyName != null && propertyName != '') {
-            this._setElementClass(element, this[propertyName], false);
-            this._setElementClass(element, newClassValue, true);
-            this[propertyName] = newClassValue;
-        }
-    }
-
-    private _setElementClass(element: any, value: string, isAdd: boolean) {
-        if (element != null && value != null && value != '') {
-            if (isAdd) {
-                this._renderer.addClass(element, `bc-${value}`);
-            } else {
-                this._renderer.removeClass(element, `bc-${value}`);
-            }
-        }
-    }
-
 }

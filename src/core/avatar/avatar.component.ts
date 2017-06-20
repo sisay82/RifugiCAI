@@ -6,6 +6,8 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
+import { HtmlStyler } from '../shared/types/html-styler';
+
 @Component({
   selector: '[bc-avatar]',
   styleUrls: ['avatar.component.scss'],
@@ -16,10 +18,11 @@ import {
   encapsulation: ViewEncapsulation.None
 })
 export class BcAvatar {
-
+  private _HtmlStyler: HtmlStyler;
   private _shape: string;
 
   constructor(private _elementRef: ElementRef, private _renderer: Renderer2) {
+    this._HtmlStyler = new HtmlStyler(this, _elementRef, _renderer);
   }
 
   /** The shape of the avatar. Can be round, square, or rounded-corner. */
@@ -37,25 +40,6 @@ export class BcAvatar {
         className = "img-circle";
     }
 
-    this._updateClass(this._elementRef.nativeElement, "_shape", className);
+    this._HtmlStyler.updateClass("_shape", className);
   }
-
-  private _updateClass(element: any, propertyName: string, newClass: string) {
-    if (propertyName != null && propertyName != '') {
-      this._setElementClass(element, this[propertyName], false);
-      this._setElementClass(element, newClass, true);
-      this[propertyName] = newClass;
-    }
-  }
-
-  private _setElementClass(element: any, className: string, isAdd: boolean) {
-    if (element != null && className != null && className != '') {
-      if (isAdd) {
-        this._renderer.addClass(element, className);
-      } else {
-        this._renderer.removeClass(element, className);
-      }
-    }
-  }
-
 }

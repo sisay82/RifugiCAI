@@ -34,11 +34,7 @@ $bc-list-side-padding: 16px;
 
             @include bc-list-item-disable($accent, $background, $foreground);
             @include bc-list-item-active($accent, $background, $foreground);
-            //&.active:hover, &.active:focus{
-            //     color: bc-color($accent, '100-contrast');
-            //     background: bc-color($accent, 100);
-            //     border-color: bc-color($accent, 100);
-            //}
+
             &:hover, &:focus {
                 @include bc-list-item-disable($accent, $background, $foreground);
                 @include bc-list-item-active($accent, $background, $foreground);
@@ -50,8 +46,6 @@ $bc-list-side-padding: 16px;
     }
 }
 
-// This mixin provides all list-item styles, changing font size and height
-// based on whether the list is in dense mode.
 @mixin bc-list-item-base($font-size, $base-height) {
 
     & a.bc-list-item, & button.bc-list-item {
@@ -65,7 +59,6 @@ $bc-list-side-padding: 16px;
 
         &.list-group-item {
             padding: 0px;
-
             &.active, &:hover, &:focus {
                 outline: none;
             }
@@ -131,5 +124,13 @@ $bc-list-side-padding: 16px;
         //     height: 100%;
         //     padding: 8px $mat-list-side-padding;
         //   }
+    }
+}
+
+@mixin bc-list-item-custom-border($border-size: 1px) {
+    .bc-list-item {
+        &.list-group-item {
+            border-width: $border-size;
+        }
     }
 }
