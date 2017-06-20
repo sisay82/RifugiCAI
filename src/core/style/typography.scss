@@ -51,42 +51,42 @@
 // Adds the base typography styles.
 @mixin bc-typography($typographic-scale: bc-typographic-scale(), $selector: '.bc-typography') {
   .bc-h0, .bc-jumbo {
-    @include bc-typography-level-to-styles($typographic-scale, display-4);
+    @include bc-typography-scale-to-styles($typographic-scale, display-4);
   }
 
   .bc-h1, #{$selector} h1 {
-    @include bc-typography-level-to-styles($typographic-scale, display-3);
+    @include bc-typography-scale-to-styles($typographic-scale, display-3);
   }
 
   .bc-h2, #{$selector} h2 {
-    @include bc-typography-level-to-styles($typographic-scale, display-2);
+    @include bc-typography-scale-to-styles($typographic-scale, display-2);
   }
 
   .bc-h3, #{$selector} h3 {
-    @include bc-typography-level-to-styles($typographic-scale, display-1);
+    @include bc-typography-scale-to-styles($typographic-scale, display-1);
   }
 
   .bc-h4, #{$selector} h4 {
-    @include bc-typography-level-to-styles($typographic-scale, headline);
+    @include bc-typography-scale-to-styles($typographic-scale, headline);
   }
 
   .bc-h5, #{$selector} h5 {
-    @include bc-typography-level-to-styles($typographic-scale, title);
+    @include bc-typography-scale-to-styles($typographic-scale, title);
   }
 
   .bc-h6, #{$selector} h6 {
-    @include bc-typography-level-to-styles($typographic-scale, subheading);
+    @include bc-typography-scale-to-styles($typographic-scale, subheading);
   }
 
   .bc-body-strong {
-    @include bc-typography-level-to-styles($typographic-scale, body-2);
+    @include bc-typography-scale-to-styles($typographic-scale, body-2);
   }
 
   .bc-body, #{$selector} {
-    @include bc-typography-level-to-styles($typographic-scale, body-1);
+    @include bc-typography-scale-to-styles($typographic-scale, body-1);
   }
 
   .bc-small {
-    @include bc-typography-level-to-styles($typographic-scale, caption);
+    @include bc-typography-scale-to-styles($typographic-scale, caption);
   }
 }
