@@ -7,12 +7,9 @@ $bc-icon-size: 22px !default;
 $bc-icon-size-l: 32px;
 $bc-icon-size-xl: 42px;
 
-$bc-icon-container-xs: 16px;
-$bc-icon-container-s: 20px;
-$bc-icon-container: 24px !default;
-$bc-icon-container-l: 36px;
-$bc-icon-container-xl: 48px;
+$bc-icon-margin: 8px;
 
+$bc-dense-icon-size: 20px;
 
 @mixin bc-icon-theme($theme) {
   $primary: map-get($theme, primary);
@@ -41,33 +38,30 @@ $bc-icon-container-xl: 48px;
     display: inline-block;
     fill: currentColor;
     text-align: center;
-    height: $bc-icon-container;
-    width: $bc-icon-container;
+    height: $bc-icon-size;
+    width: $bc-icon-size;
     font-size: $bc-icon-size;
+    margin: $bc-icon-margin;
     
-    &:before{
-            vertical-align: middle;
-    }
-
     &.bc-icon-xs{
-        height: $bc-icon-container-xs;
-        width: $bc-icon-container-xs;
+        height: $bc-icon-size-xs;
+        width: $bc-icon-size-xs;
         font-size: $bc-icon-size-xs;
     }
     &.bc-icon-s{
-        height: $bc-icon-container-s;
-        width: $bc-icon-container-s;
+        height: $bc-icon-size-s;
+        width: $bc-icon-size-s;
         font-size: $bc-icon-size-s;
     }
 
     &.bc-icon-l{
-        height: $bc-icon-container-l;
-        width: $bc-icon-container-l;
+        height: $bc-icon-size-l;
+        width: $bc-icon-size-l;
         font-size: $bc-icon-size-l;
     }
     &.bc-icon-xl{
-        height: $bc-icon-container-xl;
-        width: $bc-icon-container-xl;
+        height: $bc-icon-size-xl;
+        width: $bc-icon-size-xl;
         font-size: $bc-icon-size-xl;
     }
 }

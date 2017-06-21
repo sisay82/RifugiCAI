@@ -1,21 +1,17 @@
 import {
-  Component,
+  Directive,
   ElementRef,
   Renderer2,
   Input,
-  ViewEncapsulation
 } from '@angular/core';
 
 import { BcStyler } from '../shared/types/bc-styler';
 
-@Component({
+@Directive({
   selector: '[bc-avatar]',
-  styleUrls: ['avatar.component.scss'],
-  template: '',
   host: {
     '[class.bc-avatar]': 'true'
-  },
-  encapsulation: ViewEncapsulation.None
+  }
 })
 export class BcAvatar extends BcStyler {
   private _shape: string;

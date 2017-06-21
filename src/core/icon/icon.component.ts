@@ -1,7 +1,6 @@
 import {
     Component,
     Input,
-    ChangeDetectionStrategy,
     ViewEncapsulation,
     ElementRef,
     Renderer2,
@@ -19,7 +18,6 @@ import { BcStyler } from '../shared/types/bc-styler';
         '[class.fa]': 'true',
         'role': 'img'
     },
-    changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
 export class BcIcon extends BcStyler {

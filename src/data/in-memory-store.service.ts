@@ -128,7 +128,7 @@ export class InMemoryStoreService {
                             { "key": "Richiesta rifornire il rifugio", "value": "true" }]
                     }
                 ],
-                "contatti": {
+                "contacts": {
                     "name": "pincopallo",
                     "role": "custode",
                     "fixed_phone": "0522897497",
@@ -137,7 +137,7 @@ export class InMemoryStoreService {
                     "email_address": "info@rifugio-battisti.it",
                     "web_address": "http://www.rifugio-battisti.it"
                 },
-                "openingTime":[
+                "openingTime": [
                     {
                         "startDate": "2017-06-17T12:21:29.337Z",
                         "endDate": "2017-10-17T12:21:29.337Z",
@@ -147,186 +147,77 @@ export class InMemoryStoreService {
                         "startDate": "2017-12-17T12:21:29.337Z",
                         "endDate": "2018-01-17T12:21:29.337Z",
                         "type": "Apertura estiva",
+                    },
+                    {
+                        "startDate": null,
+                        "endDate": null,
+                        "type": "luglio agosto sempre, ecc.",
+                    },
+                    {
+                        "startDate": null,
+                        "endDate": null,
+                        "type": "apertura su richiesta",
                     }
-                ]
+                ],
+                "management": {
+                    "rent": 6000,
+                    "period": "annuale",
+                    "valuta": "euro",
+                    "rentType": "Affitto ramo d'impresa",
+                    "pickupKey": "true",
+                    "subject": [
+                        {
+                            "name": "CAI Reggio Emilia",
+                            "surname": "",
+                            "taxCode": "01845040359",
+                            "fixedPhone": "0522436685",
+                            "mobilePhone": "",
+                            "pec": "caireggioemilia@postecert.it",
+                            "email": "info@caireggioemilia.it",
+                            "webSite": "http://www.caireggioemilia.it/",
+                            "type": "Proprietario"
+                        },
+                        {
+                            "name": "Mascia",
+                            "surname": "Foschi",
+                            "taxCode": "01845040359",
+                            "fixedPhone": "052243325",
+                            "mobilePhone": "3485954241",
+                            "pec": "",
+                            "email": "mascia@gmail.com",
+                            "webSite": "",
+                            "type": "custode"
+                        }
+                    ]
+                },
+                "catastal": {
+                    "buildYear": "1950",
+                    "rebuildYear": "1989",
+                    "code": "A20",
+                    "class": "4",
+                    "fireRegulation": "true",
+                    "buildingRegulation": "true",
+                    "cityPlanRegulation": "true",
+                    "typologicalCoherence": "piena",
+                    "matericalCoherence": "true",
+                    "mainBody": "presente",
+                    "secondaryBody": "presente",
+                    "ISO14001": "true"
+                },
+                "energy": {
+                    "class": "C",
+                    "energy": "4500",
+                    "photovoltaic": "true",
+                    "powerGenerator": "true"
+                },
+                "drain": {
+                    "type": "IMOF fognatura",
+                    "regulation": "true",
+                    "oilSeparator": "true"
+                }
             }
         ];
 
         return { shelters };
     }
-}
-
-
-// Contatti e apertura ={
-//     "Contatti": {
-//         "Telefono fisso": null,
-//         "Cellulare 1": "+39 348 1415490",
-//         "Cellulare 2": "+39 348 1415491",
-//         "Sito web rifugio": "www.rifugimonterosa.it",
-//         "Sito web sezione": "www.cairavallo.it",
-//         "PEC": null,
-//         "Email": "info@rifugimonterosa.it"
-//     },
-//     "Apertura": {
-//         "Apertura": null,
-//         "Apertura su richiesta": null
-//     }
-// }
-
-
-// Proprietà e custodia ={
-//     "Proprietà": {
-//         "Ente": null,
-//         "P.IVA": null,
-//         "Telefono": null,
-//         "PEC": null,
-//         "Email": null,
-//         "Canone annuale": null,
-//         "Tipo canone": null
-//     },
-//     "Custodia": {
-//         "Nome cognome": null,
-//         "Telefono fisso": null,
-//         "Cellulare": null,
-//         "Email": null,
-//         "Ritiro chiavi": null
-//     }
-// }
-
-// Dati catastali ={
-//     "Dati catastali e Certificazioni": {
-//         "Anno costruzione": 1893,
-//         "Anno ristrutturazione": 1980,
-//         "Codice catastale": null,
-//         "Classe catastale": null,
-//         "Regolarità antincendio": null,
-//         "Regolarità edilizia": null,
-//         "Regolarità urbanistica": null,
-//         "Coerenza tipologica": null,
-//         "Coerenza materica": null,
-//         "Consistenza corpo primario": null,
-//         "Consistenza corpo secondario": null,
-//         "Certificazione ambientale ISO 14001": true
-//     },
-//     "Energia": {
-//         "Classe energetica": null,
-//         "Energia": null,
-//         "Fotovoltaico": null,
-//         "Generatore diesel": null
-//     },
-//     "Scarico": {
-//         "Tipo scarico": null,
-//         "Scarico a norma": null,
-//         "Disoleatore": null
-//     }
-// }
-
-
-
-let rifugio = {
-    "_id": "5943fbc81436630012cf70d9",
-    "name": "sheNNN",
-    "registry": {
-        "address": {
-            "district": "Provincia4",
-            "country": "Regione4",
-            "collective": "Comune4",
-            "city": "city4",
-            "cap": 4,
-            "number": 4,
-            "via4": "via1"
-        },
-        "_id": "59451ec9a1a1bd3c98f8fdf1",
-        "insert_date": "2017-06-17T12:21:29.337Z"
-    },
-    "__v": 3,
-    "services": [
-        {
-            "_id": "5946968a4c580300121e7041",
-            "service_name": "servicN",
-            "service_category": "service_cat1",
-            "description": "d1",
-            "__v": 0,
-            "options": [
-                "o1",
-                "o2"
-            ],
-            "tags": [
-                {
-                    "key": "key1",
-                    "value": "value1",
-                    "_id": "59451ec9a1a1bd3c98f8fdf4"
-                },
-                {
-                    "key": "key2",
-                    "value": "value2",
-                    "_id": "59451ec9a1a1bd3c98f8fdf3"
-                }
-            ]
-        },
-        {
-            "_id": "5946968a4c580300121e7042",
-            "service_name": "serviNNN",
-            "service_category": "service_cat2",
-            "description": "d2",
-            "__v": 0,
-            "options": [],
-            "tags": [
-                {
-                    "key": "key1",
-                    "value": "value1",
-                    "_id": "59451ec9a1a1bd3c98f8fdf7"
-                },
-                {
-                    "key": "key2",
-                    "value": "value2",
-                    "_id": "59451ec9a1a1bd3c98f8fdf6"
-                }
-            ]
-        },
-        {
-            "_id": "594696ba4c580300121e7044",
-            "service_name": "servicN",
-            "service_category": "service_cat1",
-            "description": "d1",
-            "__v": 0,
-            "options": [
-                "o1",
-                "o2"
-            ],
-            "tags": [
-                {
-                    "key": "key1",
-                    "value": "value1",
-                    "_id": "59451ec9a1a1bd3c98f8fdf4"
-                },
-                {
-                    "key": "key2",
-                    "value": "value2",
-                    "_id": "59451ec9a1a1bd3c98f8fdf3"
-                }
-            ]
-        },
-        {
-            "_id": "594696ba4c580300121e7045",
-            "service_name": "serviNNN",
-            "service_category": "service_cat2",
-            "description": "d2",
-            "__v": 0,
-            "options": [],
-            "tags": [
-                {
-                    "key": "key1",
-                    "value": "value1",
-                    "_id": "59451ec9a1a1bd3c98f8fdf7"
-                },
-                {
-                    "key": "key2",
-                    "value": "value2",
-                    "_id": "59451ec9a1a1bd3c98f8fdf6"
-                }
-            ]
-        }
-    ],
-    "logs": []
 }
