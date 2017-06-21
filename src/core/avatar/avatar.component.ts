@@ -6,7 +6,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 
-import { HtmlStyler } from '../shared/types/html-styler';
+import { BcStyler } from '../shared/types/bc-styler';
 
 @Component({
   selector: '[bc-avatar]',
@@ -17,12 +17,11 @@ import { HtmlStyler } from '../shared/types/html-styler';
   },
   encapsulation: ViewEncapsulation.None
 })
-export class BcAvatar {
-  private _HtmlStyler: HtmlStyler;
+export class BcAvatar extends BcStyler {
   private _shape: string;
 
-  constructor(private _elementRef: ElementRef, private _renderer: Renderer2) {
-    this._HtmlStyler = new HtmlStyler(this, _elementRef, _renderer);
+  constructor(elementRef: ElementRef, renderer: Renderer2) {
+    super(elementRef, renderer);
   }
 
   /** The shape of the avatar. Can be round, square, or rounded-corner. */
@@ -40,6 +39,6 @@ export class BcAvatar {
         className = "img-circle";
     }
 
-    this._HtmlStyler.updateClass("_shape", className);
+    this.updateClass("_shape", className);
   }
 }

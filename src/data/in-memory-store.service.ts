@@ -45,25 +45,23 @@ export class InMemoryStoreService {
                             { "key": "Camerate", "value": "4" },
                             { "key": "Cuccette", "value": "20" },
                             { "key": "Cuccette invernali", "value": "10" },
-                            { "key": "Tavolato", "value": "5" },
-                            { "key": "Docce", "value": "6" },
-                            { "key": "WC in camera", "value": "0" },
-                            { "key": "WC uso comune", "value": "3" }
+                            { "key": "Vendita sacco lenzuolo", "value": "false" }
                         ]
                     },
                     {
                         "name": "Ristorazione",
                         "category": "Pernottamento e servizi",
-                        "description": "tavoli e servizi di ristorazione",
+                        "description": "Ristorazione e tavoli",
                         "tags": [
                             { "key": "Ristorante", "value": "true" },
                             { "key": "Accesso alla cucina", "value": "false" },
+                            { "key": "Tavolato", "value": "5" }
                         ]
                     },
                     {
-                        "name": "Bagni",
+                        "name": "Servizi igienici",
                         "category": "Pernottamento e servizi",
-                        "description": "Cessi disponibili",
+                        "description": "Bagni e docce",
                         "tags": [
                             { "key": "Docce", "value": "6" },
                             { "key": "WC in camera", "value": "0" },
@@ -71,81 +69,84 @@ export class InMemoryStoreService {
                         ]
                     },
                     {
-                        "name": "altro",
-                        "category": "Pernottamento e servizi",
-                        "description": "varie ed eventuali",
+                        "name": "Acqua",
+                        "category": "Acqua e riscaldamento",
+                        "description": "Disponibilità di acqua",
                         "tags": [
-                            { "key": "Vendita sacco lenzuolo", "value": "false" }
+                            { "key": "Acqua calda", "value": "true" },
+                            { "key": "Acqua in rifugio", "value": "true" },
+                            { "key": "Disponibilità di acqua", "value": "costante" },
+                            { "key": "Periodi di siccità", "value": "estate" }
                         ]
                     },
                     {
-                        "service_name": "Acqua e riscaldamento",
-                        "service_category": "service_cat1",
-                        "description": "d1",
-                        "options": [
-                            "Acqua in rifugio",
-                            "Acqua calda"
-                        ],
+                        "name": "Riscaldamento",
+                        "category": "Acqua e riscaldamento",
+                        "description": "Disponibilità di riscaldamento",
                         "tags": [
-                            {
-                                "key": "Disponibilit� acqua",
-                                "value": "Costante"
-                            },
-                            {
-                                "key": "Periodi di siccit�",
-                                "value": "Estate"
-                            },
-                            {
-                                "key": "Riscaldamento",
-                                "value": "Legna"
-                            }
+                            { "key": "Riscaldamento", "value": "legna" }
                         ]
                     },
                     {
-                        "service_name": "Elettricit�",
-                        "service_category": "service_cat1",
-                        "description": "d1",
-                        "options": [
-                            "Elettricit�"
-                        ],
+                        "name": "Elettricità",
+                        "category": "Elettricità",
+                        "description": "Disponibilità di elettricità",
                         "tags": [
-                            {
-                                "key": "Punti ricarica spazi comuni",
-                                "value": "5"
-                            },
-                            {
-                                "key": "Punti ricarica camere",
-                                "value": "2"
-                            }
+                            { "key": "Elettricità", "value": "true" },
+                            { "key": "Punti ricarica spazi comuni", "value": "5" },
+                            { "key": "Punti ricarica camere", "value": "3" }
                         ]
                     },
                     {
-                        "service_name": "WIFI e GSM",
-                        "service_category": "service_cat1",
-                        "description": "d1",
-                        "options": [
-                            "WIFI"
-                        ],
+                        "name": "WIFI e GSM",
+                        "category": "WIFI e GSM",
+                        "description": "Disponibilit� di WIFI e GSM",
                         "tags": [
-                            {
-                                "key": "Segnale GSM",
-                                "value": "E"
-                            },
-                            {
-                                "key": "Gestore telefonia mobile",
-                                "value": "Vodafone"
-                            }
+                            { "key": "WIFI", "value": "true" },
+                            { "key": "Segnale GSM", "value": "E" },
+                            { "key": "Gestore telefonia mobile", "value": "Vodafone; TIM" }
                         ]
                     },
                     {
-                        "service_name": "Accessibilit�",
-                        "service_category": "service_cat1",
-                        "description": "d1",
-                        "options": [
-                            "Accessibilit� disabili",
-                            "Accessibilit� macchina",
-                            "Accesso animali domestici"
+                        "name": "Accessibilità",
+                        "category": "Accessibilità",
+                        "description": null,
+                        "tags": [
+                            { "key": "Accessibilità disabili", "value": "true" },
+                            { "key": "Accessibilità macchina", "value": "true" },
+                            { "key": "Accessibilità animali domestici", "value": "true" },
+                            { "key": "Quantità stanze dedicate", "value": "2" }
                         ]
+                    },
+                    {
+                        "name": "Informazioni aggiuntive",
+                        "category": "Informazioni aggiuntive",
+                        "description": null,
+                        "tags": [
+                            { "key": "Pagamento POS", "value": "true" },
+                            { "key": "Convenzioni", "value": "true" },
+                            { "key": "Richiesta rifornire il rifugio", "value": "true" }]
+                    }
+                ],
+                "contatti": {
+                    "name": "pincopallo",
+                    "role": "custode",
+                    "fixed_phone": "0522897497",
+                    "mobile_phone": "3485954241",
+                    "mail_pec": "rifugio_battisti@postecert.it",
+                    "email_address": "info@rifugio-battisti.it",
+                    "web_address": "http://www.rifugio-battisti.it"
+                },
+                "openingTime":[
+                    {
+                        "startDate": "2017-06-17T12:21:29.337Z",
+                        "endDate": "2017-10-17T12:21:29.337Z",
+                        "type": "Apertura estiva",
+                    },
+                    {
+                        "startDate": "2017-12-17T12:21:29.337Z",
+                        "endDate": "2018-01-17T12:21:29.337Z",
+                        "type": "Apertura estiva",
                     }
                 ]
             }
@@ -154,49 +155,6 @@ export class InMemoryStoreService {
         return { shelters };
     }
 }
-
-// Servizi ={
-//     "Pernottamento": {
-//         "Cuccette": 77,
-//         "Cuccette invernali": 19,
-//         "Cuccette totali": 96,
-//         "Tavolato": 0,
-//         "Ristorante": null,
-//         "Cucinare in proprio": null,
-//         "Vendita sacco lenzuolo": null,
-//         "Docce": null,
-//         "WC in camera": null,
-//         "WC uso comune": null
-//     },
-//     "Acqua e riscaldamento": {
-//         "Acqua calda": null,
-//         "Acqua in rifugio": null,
-//         "Disponibilità acqua": null,
-//         "Periodi di siccità": null,
-//         "Riscaldamento": null
-//     },
-//     "Elettricità": {
-//         "Elettricità": null,
-//         "Punti ricarica spazi comuni": null,
-//         "Punti ricarica camere": null
-//     },
-//     "WIFI e GSM": {
-//         "WIFI": null,
-//         "Segnale GSM": null,
-//         "Gestore telefonia mobile": null
-//     },
-//     "Accessibilità": {
-//         "Accessibilità disabili": null,
-//         "Accessibiltà macchina": null,
-//         "Accessibilità animali domestici": null,
-//         "Quantità stanze dedicate": null
-//     },
-//     "Altro": {
-//         "Pagamento POS": null,
-//         "Convenzioni": null,
-//         "Richiesta rifornire il rifugio": null
-//     }
-// }
 
 
 // Contatti e apertura ={
