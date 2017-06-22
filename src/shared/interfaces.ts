@@ -89,15 +89,15 @@ export interface ISubject{
     email?:String;
     webSite?:String;
     type?:String;
-    contract_start_date?:Date;
-    contract_end_date?:Date;
-    contract_duration?:Number;
-    contract_fee?:Number;
 }
 
 export interface IManagement{
     rent:Number;
     period:String;
+    contract_start_date?:Date;
+    contract_end_date?:Date;
+    contract_duration?:Number;
+    contract_fee?:Number;
     valuta?:String;
     rentType?:Enums.Custody_Type;
     pickupKey?:Boolean;
