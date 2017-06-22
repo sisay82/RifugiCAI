@@ -3,40 +3,44 @@
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Telefono:</div>
-            <div class="bc-body">{{data.fixed_phone?(data.fixed_phone):'------------'}}</div>
+            <div class="bc-body">{{data.contacts?(data.contacts.fixedPhone || '------------'):'------------'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Cellulare:</div>
-            <div class="bc-body">{{data.mobile_phone?(data.mobile_phone):'------------'}}</div>
+            <div class="bc-body">{{data.contacts?(data.contacts.mobilePhone || '------------'):'------------'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Ruolo:</div>
+            <div class="bc-body">{{data.contacts?(data.contacts.role || '----'):'----'}}</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Mail:</div>
-            <div class="bc-body">{{data.email_address?(data.email_address):'------------'}}</div>
+            <div class="bc-body">{{data.contacts?(data.contacts.emailAddress || '------------'):'------------'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">PEC:</div>
-            <div class="bc-body">{{data.mail_pec?(data.mail_pec):'------------'}}</div>
+            <div class="bc-body">{{data.contacts?(data.contacts.mailPec || '------------'):'------------'}}</div>
+        </div>
+        <div *nfIf="data.contacts.webAddress!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div ng-href="data.contacts.webAddress" class="bc-body-strong" style="margin-right:4px">WebSite:</div>
         </div>
     </div>
     <bc-divider></bc-divider>
     <div class="bc-h6 bc-detail-title">Aperture:</div>
     <div style="display: flex;flex-direction:row">
         <div style="flex:1">
-            <div class="bc-body-strong">Aperture:</div>
-        </div>
-        <div style="flex:1">
             <div class="bc-body-strong">Inizio</div>
-            <div class="bc-body" *ngFor="let item of data.openings">{{item.opening_date | date:"dd/MM/yy" }}</div>
+            <div class="bc-body" *ngFor="let item of data.openingTime">{{item.startDate | date:"dd/MM/yy" }}</div>
         </div>
         <div style="flex:1">
             <div class="bc-body-strong">Fine</div>
-            <div class="bc-body" *ngFor="let item of data.openings">{{item.closure_date | date:"dd/MM/yy" }}</div>
+            <div class="bc-body" *ngFor="let item of data.openingTime">{{item.endDate | date:"dd/MM/yy" }}</div>
         </div>
         <div style="flex:1">
             <div class="bc-body-strong">Tipo</div>
-            <div class="bc-body" *ngFor="let item of data.openings">{{item.opening_type}}</div>
+            <div class="bc-body" *ngFor="let item of data.openingTime">{{item.type}}</div>
         </div>
     </div>
 </div>

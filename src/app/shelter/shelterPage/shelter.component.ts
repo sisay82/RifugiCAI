@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {ShelterService} from '../../../core/shelter/shelter.service'
+import {ShelterService} from '../shelter.service'
 import {IMenu,IShelter}from '../../shared/types/interfaces';
 
 @Component({
@@ -12,7 +12,7 @@ import {IMenu,IShelter}from '../../shared/types/interfaces';
 
 })
 export class BcShelter {
-    shelter:IShelter={name:"nome",registry:{id:"id",address:{via:"via",number:1,cap:1,city:"cittá",collective:"comune",country:"regione",district:"provincia"}}};
+    shelter:IShelter;
     appMenuElements:IMenu={
     layers:[{
         layerName:"Publics",
@@ -41,7 +41,9 @@ export class BcShelter {
 
     ngOnInit(){
         this.route.params.subscribe(params=>{
-            this.shelter={name:params['name'],registry:this.shelterService.getHeaderByName(params['name'])};
+            this.shelterService.getShelter(params['_id']).subscribe(shelter=>{
+                this.shelter=shelter;
+            });
         });
     }
 }

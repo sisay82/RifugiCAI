@@ -7,7 +7,7 @@ import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
-import { IPagedResults, IShelter } from '../shared/types/interfaces';
+import { IPagedResults, IShelter, IMarker } from '../shared/types/interfaces';
 
 @Injectable()
 export class ShelterService {
@@ -47,6 +47,33 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
+    getConutryMarkersNumber(countryName:String): Observable<number>{
+        return this.http.get(this.sheletersBaseUrl + '/country/' + countryName)
+            .map((res: Response) => {
+                let markers = res.json();
+                return markers;
+            })
+            .catch(this.handleError);
+    }
+
+    getSheltersAroundPoint(point:L.LatLng,range:number):Observable<IShelter[]>{
+        return this.http.get(this.sheletersBaseUrl + '/point/' + point + '/' + range)
+            .map((res: Response) => {
+                let shelter = res.json();
+                return shelter;
+            })
+            .catch(this.handleError);
+    }   
+
+    getShelterSection(id: number,section: string): Observable<IShelter> {
+        return this.http.get(this.sheletersBaseUrl + '/' + id + '/' + section)
+            .map((res: Response) => {
+                let shelter = res.json();
+                return shelter;
+            })
+            .catch(this.handleError);
+    }
+
     insertShelter(shelter: IShelter): Observable<IShelter> {
         return this.http.post(this.sheletersBaseUrl, shelter)
             .map((res: Response) => res.json())
@@ -54,7 +81,7 @@ export class ShelterService {
     }
 
     updateShelter(shelter: IShelter): Observable<boolean> {
-        return this.http.put(this.sheletersBaseUrl + '/' + shelter.id, shelter)
+        return this.http.put(this.sheletersBaseUrl + '/' + shelter._id, shelter)
             .map((res: Response) => res.json())
             .catch(this.handleError);
     }

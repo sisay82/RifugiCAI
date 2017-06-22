@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit
 } from '@angular/core';
-import { IService } from '../../../app/shared/types/interfaces'
+import { IService,ITag } from '../../../app/shared/types/interfaces'
 
 @Component({
   moduleId: module.id,
@@ -12,4 +12,17 @@ import { IService } from '../../../app/shared/types/interfaces'
 })
 export class BcServItem {
   @Input() item:IService;
+  options:ITag[]=[];
+  checks:ITag[]=[];
+
+  ngOnInit(){
+    for(let it of this.item.tags){
+      if(it.value=="true"||it.value=="false"){
+        this.checks.push(it);
+      }else{
+        this.options.push(it);
+      }
+    }
+
+  }
 }

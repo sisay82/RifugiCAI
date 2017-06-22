@@ -1,95 +1,26 @@
 import { Component, OnInit } from '@angular/core';
+import {ShelterService} from '../shelter.service'
+import {IShelter}from '../../shared/types/interfaces';
 
 @Component({
     moduleId: module.id,
     selector: 'bc-shelters-List',
     templateUrl: 'shelterList.component.html',
-    styleUrls: ['shelterList.component.scss']
+    styleUrls: ['shelterList.component.scss'],
+    providers:[ShelterService]
 })
 export class BcShelterList {
     filterText: string = "";
-    filteredShelter: any[] = [];
+    filteredShelter: IShelter[] = [];
+    rifugiSample:IShelter[]=[];
 
-    rifugiSample: any[] = [{
-        name: "Sassolungo/Giuliani Reginaldo",
-        municipality: "Selva di Val Gardena",
-        province: "Bolzano",
-        region: "Trentino-Alto Adige"
-    }, {
-        name: "Torrani Maria Vittoria",
-        municipality: "Zoldo Alto",
-        province: "Belluno",
-        region: "Veneto"
-    }, {
-        name: "Sigot Mario",
-        municipality: "Exilles",
-        province: "Torino",
-        region: "Piemonte"
-    }, {
-        name: "Taveggia Angelo",
-        municipality: "Chiesa Valmalenco",
-        province: "Sondrio",
-        region: "Lombardia"
-    }, {
-        name: "Pelino Cesare Mario",
-        municipality: "Pacentro",
-        province: "Aquila",
-        region: "Abruzzo"
-    }, {
-        name: "Zilioni Tito",
-        municipality: "Arquata del Tronto",
-        province: "Ascoli Piceno",
-        region: "Marche"
-    }, {
-        name: "Cavarero Franco",
-        municipality: "Ormea",
-        province: "Cuneo",
-        region: "Piemonte"
-    }, {
-        name: "Casarotto Renato",
-        municipality: "Linguaglossa",
-        province: "Catania",
-        region: "Sicilia"
-    }, {
-        name: "CAI Tarvisio",
-        municipality: "Tarvisio",
-        province: "Udine",
-        region: "Friuli-Venezia Giulia"
-    }, {
-        name: "CAI Alatri",
-        municipality: "Guarcino",
-        province: "Frosinone",
-        region: "Lazio"
-    }, {
-        name: "Grandinetti Leone",
-        municipality: "Zagarise",
-        province: "Catanzaro",
-        region: "Calabria"
-    }, {
-        name: "Lago Nero",
-        municipality: "Abetone",
-        province: "Pistoia",
-        region: "Toscana"
-    }, {
-        name: "Casale Ghezzi",
-        municipality: "Norcia",
-        province: "Perugia",
-        region: "Umbria"
-    }, {
-        name: "Allavena Franco",
-        municipality: "Pigna",
-        province: "Imperia",
-        region: "Liguria"
-    }, {
-        name: "Forte dei Marmi",
-        municipality: "Stazzema",
-        province: "Lucca",
-        region: "Toscana"
-    }];
+    constructor(private shelterService:ShelterService){}
 
     ngOnInit() {
         this.filterText = "";
-        this.filteredShelter = this.rifugiSample;
+        this.shelterService.getShelters().subscribe(shelters=>{
+            this.rifugiSample=shelters;
+        });
     }
 
     filterChanged(event: any) {

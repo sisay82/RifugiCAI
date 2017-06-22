@@ -1,29 +1,52 @@
 <div style="display:block;margin-left:4px;background:white">
     <div class="bc-detail-title bc-h6">Proprietà:</div>
-    <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Codice Rifugio:</div>
-            <div class="bc-body">{{data.shelter_code?(data.shelter_code):'----'}}</div>
+    <div *ngFor="let item of data.subject">
+        <div style="display: flex;flex-direction:row">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:4px">Nome e Cognome:</div>
+                <div class="bc-body">{{data.name}} {{data.surname}}</div>
+            </div>
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:4px">P.IVA:</div>
+                <div class="bc-body">{{data.taxCode || '----'}}</div>
+            </div>
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:4px">Tipo:</div>
+                <div class="bc-body">{{data.type || '----'}}</div>
+            </div>
+            <div *ngIf="data.webSite!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+                <div ng-href="data.webSite" class="bc-body-strong" style="margin-right:4px">Sito Web</div>
+            </div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">P.IVA:</div>
-            <div class="bc-body">{{data.p_iva?(data.p_iva):'------------'}}</div>
+        <div style="display: flex;flex-direction:row">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:4px">Telefono Fisso:</div>
+                <div class="bc-body">{{data.fixedPhone || '----'}}</div>
+            </div>
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:4px">Cellulare:</div>
+                <div class="bc-body">{{data.mobilePhone || '----'}}</div>
+            </div>
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:4px">PEC:</div>
+                <div class="bc-body">{{data.pec || '----'}}</div>
+            </div>
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:4px">Mail:</div>
+                <div class="bc-body">{{data.webSite || '----'}}</div>
+            </div>
         </div>
     </div>
     <bc-divider></bc-divider>
     <div class="bc-detail-title bc-h6">Gestione:</div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Proprietario:</div>
-            <div class="bc-body">{{data.owner?(data.owner):'----'}}</div>
+            <div class="bc-body-strong" style="margin-right:4px">Affitto:</div>
+            <div class="bc-body">{{data.rent}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Custode:</div>
-            <div class="bc-body">{{data.custodian?(data.custodian):'----'}}</div>
-        </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Titolo di Possesso:</div>
-            <div class="bc-body">{{data.possession_title?(data.possession_title):'----'}}</div>
+            <div class="bc-body-strong" style="margin-right:4px">Durata:</div>
+            <div class="bc-body">{{data.period}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Tipo Custodia:</div>
@@ -49,20 +72,7 @@
         </div>
     </div>
     <bc-divider></bc-divider>
-    <div class="bc-detail-title bc-h6">Ritiro Chiavi:</div>
-    <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Nome:</div>
-            <div class="bc-body">{{data.key_collect?(data.key_collect.name):'------------'}}</div>
-        </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Telefono:</div>
-            <div class="bc-body">{{data.key_collect?(data.key_collect.phone?(data.key_collect.phone):'------------'):'------------'}}</div>
-        </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Mail:</div>
-            <div class="bc-body">{{data.key_collect?(data.key_collect.mail?(data.key_collect.mail):'------------'):'------------'}}</div>
-        </div>
-    </div>
-
+    <div class="bc-detail-title bc-h6">Ritiro Chiavi</div>
+    <i *ngIf="data.pickupKey==true" class="fa fa-check-square-o" style="font-size:10px"></i>
+    <i *ngIf="data.pickupKey==false" class="fa fa-square-o" style="font-size:10px"></i>
 </div>

@@ -2,8 +2,8 @@ import {
   Component,Input,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ICadastral } from '../../../app/shared/types/interfaces'
-import {ShelterService} from '../../shelter/shelter.service'
+import { IShelter } from '../../../app/shared/types/interfaces'
+import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Enums } from '../../../app/shared/types/enums'
 
 @Component({
@@ -14,7 +14,7 @@ import { Enums } from '../../../app/shared/types/enums'
   providers:[ShelterService]
 })
 export class BcCadastral {
-  data:ICadastral;
+  data:IShelter;
 
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
   
@@ -28,7 +28,15 @@ export class BcCadastral {
 
   ngOnInit(){
     this._route.parent.params.subscribe(params=>{
-      this.data=this.shelterService.getCadastralsByName(params['name']);
+      this.shelterService.getShelterSection(params['id'],"catastal").subscribe(shelter=>{
+        this.data.catastal=shelter.catastal;
+        this.shelterService.getShelterSection(params['id'],"drain").subscribe(shelter=>{
+          this.data.drain=shelter.drain;
+          this.shelterService.getShelterSection(params['id'],"energy").subscribe(shelter=>{
+            this.data.energy=shelter.energy;
+          });
+        });
+      });
     });
   }
 }

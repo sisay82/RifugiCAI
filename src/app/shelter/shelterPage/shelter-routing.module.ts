@@ -4,7 +4,7 @@ import { BcShelter } from './shelter.component';
 import { DetailsRoutingModule } from '../../../core/details/details-routing.module';
 
 const sheltersRoutes: Routes = [
-    { path: 'shelter/:name', component: BcShelter,children:[
+    { path: 'shelter/:id', component: BcShelter,children:[
         ...DetailsRoutingModule.appRoutes
     ]}
 ];
