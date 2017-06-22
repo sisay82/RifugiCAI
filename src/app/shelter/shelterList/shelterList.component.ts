@@ -11,22 +11,33 @@ import {IShelter}from '../../shared/types/interfaces';
 })
 export class BcShelterList {
     filterText: string = "";
-    filteredShelter: IShelter[] = [];
-    rifugiSample:IShelter[]=[];
+    filteredShelter: any[] = [];
+    rifugiSample:any[]=[];
 
     constructor(private shelterService:ShelterService){}
-
+    
     ngOnInit() {
         this.filterText = "";
-        this.shelterService.getShelters().subscribe(shelters=>{
-            this.rifugiSample=shelters;
+        this.shelterService.getSheltersPage(0,6).subscribe(shelters=>{
+            shelters.results.forEach(shelter=>{
+                this.shelterService.getShelterSection(shelter._id,"geoData").subscribe(shel=>{
+                    this.rifugiSample.push(
+                        {
+                            _id:shelter._id,
+                            name:shelter.name,
+                            municipality:shel.geoData.location.municipality,
+                            province:shel.geoData.location.province,
+                            region:shel.geoData.location.region
+                        });
+                        this.filterChanged("");
+                })
+            });
         });
     }
 
     filterChanged(event: any) {
         var data = this.filterText;
         if (data && this.rifugiSample) {
-
             const props = ['name', 'municipality', 'province', 'region'];
             this.filteredShelter = this.rifugiSample.filter((item: any) => {
                 let match = false;

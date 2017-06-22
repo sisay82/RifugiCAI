@@ -19,7 +19,7 @@
   </bc-content-header>
   <bc-content-section>
     <bc-list dense>
-      <a bc-list-item *ngFor="let item of filteredShelter">
+      <a bc-list-item *ngFor="let item of filteredShelter" [href]="'shelter/'+item._id">
         <div style="flex:1; padding:8px; font-weight: 500;">{{item.name}}</div>
         <div style="flex:1; padding:8px;">{{item.municipality}}</div>
         <div style="flex:1; padding:8px;">{{item.province}}</div>

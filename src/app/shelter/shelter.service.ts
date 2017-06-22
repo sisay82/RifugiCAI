@@ -12,7 +12,8 @@ import { IPagedResults, IShelter, IMarker } from '../shared/types/interfaces';
 @Injectable()
 export class ShelterService {
 
-    sheletersBaseUrl: string = '/api/sheleters';
+    //sheletersBaseUrl: string = '/api/shelters';
+    sheletersBaseUrl: string = 'http://localhost:8080/api/shelters';
 
     constructor(private http: Http) { }
 
@@ -38,7 +39,7 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
-    getShelter(id: number): Observable<IShelter> {
+    getShelter(id: String): Observable<IShelter> {
         return this.http.get(this.sheletersBaseUrl + '/' + id)
             .map((res: Response) => {
                 let shelter = res.json();
@@ -65,7 +66,7 @@ export class ShelterService {
             .catch(this.handleError);
     }   
 
-    getShelterSection(id: number,section: string): Observable<IShelter> {
+    getShelterSection(id: String,section: string): Observable<IShelter> {
         return this.http.get(this.sheletersBaseUrl + '/' + id + '/' + section)
             .map((res: Response) => {
                 let shelter = res.json();
@@ -86,7 +87,7 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
-    deleteShelter(id: number): Observable<boolean> {
+    deleteShelter(id: string): Observable<boolean> {
         return this.http.delete(this.sheletersBaseUrl + '/' + id)
             .map((res: Response) => res.json().status)
             .catch(this.handleError);

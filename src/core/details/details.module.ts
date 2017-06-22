@@ -7,9 +7,10 @@ import { BcDetails } from "./details.component";
 import { RouterModule, Routes } from '@angular/router';
 import { BcManageModule } from "./management/manage.module";
 import { BcCadastralModule } from "./cadastral/cad.module";
+import { HttpModule } from '@angular/http';
 
 @NgModule({
-    imports: [RouterModule,BcGeoModule,BcServModule,BcContactModule,BcCadastralModule,BcManageModule],
+    imports: [HttpModule,RouterModule,BcGeoModule,BcServModule,BcContactModule,BcCadastralModule,BcManageModule],
     declarations:[BcDetails],
     exports: [BcGeoModule,BcDetails]
 })
