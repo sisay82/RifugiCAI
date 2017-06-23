@@ -6,6 +6,8 @@ import { IGeographic } from '../../../app/shared/types/interfaces'
 import {BcMap} from '../../map/map.component';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
+import * as L from 'leaflet';
+import { Map } from 'leaflet';
 
 @Component({
   moduleId: module.id,

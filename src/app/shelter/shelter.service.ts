@@ -6,14 +6,15 @@ import 'rxjs/add/observable/throw';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-
+import * as L from 'leaflet';
+import { Map } from 'leaflet';
 import { IPagedResults, IShelter, IMarker } from '../shared/types/interfaces';
 
 @Injectable()
 export class ShelterService {
 
     //sheletersBaseUrl: string = '/api/shelters';
-    sheletersBaseUrl: string = 'http://localhost:8080/api/shelters';
+    sheletersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 
