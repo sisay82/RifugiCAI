@@ -1,7 +1,7 @@
 <div>
     <div style="display: flex;flex-direction:row;align-items:center">
-        <div class="bc-h6 bc-service-title" style="flex:1">{{item.name}}</div>
-        <div class="bc-h6" style="flex:15">Categoria: {{item.category?(item.category):'---'}}</div>
+        <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{item.name}}</div>
+        <div class="bc-h6" style="flex:2">Categoria: {{item.category?(item.category):'---'}}</div>
     </div>
 
     <div style="display: flex;flex-direction:row">
@@ -15,9 +15,10 @@
 
     <div>
         <div *ngFor="let check of checks" class="bc-body" style="margin-bottom:4px;display: flex;flex-direction:row;align-items:center">
-            <i *ngIf="check.value=='true'" class="fa fa-check-square-o" style="font-size:10px"></i>
-            <i *ngIf="check.value=='false'" class="fa fa-square-o" style="font-size:10px"></i>
-            <div style="margin-left:2px">{{check.key}}</div>
+            <div style="display:flex;flex-direction:row;align-items:center" *ngIf="check.value=='true'">
+                <i class="fa fa-check-square-o" style="font-size:10px"></i>
+                <div style="margin-left:2px">{{check.key}}</div>
+            </div>
         </div>
     </div>
 

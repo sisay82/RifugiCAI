@@ -48,7 +48,7 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
-    getConutryMarkersNumber(countryName:String): Observable<number>{
+    getConutryMarkersNumber(countryName:String): Observable<any>{
         return this.http.get(this.sheletersBaseUrl + '/country/' + countryName)
             .map((res: Response) => {
                 let markers = res.json();
@@ -58,7 +58,7 @@ export class ShelterService {
     }
 
     getSheltersAroundPoint(point:L.LatLng,range:number):Observable<IShelter[]>{
-        return this.http.get(this.sheletersBaseUrl + '/point/' + point + '/' + range)
+        return this.http.get(this.sheletersBaseUrl + '/point/' + point.lat +'/' + point.lng + '/' + range)
             .map((res: Response) => {
                 let shelter = res.json();
                 return shelter;

@@ -2,9 +2,10 @@ import {
   Component,Input,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter } from '../../../app/shared/types/interfaces'
+import { IGeographic } from '../../../app/shared/types/interfaces'
 import {BcMap} from '../../map/map.component';
 import {ShelterService} from '../../../app/shelter/shelter.service'
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   moduleId: module.id,
@@ -14,20 +15,22 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
   providers:[ShelterService]
 })
 export class BcGeo {
-  data:IShelter;
+  data:IGeographic={location:{longitude:null,latitude:null}};
+  center:Subject<L.LatLng|L.LatLngExpression>=new Subject();
 
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
 
   getCenter(){
-    if(this.data!=undefined && this.data.geoData!=undefined && this.data.geoData.location!=undefined){
-      return [this.data.geoData.location.latitude,this.data.geoData.location.longitude];
+    if(this.data!=undefined && this.data.location!=undefined
+    &&this.data.location.latitude!=undefined&&this.data.location.longitude!=undefined){
+      return [this.data.location.latitude,this.data.location.longitude];
     }else{
       return BcMap.defaultCenter;//default
     }
   }
 
   getZoom(){
-    if(this.data!=undefined && this.data.geoData!=undefined && this.data.geoData.location!=undefined){
+    if(this.data!=undefined && this.data.location!=undefined){
       return 11;
     }else{
       return 6;//default
@@ -37,16 +40,17 @@ export class BcGeo {
   ngOnInit(){
     this._route.parent.params.subscribe(params=>{
       this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
-        this.data=shelter;
+        this.data=shelter.geoData;
+        this.center.next([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number]);
       });
     });
   }
 
   getTag(key:String){
-    if(this.data!=undefined && this.data.geoData!=undefined && this.data.geoData.tags!=undefined){
-      let index=this.data.geoData.tags.findIndex((tag)=>tag.key==key)
+    if(this.data!=undefined && this.data.tags!=undefined){
+      let index=this.data.tags.findIndex((tag)=>tag.key==key)
       if(index>-1){
-        return this.data.geoData.tags[index].value;
+        return this.data.tags[index].value;
       }else{
         return '----';
       }

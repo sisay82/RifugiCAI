@@ -2,7 +2,7 @@ import {
   Component,Input,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IManagement } from '../../../app/shared/types/interfaces'
+import { IManagement,ISubject } from '../../../app/shared/types/interfaces'
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Enums } from '../../../app/shared/types/enums'
 
@@ -14,8 +14,7 @@ import { Enums } from '../../../app/shared/types/enums'
   providers:[ShelterService]
 })
 export class BcManage {
-  data:IManagement;
-
+  data:IManagement={rent:null,period:null,subject:[{name:null}]};
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
 
   ngOnInit(){

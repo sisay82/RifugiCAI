@@ -40,10 +40,10 @@ export interface IMenu{
 }
 
 export interface ILocation{
-    region:String;
-    province:String;
-    municipality:String;
-    locality:String;
+    region?:String;
+    province?:String;
+    municipality?:String;
+    locality?:String;
     ownerRegion?:String;
     authorityJurisdiction?:String;
     altitude?:Number;
@@ -59,7 +59,7 @@ export interface ITag{
 }
 
 export interface IGeographic{
-    location:ILocation;
+    location?:ILocation;
     tags?:[ITag];
 }
 

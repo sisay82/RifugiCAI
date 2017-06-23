@@ -23,7 +23,7 @@ export class DetailsRoutingModule {
     { path: 'services', component: BcServ,outlet:'content' },
     { path: 'contacts', component: BcContact,outlet:'content' },
     { path: 'management', component: BcManage,outlet:'content' },
-    { path: 'cadastral', component: BcCadastral,outlet:'content' },
+    { path: 'catastal', component: BcCadastral,outlet:'content' },
     { path: 'documents', component: BcGeo,outlet:'content' },
     { path: 'images', component: BcGeo,outlet:'content' },
     { path: 'economy', component: BcGeo,outlet:'content' },

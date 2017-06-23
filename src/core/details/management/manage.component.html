@@ -4,15 +4,15 @@
         <div style="display: flex;flex-direction:row">
             <div style="align-items:center;flex:1;display:flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:4px">Nome e Cognome:</div>
-                <div class="bc-body">{{data.name}} {{data.surname}}</div>
+                <div class="bc-body">{{item.name || '----'}} {{item.surname}}</div>
             </div>
             <div style="align-items:center;flex:1;display:flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:4px">P.IVA:</div>
-                <div class="bc-body">{{data.taxCode || '----'}}</div>
+                <div class="bc-body">{{item.taxCode || '----'}}</div>
             </div>
             <div style="align-items:center;flex:1;display:flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:4px">Tipo:</div>
-                <div class="bc-body">{{data.type || '----'}}</div>
+                <div class="bc-body">{{item.type || '----'}}</div>
             </div>
             <div *ngIf="data.webSite!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:4px">Sito Web</div>
@@ -21,19 +21,19 @@
         <div style="display: flex;flex-direction:row">
             <div style="align-items:center;flex:1;display:flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:4px">Telefono Fisso:</div>
-                <div class="bc-body">{{data.fixedPhone || '----'}}</div>
+                <div class="bc-body">{{item.fixedPhone || '----'}}</div>
             </div>
             <div style="align-items:center;flex:1;display:flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:4px">Cellulare:</div>
-                <div class="bc-body">{{data.mobilePhone || '----'}}</div>
+                <div class="bc-body">{{item.mobilePhone || '----'}}</div>
             </div>
             <div style="align-items:center;flex:1;display:flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:4px">PEC:</div>
-                <div class="bc-body">{{data.pec || '----'}}</div>
+                <div class="bc-body">{{item.pec || '----'}}</div>
             </div>
             <div style="align-items:center;flex:1;display:flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:4px">Mail:</div>
-                <div class="bc-body">{{data.webSite || '----'}}</div>
+                <div class="bc-body">{{item.webSite || '----'}}</div>
             </div>
         </div>
     </div>
@@ -72,7 +72,10 @@
         </div>
     </div>
     <bc-divider></bc-divider>
-    <div class="bc-detail-title bc-h6">Ritiro Chiavi</div>
-    <i *ngIf="data.pickupKey==true" class="fa fa-check-square-o" style="font-size:10px"></i>
-    <i *ngIf="data.pickupKey==false" class="fa fa-square-o" style="font-size:10px"></i>
+    <div class="bc-detail-title bc-h6">
+        <i *ngIf="data.pickupKey==true" class="fa fa-check-square-o" style="font-size:10px"></i>
+        <i *ngIf="data.pickupKey==false" class="fa fa-square-o" style="font-size:10px"></i>
+        Ritiro Chiavi
+    </div>
+    
 </div>
