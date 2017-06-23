@@ -1,43 +1,43 @@
 <div class="bc-mask-container">
     <div class="bc-mask-line">
         <div class="bc-h6">
-            <div (click)="return()" class="fa fa-arrow-left bc-return-icon" style="display: inline;margin-left:10px"></div><div style="display: inline;margin-left:10px">{{shelter?.name || 'Nome Rifugio'}}</div>,<div style="display: inline;margin-left:5px">{{shelter?.collective || 'Comune Rifugio'}}</div>
+            <div (click)="return()" class="fa fa-arrow-left bc-return-icon" style="display: inline;margin-left:10px"></div><div style="display: inline;margin-left:10px">{{shelter?(shelter.name): 'Nome Rifugio'}}</div>,<div style="display: inline;margin-left:5px">{{shelter?(shelter.geoData?(shelter.geoData.location?(shelter.geoData.location.municipality || 'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'}}</div>
         </div>
     </div>
     <div class="bc-mask-line" style="margin-left:10px">
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title bc-body-strong">ID:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry?.id || '---'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.idCai || '---'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Tipo:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry?.shelter_type || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.type || '----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Sezione:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry?.section_code || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.branch || '----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Proprietà:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry?.custody_type || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.owner || '----'}}</div>
         </div>
     </div>
     <div class="bc-mask-line" style="margin-left:32px">
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Categoria:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry?.category || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.category || '----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Per la regione:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry?.regional_type || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?(shelter.geoData?(shelter.geoData.location?(shelter.geoData.location.ownerRegion || '----'):'----'):'----'):'----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Inserito il:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.registry?.insert_date || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?(shelter.insertDate?(shelter.insertDate | date:"dd/MM/yy"):'----'): '----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Aggiornato il:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.logs[shelter.logs-1].update_date || '----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?(shelter.updateDate?(shelter.updateDate | date:"dd/MM/yy"):'----'): '----'}}</div>
         </div>
     </div>
     <bc-divider></bc-divider>

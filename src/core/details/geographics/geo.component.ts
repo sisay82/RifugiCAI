@@ -48,10 +48,10 @@ export class BcGeo {
       if(index>-1){
         return this.data.geoData.tags[index].value;
       }else{
-        return null;
+        return '----';
       }
     }else{
-      return null;
+      return '----';
     } 
   }
 }

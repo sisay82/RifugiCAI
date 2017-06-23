@@ -41,7 +41,7 @@ export class BcShelter {
 
     ngOnInit(){
         this.route.params.subscribe(params=>{
-            this.shelterService.getShelter(params['_id']).subscribe(shelter=>{
+            this.shelterService.getShelter(params['id']).subscribe(shelter=>{
                 this.shelter=shelter;
             });
         });
