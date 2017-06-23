@@ -15,7 +15,7 @@ export class BcShelterList {
 
     filterText: string = "";
     filteredShelter: any[] = [];
-    rifugiSample:any[]=[];
+    rifugiSample: any[] = [];
 
     constructor(private shelterService:ShelterService){}
     
@@ -33,7 +33,7 @@ export class BcShelterList {
                                 province:shel.geoData.location.province,
                                 region:shel.geoData.location.region
                             });
-                            this.filterChanged("");
+                        this.filteredShelter = this.rifugiSample;
                     }
                 })
             });
