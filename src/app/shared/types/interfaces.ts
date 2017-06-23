@@ -64,7 +64,7 @@ export interface IGeographic{
 }
 
 export interface IService{
-    name:String;
+    name?:String;
     category?:String;
     description?:String;
     tags?:[ITag];
@@ -73,12 +73,12 @@ export interface IService{
 export interface IOpening{
     startDate?:Date;
     endDate?:Date;
-    type:String;
+    type?:String;
 }
 
 export interface IContacts{
-    name:String;
-    role:String;
+    name?:String;
+    role?:String;
     fixedPhone?:String;
     mobilePhone?:String;
     mailPec?:String;
@@ -87,7 +87,7 @@ export interface IContacts{
 }
 
 export interface ISubject{
-    name:String;
+    name?:String;
     surname?:String;
     taxCode?:String;
     fixedPhone?:String;
@@ -99,8 +99,8 @@ export interface ISubject{
 }
 
 export interface IManagement{
-    rent:Number;
-    period:String;
+    rent?:Number;
+    period?:String;
     contract_start_date?:Date;
     contract_end_date?:Date;
     contract_duration?:Number;
@@ -137,7 +137,7 @@ export interface IEnergy{
 }
 
 export interface IDrain{
-    type:String;
+    type?:String;
     regulation?:Boolean;
     oilSeparator?:Boolean;
     recycling?:Boolean;
