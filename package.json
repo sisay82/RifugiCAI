@@ -22,8 +22,8 @@
     "url": "https://github.com/sisay82/RifugiCAI.git"
   },
   "engines": {
-    "node": ">=6.9.5 <7.0.0",
-    "npm": ">=3.10.7 <4.0.0"
+    "node": "6.10.2",
+    "npm": "4.6.1"
   },
   "author": "Michele Geri <sisay82@gmail.com>",
   "contributors": [
@@ -34,7 +34,8 @@
   ],
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "postinstall": "ng build",
+    "start": "node server.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -43,6 +44,8 @@
   "style": "./dist/rifugi-cai.css",
   "scss": "./dist/rifugi-cai.scss",
   "dependencies": {
+    "@angular/cli": "^1.0.0",
+    "@angular/compiler-cli": "^4.0.2",
     "@angular/animations": "^4.0.2",
     "@angular/common": "^4.0.2",
     "@angular/compiler": "^4.0.2",

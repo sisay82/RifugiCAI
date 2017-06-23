@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
 import { IMarker, IShelter } from '../../shared/interfaces';
+ import { Observable } from 'rxjs/Observable';
+
 @Injectable()
 export class ShelterService{
-     shelters:IShelter[]=[
-        {latLng:new L.LatLng(43.77,11.2), name:"Shelter1",collective:"Comune1",country:"Regione1",district:"Provincia1"},
-        {latLng:new L.LatLng(43.14,11.42), name:"Shelter2",collective:"Comune2",country:"Regione1",district:"Provincia1"},
-        {latLng:new L.LatLng(43.4,11.5),name:"Shelter3",collective:"Comune1",country:"Regione1",district:"Provincia1"},
+    shelters:IShelter[]=[
     ];
 
     /**
@@ -15,6 +14,14 @@ export class ShelterService{
      */
     getShelters(point:L.LatLng,area:number):IShelter[]{
         return this.shelters;
+    }
+
+    getConutryMarkersNumber(country:String):Observable<any>{
+        return Observable.create().map(3);
+    }
+
+    getSheltersAroundPoint(point:any,range:number):Observable<any[]>{
+        return null;
     }
 
     /**
