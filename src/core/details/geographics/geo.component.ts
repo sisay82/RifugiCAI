@@ -2,9 +2,10 @@ import {
   Component,Input,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter } from '../../../shared/interfaces'
+import { IGeographic } from '../../../app/shared/types/interfaces'
 import {BcMap} from '../../map/map.component';
-import {ShelterService} from '../../shelter/shelter.service'
+import {ShelterService} from '../../../app/shelter/shelter.service'
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   moduleId: module.id,
@@ -14,20 +15,22 @@ import {ShelterService} from '../../shelter/shelter.service'
   providers:[ShelterService]
 })
 export class BcGeo {
-  data:IShelter;
+  data:IGeographic={location:{longitude:null,latitude:null}};
+  center:Subject<L.LatLng|L.LatLngExpression>=new Subject();
 
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
 
   getCenter(){
-    if(this.data!=undefined && this.data.geographic_data!=undefined && this.data.geographic_data.coordinates!=undefined){
-      return [this.data.geographic_data.coordinates.latitude,this.data.geographic_data.coordinates.longitude];
+    if(this.data!=undefined && this.data.location!=undefined
+    &&this.data.location.latitude!=undefined&&this.data.location.longitude!=undefined){
+      return [this.data.location.latitude,this.data.location.longitude];
     }else{
       return BcMap.defaultCenter;//default
     }
   }
 
   getZoom(){
-    if(this.data!=undefined && this.data.geographic_data!=undefined && this.data.geographic_data.coordinates!=undefined){
+    if(this.data!=undefined && this.data.location!=undefined){
       return 11;
     }else{
       return 6;//default
@@ -36,12 +39,23 @@ export class BcGeo {
 
   ngOnInit(){
     this._route.parent.params.subscribe(params=>{
-      this.data={name:params['name'],
-                registry:this.shelterService.getHeaderByName(params['name']),
-                geographic_data:this.shelterService.getGeographicByName(params['name'])
-              };
-
+      this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
+        this.data=shelter.geoData;
+        this.center.next([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number]);
+      });
     });
   }
 
+  getTag(key:String){
+    if(this.data!=undefined && this.data.tags!=undefined){
+      let index=this.data.tags.findIndex((tag)=>tag.key==key)
+      if(index>-1){
+        return this.data.tags[index].value;
+      }else{
+        return '----';
+      }
+    }else{
+      return '----';
+    } 
+  }
 }

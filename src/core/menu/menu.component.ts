@@ -6,7 +6,7 @@ import {
 } from './menu-animations';
 import { 
   IMenu
-} from '../../shared/interfaces';
+} from '../../app/shared/types/interfaces';
 import {
   BcMenuItem,BcItemService
 } from './menu-item.component';

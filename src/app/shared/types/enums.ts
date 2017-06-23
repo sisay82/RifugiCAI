@@ -6,7 +6,7 @@ export namespace Enums{
         Rifugio_Custodito,
         Rifugio_Incustodito,
         Capanna_Sociale,
-        Punto_dAppoggio
+        Punto_Appoggio
     }
 
     //tipo rifugio regionale

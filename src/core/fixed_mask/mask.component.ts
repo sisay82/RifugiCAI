@@ -1,7 +1,7 @@
 import {
   Component, Input
 } from '@angular/core';
-import { IShelter } from '../../shared/interfaces';
+import { IShelter } from '../../app/shared/types/interfaces';
 import {Router} from '@angular/router';
 
 @Component({

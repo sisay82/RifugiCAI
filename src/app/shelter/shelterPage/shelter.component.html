@@ -1,0 +1,17 @@
+<bc-content>
+  <bc-content-header>
+    <div bc-navbar>
+        <bc-mask [shelter]="shelter"></bc-mask>
+    </div>
+  </bc-content-header>
+  <bc-content-section>
+    <div style="display:flex;flex-direction:row;position:relative;height:100%;width:100%">
+        <div style="position:relative;z-index:2000;position:relative;height:100%">
+            <bc-menu [menuElements]="appMenuElements"></bc-menu>
+        </div>
+        <div style="position:relative;position:relative;height:100%;width:100%">
+            <bc-details></bc-details>
+        </div>
+    </div>
+  </bc-content-section>
+</bc-content>

@@ -1,0 +1,27 @@
+<bc-content>
+  <bc-content-header>
+    <bc-navbar>
+      <div class="navbar-item" style="z-index: 10;position:absolute;height:55px;left:5%;padding-top:10px;display:inline-block">
+        <bc-select-group class="navbar-item">
+          <bc-button [pre_selected]=true [button]="list_view_button"></bc-button>
+          <bc-button [button]="map_view_button"></bc-button>
+        </bc-select-group>
+      </div>
+      <span class="bc-navbar-filler"></span>
+      <div>
+        <input type="text" name="filterList" class="form-control" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+          placeholder="&#xF002; Search for shelter, municipality" [(ngModel)]="filterText" (keyup)="filterChanged(filterText)"/>
+      </div>
+    </bc-navbar>
+  </bc-content-header>
+  <bc-content-section>
+    <bc-list dense>
+      <a bc-list-item *ngFor="let item of filteredShelter" [href]="'shelter/'+item._id">
+        <div style="flex:1; padding:8px; font-weight: 500;">{{item.name}}</div>
+        <div style="flex:1; padding:8px;">{{item.municipality}}</div>
+        <div style="flex:1; padding:8px;">{{item.province}}</div>
+        <div style="flex:1; padding:8px;">{{item.region}}</div>
+      </a>
+    </bc-list>
+  </bc-content-section>
+</bc-content>

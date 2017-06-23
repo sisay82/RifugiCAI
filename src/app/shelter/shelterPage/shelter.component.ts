@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {IShelter} from '../../shared/interfaces';
 import { ActivatedRoute } from '@angular/router';
-import {ShelterService} from '../../core/shelter/shelter.service'
-import {IMenu}from '../../shared/interfaces';
-import { BcMenuService } from '../../core/menu/menu-toggle.service'
+import { BcMenuService } from '../../../core/menu/menu-toggle.service';
+import {ShelterService} from '../shelter.service';
+import {IMenu,IShelter}from '../../shared/types/interfaces';
 
 @Component({
     moduleId: module.id,
@@ -14,7 +13,7 @@ import { BcMenuService } from '../../core/menu/menu-toggle.service'
 
 })
 export class BcShelter {
-    shelter:IShelter={name:"nome",registry:{id:"id",address:{via:"via",number:1,cap:1,city:"cittá",collective:"comune",country:"regione",district:"provincia"}}};
+    shelter:IShelter;
     appMenuElements:IMenu={
     layers:[{
         layerName:"Publics",
@@ -23,7 +22,7 @@ export class BcShelter {
             {name:"Servizi",icon:"fa-home",link:[{outlets:({'content': ['services']})}]},
             {name:"Contatti e apertura",icon:"fa-phone",link:[{outlets:({'content': ['contacts']})}]},
             {name:"Proprietá e gestione",icon:"fa-user",link:[{outlets:({'content': ['management']})}]},
-            {name:"Dati catastali",icon:"fa-book",link:[{outlets:({'content': ['cadastral']})}]}
+            {name:"Dati catastali",icon:"fa-book",link:[{outlets:({'content': ['catastal']})}]}
             ]},{
         layerName:"Documents",
         elements:[
@@ -43,7 +42,9 @@ export class BcShelter {
 
     ngOnInit(){
         this.route.params.subscribe(params=>{
-            this.shelter={name:params['name'],registry:this.shelterService.getHeaderByName(params['name'])};
+            this.shelterService.getShelter(params['id']).subscribe(shelter=>{
+                this.shelter=shelter;
+            });
         });
     }
 }

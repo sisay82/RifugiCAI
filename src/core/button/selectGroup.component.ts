@@ -1,5 +1,5 @@
 import { Component, Input, ContentChildren, QueryList, OnInit } from '@angular/core';
-import {IButton} from '../../shared/interfaces';
+import {IButton} from '../../app/shared/types/interfaces';
 import {BcButton,BcButtonService} from './button.component';
 @Component({
     moduleId:module.id,

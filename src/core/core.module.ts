@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 
+import { BcContentModule } from './content/content.module';
 import { BcAvatarModule } from './avatar/avatar.module';
 import { BcDividerModule } from './divider/divider.module';
 import { BcNavbarModule } from './navbar/navbar.module';
@@ -19,6 +20,7 @@ import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { TrimPipe } from './pipes/trim.pipe';
 
 const COMPONENTS_MODULES = [
+    BcContentModule,
     BcAvatarModule,
     BcDividerModule,
     BcNavbarModule,

@@ -6,10 +6,10 @@ import { CoreModule } from '../core/core.module';
 import { AppComponent } from './app.component';
 
 import { AppRoutingModule } from './app-routing.module';
-import { ShelterListModule } from './shelterList/shelterList.module';
-import { ShelterMapModule } from './shelterMap/shelterMap.module';
-import { ShelterModule } from './shelter/shelter.module';
+import { ShelterMapModule } from './shelter/shelterMap/shelterMap.module';
 import { FormsModule } from '@angular/forms';
+import { ShelterModule } from './shelter/shelterPage/shelter.module';
+import { ShelterListModule } from './shelter/shelterList/shelterList.module';
 
 @NgModule({
     imports: [

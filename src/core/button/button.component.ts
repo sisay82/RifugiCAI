@@ -1,5 +1,5 @@
 import { Component, Input, Injectable, OnInit,Optional } from '@angular/core';
-import {IButton} from '../../shared/interfaces';
+import {IButton} from '../../app/shared/types/interfaces';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 

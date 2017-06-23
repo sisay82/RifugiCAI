@@ -1,22 +1,24 @@
 <div>
     <div style="display: flex;flex-direction:row;align-items:center">
-        <div class="bc-h6 bc-service-title" style="flex:1">{{item.service_name}}</div>
-        <div class="bc-h6" style="flex:15">Categoria: {{item.service_category?(item.service_category):'---'}}</div>
+        <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{item.name}}</div>
+        <div class="bc-h6" style="flex:2">Categoria: {{item.category?(item.category):'---'}}</div>
     </div>
 
     <div style="display: flex;flex-direction:row">
-        <div *ngFor="let t of item.tags" style="display: flex;flex-direction:row;align-items:center;flex:1">
-            <div class="bc-body-strong" style="margin-right:4px">{{t.key}}:</div>
-            <div class="bc-body">{{t.value}}</div>
+        <div *ngFor="let option of options" style="display: flex;flex-direction:row;align-items:center;flex:1">
+            <div class="bc-body-strong" style="margin-right:4px">{{option.key}}:</div>
+            <div class="bc-body">{{option.value}}</div>
         </div>
     </div>
 
     <div *ngIf="item.description!=undefined" class="bc-h6">{{item.description}}</div>
 
     <div>
-        <div *ngFor="let option of item.options" class="bc-body" style="margin-bottom:4px;display: flex;flex-direction:row;align-items:center">
-            <i class="fa fa-circle" style="font-size:6px"></i>
-            <div style="margin-left:2px">{{option}}</div>
+        <div *ngFor="let check of checks" class="bc-body" style="margin-bottom:4px;display: flex;flex-direction:row;align-items:center">
+            <div style="display:flex;flex-direction:row;align-items:center" *ngIf="check.value=='true'">
+                <i class="fa fa-check-square-o" style="font-size:10px"></i>
+                <div style="margin-left:2px">{{check.key}}</div>
+            </div>
         </div>
     </div>
 

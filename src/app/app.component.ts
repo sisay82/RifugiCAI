@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import {IButton} from '../shared/interfaces';
-import {IMenu}from '../shared/interfaces';
+import {IButton} from './shared/types/interfaces';
+import {IMenu}from './shared/types/interfaces';
 
 @Component({ 
   moduleId: module.id,

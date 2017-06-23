@@ -1,7 +1,11 @@
 
 import {
     Component,
+    Directive,
+    Input,
     ViewEncapsulation,
+    ElementRef,
+    Renderer2,
     Injectable
 } from '@angular/core';
 
@@ -21,6 +25,31 @@ export class ItemSelectionService {
     }
 }
 
+/**
+ * Directive whose purpose is to add the bc- CSS styling to this selector.
+ */
+@Directive({
+    selector: 'a[bc-list-item], button[bc-list-item]',
+    host: {
+        '[attr.bc-nav-item]': 'true'
+    }
+})
+export class BcListNavItemStyler {
+}
+
+/**
+ * Directive whose purpose is to add the bc- CSS styling to this selector.
+ */
+@Directive({
+    selector: 'a[bc-list-item][bc-disable-item], button[bc-list-item][bc-disable-item]',
+    host: {
+        '[class.disabled]': '_DisableItem'
+    }
+})
+export class BcListItemDisableStyler {
+    @Input('bc-disable-item') _DisableItem: boolean;
+}
+
 @Component({
     moduleId: module.id,
     selector: 'bc-list-item, a[bc-list-item], button[bc-list-item]',
@@ -29,23 +58,25 @@ export class ItemSelectionService {
         '(click)': 'selected($event)',
         '[class.bc-list-item]': 'true',
         '[class.list-group-item]': 'true',
-        '[class.active]': 'active'
+        '[class.active]': 'isNavItem && active'
     },
     templateUrl: 'list-item.component.html',
-    // providers: [ItemSelectionService],
     encapsulation: ViewEncapsulation.None
 })
 export class BcListItem {
     readonly listItemId: number;
+    private isNavItem: boolean = false;
     public listItemUniqueName: string;
     public active: boolean = false;
 
-    constructor(private _SelectionService: ItemSelectionService) {
+    constructor(private _ElementRef: ElementRef, private _Renderer2: Renderer2, private _SelectionService: ItemSelectionService) {
         this.listItemId = _nextListItemId++;
     }
-
+    ngAfterViewInit() {
+        this.isNavItem = this._ElementRef.nativeElement.attributes["bc-nav-item"] !== undefined;
+    }
     selected(event: any): void {
         this._SelectionService.selectionChange(this.listItemUniqueName);
     }
-    
+
 }

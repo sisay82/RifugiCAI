@@ -1,6 +1,6 @@
 import {Component,Injectable,Input,OnInit} from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-import { IMenuElement } from '../../shared/interfaces';
+import { IMenuElement } from '../../app/shared/types/interfaces';
 import { Router,ActivatedRoute } from '@angular/router';
 
 @Injectable()

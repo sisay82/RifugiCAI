@@ -1,8 +1,8 @@
 import {
   Component,Input,OnInit
 } from '@angular/core';
-import { IService } from '../../../shared/interfaces'
-import {ShelterService} from '../../shelter/shelter.service'
+import { IService } from '../../../app/shared/types/interfaces'
+import {ShelterService} from '../../../app/shelter/shelter.service'
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -21,7 +21,9 @@ export class BcServ {
 
   ngOnInit(){
     this._route.parent.params.subscribe(params=>{
-      this.services=this.shelterService.getServByName(params['name']);
+      this.shelterService.getShelterSection(params['id'],"services").subscribe(shelter=>{
+        this.services=shelter.services;
+      });
     });
   }
 

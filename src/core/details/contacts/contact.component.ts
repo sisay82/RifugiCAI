@@ -2,8 +2,8 @@ import {
   Component,Input,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IContacts } from '../../../shared/interfaces'
-import {ShelterService} from '../../shelter/shelter.service'
+import { IContacts, IOpening } from '../../../app/shared/types/interfaces'
+import {ShelterService} from '../../../app/shelter/shelter.service'
 
 @Component({
   moduleId: module.id,
@@ -13,14 +13,19 @@ import {ShelterService} from '../../shelter/shelter.service'
   providers:[ShelterService]
 })
 export class BcContact {
-  data:IContacts;
-
+  contacts:IContacts={name:null,role:null};
+  openings:IOpening[]=[];
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
 
 
   ngOnInit(){
     this._route.parent.params.subscribe(params=>{
-      this.data=this.shelterService.getContactsByName(params['name']);
+     this.shelterService.getShelterSection(params['id'],"contacts").subscribe(shelter=>{
+      this.contacts=shelter.contacts;
+      this.shelterService.getShelterSection(params['id'],"openingTime").subscribe(shel=>{
+        this.openings=shel.openingTime;
+      });
+     });
     });
   }
 }
