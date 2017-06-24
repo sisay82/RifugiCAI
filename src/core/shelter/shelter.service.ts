@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
 import { IMarker, IShelter } from '../../shared/interfaces';
- import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
 
 @Injectable()
 export class ShelterService{
@@ -17,11 +18,11 @@ export class ShelterService{
     }
 
     getConutryMarkersNumber(country:String):Observable<any>{
-        return Observable.create().map(3);
+        return Observable.of(3);
     }
 
     getSheltersAroundPoint(point:any,range:number):Observable<any[]>{
-        return null;
+        return Observable.of([{name:"Name",location:{region:"Region",provinice:"Province"}}]);
     }
 
     /**

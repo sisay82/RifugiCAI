@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-
+import { Router } from '@angular/router';
 import { ShelterService } from '../shelter/shelter.service';
 import * as L from 'leaflet';
 import { Map } from 'leaflet';
@@ -16,7 +16,7 @@ export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
     @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
-    @Input() windowSize:{width:string,height:string}={width:'100%',height:'256px'};
+    @Input() windowSize:{width:string,height:string}={width:'100%',height:'100%'};
     @Input() initialCenter:Subject<L.LatLng|L.LatLngExpression>;
     @Input() initialZoom:number=6;
     @Input() openTooltipCenter:boolean=false;
@@ -55,7 +55,7 @@ export class BcMap implements OnInit{
     private map:Map;
     private divIcon;
 
-    constructor(public shelterService:ShelterService){
+    constructor(private router:Router,public shelterService:ShelterService){
         this.normalIcon=L.divIcon({
             className:'',
             iconSize:null,
@@ -103,7 +103,7 @@ export class BcMap implements OnInit{
         L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
             attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
         }).addTo(this.map);
-        this.map.on("zoom",this.zoomEvent,this);
+        this.map.on("zoom",this.moveEvent,this);
         this.map.on("click",function(e:L.MouseEvent){
             e.target.eachLayer(function(layer){layer.closeTooltip()})
         });
@@ -126,14 +126,22 @@ export class BcMap implements OnInit{
     markRegions(){
         for(let item of BcMap.latLngCountries){       
             this.shelterService.getConutryMarkersNumber(item.optional.id).subscribe(obj=>{
-                let regionIcon= L.divIcon({
-                    className:'',
-                    iconSize:null,
-                    iconAnchor:[this.regionIconSize/4,this.regionIconSize],
-                    popupAnchor:[0,0],
-                    html:'<style>.bc-marker:hover{color:#26a69a;} .bc-marker{font-size:'+this.regionIconSize+'px;} .bc-marker-content{font-family:Roboto,Helvetica Neue, sans-serif;} .bc-marker:hover .bc-marker-content{color:black;}</style><div style="position:relative" class="fa fa-map-marker bc-marker"><div class="bc-marker-content" style="position:absolute;z-index:-1;background:white;top:18%;text-align:center;left:20%;width:60%;height:35%;"><div style="font-size:20%;transform: translateY(35%);">'+obj.num+'</div></div></div>'
-                });
-                this.addMarker(L.marker(item.latLng,{icon:regionIcon}).on("click",this.openPopupRegion,this));
+                if(obj!=undefined&&obj.num!=undefined&&obj.num>0){
+                    let regionIcon= L.divIcon({
+                        className:'',
+                        iconSize:null,
+                        iconAnchor:[this.regionIconSize/4,this.regionIconSize],
+                        popupAnchor:[0,0],
+                        html:  `<style>.bc-marker:hover{color:#26a69a;} .bc-marker{color:white;font-size:`+this.regionIconSize+`px;} .bc-marker-content{font-family:Roboto,Helvetica Neue, sans-serif;} .bc-marker:hover .bc-marker-content{color:black;}</style>
+                                <div style="position:relative" class="fa fa-map-marker bc-marker">
+                                    <div class="bc-marker-content" style="position:absolute;z-index:-1;background:white;top:18%;text-align:center;left:20%;width:60%;height:35%;">
+                                        <div style="font-size:20%;transform: translateY(35%);">`+obj.num+`
+                                        </div>
+                                    </div>
+                                </div>`
+                    });
+                    this.addMarker(L.marker(item.latLng,{icon:regionIcon}).on("click",this.openPopupRegion,this));
+                }
             })
         }
     }
@@ -147,31 +155,6 @@ export class BcMap implements OnInit{
     }
 
     moveEvent(event:L.Event){
-        this.removeMarkers();
-        this.setMarkersAround(event.target.getCenter());
-    }
-
-    setMarkersAround(point:L.LatLng){
-        this.shelterService.getSheltersAroundPoint(point,1).subscribe(shelters=>{
-            for(let shelter of shelters){
-                let popup:string=`<div style="width:250px;height:150px;background:white;border:0.1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
-                                <div style="width:100%;height:50px;background:black;font-family:inherit;font-size:inherit;text-align:center;color:white;position:relative">
-                                <div style="top:20%;position:relative">`+shelter.name+`</div></div><div style="width:100%;height:100px;top:50px;"><div style="text-align:center;position:relative;top:20%">`
-                                +shelter.geoData.location.municipality+`, `+shelter.geoData.location.province+`</br>`+shelter.geoData.location.region+`</div></div></div>`;
-                let tooltip:L.Tooltip=L.tooltip({permanent:true,direction:"right",offset:[50,-50],interactive:true}).setContent(popup);
-                let mark=L.marker([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number],{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
-                    let isOpen=e.target.isTooltipOpen();
-                    this.map.eachLayer(function(layer){layer.closeTooltip()})               
-                    if(!isOpen)
-                        e.target.toggleTooltip();    
-                },this);
-                this.addMarker(mark);
-                this.map.closeTooltip(tooltip);
-            }
-        })
-    }
-
-    zoomEvent(event:L.Event){
         if(event.target.getZoom()>7){
             this.removeMarkers();
             this.setMarkersAround(event.target.getCenter());
@@ -179,6 +162,31 @@ export class BcMap implements OnInit{
             this.removeMarkers();
             this.markRegions();
         }
+    }
+
+    setMarkersAround(point:L.LatLng){
+        this.shelterService.getSheltersAroundPoint(point,1).subscribe(shelters=>{
+            for(let shelter of shelters){
+                if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){
+                    let popup:string=`<div style="width:250px;height:150px;background:white;border:0.1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
+                                    <div style="width:100%;height:50px;background:black;font-family:inherit;font-size:inherit;text-align:center;color:white;position:relative">
+                                    <div style="top:20%;position:relative">`+shelter.name+`</div></div><div style="width:100%;height:100px;top:50px;"><div style="text-align:center;position:relative;top:20%">`
+                                    +shelter.geoData.location.municipality||'---'+`, `+shelter.geoData.location.province||'---'+`</br>`+shelter.geoData.location.region||'---'+`</div></div></div>`;
+                    let tooltip:L.Tooltip=L.tooltip({permanent:true,direction:"right",offset:[50,-50],interactive:true}).setContent(popup);
+                    tooltip.on("click",function(event:Event){
+                        this.router.navigateByUrl("/shelter/"+shelter._id);
+                    });
+                    let mark=L.marker([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number],{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
+                        let isOpen=e.target.isTooltipOpen();
+                        this.map.eachLayer(function(layer){layer.closeTooltip()})               
+                        if(!isOpen)
+                            e.target.toggleTooltip();    
+                    },this);
+                    this.addMarker(mark);
+                    this.map.closeTooltip(tooltip);
+                }
+            }
+        })
     }
 
     clickEvent(event:MouseEvent){   

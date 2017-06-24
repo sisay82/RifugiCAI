@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BcPageNotFound } from "./pageNotFound/pageNotFound.component";
 
 const appRoutes: Routes = [
-    { path: '**', component: BcPageNotFound }
+   // { path: '**', component: BcPageNotFound }
     //   { path: 'shelter/:id', component: ShelterDetailComponent },
 ];
 
