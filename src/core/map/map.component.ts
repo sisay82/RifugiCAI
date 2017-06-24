@@ -20,6 +20,7 @@ export class BcMap implements OnInit{
     @Input() initialCenter:Subject<L.LatLng|L.LatLngExpression>;
     @Input() initialZoom:number=6;
     @Input() openTooltipCenter:boolean=false;
+    increaseRatio:number=1;
     private _toggle:boolean=false;
 
     public static defaultCenter:L.LatLng=L.latLng(41.9051,12.4879);
@@ -165,7 +166,7 @@ export class BcMap implements OnInit{
     }
 
     setMarkersAround(point:L.LatLng){
-        this.shelterService.getSheltersAroundPoint(point,1).subscribe(shelters=>{
+        this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom()).subscribe(shelters=>{
             for(let shelter of shelters){
                 if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){
                     let popup:string=`<div style="width:250px;height:150px;background:white;border:0.1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
@@ -179,7 +180,7 @@ export class BcMap implements OnInit{
                     let mark=L.marker([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number],{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
                         let isOpen=e.target.isTooltipOpen();
                         if(isOpen){
-                            this.router.navigateByUrl("/shelter/"+shelter._id);
+                            this.router.navigateByUrl("/shelter/"+shelter._id+"/(content:geographic)");
                         }
                         this.map.eachLayer(function(layer){layer.closeTooltip()})               
                         if(!isOpen)
