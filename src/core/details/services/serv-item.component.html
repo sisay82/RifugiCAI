@@ -1,13 +1,12 @@
 <div>
     <div style="display: flex;flex-direction:row;align-items:center">
         <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{item.name}}</div>
-        <div class="bc-h6" style="flex:2">Categoria: {{item.category?(item.category):'---'}}</div>
     </div>
 
     <div style="display: flex;flex-direction:row">
         <div *ngFor="let option of options" style="display: flex;flex-direction:row;align-items:center;flex:1">
-            <div class="bc-body-strong" style="margin-right:4px">{{option.key}}:</div>
-            <div class="bc-body">{{option.value}}</div>
+            <div class="bc-body-strong" style="margin-right:4px">{{option.key}}</div>
+            <div *ngIf="option.value!=undefined&&option.value!=''" class="bc-body">: {{option.value}}</div>
         </div>
     </div>
 

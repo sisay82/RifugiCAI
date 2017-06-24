@@ -20,6 +20,7 @@ export class BcMap implements OnInit{
     @Input() initialCenter:Subject<L.LatLng|L.LatLngExpression>;
     @Input() initialZoom:number=6;
     @Input() openTooltipCenter:boolean=false;
+    increaseRatio:number=10;
     private _toggle:boolean=false;
 
     public static defaultCenter:L.LatLng=L.latLng(41.9051,12.4879);
@@ -169,7 +170,8 @@ export class BcMap implements OnInit{
     }
 
     setMarkersAround(point:L.LatLng){
-        this.shelterService.getSheltersAroundPoint(point,1).subscribe(shelters=>{
+        console.log(1+this.increaseRatio/this.map.getZoom());
+        this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom()).subscribe(shelters=>{
             for(let shelter of shelters){
                 if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){
                     let popup:string=`<div style="width:250px;height:150px;background:white;border:0.1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
@@ -177,17 +179,15 @@ export class BcMap implements OnInit{
                                     <div style="top:20%;position:relative">`+shelter.name+`</div></div><div style="width:100%;height:100px;top:50px;"><div style="text-align:center;position:relative;top:20%">`
                                     +shelter.geoData.location.municipality||'---'+`, `+shelter.geoData.location.province||'---'+`</br>`+shelter.geoData.location.region||'---'+`</div></div></div>`;
                     let tooltip:L.Tooltip=L.tooltip({permanent:true,direction:"right",offset:[50,-50],interactive:true}).setContent(popup);
-                    
                     let mark=L.marker([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number],{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
                         let isOpen=e.target.isTooltipOpen();
                         if(isOpen){
-                            this.router.navigateByUrl("/shelter/"+shelter._id);
+                            this.router.navigateByUrl("/shelter/"+shelter._id+"/(content:geographic)");
                         }
                         this.map.eachLayer(function(layer){layer.closeTooltip()})               
                         if(!isOpen)
                             e.target.toggleTooltip();    
                     },this);
-
                     this.addMarker(mark);
                     this.map.closeTooltip(tooltip);
                 }
