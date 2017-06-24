@@ -1,7 +1,6 @@
 @import '../style/palette';
 
 .bc-list-button{
-    font-size: 20px;
     background-color: map_get($bc-grey-cai, 0);
     border-color: map_get($bc-grey-cai, 0);    
     color:map_get(map_get($bc-grey-cai,contrast),A400);

@@ -3,6 +3,10 @@
 
 @include bc-typography;
 
+.bc-return-icon{
+    padding-right: 10px;
+}
+
 .bc-return-icon:hover{
     color: map-get($bc-teal,400);
     cursor: pointer;

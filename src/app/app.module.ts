@@ -10,6 +10,7 @@ import { ShelterMapModule } from './shelter/shelterMap/shelterMap.module';
 import { FormsModule } from '@angular/forms';
 import { ShelterModule } from './shelter/shelterPage/shelter.module';
 import { ShelterListModule } from './shelter/shelterList/shelterList.module';
+import { BcMenuToggleModule } from '../core/menu/menu-toggle.module'
 
 @NgModule({
     imports: [
@@ -19,7 +20,8 @@ import { ShelterListModule } from './shelter/shelterList/shelterList.module';
         ShelterModule,
         ShelterMapModule,
         FormsModule,
-        AppRoutingModule
+        AppRoutingModule,
+        BcMenuToggleModule
     ],
     providers: [],
     declarations: [AppComponent],
