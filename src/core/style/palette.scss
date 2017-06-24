@@ -8,6 +8,7 @@ $black-6alpha: rgba(black, 0.06);
 $white-6alpha: rgba(white, 0.06);
 
 $black-4alpha: rgba(black, 0.04);
+$black-26alpha: rgba(black,0.26);
 $black-38alpha: rgba(black,  0.38);
 $black-54alpha: rgba(black,  0.54);
 
@@ -126,7 +127,7 @@ $bc-light-theme-background: (
   hover:      $black-4alpha,
   card:       $white,
   dialog:     $white,
-  disabled-button: $black-12alpha,
+  disabled-button: $white-30alpha,
   raised-button: $white,
   focused-button: $black-6alpha,
   selected-button: map_get($bc-grey-cai, 300),
@@ -142,8 +143,8 @@ $bc-dark-theme-background: (
   hover:      $white-4alpha,
   card:       map_get($bc-grey-cai, 700),
   dialog:     map_get($bc-grey-cai, 700),
-  disabled-button: $white-12alpha,
-  raised-button: map-get($bc-grey-cai, 700),
+  disabled-button: $black-26alpha,
+  raised-button: $black-54alpha,
   focused-button: $white-6alpha,
   selected-button: map_get($bc-grey-cai, 800),
   selected-disabled-button: map_get($bc-grey-cai, 700),

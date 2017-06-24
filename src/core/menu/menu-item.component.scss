@@ -1,0 +1,34 @@
+@import '../style/palette';
+@import '../style/constants';
+@import '../style/typography';
+
+$accent:map_get($bc-teal,400);
+$font-style:bc-typography-style(14px,14px,500);
+$menu-width:200px;
+
+.bc-menu-item-content{
+    white-space: nowrap;
+    text-align: left;
+    color:map_get(map_get($bc-grey-cai,contrast),A400);
+    padding:10px 16px;
+    line-height: 1;
+    cursor:pointer;
+    font-size:map_get($font-style,font-size);
+    line-height:map_get($font-style, line-height);
+    font-weight:map_get($font-style, font-weight);
+    font-family: $bc-font-family;
+    margin:0px 5px;
+}
+
+.bc-menu-item-select{
+    background-color: $accent;
+}
+
+.bc-menu-item-content:hover{
+    background-color: $accent;
+}
+
+.bc-menu-item-content:focus{
+    background-color: $accent;
+
+}

@@ -32,6 +32,15 @@ export interface IMenu{
     layers:[IMenuLayer];
 }
 
+export interface IMenuLayer{
+    layerName?:String,
+    elements:[IMenuElement]
+}
+
+export interface IMenu{
+    layers:[IMenuLayer];
+}
+
 export interface IRegistry{
     id:String,
     shelter_type?:Enums.Shelter_Type,
@@ -152,4 +161,13 @@ export interface IService{
 export interface IUser{
     name:String;
     value:String;
+}
+
+export interface IButton {
+    ref:string;
+    icon?:string;
+    dark_theme?:Boolean;
+    text?:string;
+    enabled?:Boolean;
+    action?:Function;
 }
