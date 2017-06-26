@@ -10,8 +10,6 @@
         </div>
     </div>
 
-    <div *ngIf="item.description!=undefined" class="bc-h6">{{item.description}}</div>
-
     <div>
         <div *ngFor="let check of checks" class="bc-body" style="margin-bottom:4px;display: flex;flex-direction:row;align-items:center">
             <div style="display:flex;flex-direction:row;align-items:center" *ngIf="check.value=='true'">
