@@ -21,7 +21,7 @@ export class BcShelterList {
     
     ngOnInit() {
         this.filterText = "";
-        this.shelterService.getSheltersPage(0,6).subscribe(shelters=>{
+        this.shelterService.getSheltersPage(0,30).subscribe(shelters=>{
             shelters.results.forEach(shelter=>{
                 this.shelterService.getShelterSection(shelter._id,"geoData").subscribe(shel=>{
                     if(shel.geoData!=undefined&&shel.geoData.location!=undefined){
