@@ -4,7 +4,7 @@
             <div (click)="return()" class="fa fa-arrow-left bc-return-icon" style="display: inline;margin-left:10px"></div>
             <ng-content></ng-content>
             <div style="display: inline;margin-left:10px">{{shelter?.name || 'Nome Rifugio'}}</div>,
-            <div style="display: inline;margin-left:5px">{{shelter?.collective || 'Comune Rifugio'}}</div>
+            <div style="display: inline;margin-left:5px">{{shelter?(shelter.geoData?(shelter.geoData.location?(shelter.geoData.location.municipality||'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'}}</div>
         </div>
     </div>
     <div class="bc-mask-line" style="margin-left:10px">
