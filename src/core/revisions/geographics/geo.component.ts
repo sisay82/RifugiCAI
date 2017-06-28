@@ -2,7 +2,7 @@ import {
   Component,Input,OnInit,Pipe, PipeTransform
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IGeographic, IButton } from '../../../app/shared/types/interfaces'
+import { IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, Validators } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 
@@ -25,32 +25,46 @@ export class KeysPipe implements PipeTransform {
   providers:[ShelterService]
 })
 export class BcGeoRevision {
-    clickButton:IButton={text:"Submit",action:this.click};
+    clickButton:IButton={text:"Invia.",action:this.click,ref:this};
+    _id:String;
+    name:String;
     geoForm: FormGroup; 
     data:IGeographic;
     constructor(private shelterService:ShelterService,private _route:ActivatedRoute,fb: FormBuilder) { 
         this.geoForm = fb.group({
-            region:["",Validators.required],
-            province:[],
-            municipality:[],
-            locality:[],
-            ownerRegion:[],
-            authorityJurisdiction:[],
-            altitude:[],
-            latitude:[],
-            longitude:[],
-            massif:[],
-            valley:[]
+            region:["",[Validators.required,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]],//required and string
+            province:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],//string with some character
+            municipality:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
+            locality:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
+            ownerRegion:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
+            authorityJurisdiction:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
+            altitude:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],//number
+            latitude:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],
+            longitude:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],
+            massif:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
+            valley:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]
         }); 
     } 
 
-    click(){
-        console.log("A");
+    click(ref:any){
+        let shelter:IShelter={_id:ref._id,name:ref.name,geoData:ref.data};
+        for(let prop in ref.data.location){
+            if(ref.data.location.hasOwnProperty(prop)){
+                if(ref.geoForm.contains(prop)&&ref.geoForm.controls[prop].dirty){
+                    shelter.geoData.location[prop]=ref.geoForm.controls[prop].value;
+                }
+            }
+        }
+        ref.shelterService.updateShelter(shelter).subscribe((returnVal)=>{
+            location.reload();
+        });
     }
 
     ngOnInit(){
         this._route.parent.params.subscribe(params=>{
+            this._id=params["id"];
             this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
+                this.name=shelter.name;
                 this.data=shelter.geoData;
 
                 if(this.data!=undefined&&this.data.location!=undefined){

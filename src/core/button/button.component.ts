@@ -41,7 +41,7 @@ export class BcButton{
         if(this.button.action==undefined){
             this.router.navigateByUrl(this.button.ref);
         }else{
-            this.button.action();
+            this.button.action(this.button.ref);
         }
     }
 
