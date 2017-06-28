@@ -13,7 +13,7 @@ import { Enums  } from '../shared/types/enums';
 @Injectable()
 export class ShelterService {
 
-    sheletersBaseUrl: string = '/api/sheleters';
+    sheletersBaseUrl: string = 'http://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 

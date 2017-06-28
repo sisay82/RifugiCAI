@@ -1,9 +1,12 @@
 @import './list-item.component';
+@import '../icon/icon.component';
+@import '../avatar/avatar.component';
 
 // Normal list variables
 $bc-list-top-padding: 8px;
 $bc-list-font-size: 16px;
 $bc-list-base-height: 48px;
+$bc-list-avatar-height: 56px;
 $bc-list-border-size: 1px;
 $bc-list-no-border: 0px;
 // // $bc-list-secondary-font: 14px;
@@ -11,7 +14,7 @@ $bc-list-no-border: 0px;
 // // // height for single-line lists
 
 // // // height for single-line lists with avatars
-// // $bc-list-avatar-height: 56px;
+// // 
 // // // spec requires two- and three-line lists be taller
 // // $bc-list-two-line-height: 72px;
 // // $bc-list-three-line-height: 88px;
@@ -22,8 +25,7 @@ $bc-list-no-border: 0px;
 $bc-dense-top-padding: 4px;
 $bc-dense-font-size: 13px;
 $bc-dense-base-height: 40px;
-
-// // $bc-dense-avatar-height: 48px;
+$bc-dense-avatar-height: 48px;
 // // $bc-dense-two-line-height: 60px;
 // // $bc-dense-three-line-height: 76px;
 // // $bc-dense-list-icon-size: 20px;
@@ -40,7 +42,9 @@ $bc-dense-base-height: 40px;
 
   @include bc-list-item-base(
     $bc-list-font-size,
-    $bc-list-base-height
+    $bc-list-base-height,
+    $bc-list-avatar-height,
+    $bc-icon-size
   );
   
   &[no-border], &[data-no-border] {
@@ -49,7 +53,9 @@ $bc-dense-base-height: 40px;
   &[dense], &[data-dense] {
     @include bc-list-item-base(
       $bc-dense-font-size,
-      $bc-dense-base-height
+      $bc-dense-base-height,
+      $bc-list-avatar-height,
+      $bc-dense-icon-size
     );
   }
 }

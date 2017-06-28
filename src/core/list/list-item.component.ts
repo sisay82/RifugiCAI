@@ -72,9 +72,11 @@ export class BcListItem {
     constructor(private _ElementRef: ElementRef, private _Renderer2: Renderer2, private _SelectionService: ItemSelectionService) {
         this.listItemId = _nextListItemId++;
     }
+
     ngAfterViewInit() {
         this.isNavItem = this._ElementRef.nativeElement.attributes["bc-nav-item"] !== undefined;
     }
+
     selected(event: any): void {
         this._SelectionService.selectionChange(this.listItemUniqueName);
     }

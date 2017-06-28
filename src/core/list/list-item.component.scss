@@ -2,7 +2,7 @@
 @import '../style/theme';
 
 $bc-list-side-padding: 16px;
-
+$secondary-font-size:14px;
 @mixin bc-list-item-disable($accent, $background, $foreground){
     &.disabled {
         color: bc-color($foreground, 'text');
@@ -46,7 +46,7 @@ $bc-list-side-padding: 16px;
     }
 }
 
-@mixin bc-list-item-base($font-size, $base-height) {
+@mixin bc-list-item-base($font-size, $base-height, $icon-size, $avatar-height) {
 
     & a.bc-list-item, & button.bc-list-item {
         text-decoration: none;
@@ -74,6 +74,7 @@ $bc-list-side-padding: 16px;
             padding: 0 $bc-list-side-padding;
             box-sizing: border-box;
             position: relative;
+            overflow: hidden;
         }
 
 
@@ -104,11 +105,18 @@ $bc-list-side-padding: 16px;
                 font-size: inherit;
             }
         }
-        
-        //   &.bc-list-item-avatar .bc-list-item-content {
-        //     height: $avatar-height;
-        //   }
 
+        .bc-icon {
+                height: $bc-icon-size;
+                width: $bc-icon-size;
+                font-size: $bc-icon-size;
+        }
+
+        .bc-list-item-avatar .bc-list-item-content {
+            height:  $avatar-height;
+        }
+        
+        @include bc-line-base($secondary-font-size);
         //   &.bc-2-line .bc-list-item-content {
         //     height: $two-line-height;
         //   }
@@ -133,4 +141,25 @@ $bc-list-side-padding: 16px;
             border-width: $border-size;
         }
     }
+}
+
+@mixin truncate-line() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Mixin to provide all mat-line styles, changing secondary font size based on whether the list
+// is in dense mode.
+@mixin bc-line-base($secondary-font-size) {
+  .bc-line {
+    @include truncate-line();
+    display: block;
+    box-sizing: border-box;
+
+    // all lines but the top line should have smaller text
+    &:nth-child(n+2) {
+      font-size: $secondary-font-size;
+    }
+  }
 }
