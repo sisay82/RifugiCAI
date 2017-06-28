@@ -1,5 +1,5 @@
 export interface IButton {
-    ref?:string;
+    ref?:any;
     icon?:string;
     dark_theme?:Boolean;
     text?:string;
