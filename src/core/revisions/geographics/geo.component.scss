@@ -10,14 +10,3 @@
 .ng-invalid:not(form)  {
   border-left: 5px solid #a94442; /* red */
 }
-
-.bc-control{
-  &:disabled{
-    color:red;
-  };
-
-  &:enabled{
-    color:green;
-  };
-  
-}

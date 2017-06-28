@@ -2,7 +2,7 @@ import {
   Component,Input,OnInit,Pipe, PipeTransform
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IGeographic } from '../../../app/shared/types/interfaces'
+import { IGeographic, IButton } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, Validators } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 
@@ -25,6 +25,7 @@ export class KeysPipe implements PipeTransform {
   providers:[ShelterService]
 })
 export class BcGeoRevision {
+    clickButton:IButton={text:"Submit",action:this.click};
     geoForm: FormGroup; 
     data:IGeographic;
     constructor(private shelterService:ShelterService,private _route:ActivatedRoute,fb: FormBuilder) { 
@@ -44,7 +45,7 @@ export class BcGeoRevision {
     } 
 
     click(){
-
+        console.log("A");
     }
 
     ngOnInit(){

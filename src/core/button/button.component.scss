@@ -1,0 +1,39 @@
+@import '../style/palette';
+
+$button_margin: 1px 1px;
+
+.bc-button{
+    border: none;
+    margin: $button_margin;
+}
+
+.bc-selected-button-light{
+    color:map-get($bc-teal,400);
+    border-width: 1px;
+    border-color: map-get($bc-teal,400);
+    border-style:solid;
+}
+
+.dark-theme-button:enabled{
+    background:map-get($bc-light-theme-background,raised-button);
+}
+
+.dark-theme-button:disabled{
+    background:map-get($bc-light-theme-background,disabled-button);
+}
+
+.light-theme-button:enabled{
+    background:map-get($bc-light-theme-background,raised-button);
+}
+
+.light-theme-button:disabled{
+    background:map-get($bc-light-theme-background,disabled-button);
+}
+
+.bc-button:hover:enabled{
+ //   color:map-get($bc-light-theme-background,focused-button);
+    background:map-get($bc-light-theme-background,background);
+    border-width: 1px;
+    border-color: map-get($bc-light-theme-background,selected-button);
+    border-style:solid;
+}

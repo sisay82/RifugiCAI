@@ -7,6 +7,7 @@
     <button class="bc-control" [disabled]="geoForm.controls['region'].untouched" (click)="click()" type="submit">Submit</button>
     
 -->
+    <bc-button [enabled]="geoForm.valid" [button]="clickButton"></bc-button>
 
     <div *ngFor="let prop of geoForm.controls | keys">
         <div class="bc-body">{{prop.key | titlecase}}</div>
@@ -16,6 +17,8 @@
         <br>
     </div>
 
-
+    <bc-button [enabled]="geoForm.valid" [button]="clickButton"></bc-button>
+    <!--
     <button class="bc-control" (click)="click()">Submit</button>
+    -->
 </form>
