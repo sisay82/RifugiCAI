@@ -1,0 +1,21 @@
+<form style="position:relative;width:20%" [formGroup]="geoForm">
+<!--
+
+    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+     required class="form-control"  formControlName="region">
+    <div [hidden]="geoForm.controls['region'].valid" class="alert alert-danger">Required</div>
+    <button class="bc-control" [disabled]="geoForm.controls['region'].untouched" (click)="click()" type="submit">Submit</button>
+    
+-->
+
+    <div *ngFor="let prop of geoForm.controls | keys">
+        <div class="bc-body">{{prop.key | titlecase}}</div>
+        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+            [required]="prop.key=='region'" class="form-control"  [formControlName]="prop.key">
+        <div [hidden]="geoForm.controls[prop.key].valid" class="alert alert-danger">Required</div>
+        <br>
+    </div>
+
+
+    <button class="bc-control" (click)="click()">Submit</button>
+</form>

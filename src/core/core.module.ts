@@ -6,6 +6,7 @@ import { BcDividerModule } from './divider/divider.module';
 import { BcNavbarModule } from './navbar/navbar.module';
 import { BcListModule } from './list/list.module';
 import { BcDetailsModule } from './details/details.module';
+import { BcRevisionsModule } from './revisions/revisions.module';
 import { BcMapModule } from './map/map.module';
 import { BcMaskModule } from './fixed_mask/mask.module';
 
@@ -24,7 +25,8 @@ const COMPONENTS_MODULES = [
     BcListModule,
     BcDetailsModule,
     BcMapModule,
-    BcMaskModule
+    BcMaskModule,
+    BcRevisionsModule
 ];
 const PIPES_MODULES = [
     CapitalizePipe,
