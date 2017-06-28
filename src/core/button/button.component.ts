@@ -23,6 +23,7 @@ export class BcButtonService{
 })
 export class BcButton{
     @Input() button:IButton;
+    @Input() enabled:boolean=true;
     local_style:string;
     private _selected:Boolean;
 
@@ -65,8 +66,8 @@ export class BcButton{
     getClass(){
         if(this.button!=undefined){
             let ret_class="btn btn-default bc-button";
-            if(this.button.enabled===undefined){
-                this.button.enabled=true;
+            if(this.enabled===undefined){
+                this.enabled=true;
             }
             if(this.button.dark_theme===undefined){
                 this.button.dark_theme=false;
