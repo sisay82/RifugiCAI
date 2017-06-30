@@ -1,74 +1,75 @@
 <div style="display:block;margin-left:4px;background:white">
     <div class="bc-detail-title bc-h6">Proprietà:</div>
     <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Nome e Cognome:</div>
             <div class="bc-body">{{owner?(owner.name || '----'):'----'}} {{owner?(owner.surname):''}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">P.IVA:</div>
             <div class="bc-body">{{owner?(owner.taxCode || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Tipo:</div>
             <div class="bc-body">{{owner?(owner.type || '----'):'----'}}</div>
         </div>
-        <div *ngIf="owner!=undefined&&owner.webSite!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Sito Web</div>
+        <div *ngIf="owner!=undefined&&owner.webSite!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
+            <div class="bc-body-strong" style="margin-right:4px">Sito Web:</div>
+            <div (click)="gotoSite(owner.webSite)" class="bc-body bc-link">{{owner?(owner.webSite || '----'):'----'}}</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Telefono Fisso:</div>
             <div class="bc-body">{{owner?(owner.fixedPhone || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Cellulare:</div>
             <div class="bc-body">{{owner?(owner.mobilePhone || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">PEC:</div>
             <div class="bc-body">{{owner?(owner.pec || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Mail:</div>
-            <div class="bc-body">{{owner?(owner.webSite || '----'):'----'}}</div>
+            <div class="bc-body">{{owner?(owner.email || '----'):'----'}}</div>
         </div>
     </div>
     <bc-divider></bc-divider>
     <div class="bc-detail-title bc-h6">Gestione:</div>
     <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Canone Affitto:</div>
             <div class="bc-body">{{data?(data.rent || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Periodo:</div>
             <div class="bc-body">{{data?(data.period || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Data di Inizio:</div>
             <div class="bc-body">{{data?((data.contract_start_date | date:"dd/MM/yy") || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Data di Fine:</div>
             <div class="bc-body">{{data?((data.contract_end_date | date:"dd/MM/yy") || '----'):'----'}}</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Durata Contratto:</div>
             <div class="bc-body">{{data?(data.contract_duration || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Canone Contratto:</div>
             <div class="bc-body">{{data?(data.contract_fee || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Valuta:</div>
             <div class="bc-body">{{data?(data.valuta || '----'):'----'}}</div>
         </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Tipo di Affitto:</div>
             <div class="bc-body">{{data?(data.rentType || '----'):'----'}}</div>
         </div>
@@ -82,38 +83,39 @@
     <div class="bc-detail-title bc-h6">Gestori:</div>
     <div *ngFor="let manager of managers">
         <div style="display: flex;flex-direction:row">
-            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
                 <div class="bc-body-strong" style="margin-right:4px">Nome e Cognome:</div>
                 <div class="bc-body">{{manager?(manager.name || '----'):'----'}} {{manager?(manager.surname):''}}</div>
             </div>
-            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
                 <div class="bc-body-strong" style="margin-right:4px">P.IVA:</div>
                 <div class="bc-body">{{manager?(manager.taxCode || '----'):'----'}}</div>
             </div>
-            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
                 <div class="bc-body-strong" style="margin-right:4px">Tipo:</div>
                 <div class="bc-body">{{manager?(manager.type || '----'):'----'}}</div>
             </div>
-            <div *ngIf="manager!=undefined&&manager.webSite!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-                <div class="bc-body-strong" style="margin-right:4px">Sito Web</div>
+            <div *ngIf="manager!=undefined&&manager.webSite!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
+                <div class="bc-body-strong" style="margin-right:4px">Sito Web:</div>
+                <div (click)="gotoSite(manager.webSite)" class="bc-body bc-link">{{manager?(manager.webSite || '----'):'----'}}</div>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
-            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
                 <div class="bc-body-strong" style="margin-right:4px">Telefono Fisso:</div>
                 <div class="bc-body">{{manager?(manager.fixedPhone || '----'):'----'}}</div>
             </div>
-            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
                 <div class="bc-body-strong" style="margin-right:4px">Cellulare:</div>
                 <div class="bc-body">{{manager?(manager.mobilePhone || '----'):'----'}}</div>
             </div>
-            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
                 <div class="bc-body-strong" style="margin-right:4px">PEC:</div>
                 <div class="bc-body">{{manager?(manager.pec || '----'):'----'}}</div>
             </div>
-            <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
                 <div class="bc-body-strong" style="margin-right:4px">Mail:</div>
-                <div class="bc-body">{{manager?(manager.webSite || '----'):'----'}}</div>
+                <div class="bc-body">{{manager?(manager.email || '----'):'----'}}</div>
             </div>
         </div>
         <bc-divider></bc-divider>

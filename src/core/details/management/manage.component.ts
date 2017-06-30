@@ -36,6 +36,10 @@ export class BcManage {
     });
   }
 
+  gotoSite(webSite:string){
+    location.replace(webSite);
+  }
+
   getValue(){
     return Object.keys(Enums.Custody_Type).find(k=>Enums.Custody_Type[k]===this.data.rentType)
   }

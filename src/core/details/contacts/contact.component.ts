@@ -28,4 +28,8 @@ export class BcContact {
      });
     });
   }
+
+  gotoSite(webSite:string){
+    location.replace(webSite);
+  }
 }
