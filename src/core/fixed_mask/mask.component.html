@@ -1,7 +1,14 @@
 <div class="bc-mask-container">
     <div class="bc-mask-line">
-        <div class="bc-h6">
-            <div (click)="return()" class="fa fa-arrow-left bc-return-icon" style="display: inline;margin-left:10px"></div><div style="display: inline;margin-left:10px">{{shelter?(shelter.name): 'Nome Rifugio'}}</div>,<div style="display: inline;margin-left:5px">{{shelter?(shelter.geoData?(shelter.geoData.location?(shelter.geoData.location.municipality || 'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'}}</div>
+        <div class="bc-h6" style="display:flex;flex-direction:row;align-items:center;white-space:center;width:100%">
+            <div (click)="return()" class="fa fa-arrow-left bc-mask-icon" style="display: inline;margin-left:10px"></div>
+            <ng-content></ng-content>
+            <div style="display: inline;margin-left:10px">{{shelter?.name || 'Nome Rifugio'}}</div>,
+            <div style="display: inline;margin-left:5px">{{shelter?(shelter.geoData?(shelter.geoData.location?(shelter.geoData.location.municipality||'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'}}</div>
+            <div style="display: inline;margin-left:auto;margin-right:1%">
+                <div *ngIf="isRevisionig()" (click)="save()" class="fa fa-floppy-o bc-mask-icon" style="display: inline"></div>
+                <div (click)="revision()" class="fa fa-edit bc-mask-icon" style="display: inline"></div>
+            </div>
         </div>
     </div>
     <div class="bc-mask-line" style="margin-left:10px">
@@ -17,12 +24,13 @@
             <div class="bc-mask-title  bc-body-strong">Sezione:</div>
             <div class="bc-mask-content bc-body">{{shelter?.branch || '----'}}</div>
         </div>
+
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Proprietà:</div>
             <div class="bc-mask-content bc-body">{{shelter?.owner || '----'}}</div>
         </div>
     </div>
-    <div class="bc-mask-line" style="margin-left:32px">
+    <div class="bc-mask-line" style="margin-left:15px">
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Categoria:</div>
             <div class="bc-mask-content bc-body">{{shelter?.category || '----'}}</div>

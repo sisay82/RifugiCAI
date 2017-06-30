@@ -15,7 +15,7 @@ import { ShelterListModule } from './shelter/shelterList/shelterList.module';
         CoreModule,
         ShelterListModule,
         ShelterModule,
-        AppRoutingModule,
+        AppRoutingModule
     ],
     providers: [],
     declarations: [AppComponent],

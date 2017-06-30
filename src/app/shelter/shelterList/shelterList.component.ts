@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ShelterService} from '../shelter.service'
 import {IShelter}from '../../shared/types/interfaces';
 
+
 @Component({
     moduleId: module.id,
     selector: 'bc-shelters-List',

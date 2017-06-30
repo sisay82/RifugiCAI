@@ -3,13 +3,18 @@
 
 @include bc-typography;
 
-.bc-return-icon:hover{
+.bc-mask-icon{
+    font-size:20px;
+    padding-right: 10px;
+}
+
+.bc-mask-icon:hover{
     color: map-get($bc-teal,400);
     cursor: pointer;
 }
 
 .bc-mask-container{
-    height:128px;
+    height:150px;
     background-color: map-get($bc-light-theme-background,background);
     font-style: Roboto, Helvetica Neue, sans-serif;
     position:relative;
