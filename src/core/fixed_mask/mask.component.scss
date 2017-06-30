@@ -3,12 +3,12 @@
 
 @include bc-typography;
 
-.bc-return-icon{
+.bc-mask-icon{
     font-size:20px;
     padding-right: 10px;
 }
 
-.bc-return-icon:hover{
+.bc-mask-icon:hover{
     color: map-get($bc-teal,400);
     cursor: pointer;
 }
