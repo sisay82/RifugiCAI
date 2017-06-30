@@ -1,4 +1,4 @@
-// import { Injectable } from '@angular/core';
+ import { Injectable } from '@angular/core';
 // import { Http, Response } from '@angular/http';
 
 // //Grab everything with import 'rxjs/Rx';
@@ -10,8 +10,8 @@
 
 // // import { IShelter } from '../../shared/interfaces';
 
-// @Injectable()
-// export class ShelterService {
+ @Injectable()
+ export class ShelterService {
   
 //     sheletersBaseUrl: string = '/api/sheleters';
 
@@ -90,4 +90,4 @@
 //         });
 //     }
 
-// }
+ }
