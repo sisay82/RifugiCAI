@@ -6,7 +6,6 @@ import 'rxjs/add/observable/throw';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-
 import { IPagedResults, IShelter, IMarker } from '../shared/types/interfaces';
 
 @Injectable()
@@ -78,6 +77,12 @@ export class ShelterService {
 
     insertShelter(shelter: IShelter): Observable<IShelter> {
         return this.http.post(this.sheletersBaseUrl, shelter)
+            .map((res: Response) => res.json())
+            .catch(this.handleError);
+    }
+
+    confirmShelter(shelterId:String): Observable<boolean>{
+        return this.http.put(this.sheletersBaseUrl + '/confirm',shelterId)
             .map((res: Response) => res.json())
             .catch(this.handleError);
     }

@@ -3,18 +3,20 @@ import {
 } from '@angular/core';
 import { IShelter } from '../../app/shared/types/interfaces';
 import {Router,ActivatedRoute} from '@angular/router';
+import {ShelterService} from '../../app/shelter/shelter.service'
 
 @Component({
     moduleId: module.id,
     selector: 'bc-mask',
     templateUrl: 'mask.component.html',
     styleUrls: ['mask.component.scss'],
+    providers:[ShelterService]
 })
 export class BcMask {
   @Input() shelter:IShelter;
   @Input() ref:string;
 
-  constructor(private router:Router,private _route:ActivatedRoute){}
+  constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService){}
 
   isRevisionig(){
     let route=this._route;
@@ -22,16 +24,30 @@ export class BcMask {
       route=route.children[0];
     }
     return (route.outlet.toLowerCase().indexOf("revision")>-1);
-    //return true;
   }
 
   save(){
-    
+    this.shelterService.confirmShelter(this.shelter._id).subscribe(value=>{
+      if(!value){
+       console.log("Error in Confirm"); 
+      }else{
+        let route=this._route;
+        while(route.children.length>0){
+          route=route.children[0];
+        }
+        let path=route.snapshot.url[0].path;
+        this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+path+")")
+      }
+    });
   }
 
   revision(){
-    console.log(this._route.root);
-    //this.router.navigate([{outlets:({'content': ['geographic']})}],{relativeTo:this._route.root})
+    let route=this._route;
+    while(route.children.length>0){
+      route=route.children[0];
+    }
+    let path=route.snapshot.url[0].path;
+    this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(revision:"+path+")")
   }
 
   return(){
