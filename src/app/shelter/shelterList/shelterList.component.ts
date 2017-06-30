@@ -10,8 +10,8 @@ import {IShelter,IButton}from '../../shared/types/interfaces';
     providers:[ShelterService]
 })
 export class BcShelterList {
-    list_view_button:IButton={ref:'list',icon:'fa fa-th-list',text:'Lista',enabled:true,dark_theme:false};
-    map_view_button:IButton={ref:'map',icon:'fa fa-map-marker',text:'Mappa',enabled:true,dark_theme:false};
+    list_view_button:IButton={ref:'list',icon:'fa fa-th-list',text:'Lista',dark_theme:false};
+    map_view_button:IButton={ref:'map',icon:'fa fa-map-marker',text:'Mappa',dark_theme:false};
 
     filterText: string = "";
     filteredShelter: any[] = [];
