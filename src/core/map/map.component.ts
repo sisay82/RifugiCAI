@@ -170,7 +170,6 @@ export class BcMap implements OnInit{
     }
 
     setMarkersAround(point:L.LatLng){
-        console.log(1+this.increaseRatio/this.map.getZoom());
         this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom()).subscribe(shelters=>{
             for(let shelter of shelters){
                 if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){

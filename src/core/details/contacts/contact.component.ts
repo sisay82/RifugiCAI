@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 import { IContacts, IOpening } from '../../../app/shared/types/interfaces'
 import {ShelterService} from '../../../app/shelter/shelter.service'
 
@@ -27,5 +27,9 @@ export class BcContact {
       });
      });
     });
+  }
+
+  gotoSite(webSite:string){
+    location.replace(webSite);
   }
 }

@@ -14,15 +14,31 @@ import { Enums } from '../../../app/shared/types/enums'
   providers:[ShelterService]
 })
 export class BcManage {
-  data:IManagement={subject:[{}]};
+  data:IManagement={rent:null,period:null,subject:[{name:null}]};
+  owner:ISubject;
+  managers:ISubject[]=[];
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
 
   ngOnInit(){
     this._route.parent.params.subscribe(params=>{
       this.shelterService.getShelterSection(params['id'],"management").subscribe(shelter=>{
         this.data=shelter.management;
+        if(this.data!=undefined&&this.data.subject!=undefined){
+          this.data.subject.forEach(subject=>{
+            if(subject.type!=undefined&&subject.type!=null&&subject.type.toLowerCase().indexOf("proprietario")>-1){
+              this.owner=subject;
+            }else{
+              this.managers.push(subject);
+            }
+
+          })
+        }
       })
     });
+  }
+
+  gotoSite(webSite:string){
+    location.replace(webSite);
   }
 
   getValue(){
