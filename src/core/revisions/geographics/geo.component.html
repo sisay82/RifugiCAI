@@ -1,13 +1,14 @@
 <form style="position:relative" [formGroup]="geoForm">
     <bc-button [enabled]="geoForm.valid" [button]="clickButton"></bc-button>
-    <div [hidden]="!displayError" class="alert alert-danger">Error Occurred</div>
+    <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
+    <div [hidden]="!displaySave" class="alert alert-success">Saved!</div>
     <br>
     <div style="display:flex;flex-direction:row">
         <div style="position:relative;width:20%">
             <div class="bc-body">Regione</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 required class="form-control"  formControlName="region">
-            <div [hidden]="geoForm.controls['region'].valid" class="alert alert-danger">Invalid</div>
+            <div [hidden]="geoForm.controls['region'].valid" class="alert alert-danger" style="color:green">Invalid</div>
             <br>
 
             <div class="bc-body">Provincia</div>

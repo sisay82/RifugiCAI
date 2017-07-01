@@ -82,14 +82,20 @@ export class ShelterService {
     }
 
     confirmShelter(shelterId:String): Observable<boolean>{
-        return this.http.put(this.sheletersBaseUrl + '/confirm',shelterId)
+        return this.http.put(this.sheletersBaseUrl + '/confirm/'+shelterId,null)
+            .map((res: Response) => res.json())
+            .catch(this.handleError);
+    }
+
+    preventiveUpdateShelter(shelter: IShelter,section:string): Observable<boolean> {
+        return this.http.put(this.sheletersBaseUrl + '/confirm/' + section + '/' + shelter._id, shelter)
             .map((res: Response) => res.json())
             .catch(this.handleError);
     }
 
     updateShelter(shelter: IShelter): Observable<boolean> {
         return this.http.put(this.sheletersBaseUrl + '/' + shelter._id, shelter)
-            .map((res: Response) => res.json())
+            .map((res: Response) => res.json().status)
             .catch(this.handleError);
     }
 

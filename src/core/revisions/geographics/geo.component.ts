@@ -31,6 +31,7 @@ export class BcGeoRevision {
     geoForm: FormGroup; 
     data:IGeographic;
     invalid:Boolean=false;
+    displaySave:Boolean=false;
     displayError:boolean=false;
     constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder) { 
         this.geoForm = fb.group({
@@ -69,7 +70,6 @@ export class BcGeoRevision {
             for(let c of control.controls){
                 if(c.value.key==this.geoForm.controls["newKey"].value){
                     this.invalid=true;
-                    console.log(this.invalid);
                     return;
                 }
             }
@@ -98,11 +98,15 @@ export class BcGeoRevision {
             tags.push({key:c.value.key,value:c.value.value});
         }
         shelter.geoData.tags=tags;
-        ref.shelterService.updateShelter(shelter).subscribe((returnVal)=>{
+        ref.shelterService.preventiveUpdateShelter(shelter,"geoData").subscribe((returnVal)=>{
             if(returnVal){
-                location.reload();
+                ref.displaySave=true;
+                ref.displayError=false;
+                //location.reload();
             }else{
+                console.log(returnVal);
                 ref.displayError=true;
+                ref.displaySave=false;
             }
             
         });
