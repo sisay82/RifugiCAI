@@ -11,7 +11,7 @@ import {
   CollectionChangeRecord,
 } from '@angular/core';
 
-import { BcListItem, ItemSelectionService } from './list-item.component';
+import { BcListItem, ItemSelectionService } from './listItem/list-item.component';
 
 import { Subscription } from 'rxjs/Subscription';
 

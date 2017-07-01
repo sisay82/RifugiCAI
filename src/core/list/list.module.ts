@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 
 import { BcList, BcListStyler } from './list.component';
 
-import { BcListItemModule } from './list-item.module';
+import { BcListItemModule } from './listItem/list-item.module';
 
 @NgModule({
     imports: [BcListItemModule],

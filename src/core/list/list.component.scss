@@ -1,13 +1,11 @@
-@import './list-item.component';
+@import './listItem/list-item.component';
 @import '../icon/icon.component';
 @import '../avatar/avatar.component';
 
 // Normal list variables
-$bc-list-top-padding: 8px;
 $bc-list-font-size: 16px;
 $bc-list-base-height: 48px;
 $bc-list-avatar-height: 56px;
-$bc-list-border-size: 1px;
 $bc-list-no-border: 0px;
 // // $bc-list-secondary-font: 14px;
 
@@ -22,7 +20,6 @@ $bc-list-no-border: 0px;
 // // $bc-list-icon-size: 24px;
 
 // Dense list variables
-$bc-dense-top-padding: 4px;
 $bc-dense-font-size: 13px;
 $bc-dense-base-height: 40px;
 $bc-dense-avatar-height: 48px;
@@ -37,7 +34,6 @@ $bc-dense-avatar-height: 48px;
 }
 
 .bc-list {
-  padding-top: $bc-list-top-padding;
   display: block;
 
   @include bc-list-item-base(
