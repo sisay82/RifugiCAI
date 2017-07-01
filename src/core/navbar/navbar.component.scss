@@ -76,8 +76,8 @@ $bc-navbar-row-padding: 4px !default;
 
         padding: 0 $bc-navbar-row-padding;
 
-        display: flex;
-        flex-direction: row;
+        @include flex-box;
+        @include flex-flow("row");
         align-items: center;
 
         white-space: nowrap;

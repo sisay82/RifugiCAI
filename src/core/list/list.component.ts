@@ -1,8 +1,8 @@
 
 import {
   Component,
-  ViewEncapsulation,
   Directive,
+  ViewEncapsulation,
   ContentChildren,
   AfterContentInit,
   QueryList,

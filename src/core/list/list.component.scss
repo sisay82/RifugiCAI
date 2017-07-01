@@ -1,12 +1,17 @@
+@import '../style/vendor-prefixes';
+@import '../style/typography';
 @import './listItem/list-item.component';
+@import './listHeader/list-header.directive';
 @import '../icon/icon.component';
-@import '../avatar/avatar.component';
+@import '../avatar/avatar.directive';
 
 // Normal list variables
+$bc-list-padding: 16px;
 $bc-list-font-size: 16px;
 $bc-list-base-height: 48px;
 $bc-list-avatar-height: 56px;
 $bc-list-no-border: 0px;
+
 // // $bc-list-secondary-font: 14px;
 
 // // // height for single-line lists
@@ -29,23 +34,33 @@ $bc-dense-avatar-height: 48px;
 
 @mixin bc-list-theme($theme) {
   .bc-list {
-     @include bc-list-item-theme($theme)
+    // bc-list-header theme
+    @include bc-list-header-theme($theme);
+    // bc-list-item theme
+    @include bc-list-item-theme($theme);
   }
 }
 
 .bc-list {
   display: block;
+  list-style-type: none;
+  padding: 0px $bc-list-padding;
 
+  // bc-list-header style
+  @include bc-list-header-base;
+
+  // bc-list-item style
   @include bc-list-item-base(
     $bc-list-font-size,
     $bc-list-base-height,
     $bc-list-avatar-height,
     $bc-icon-size
   );
-  
-  &[no-border], &[data-no-border] {
-    @include bc-list-item-custom-border($bc-list-no-border);
-  }
+
+  @include bc-list-item-custom-border($bc-list-no-border);
+  // &[no-border], &[data-no-border] {
+  //   @include bc-list-item-custom-border($bc-list-no-border);
+  // }
   &[dense], &[data-dense] {
     @include bc-list-item-base(
       $bc-dense-font-size,
@@ -55,3 +70,5 @@ $bc-dense-avatar-height: 48px;
     );
   }
 }
+
+@include bc-typography;

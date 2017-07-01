@@ -1,0 +1,79 @@
+@import '../../style/constants';
+@import '../../style/typography';
+
+// Represents a collection of typographic scale.
+@function bc-list-header-typographic-scale(
+  $font-family: $bc-font-family,
+  $list-header: bc-typography-style(13px, 13px, 500)
+) {
+  @return (
+    font-family: $font-family,
+    list-header: $list-header
+  );
+}
+
+/// @prop - Letter spacing of the header in a list
+$bc-list-header-letter-spacing: 0.1rem !default;
+/// @prop - Text transform of the header in a list
+$bc-list-header-text-transform: uppercase !default;
+
+@mixin bc-list-header-color($palette) {
+  background: bc-color($palette);
+  color: bc-color($palette, default-contrast);
+}
+
+@mixin bc-list-header-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+  .bc-list-header {
+    color: bc-color($foreground, 'secondary-text');
+
+    &.bc-primary {
+      @include bc-list-header-color($primary);
+    }
+
+    &.bc-accent {
+      @include bc-list-header-color($accent);
+    }
+  }
+}
+
+// bc-list-header style
+@mixin bc-list-header-base() {
+  & .bc-list-header {
+    @include flex-box;
+    position: relative;
+    overflow: hidden;
+   
+    // Positioning content style
+    // --------------------------------------------------
+    align-items: center;
+    justify-content: space-between;
+
+    // Container dimension style
+    // --------------------------------------------------
+    width: 100%;
+    min-height: 4.5rem;
+    // margin and padding
+    // --------------------------------------------------
+    padding-left: 16px;
+    margin-bottom: 13px;
+    // text style
+    // --------------------------------------------------
+    &.bc-list-header-text{
+      white-space: nowrap;
+      @include bc-typography-scale-to-styles(bc-list-header-typographic-scale(), list-header);
+      letter-spacing: $bc-list-header-letter-spacing;
+      text-transform: $bc-list-header-text-transform;
+    }
+
+    // border-bottom: $list-header-border-bottom;
+
+  }
+
+  & .bc-list-header:not(:first-child){
+    display:none;
+  }
+}

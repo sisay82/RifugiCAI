@@ -1,3 +1,4 @@
+@import 'constants';
 // Converts a typographic scale into CSS styles.
 @mixin bc-typography-scale-to-styles($config, $level) {
   $font-size: map-get(map-get($config, $level), font-size);
@@ -19,7 +20,7 @@
 
 // Represents a collection of typographic scale.
 @function bc-typographic-scale(
-  $font-family: 'Roboto, sans-serif',
+  $font-family: $bc-font-family,
   $display-4:   bc-typography-style(112px, 112px, 300),
   $display-3:   bc-typography-style(56px, 56px, 400),
   $display-2:   bc-typography-style(45px, 48px, 400),

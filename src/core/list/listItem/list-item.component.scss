@@ -1,5 +1,6 @@
 @import '../../style/constants';
 @import '../../style/theme';
+@import '../../style/vendor-prefixes';
 
 $bc-list-side-padding: 16px;
 $secondary-font-size:14px;
@@ -65,8 +66,9 @@ $secondary-font-size:14px;
         }
 
         .bc-list-item-content {
-            display: flex;
-            flex-direction: row;
+            @include flex-box;
+            @include flex-flow("row");
+
             align-items: center;
             font-family: $bc-font-family;
             font-size: $font-size;
@@ -79,8 +81,9 @@ $secondary-font-size:14px;
 
 
         .bc-list-text {
-            display: flex;
-            flex-direction: column;
+            @include flex-box;
+            @include flex-flow;
+
             width: 100%;
             box-sizing: border-box;
             overflow: hidden;
@@ -153,10 +156,11 @@ $secondary-font-size:14px;
 // is in dense mode.
 @mixin bc-line-base($secondary-font-size) {
   .bc-line {
-    @include truncate-line();
     display: block;
     box-sizing: border-box;
+    width:100%;
 
+    @include truncate-line();
     // all lines but the top line should have smaller text
     &:nth-child(n+2) {
       font-size: $secondary-font-size;
