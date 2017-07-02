@@ -4,7 +4,7 @@
   $font-size: map-get(map-get($config, $level), font-size);
   $font-weight: map-get(map-get($config, $level), font-weight);
   $line-height: map-get(map-get($config, $level), line-height);
-  $font-family: unquote(map-get($config, font-family));
+  $font-family: map-get($config, font-family);
 
   font: $font-weight #{$font-size}/#{$line-height} $font-family;
 }

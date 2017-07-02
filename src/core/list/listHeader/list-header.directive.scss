@@ -41,7 +41,7 @@ $bc-list-header-text-transform: uppercase !default;
 }
 
 // bc-list-header style
-@mixin bc-list-header-base() {
+@mixin bc-list-header-base($bc-list-header-padding-start: 16px, $bc-list-header-padding-end:0px) {
   & .bc-list-header {
     @include flex-box;
     position: relative;
@@ -58,8 +58,8 @@ $bc-list-header-text-transform: uppercase !default;
     min-height: 4.5rem;
     // margin and padding
     // --------------------------------------------------
-    padding-left: 16px;
-    margin-bottom: 13px;
+    padding: 0px $bc-list-header-padding-end 0px $bc-list-header-padding-start;
+    margin-bottom: 8px;
     // text style
     // --------------------------------------------------
     &.bc-list-header-text{
@@ -68,9 +68,6 @@ $bc-list-header-text-transform: uppercase !default;
       letter-spacing: $bc-list-header-letter-spacing;
       text-transform: $bc-list-header-text-transform;
     }
-
-    // border-bottom: $list-header-border-bottom;
-
   }
 
   & .bc-list-header:not(:first-child){

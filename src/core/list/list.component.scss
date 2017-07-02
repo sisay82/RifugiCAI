@@ -1,36 +1,28 @@
 @import '../style/vendor-prefixes';
 @import '../style/typography';
+
 @import './listItem/list-item.component';
 @import './listHeader/list-header.directive';
+
 @import '../icon/icon.component';
 @import '../avatar/avatar.directive';
 
 // Normal list variables
-$bc-list-padding: 16px;
-$bc-list-font-size: 16px;
+$bc-list-padding-start: 16px;
+$bc-list-padding-end: 0px;
+
 $bc-list-base-height: 48px;
-$bc-list-avatar-height: 56px;
+
 $bc-list-no-border: 0px;
 
-// // $bc-list-secondary-font: 14px;
-
-// // // height for single-line lists
-
-// // // height for single-line lists with avatars
-// // 
 // // // spec requires two- and three-line lists be taller
 // // $bc-list-two-line-height: 72px;
 // // $bc-list-three-line-height: 88px;
-// // $bc-list-avatar-size: 40px;
-// // $bc-list-icon-size: 24px;
 
 // Dense list variables
-$bc-dense-font-size: 13px;
 $bc-dense-base-height: 40px;
-$bc-dense-avatar-height: 48px;
 // // $bc-dense-two-line-height: 60px;
 // // $bc-dense-three-line-height: 76px;
-// // $bc-dense-list-icon-size: 20px;
 
 @mixin bc-list-theme($theme) {
   .bc-list {
@@ -44,29 +36,31 @@ $bc-dense-avatar-height: 48px;
 .bc-list {
   display: block;
   list-style-type: none;
-  padding: 0px $bc-list-padding;
 
   // bc-list-header style
-  @include bc-list-header-base;
+  @include bc-list-header-base($bc-list-padding-start, $bc-list-padding-end);
 
   // bc-list-item style
   @include bc-list-item-base(
-    $bc-list-font-size,
     $bc-list-base-height,
-    $bc-list-avatar-height,
-    $bc-icon-size
+    $bc-icon-size,
+    $bc-avatar-container-height,
+    $bc-list-padding-start, $bc-list-padding-end
   );
 
-  @include bc-list-item-custom-border($bc-list-no-border);
-  // &[no-border], &[data-no-border] {
-  //   @include bc-list-item-custom-border($bc-list-no-border);
-  // }
+  &[no-border], &[data-no-border] {
+    @include bc-list-item-no-border();
+    & bc-divider {
+      display:none;
+    }
+  }
+
   &[dense], &[data-dense] {
     @include bc-list-item-base(
-      $bc-dense-font-size,
       $bc-dense-base-height,
-      $bc-list-avatar-height,
-      $bc-dense-icon-size
+      $bc-dense-icon-size,
+      $bc-dense-avatar-container-height,
+      $bc-list-padding-start, $bc-list-padding-end
     );
   }
 }

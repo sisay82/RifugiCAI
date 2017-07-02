@@ -1,9 +1,211 @@
 @import '../../style/constants';
+@import '../../style/typography';
 @import '../../style/theme';
 @import '../../style/vendor-prefixes';
 
-$bc-list-side-padding: 16px;
-$secondary-font-size:14px;
+// Represents a collection of typographic scale.
+@function bc-list-item-typographic-scale(
+  $font-family: $bc-font-family,
+  $list-item: bc-typography-style($bc-font-size-base, $bc-font-size-base, 400),
+  $list-item-first-line: bc-typography-style(16px, 16px, 500),
+  $list-item-secondary-line: bc-typography-style($bc-font-size-base, $bc-font-size-base, 400)
+) {
+  @return (
+    font-family: $font-family,
+    normal: $list-item,
+    first: $list-item-first-line,
+    secondary: $list-item-secondary-line
+  );
+}
+
+@mixin bc-list-item-theme($theme) {
+    $accent: map-get($theme, accent);
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+
+    .bc-list-item {
+        color: bc-color($foreground, 'text');
+
+        &.list-group-item {
+            color: bc-color($foreground, 'text');
+
+            @include bc-list-item-disable($accent, $background, $foreground);
+            @include bc-list-item-active($accent, $background, $foreground);
+
+            &:hover, &:focus {
+                @include bc-list-item-disable($accent, $background, $foreground);
+                @include bc-list-item-active($accent, $background, $foreground);
+                color: bc-color($foreground, 'text');
+                background: bc-color($background, 'hover');
+                border-color: bc-color($background, 'hover');
+            }
+        }
+
+        .bc-list-item-inner {
+            border-bottom: 1px solid bc-color($foreground, divider);
+        }
+
+        .bc-list-text{
+            .bc-line {
+                color: bc-color($foreground, 'text');
+                // all lines but the top line should have smaller text
+                &:nth-child(n+2) {
+                    color: bc-color($foreground, 'secondary-text');
+                }
+            }
+        }
+    }
+}
+
+@mixin bc-list-item-base($base-height, $icon-size, $avatar-height, $bc-list-item-padding-start: 16px, $bc-list-item-padding-end: 0px) {
+
+    & a.bc-list-item, & button.bc-list-item {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .bc-list-item {
+        display: block;
+
+        // margin and padding
+        // --------------------------------------------------
+        margin: 0px;
+        padding: 0px  $bc-list-item-padding-end 0px $bc-list-item-padding-start;
+
+        border-width: 0px;
+
+        &.list-group-item {
+            &.active, &:hover, &:focus {
+                outline: none;
+            }
+        }
+
+        .bc-list-item-content {
+            @include flex-box;
+            @include flex-flow(row);
+            
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            // margin and padding
+            // --------------------------------------------------
+            margin: 0px;
+            padding: 0px; 
+            
+            // Container dimension style
+            // --------------------------------------------------
+            height: $base-height;
+            // Content position style
+            // --------------------------------------------------
+            align-items: center;
+
+            // Font style
+            // --------------------------------------------------
+            @include bc-typography-scale-to-styles(bc-list-item-typographic-scale(), normal);
+            white-space: nowrap;
+
+            & :first-child{
+                margin-left: 0px;
+                padding-left: 0px;
+            }
+        }
+
+        // bc-list-item-inner style
+        .bc-list-item-inner {
+            @include flex-box;
+            @include flex-flow(row);
+            overflow: hidden;
+
+            // Container dimension style
+            // --------------------------------------------------
+            @include flex(1);
+            align-self: stretch;
+            min-height: inherit;
+
+            // Content position style
+            // --------------------------------------------------
+            align-items: inherit;
+
+            // margin and padding
+            // --------------------------------------------------
+            margin: 0px 0px 0px $bc-list-item-padding-start;
+            padding: 0px 8px 0px 0px;
+
+            & > *:not(:last-child) {
+                padding-right: 16px;
+            }
+        }
+
+        &:nth-last-child(2) .bc-list-item-inner {
+            border-bottom: 0px;
+        }
+        
+        .bc-list-text {
+            @include flex-box;
+            @include flex-flow;
+
+            width:100%;
+            box-sizing: border-box;
+            overflow: hidden;
+            padding: 0px;
+
+            &:empty {
+                display: none;
+            }
+
+            &:first-child {
+                padding: 0;
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
+
+            & > * {
+                margin: 0;
+                padding: 0;
+                font-weight: inherit;
+                font-size: inherit;
+            }
+                   
+            @include bc-line-base();
+        }
+
+        .bc-icon {
+                height: $bc-icon-size;
+                width: $bc-icon-size;
+                font-size: $bc-icon-size;
+        }
+
+        //   &.bc-2-line .bc-list-item-content {
+        //     height: $two-line-height;
+        //   }
+
+
+        //   &.bc-3-line .bc-list-item-content {
+        //     height: $three-line-height;
+        //   }
+
+        //   // list items with more than 3 lines should expand to match
+        //   // the height of its contained text
+        //   &.bc-multi-line .bc-list-item-content {
+        //     height: 100%;
+        //     padding: 8px $mat-list-side-padding;
+        //   }
+    }
+
+    &.bc-list-avatar .bc-list-item .bc-list-item-content {
+        height:  $avatar-height;
+    }
+}
+
+@mixin bc-list-item-no-border(){
+    & .bc-list-item .bc-list-item-inner{
+        border-bottom: 0px;
+    }
+}
+
 @mixin bc-list-item-disable($accent, $background, $foreground){
     &.disabled {
         color: bc-color($foreground, 'text');
@@ -22,148 +224,25 @@ $secondary-font-size:14px;
     }
 }
 
-@mixin bc-list-item-theme($theme) {
-    $accent: map-get($theme, accent);
-    $background: map-get($theme, background);
-    $foreground: map-get($theme, foreground);
-    .bc-list-item {
-        color: bc-color($foreground, 'text');
+@mixin bc-line-base() {
+  .bc-line {
+    display: block;
+    box-sizing: border-box;
+    width:100%;
 
-        &.list-group-item {
-            color: bc-color($foreground, 'text');
-            border-color: bc-color($foreground, divider);
+    @include bc-typography-scale-to-styles(bc-list-item-typographic-scale(), first);
 
-            @include bc-list-item-disable($accent, $background, $foreground);
-            @include bc-list-item-active($accent, $background, $foreground);
+    @include truncate-line();
 
-            &:hover, &:focus {
-                @include bc-list-item-disable($accent, $background, $foreground);
-                @include bc-list-item-active($accent, $background, $foreground);
-                color: bc-color($foreground, 'text');
-                background: bc-color($background, 'hover');
-                border-color: bc-color($background, 'hover');
-            }
-        }
+    // all lines but the top line should have smaller text
+    &:nth-child(n+2) {
+      @include bc-typography-scale-to-styles(bc-list-item-typographic-scale(), secondary);
     }
-}
-
-@mixin bc-list-item-base($font-size, $base-height, $icon-size, $avatar-height) {
-
-    & a.bc-list-item, & button.bc-list-item {
-        text-decoration: none;
-        color: inherit;
-        cursor: pointer;
-    }
-
-    .bc-list-item {
-        display: block;
-
-        &.list-group-item {
-            padding: 0px;
-            &.active, &:hover, &:focus {
-                outline: none;
-            }
-        }
-
-        .bc-list-item-content {
-            @include flex-box;
-            @include flex-flow("row");
-
-            align-items: center;
-            font-family: $bc-font-family;
-            font-size: $font-size;
-            height: $base-height;
-            padding: 0 $bc-list-side-padding;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-        }
-
-
-        .bc-list-text {
-            @include flex-box;
-            @include flex-flow;
-
-            width: 100%;
-            box-sizing: border-box;
-            overflow: hidden;
-            padding: 0 $bc-list-side-padding;
-
-            &:empty {
-                display: none;
-            }
-
-            &:first-child {
-                padding: 0;
-            }
-
-            &:last-child {
-                padding-right: 0;
-            }
-
-            & > * {
-                margin: 0;
-                padding: 0;
-                font-weight: normal;
-                font-size: inherit;
-            }
-        }
-
-        .bc-icon {
-                height: $bc-icon-size;
-                width: $bc-icon-size;
-                font-size: $bc-icon-size;
-        }
-
-        .bc-list-item-avatar .bc-list-item-content {
-            height:  $avatar-height;
-        }
-        
-        @include bc-line-base($secondary-font-size);
-        //   &.bc-2-line .bc-list-item-content {
-        //     height: $two-line-height;
-        //   }
-
-
-        //   &.bc-3-line .bc-list-item-content {
-        //     height: $three-line-height;
-        //   }
-
-        //   // list items with more than 3 lines should expand to match
-        //   // the height of its contained text
-        //   &.bc-multi-line .bc-list-item-content {
-        //     height: 100%;
-        //     padding: 8px $mat-list-side-padding;
-        //   }
-    }
-}
-
-@mixin bc-list-item-custom-border($border-size: 1px) {
-    .bc-list-item {
-        &.list-group-item {
-            border-width: $border-size;
-        }
-    }
+  }
 }
 
 @mixin truncate-line() {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-// Mixin to provide all mat-line styles, changing secondary font size based on whether the list
-// is in dense mode.
-@mixin bc-line-base($secondary-font-size) {
-  .bc-line {
-    display: block;
-    box-sizing: border-box;
-    width:100%;
-
-    @include truncate-line();
-    // all lines but the top line should have smaller text
-    &:nth-child(n+2) {
-      font-size: $secondary-font-size;
-    }
-  }
 }
