@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
+import { BcRevisionsService } from '../revisions.service';
 
 @Pipe({name: 'keys'})
 export class KeysPipe implements PipeTransform {
@@ -33,7 +34,7 @@ export class BcGeoRevision {
     invalid:Boolean=false;
     displaySave:Boolean=false;
     displayError:boolean=false;
-    constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder) { 
+    constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
             region:["",[Validators.required,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]],//required and string
             province:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],//string with some character
@@ -98,6 +99,7 @@ export class BcGeoRevision {
             tags.push({key:c.value.key,value:c.value.value});
         }
         shelter.geoData.tags=tags;
+        ref.revisionService.onChildSave(shelter,"geoData");
         ref.shelterService.preventiveUpdateShelter(shelter,"geoData").subscribe((returnVal)=>{
             if(returnVal){
                 ref.displaySave=true;
@@ -112,32 +114,45 @@ export class BcGeoRevision {
         });
     }
 
+    initForm(shelter){
+        this.name=shelter.name;
+        this.data=shelter.geoData;
+
+        if(this.data!=undefined){
+            if(this.data.location!=undefined){
+                for(let prop in this.data.location){
+                    if(this.data.location.hasOwnProperty(prop)){
+                        if(this.geoForm.contains(prop)){
+                            this.geoForm.controls[prop].setValue(this.data.location[prop]);
+                            this.geoForm.controls[prop].markAsTouched();
+                        }
+                    }
+                }
+            }
+            if(this.data.tags!=undefined){
+                for(let tag of this.data.tags){
+                    this.addTag(tag.key,tag.value);
+                }
+            }
+        }
+    }   
+
     ngOnInit(){
         this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
-            this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
-                this.name=shelter.name;
-                this.data=shelter.geoData;
-
-                if(this.data!=undefined){
-                    if(this.data.location!=undefined){
-                        for(let prop in this.data.location){
-                            if(this.data.location.hasOwnProperty(prop)){
-                                if(this.geoForm.contains(prop)){
-                                    this.geoForm.controls[prop].setValue(this.data.location[prop]);
-                                    this.geoForm.controls[prop].markAsTouched();
-                                }
-                            }
-                        }
-                    }
-                    if(this.data.tags!=undefined){
-                        for(let tag of this.data.tags){
-                            this.addTag(tag.key,tag.value);
-                        }
-                    }
-                    
+            this.revisionService.load$.subscribe(shelter=>{
+                console.log("Child "+shelter);
+                if(shelter!=null){
+                    this.initForm(shelter);
+                }else{
+                    this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
+                        this.initForm(shelter);
+                    });
                 }
+
             });
+            this.revisionService.onChildLoadRequest("geoData");
         });
+
     }
 }
