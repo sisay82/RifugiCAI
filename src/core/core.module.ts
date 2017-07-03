@@ -11,6 +11,7 @@ import { BcMapModule } from './map/map.module';
 import { BcMaskModule } from './fixed_mask/mask.module';
 import { BcButtonModule } from './button/button.module';
 import { BcSelectGroupModule } from './button/selectGroup.module';
+import { BcMenuModule } from './menu/menu.module';
 // import { FilterService } from './services/filter.service';
 // import { SorterService } from './services/sorter.service';
 // import { TrackByService } from './services/trackby.service';
@@ -29,7 +30,8 @@ const COMPONENTS_MODULES = [
     BcMaskModule,
     BcRevisionsModule,
     BcButtonModule,
-    BcSelectGroupModule
+    BcSelectGroupModule,
+    BcMenuModule
 ];
 const PIPES_MODULES = [
     CapitalizePipe,

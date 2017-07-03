@@ -141,7 +141,6 @@ export class BcGeoRevision {
         this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.revisionService.load$.subscribe(shelter=>{
-                console.log("Child "+shelter);
                 if(shelter!=null){
                     this.initForm(shelter);
                 }else{

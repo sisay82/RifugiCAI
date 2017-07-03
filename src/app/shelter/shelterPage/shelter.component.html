@@ -5,9 +5,14 @@
     </div>
   </bc-content-header>
   <bc-content-section>
-    <div style="position:relative">
-        <bc-details></bc-details>
-        <bc-revisions></bc-revisions>
+    <div style="display:flex;flex-direction:row">
+      <div style="position: relative">
+        <bc-menu [menuElements]="appMenuElements"></bc-menu>
+      </div>
+      <div style="position:relative;width:100%">
+          <bc-details></bc-details>
+          <bc-revisions></bc-revisions>
+      </div>
     </div>
   </bc-content-section>
 </bc-content>
