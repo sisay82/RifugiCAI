@@ -6,9 +6,9 @@
 // Represents a collection of typographic scale.
 @function bc-list-item-typographic-scale(
   $font-family: $bc-font-family,
-  $list-item: bc-typography-style($bc-font-size-base, $bc-font-size-base, 400),
-  $list-item-first-line: bc-typography-style(16px, 16px, 500),
-  $list-item-secondary-line: bc-typography-style($bc-font-size-base, $bc-font-size-base, 400)
+  $list-item: bc-typography-style($bc-font-size-base, ($bc-font-size-base+4), 400),
+  $list-item-first-line: bc-typography-style(16px, 20px, 500),
+  $list-item-secondary-line: bc-typography-style($bc-font-size-base, ($bc-font-size-base+4), 400)
 ) {
   @return (
     font-family: $font-family,
@@ -76,6 +76,7 @@
         border-width: 0px;
 
         &.list-group-item {
+            transition: background-color 250ms linear;
             &.active, &:hover, &:focus {
                 outline: none;
             }
@@ -132,7 +133,9 @@
             margin: 0px 0px 0px $bc-list-item-padding-start;
             padding: 0px 8px 0px 0px;
 
-            & > *:not(:last-child) {
+            & > *:not([item-end]):not([data-item-end]) {
+                @include flex(1);
+                @include truncate-line();
                 padding-right: 16px;
             }
         }
@@ -154,7 +157,7 @@
                 display: none;
             }
 
-            &:first-child {
+            & :first-child {
                 padding: 0;
             }
 
