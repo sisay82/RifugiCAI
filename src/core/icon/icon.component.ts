@@ -24,8 +24,8 @@ export class BcIcon extends BcStyler {
     private _name: string;
     private _size: string;
 
-    constructor(elementRef: ElementRef, renderer: Renderer2) {
-        super(elementRef, renderer);
+    constructor(elementRef: ElementRef, _renderer2: Renderer2) {
+        super(elementRef, _renderer2);
     }
 
     /** The name of the icon.*/

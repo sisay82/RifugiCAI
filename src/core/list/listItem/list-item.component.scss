@@ -6,7 +6,7 @@
 // Represents a collection of typographic scale.
 @function bc-list-item-typographic-scale(
   $font-family: $bc-font-family,
-  $list-item: bc-typography-style($bc-font-size-base, ($bc-font-size-base+4), 400),
+  $list-item: bc-typography-style(16px, 20px, 400),
   $list-item-first-line: bc-typography-style(16px, 20px, 500),
   $list-item-secondary-line: bc-typography-style($bc-font-size-base, ($bc-font-size-base+4), 400)
 ) {

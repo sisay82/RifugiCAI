@@ -61,8 +61,8 @@ export class BcList extends BcStyler {
   private _subcription: Subscription;
   private _avatar: string;
 
-  constructor(elementRef: ElementRef, renderer: Renderer2, private _SelectionService: ItemSelectionService, private _differs: IterableDiffers) {
-    super(elementRef, renderer);
+  constructor(elementRef: ElementRef, _renderer2: Renderer2, private _SelectionService: ItemSelectionService, private _differs: IterableDiffers) {
+    super(elementRef, _renderer2);
     this._listId = _nextListId++;
 
     this._subcription = _SelectionService.selection$.subscribe(uniqueName => {

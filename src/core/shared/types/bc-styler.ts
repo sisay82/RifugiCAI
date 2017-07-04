@@ -18,9 +18,9 @@ export class BcStyler {
     /** @hidden */
     private _element: any = null;
 
-    constructor(elementRef: ElementRef, renderer: Renderer2) {
+    constructor(elementRef: ElementRef, _renderer2: Renderer2) {
         this._elementRef = elementRef;
-        this._renderer = renderer;
+        this._renderer = _renderer2;
         this._element = this._elementRef != null ? this._elementRef.nativeElement : null;
     }
 
@@ -47,6 +47,7 @@ export class BcStyler {
     /** @hidden */
     private _setElementClass(className: string, isAdd: boolean) {
         if (this._element != null && className != null && className != '') {
+            this._renderer = this._renderer.constructor.name === 'RendererAdapter'? this._renderer["delegate"]: this._renderer;
             if (isAdd) {
                 this._renderer.addClass(this._element, className);
             } else {
@@ -58,6 +59,7 @@ export class BcStyler {
     /** @hidden */
     private _setElementAttribute(attributeName: string, attributeValue: any, isAdd: boolean) {
         if (this._element != null && attributeName != null && attributeName != '') {
+            this._renderer = this._renderer.constructor.name === 'RendererAdapter'? this._renderer["delegate"]: this._renderer;
             if (isAdd) {
                 this._renderer.setAttribute(this._element, attributeName, attributeValue);
             } else {
@@ -69,6 +71,7 @@ export class BcStyler {
     /** @hidden */
     private setElementStyle(style: string, value: string, isAdd: boolean) {
         if (this._element != null && style != null && style != '') {
+            this._renderer = this._renderer.constructor.name === 'RendererAdapter'? this._renderer["delegate"]: this._renderer;
             if (isAdd) {
                 this._renderer.setStyle(this._element, style, value);
             } else {

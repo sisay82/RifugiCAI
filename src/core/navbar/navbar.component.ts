@@ -31,7 +31,7 @@ export class BcNavbarRow { }
     encapsulation: ViewEncapsulation.None
 })
 export class BcNavbar extends BcStyler {
-    constructor(elementRef: ElementRef, renderer: Renderer2) {
-        super(elementRef, renderer);
+    constructor(elementRef: ElementRef, _renderer2: Renderer2) {
+        super(elementRef, _renderer2);
     }
 }

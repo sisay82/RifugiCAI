@@ -50,6 +50,18 @@ export class BcListItemDisableStyler {
     @Input('bc-disable-item') _DisableItem: boolean;
 }
 
+/**
+ * Directive whose purpose is to add the bc- CSS styling to this selector.
+ */
+@Directive({
+    selector: '[bc-line], [data-bc-line]',
+    host: {
+        '[class.bc-line]': 'true'
+    }
+})
+export class BcLineStyler {
+}
+
 @Component({
     moduleId: module.id,
     selector: 'bc-list-item, a[bc-list-item], button[bc-list-item]',

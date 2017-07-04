@@ -16,8 +16,8 @@ import { BcStyler } from '../shared/types/bc-styler';
 export class BcAvatar extends BcStyler {
   private _shape: string;
 
-  constructor(elementRef: ElementRef, renderer: Renderer2) {
-    super(elementRef, renderer);
+  constructor(elementRef: ElementRef, _renderer2: Renderer2) {
+    super(elementRef, _renderer2);
   }
 
   /** The shape of the avatar. Can be round, square, or rounded-corner. */

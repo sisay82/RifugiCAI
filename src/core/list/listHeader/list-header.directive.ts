@@ -18,7 +18,7 @@ import { BcStyler } from '../../shared/types/bc-styler';
   }
 })
 export class BcListHeader extends BcStyler { 
-    constructor(elementRef: ElementRef, renderer: Renderer2) {
-    super(elementRef, renderer);
+    constructor(elementRef: ElementRef, _renderer2: Renderer2) {
+    super(elementRef, _renderer2);
   }
 }

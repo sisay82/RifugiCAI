@@ -1,8 +1,5 @@
 import {
   Component,
-  ElementRef,
-  Renderer2,
-  Input,
   ViewEncapsulation
 } from '@angular/core';
 
