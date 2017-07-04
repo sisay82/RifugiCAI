@@ -2,102 +2,133 @@
     <bc-button [enabled]="geoForm.valid" [button]="clickButton"></bc-button>
     <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
     <div [hidden]="!displaySave" class="alert alert-success">Saved!</div>
-    <br>
+    <bc-divider></bc-divider>
     <div style="display:flex;flex-direction:row">
         <div style="position:relative;width:20%">
-            <div class="bc-body">Regione</div>
+            <div class="bc-body" style="white-space: nowrap">Località</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                required class="form-control"  formControlName="region">
-            <div [hidden]="geoForm.controls['region'].valid" class="alert alert-danger" style="color:green">Invalid</div>
-            <br>
-
-            <div class="bc-body">Provincia</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="province">
-            <div [hidden]="geoForm.controls['province'].valid" class="alert alert-danger">Invalid</div>
-            <br>
-
-            <div class="bc-body">Comune</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="municipality">
-            <div [hidden]="geoForm.controls['municipality'].valid" class="alert alert-danger">Invalid</div>
-            <br>
-
-            <div class="bc-body">Località</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="locality">
+                required class="form-control"  formControlName="locality">
             <div [hidden]="geoForm.controls['locality'].valid" class="alert alert-danger">Invalid</div>
             <br>
-
-            <div class="bc-body">Regione Proprietaria</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="ownerRegion">
-            <div [hidden]="geoForm.controls['ownerRegion'].valid" class="alert alert-danger">Invalid</div>
-            <br>
-
-            <div class="bc-body">Zona Tutelata</div>
+        </div>
+        <div style="position:relative;width:20%;margin-left:1%">
+            <div class="bc-body" style="white-space: nowrap">Ente Sovracomunale di Competenza</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="authorityJurisdiction">
             <div [hidden]="geoForm.controls['authorityJurisdiction'].valid" class="alert alert-danger">Invalid</div>
             <br>
-
-            <div class="bc-body">Altitudine</div>
+        </div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="position:relative;width:20%">
+            <div class="bc-body" style="white-space: nowrap">Comune</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="altitude">
-            <div [hidden]="geoForm.controls['altitude'].valid" class="alert alert-danger">Invalid</div>
+                required class="form-control"  formControlName="municipality">
+            <div [hidden]="geoForm.controls['municipality'].valid" class="alert alert-danger">Invalid</div>
             <br>
-
-            <div class="bc-body">Latitudine</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="latitude">
-            <div [hidden]="geoForm.controls['latitude'].valid" class="alert alert-danger">Invalid</div>
-            <br>
-
-            <div class="bc-body">Longitudine</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="longitude">
-            <div [hidden]="geoForm.controls['longitude'].valid" class="alert alert-danger">Invalid</div>
-            <br>
-
-            <div class="bc-body">Gruppo Montuoso</div>
+        </div>
+        <div style="position:relative;width:20%;margin-left:1%">
+            <div class="bc-body" style="white-space: nowrap">Gruppo Montuoso</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="massif">
             <div [hidden]="geoForm.controls['massif'].valid" class="alert alert-danger">Invalid</div>
             <br>
-
-            <div class="bc-body">Valle</div>
+        </div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="position:relative;width:20%">
+            <div class="bc-body" style="white-space: nowrap">Provincia</div>
+            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                class="form-control"  formControlName="province">
+            <div [hidden]="geoForm.controls['province'].valid" class="alert alert-danger">Invalid</div>
+            <br>
+        </div>
+        
+        <div style="position:relative;width:20%;margin-left:1%">
+            <div class="bc-body" style="white-space: nowrap">Valle</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="valley">
             <div [hidden]="geoForm.controls['valley'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
-        
-        <div style="position:relative;margin-left:auto;margin-right:25%">
-            <div *ngIf="data!=undefined&&data.tags!=undefined" formArrayName="tags">
-                <div *ngFor="let tag of geoForm.controls.tags.controls;let i = index">
-                    <div class="bc-body">TAG N: {{i+1}}</div>
-                    <div [formGroupName]="i" style="display:flex;flex-direction:row;align-items:center">
-                        <div (click)="removeTag(i)" class="fa fa-times bc-add-tag" style="margin-right:4px;margin-left:-16px;font-size:16px"></div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control"  formControlName="key">
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control"  formControlName="value">
-                        <br>
-                    </div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="position:relative;width:20%">
+            <div class="bc-body" style="white-space: nowrap">Regione</div>
+            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                required class="form-control"  formControlName="region">
+            <div [hidden]="geoForm.controls['region'].valid" class="alert alert-danger">Invalid</div>
+            <br>
+        </div>   
+        <div style="position:relative;width:20%;margin-left:1%">
+            <div class="bc-body" style="white-space: nowrap">Quota</div>
+            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                class="form-control"  formControlName="altitude">
+            <div [hidden]="geoForm.controls['altitude'].valid" class="alert alert-danger">Invalid</div>
+            <br>    
+        </div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div style="position:relative;width:20%">        
+            <div class="bc-body" style="white-space: nowrap">Regione loc. Proprietà</div>
+            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                class="form-control"  formControlName="ownerRegion">
+            <div [hidden]="geoForm.controls['ownerRegion'].valid" class="alert alert-danger">Invalid</div>
+            <br>
+        </div>
+        <div style="position:relative;width:20%;margin-left:1%">
+            <div class="bc-body" style="white-space: nowrap">UTM WGS84</div>
+            <div style="display:flex;flex-direction:row">
+                <div>
+                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                        class="form-control"  formControlName="latitude">
+                    <div [hidden]="geoForm.controls['latitude'].valid" class="alert alert-danger">Invalid</div>
+                    <br>
+                </div>
+                <div>
+                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                        class="form-control"  formControlName="longitude">
+                    <div [hidden]="geoForm.controls['longitude'].valid" class="alert alert-danger">Invalid</div>
+                    <br>
                 </div>
             </div>
-            <br>
-            <div style="display:flex;flex-direction:row;align-items:center">
-                <div (click)="addNewTag()" class="fa fa-plus bc-add-tag" style="margin-right:4px;margin-left:-16px;font-size:16px"></div>
+        </div>  
+    </div>
+    <bc-divider></bc-divider>
+    <div style="position:relative">
+        <div *ngIf="data!=undefined&&data.tags!=undefined" formArrayName="tags">
+            <div *ngFor="let tag of geoForm.controls.tags.controls;let i = index">
+                <div class="bc-body">Tag N: {{i+1}}</div>
+                <div [formGroupName]="i" style="display:flex;flex-direction:row;align-items:center">
+                    <div style="width:20%">
+                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                            required class="form-control"  formControlName="key">
+                    </div>
+                    <div style="width:20%;margin-left:1%">
+                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                            class="form-control"  formControlName="value">
+                    </div>
+                    <div (click)="removeTag(i)" class="fa fa-times bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
+                    <br>
+                </div>
+                <div [hidden]="geoForm.controls['tags'].at(i).valid" class="alert alert-danger" style="position:relative;width:41%">Invalid Key-Value</div>
+            </div>
+        </div>
+        <br>
+        <div style="display:flex;flex-direction:row;align-items:center">
+            <div style="width:20%">
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="newKey">
+                    required class="form-control"  formControlName="newKey">
+            </div>
+            <div style="width:20%;margin-left:1%">
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="newValue">
             </div>
-            <div [hidden]="!invalid&&(geoForm.controls['newKey'].valid&&geoForm.controls['newValue'].valid)" class="alert alert-danger">Invalid</div>
+            <div (click)="addNewTag()" class="fa fa-plus bc-add-tag" style="margin-left:1%;font-size:16px"></div>
         </div>
-    
+        <div [hidden]="!invalid&&(geoForm.controls['newKey'].valid&&geoForm.controls['newValue'].valid)" style="position:relative;width:41%" class="alert alert-danger">Invalid</div>
     </div>
+
 </form>
 
 

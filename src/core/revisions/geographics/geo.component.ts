@@ -26,7 +26,7 @@ export class KeysPipe implements PipeTransform {
   providers:[ShelterService]
 })
 export class BcGeoRevision {
-    clickButton:IButton={text:"Invia.",action:this.click,ref:this};
+    clickButton:IButton={text:"Invia",action:this.click,ref:this};
     _id:String;
     name:String;
     geoForm: FormGroup; 
