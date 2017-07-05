@@ -81,8 +81,8 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
-    confirmShelter(shelterId:String): Observable<boolean>{
-        return this.http.put(this.sheletersBaseUrl + '/confirm/'+shelterId,null)
+    confirmShelter(shelterId:String,confirm:boolean): Observable<boolean>{
+        return this.http.put(this.sheletersBaseUrl + '/confirm/'+shelterId,{confirm:confirm})
             .map((res: Response) => res.json())
             .catch(this.handleError);
     }

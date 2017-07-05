@@ -1,22 +1,11 @@
 import {
-  Component,Input,OnInit,Pipe, PipeTransform
+  Component,Input,OnInit,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
-
-@Pipe({name: 'keys'})
-export class KeysPipe implements PipeTransform {
-  transform(value, args:string[]) : any[] {
-    let keys = [];
-    for (let key in value) {
-      keys.push({key: key, val: value[key]});
-    }
-    return keys;
-  }
-}
 
 @Component({
   moduleId: module.id,
@@ -106,7 +95,7 @@ export class BcGeoRevision {
                 ref.displayError=false;
                 //location.reload();
             }else{
-                console.log(returnVal);
+                console.log("Err "+returnVal);
                 ref.displayError=true;
                 ref.displaySave=false;
             }
@@ -137,11 +126,18 @@ export class BcGeoRevision {
         }
     }   
 
+    ngOnDestroy(){
+        if(this.geoForm.dirty){
+            this.click(this);
+        }
+        
+    }
+
     ngOnInit(){
         this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.revisionService.load$.subscribe(shelter=>{
-                if(shelter!=null){
+                if(shelter!=null&&shelter.geoData!=undefined){
                     this.initForm(shelter);
                 }else{
                     this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{

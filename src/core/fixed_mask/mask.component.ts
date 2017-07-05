@@ -27,7 +27,22 @@ export class BcMask {
   }
 
   save(){
-    this.shelterService.confirmShelter(this.shelter._id).subscribe(value=>{
+    this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
+      if(!value){
+       console.log("Error in Confirm"); 
+      }else{
+        let route=this._route;
+        while(route.children.length>0){
+          route=route.children[0];
+        }
+        let path=route.snapshot.url[0].path;
+        this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+path+")")
+      }
+    });
+  }
+
+  cancel(){
+    this.shelterService.confirmShelter(this.shelter._id,false).subscribe(value=>{
       if(!value){
        console.log("Error in Confirm"); 
       }else{

@@ -1,6 +1,7 @@
 import { Component, Input,OnInit } from '@angular/core';
 import { IShelter } from '../../app/shared/types/interfaces';
 import { BcRevisionsService } from './revisions.service';
+import {Router,RoutesRecognized} from '@angular/router';
 
 @Component({
     moduleId:module.id,
@@ -11,13 +12,12 @@ import { BcRevisionsService } from './revisions.service';
 export class BcRevisions implements OnInit{
     ShelterToUpdate:IShelter;
 
-    constructor(private revisionService:BcRevisionsService){
+    constructor(private revisionService:BcRevisionsService,private router: Router){
 
     }
 
     ngOnInit(){
         this.revisionService.save$.subscribe(obj=>{
-            console.log(obj.shelter);
             if(this.ShelterToUpdate!=undefined){
                 this.ShelterToUpdate[obj.section]=obj.shelter[obj.section];
             }else{
@@ -30,6 +30,18 @@ export class BcRevisions implements OnInit{
                 this.revisionService.onChildLoad(this.ShelterToUpdate);
             }else{
                 this.revisionService.onChildLoad(null);
+            }
+        });
+
+        this.router.events.subscribe((event)=>{
+            if(event instanceof RoutesRecognized){
+                let route=event.state.root;
+                while(route.children.length>0){
+                    route=route.children[0];
+                }
+                if(route.outlet=="content"){
+                    delete(this.ShelterToUpdate);
+                }
             }
         });
     }

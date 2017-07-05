@@ -1,0 +1,70 @@
+<form style="position:relative" [formGroup]="contactForm">
+    <div style="display:block;margin-left:4px;background:white">
+        <div class="bc-h6 bc-revision-title">Contatti:</div>
+        <div style="display: flex;flex-direction:row">
+            <div style="margin-right:1%">
+                <div class="bc-body" style="white-space: nowrap">Telefono</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control"  formControlName="fixedPhone">
+                <div [hidden]="contactForm.controls['fixedPhone'].valid" class="alert alert-danger">Invalid</div>
+            </div>
+            <div style="margin-right:1%">
+                <div class="bc-body" style="white-space: nowrap">Cellulare</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control"  formControlName="mobilePhone">
+                <div [hidden]="contactForm.controls['mobilePhone'].valid" class="alert alert-danger">Invalid</div>
+            </div>
+            <div style="margin-right:1%">
+                <div class="bc-body" style="white-space: nowrap">Ruolo</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control"  formControlName="role">
+                <div [hidden]="contactForm.controls['role'].valid" class="alert alert-danger">Invalid</div>
+            </div>
+        </div>
+        <div style="display: flex;flex-direction:row">
+            <div style="margin-right:1%">
+                <div class="bc-body" style="white-space: nowrap">Mail</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control"  formControlName="emailAddress">
+                <div [hidden]="contactForm.controls['emailAddress'].valid" class="alert alert-danger">Invalid</div>
+            </div>
+            <div style="margin-right:1%">
+                <div class="bc-body" style="white-space: nowrap">PEC</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control"  formControlName="mailPec">
+                <div [hidden]="contactForm.controls['mailPec'].valid" class="alert alert-danger">Invalid</div>
+            </div>
+            <div style="margin-right:1%">
+                <div class="bc-body" style="white-space: nowrap">WebSite</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control"  formControlName="webAddress">
+                <div [hidden]="contactForm.controls['webAddress'].valid" class="alert alert-danger">Invalid</div>
+            </div>
+        </div>
+        <br>
+        <bc-divider></bc-divider>
+        <div class="bc-h6 bc-detail-title">Aperture:</div>
+        <div *ngFor="let open of contactForm.controls['openings'].controls;let i = index" formArrayName="openings">
+            <div [formGroupName]="i" style="display: flex;flex-direction:row">
+                <div style="margin-right:1%">
+                    <div class="bc-body" style="white-space: nowrap">Inizio</div>
+                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                        class="form-control" formControlName="startDate">
+                    <div [hidden]="open.controls['startDate'].valid" class="alert alert-danger">Invalid</div>
+                </div>
+                <div style="margin-right:1%">
+                    <div class="bc-body" style="white-space: nowrap">Fine</div>
+                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                        class="form-control"  formControlName="endDate">
+                    <div [hidden]="open.controls['endDate'].valid" class="alert alert-danger">Invalid</div>
+                </div>
+                <div style="margin-right:1%">
+                    <div class="bc-body" style="white-space: nowrap">Tipo</div>
+                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                        class="form-control"  formControlName="type">
+                    <div [hidden]="open.controls['type'].valid" class="alert alert-danger">Invalid</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

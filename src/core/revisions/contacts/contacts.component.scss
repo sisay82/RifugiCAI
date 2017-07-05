@@ -1,0 +1,9 @@
+@import '../../style/typography';
+@import '../../style/palette';
+
+@include bc-typography();
+
+.bc-revision-title{
+    margin-bottom: 4px;
+    color:map-get($bc-teal,400 );
+}

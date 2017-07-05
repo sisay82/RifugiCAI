@@ -38,10 +38,12 @@ export class BcButton{
             let style=this.getClass();
             this.local_style=style.concat(" bc-selected-button-light");
         }
-        if(this.button.action==undefined){
-            this.router.navigateByUrl(this.button.ref);
-        }else{
-            this.button.action(this.button.ref);
+        if(this.button.action!=null){
+            if(this.button.action==undefined){
+                this.router.navigateByUrl(this.button.ref);
+            }else{
+                this.button.action(this.button.ref);
+            }
         }
     }
 
