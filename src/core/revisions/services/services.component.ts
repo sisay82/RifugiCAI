@@ -17,7 +17,6 @@ import { Animations } from './serviceAnimation';
   animations: [ Animations.slideInOut ]
 })
 export class BcServRevision {
-    clickButton:IButton={text:"Invia",action:this.click,ref:this};
     _id:String;
     name:String;
     servForm: FormGroup; 

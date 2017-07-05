@@ -15,12 +15,11 @@ import { BcRevisionsService } from '../revisions.service';
   providers:[ShelterService]
 })
 export class BcGeoRevision {
-    clickButton:IButton={text:"Invia",action:this.click,ref:this};
     _id:String;
     name:String;
     geoForm: FormGroup; 
     data:IGeographic;
-    invalid:Boolean=false;
+    invalid:boolean=false;
     displaySave:Boolean=false;
     displayError:boolean=false;
     constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 

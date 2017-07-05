@@ -15,13 +15,12 @@ import { BcRevisionsService } from '../revisions.service';
   providers:[ShelterService]
 })
 export class BcContactsRevision {
-    clickButton:IButton={text:"Invia",action:this.click,ref:this};
     _id:String;
     name:String;
     contactForm: FormGroup; 
+    invalid:boolean=false;
     contacts:IContacts;
     openings:IOpening[];
-    invalid:Boolean=false;
     displaySave:Boolean=false;
     displayError:boolean=false;
     constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
@@ -46,14 +45,19 @@ export class BcContactsRevision {
         control.removeAt(index);
     }
 
-    addNewOpening(key:String,value:String){
+    addNewOpening(){
         if(this.contactForm.controls['newOpeningStartDate'].valid
             &&this.contactForm.controls['newOpeningEndDate'].valid
             &&this.contactForm.controls['newOpeningType'].valid){
+            if(this.contactForm.controls['newOpeningStartDate'].value<this.contactForm.controls['newOpeningEndDate'].value){
+                this.invalid=true;
+                return;
+            }
+            this.invalid=false;
             const control = <FormArray>this.contactForm.controls['openings'];
             let opening:IOpening = {
-                startDate:this.contactForm.controls["newOpeningStartDate"].value,
-                endDate:this.contactForm.controls["newOpeningEndDate"].value,
+                startDate:new Date(this.contactForm.controls["newOpeningStartDate"].value),
+                endDate:new Date(this.contactForm.controls["newOpeningEndDate"].value),
                 type:this.contactForm.controls['newOpeningType'].value
             }
             control.push(this.initOpening(opening));
@@ -62,8 +66,8 @@ export class BcContactsRevision {
 
     initOpening(opening:IOpening){
         return this.fb.group({
-            startDate:[new Date(opening.startDate).toUTCString(),Validators.pattern(/^([A-Za-z0-9 ,/.:;!?|)(_-]*)+$/)],
-            endDate:[new Date(opening.endDate).toUTCString(),Validators.pattern(/^([A-Za-z0-9 ,/.:;!?|)(_-]*)+$/)],
+            startDate:[new Date(opening.startDate).toUTCString()],
+            endDate:[new Date(opening.endDate).toUTCString()],
             type:[opening.type,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)]
         });
     }
