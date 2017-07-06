@@ -1,12 +1,13 @@
 import {Injectable } from '@angular/core'
 import { Subject } from 'rxjs/Subject';
+import { IShelter } from '../../shared/interfaces';
 
 @Injectable()
 export class BcSharedService{
-    private maskSaveSource = new Subject<string>();
+    private maskSaveSource = new Subject<IShelter>();
     maskSave$ = this.maskSaveSource.asObservable();
-    onMaskSave(){
-        this.maskSaveSource.next();
+    onMaskSave(shelter:IShelter){
+        this.maskSaveSource.next(shelter);
     }
 
     private maskConfirmSaveSource = new Subject<{dirty:boolean,component:string}>();
