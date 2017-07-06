@@ -4,7 +4,7 @@ import { BcAvatarModule } from './avatar/avatar.module';
 import { BcDividerModule } from './divider/divider.module';
 import { BcNavbarModule } from './navbar/navbar.module';
 import { BcListModule } from './list/list.module';
-import { BcMaskModule } from './fixed_mask/mask.module';
+import { BcMaskControllerModule } from './fixed_mask/mask-controller.module';
 import { BcMenuModule } from './menu/menu.module';
 import { BcButtonModule } from './button/button.module';
 import { BcSelectGroupModule } from './button/selectGroup.module';
@@ -20,7 +20,7 @@ const COMPONENTS_MODULES = [
     BcDividerModule,
     BcNavbarModule,
     BcListModule,
-    BcMaskModule,
+    BcMaskControllerModule,
     BcMenuModule,
     BcButtonModule,
     BcSelectGroupModule

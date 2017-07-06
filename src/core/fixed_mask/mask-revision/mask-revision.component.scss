@@ -1,0 +1,45 @@
+@import '../../style/palette';
+@import '../../style/typography';
+
+@include bc-typography;
+
+.bc-mask-icon{
+    font-size:20px;
+    padding-right: 10px;
+}
+
+.bc-mask-icon:hover{
+    color: map-get($bc-teal,400);
+    cursor: pointer;
+}
+
+.bc-mask-container{
+    height:150px;
+    background-color: map-get($bc-light-theme-background,background);
+    font-style: Roboto, Helvetica Neue, sans-serif;
+    position:relative;
+    white-space: nowrap;
+    width: 100%;
+    display: inline-block;
+
+}
+
+.bc-mask-line{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    position:relative;
+    height:33%;
+    width:100%;
+}
+
+.bc-mask-title{
+    display: flex;
+    flex-direction: row;
+}
+
+.bc-mask-content{
+    padding-left:4px;
+    display: flex;
+    flex-direction: row;
+}

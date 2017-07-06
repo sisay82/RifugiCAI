@@ -1,0 +1,51 @@
+<div class="bc-mask-container">
+    <div class="bc-mask-line">
+        <div class="bc-h6" style="display:flex;flex-direction:row;align-items:center;white-space:center;width:100%">
+            <div (click)="return()" class="fa fa-arrow-left bc-mask-icon" style="display: inline;margin-left:10px"></div>
+            <ng-content></ng-content>
+            <div style="display: inline;margin-left:10px">{{shelter?.name || 'Nome Rifugio'}}</div>,
+            <div style="display: inline;margin-left:5px">{{shelter?(shelter.geoData?(shelter.geoData.location?(shelter.geoData.location.municipality||'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'}}</div>
+            <div style="display: inline;margin-left:auto;margin-right:1%">
+                <div (click)="revision()" class="fa fa-edit bc-mask-icon" style="display: inline"></div>
+            </div>
+        </div>
+    </div>
+    <div class="bc-mask-line" style="margin-left:10px">
+        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+            <div class="bc-mask-title bc-body-strong">ID:</div>
+            <div class="bc-mask-content bc-body">{{shelter?.idCai || '---'}}</div>
+        </div>
+        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+            <div class="bc-mask-title  bc-body-strong">Tipo:</div>
+            <div class="bc-mask-content bc-body">{{shelter?.type || '----'}}</div>
+        </div>
+        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+            <div class="bc-mask-title  bc-body-strong">Sezione:</div>
+            <div class="bc-mask-content bc-body">{{shelter?.branch || '----'}}</div>
+        </div>
+
+        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+            <div class="bc-mask-title  bc-body-strong">Proprietà:</div>
+            <div class="bc-mask-content bc-body">{{shelter?.owner || '----'}}</div>
+        </div>
+    </div>
+    <div class="bc-mask-line" style="margin-left:15px">
+        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+            <div class="bc-mask-title  bc-body-strong">Categoria:</div>
+            <div class="bc-mask-content bc-body">{{shelter?.category || '----'}}</div>
+        </div>
+        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+            <div class="bc-mask-title  bc-body-strong">Per la regione:</div>
+            <div class="bc-mask-content bc-body">{{shelter?(shelter.geoData?(shelter.geoData.location?(shelter.geoData.location.ownerRegion || '----'):'----'):'----'):'----'}}</div>
+        </div>
+        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+            <div class="bc-mask-title  bc-body-strong">Inserito il:</div>
+            <div class="bc-mask-content bc-body">{{shelter?(shelter.insertDate?(shelter.insertDate | date:"dd/MM/yy"):'----'): '----'}}</div>
+        </div>
+        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+            <div class="bc-mask-title  bc-body-strong">Aggiornato il:</div>
+            <div class="bc-mask-content bc-body">{{shelter?(shelter.updateDate?(shelter.updateDate | date:"dd/MM/yy"):'----'): '----'}}</div>
+        </div>
+    </div>
+    <bc-divider></bc-divider>
+</div>
