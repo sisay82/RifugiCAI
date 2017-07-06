@@ -5,24 +5,13 @@
 @import './listHeader/list-header.directive';
 
 @import '../icon/icon.component';
-@import '../avatar/avatar.directive';
 
 // Normal list variables
 $bc-list-padding-start: 16px;
 $bc-list-padding-end: 0px;
 
-$bc-list-base-height: 48px;
-
 $bc-list-no-border: 0px;
 
-// // // spec requires two- and three-line lists be taller
-// // $bc-list-two-line-height: 72px;
-// // $bc-list-three-line-height: 88px;
-
-// Dense list variables
-$bc-dense-base-height: 40px;
-// // $bc-dense-two-line-height: 60px;
-// // $bc-dense-three-line-height: 76px;
 
 @mixin bc-list-theme($theme) {
   .bc-list {
@@ -42,9 +31,7 @@ $bc-dense-base-height: 40px;
 
   // bc-list-item style
   @include bc-list-item-base(
-    $bc-list-base-height,
     $bc-icon-size,
-    $bc-avatar-container-height,
     $bc-list-padding-start, $bc-list-padding-end
   );
 
@@ -57,10 +44,9 @@ $bc-dense-base-height: 40px;
 
   &[dense], &[data-dense] {
     @include bc-list-item-base(
-      $bc-dense-base-height,
       $bc-dense-icon-size,
-      $bc-dense-avatar-container-height,
-      $bc-list-padding-start, $bc-list-padding-end
+      $bc-list-padding-start, $bc-list-padding-end,
+      dense
     );
   }
 }

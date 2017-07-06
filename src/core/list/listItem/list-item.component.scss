@@ -2,6 +2,7 @@
 @import '../../style/typography';
 @import '../../style/theme';
 @import '../../style/vendor-prefixes';
+@import '../../avatar/avatar.directive';
 
 // Represents a collection of typographic scale.
 @function bc-list-item-typographic-scale(
@@ -16,6 +17,29 @@
     first: $list-item-first-line,
     secondary: $list-item-secondary-line
   );
+}
+
+// Represents list item heights definition.
+$bc-list-item-heights: (
+    base: 48px,
+    2line: 72px,
+    3line: 88px,
+    multiline: 100%,
+    avatar: $bc-avatar-container-height,
+    dense:(
+        base: 40px,
+        2line: 60px,
+        3line: 76px,
+        multiline: 100%,
+        avatar: $bc-dense-avatar-container-height
+    )
+);
+// Represents the desired item height.
+@function bc-item-height($heightDef, $type: base, $dense: null) {
+
+  $item-height: if($dense == null, map-get($heightDef, $type),  map-get(map-get($heightDef, dense), $type));
+
+  @return $item-height;
 }
 
 @mixin bc-list-item-theme($theme) {
@@ -50,6 +74,9 @@
                 color: bc-color($foreground, 'text');
                 // all lines but the top line should have smaller text
                 &:nth-child(n+2) {
+                    color: bc-color($foreground, 'text');
+                }
+                &:nth-last-child(1) {
                     color: bc-color($foreground, 'secondary-text');
                 }
             }
@@ -57,7 +84,7 @@
     }
 }
 
-@mixin bc-list-item-base($base-height, $icon-size, $avatar-height, $bc-list-item-padding-start: 16px, $bc-list-item-padding-end: 0px) {
+@mixin bc-list-item-base($icon-size, $bc-list-item-padding-start: 16px, $bc-list-item-padding-end: 0px, $dense:null) {
 
     & a.bc-list-item, & button.bc-list-item {
         text-decoration: none;
@@ -96,7 +123,7 @@
             
             // Container dimension style
             // --------------------------------------------------
-            height: $base-height;
+            height: bc-item-height($bc-list-item-heights, base, $dense);
             // Content position style
             // --------------------------------------------------
             align-items: center;
@@ -157,7 +184,7 @@
                 display: none;
             }
 
-            & :first-child {
+            &:first-child {
                 padding: 0;
             }
 
@@ -180,27 +207,29 @@
                 width: $bc-icon-size;
                 font-size: $bc-icon-size;
         }
-
-        //   &.bc-2-line .bc-list-item-content {
-        //     height: $two-line-height;
-        //   }
-
-
-        //   &.bc-3-line .bc-list-item-content {
-        //     height: $three-line-height;
-        //   }
-
-        //   // list items with more than 3 lines should expand to match
-        //   // the height of its contained text
-        //   &.bc-multi-line .bc-list-item-content {
-        //     height: 100%;
-        //     padding: 8px $mat-list-side-padding;
-        //   }
     }
 
     &.bc-list-avatar .bc-list-item .bc-list-item-content {
-        height:  $avatar-height;
+        height: bc-item-height($bc-list-item-heights, 'avatar', $dense);
     }
+
+
+    &.bc-2-line .bc-list-item-content {
+    height:  bc-item-height($bc-list-item-heights, 2line, $dense);
+    }
+
+
+    &.bc-3-line .bc-list-item-content {
+    height: bc-item-height($bc-list-item-heights, 3line, $dense);
+    }
+    
+
+    // list items with more than 3 lines should expand to match
+    // the height of its contained text
+    &.bc-multi-line .bc-list-item-content {
+    height: bc-item-height($bc-list-item-heights, multiline, $dense);
+    }
+
 }
 
 @mixin bc-list-item-no-border(){
@@ -224,6 +253,18 @@
         border-color: bc-color($accent);
 
         @include bc-list-item-disable($accent, $background, $foreground);
+        
+        .bc-line {
+            color: bc-color($accent, '500-contrast');
+            // all lines but the top line should have smaller text
+            &:nth-child(n+2) {
+                color: bc-color($accent, '600-contrast');
+            }
+
+            &:nth-last-child(1) {
+                color: bc-color($accent, '800-contrast');
+            }
+        }
     }
 }
 
