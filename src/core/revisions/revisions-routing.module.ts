@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BcGeoRevision } from "./geographics/geo.component";
 import { BcServRevision } from "./services/services.component";
 import { BcContactsRevision } from "./contacts/contacts.component";
+import { BcManagementRevision } from "./management/management.component";
 
 
 @NgModule({
@@ -19,7 +20,7 @@ export class RevisionsRoutingModule {
     { path: 'geographic',component:BcGeoRevision,outlet:'revision'},
     { path: 'services', component: BcServRevision,outlet:'revision' },
     { path: 'contacts', component: BcContactsRevision,outlet:'revision' },
-    { path: 'management', component: BcGeoRevision,outlet:'revision' },
+    { path: 'management', component: BcManagementRevision,outlet:'revision' },
     { path: 'catastal', component: BcGeoRevision,outlet:'revision' },
     { path: 'documents', component: BcGeoRevision,outlet:'revision' },
     { path: 'images', component: BcGeoRevision,outlet:'revision' },

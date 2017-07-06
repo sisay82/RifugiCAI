@@ -8,7 +8,7 @@ import { BcListModule } from './list/list.module';
 import { BcDetailsModule } from './details/details.module';
 import { BcRevisionsModule } from './revisions/revisions.module';
 import { BcMapModule } from './map/map.module';
-import { BcMaskModule } from './fixed_mask/mask.module';
+import { BcMaskModule } from './fixed_mask/mask-detail/mask.module';
 import { BcButtonModule } from './button/button.module';
 import { BcSelectGroupModule } from './button/selectGroup.module';
 import { BcMenuModule } from './menu/menu.module';

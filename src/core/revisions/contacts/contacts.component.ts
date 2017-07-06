@@ -3,9 +3,22 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IOpening, IContacts, IButton, IShelter } from '../../../app/shared/types/interfaces'
+import {Enums} from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
+
+function validateDate(c:FormControl){
+    if(c.value!=''&&c.value!=null){
+        let date = Date.parse(c.value);
+        if(!isNaN(date)){
+            return null;
+        }else{
+            return {valid:false};
+        }
+    }
+    return null;
+}
 
 @Component({
   moduleId: module.id,
@@ -23,6 +36,7 @@ export class BcContactsRevision {
     openings:IOpening[];
     displaySave:Boolean=false;
     displayError:boolean=false;
+
     constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.contactForm = fb.group({
             fixedPhone:["",Validators.pattern(/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/)],
@@ -31,14 +45,31 @@ export class BcContactsRevision {
             emailAddress:["",Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)],
             mailPec:["",Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)],
             webAddress:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            openings:fb.array([
-                //  
-            ]),
-            newOpeningStartDate:["Inizio",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)],
-            newOpeningEndDate:["Fine",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)],
+            openings:fb.array([]),
+            newOpeningStartDate:["Inizio",validateDate],
+            newOpeningEndDate:["Fine",validateDate],
             newOpeningType:["Tipo",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)]
         }); 
     } 
+
+    getEnumOwnerNames():any[]{
+        let names:any[]=[];
+        const objValues = Object.keys(Enums.Owner_Type).map(k => Enums.Owner_Type[k]);
+        objValues.filter(v => typeof v === "string").forEach((val)=>{
+            names.push(val);
+        });
+        return names;
+    }
+
+    checkEnum(value){
+        if(this.contactForm.controls['role'].value!=undefined){
+            if(this.contactForm.controls['role'].value!=''&&this.contactForm.controls['role'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
+                return true;
+            }
+        }
+        return false;
+        
+    }
 
     removeOpening(index){
         const control = <FormArray>this.contactForm.controls['openings'];
@@ -46,18 +77,26 @@ export class BcContactsRevision {
     }
 
     addNewOpening(){
-        if(this.contactForm.controls['newOpeningStartDate'].valid
-            &&this.contactForm.controls['newOpeningEndDate'].valid
-            &&this.contactForm.controls['newOpeningType'].valid){
-            if(this.contactForm.controls['newOpeningStartDate'].value<this.contactForm.controls['newOpeningEndDate'].value){
-                this.invalid=true;
-                return;
+        if(this.contactForm.controls['newOpeningStartDate'].valid&&this.contactForm.controls['newOpeningEndDate'].valid&&this.contactForm.controls['newOpeningType'].valid){
+            let startDate;
+            let endDate;
+            if(this.contactForm.controls['newOpeningStartDate'].value!=null&&this.contactForm.controls['newOpeningStartDate'].value!=""&&
+                this.contactForm.controls['newOpeningEndDate'].value!=null&&this.contactForm.controls['newOpeningEndDate'].value!=""){
+                startDate=Date.parse(this.contactForm.controls['newOpeningStartDate'].value);
+                endDate=Date.parse(this.contactForm.controls['newOpeningEndDate'].value);
+                if(startDate<endDate){
+                    this.invalid=true;
+                    return;
+                }
+            }else{
+                startDate=null;
+                endDate=null;
             }
             this.invalid=false;
             const control = <FormArray>this.contactForm.controls['openings'];
             let opening:IOpening = {
-                startDate:new Date(this.contactForm.controls["newOpeningStartDate"].value),
-                endDate:new Date(this.contactForm.controls["newOpeningEndDate"].value),
+                startDate:startDate,
+                endDate:endDate,
                 type:this.contactForm.controls['newOpeningType'].value
             }
             control.push(this.initOpening(opening));
@@ -66,8 +105,8 @@ export class BcContactsRevision {
 
     initOpening(opening:IOpening){
         return this.fb.group({
-            startDate:[new Date(opening.startDate).toUTCString()],
-            endDate:[new Date(opening.endDate).toUTCString()],
+            startDate:[opening.startDate?(new Date(opening.startDate).toUTCString()):null,validateDate],
+            endDate:[opening.startDate?(new Date(opening.endDate).toUTCString()):null,validateDate],
             type:[opening.type,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)]
         });
     }

@@ -6,6 +6,7 @@ import { IGeographic, IButton, IShelter } from '../../../app/shared/types/interf
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
+import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 
 @Component({
   moduleId: module.id,
@@ -22,7 +23,7 @@ export class BcGeoRevision {
     invalid:boolean=false;
     displaySave:Boolean=false;
     displayError:boolean=false;
-    constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
             region:["",[Validators.required,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]],//required and string
             province:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],//string with some character
@@ -35,12 +36,20 @@ export class BcGeoRevision {
             longitude:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],
             massif:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
             valley:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            tags:fb.array([
-                
-            ]),
+            tags:fb.array([]),
             newKey:["Chiave",[Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/),Validators.required]],
             newValue:["Valore",[Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/),Validators.required]]
         }); 
+
+        shared.maskSave$.subscribe(()=>{
+            if(this.geoForm.dirty){
+                this.click(this);
+                shared.onMaskConfirmSave(true,"geographic");
+            }else{
+                shared.onMaskConfirmSave(false,"geographic");
+            }
+            
+        });
     } 
 
     addTag(key:String,value:String){

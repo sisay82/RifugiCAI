@@ -77,7 +77,7 @@ export interface IOpening{
 
 export interface IContacts{
     name?:String;
-    role?:String;
+    role?:Enums.Owner_Type;
     fixedPhone?:String;
     mobilePhone?:String;
     mailPec?:String;

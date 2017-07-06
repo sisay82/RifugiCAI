@@ -44,6 +44,12 @@ export namespace Enums{
         Riscaldamento
     }
 
+    export enum Owner_Type
+    {
+        Custode,
+        Proprietario
+    }
+
     //tipo custodia
     export enum Custody_Type
     {

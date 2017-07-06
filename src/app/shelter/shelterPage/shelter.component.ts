@@ -1,18 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import {ShelterService} from '../shelter.service'
-import {IMenu,IShelter}from '../../shared/types/interfaces';
-
+import { Component } from '@angular/core';
+import {IMenu} from '../../shared/types/interfaces';
+import {BcSharedService} from './shared.service'
 @Component({
     moduleId: module.id,
     selector: 'bc-shelter',
     templateUrl: 'shelter.component.html',
     styleUrls: ['shelter.component.scss'],
-    providers:[ShelterService]
+    providers:[BcSharedService]
 
 })
 export class BcShelter {
-    shelter:IShelter;
     appMenuElements:IMenu={
     layers:[{
         layerName:"Publics",
@@ -37,13 +34,7 @@ export class BcShelter {
         ]
     };
 
-    constructor(private shelterService:ShelterService,private route:ActivatedRoute){}
-
-    ngOnInit(){
-        this.route.params.subscribe(params=>{
-            this.shelterService.getShelter(params['id']).subscribe(shelter=>{
-                this.shelter=shelter;
-            });
-        });
+    constructor(private shared:BcSharedService){
     }
+    
 }

@@ -1,9 +1,10 @@
 import {
-  Component, Input
+  Component, Input, OnInit
 } from '@angular/core';
-import { IShelter } from '../../app/shared/types/interfaces';
+import { IShelter } from '../../../app/shared/types/interfaces';
 import {Router,ActivatedRoute} from '@angular/router';
-import {ShelterService} from '../../app/shelter/shelter.service'
+import {ShelterService} from '../../../app/shelter/shelter.service'
+import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 
 @Component({
     moduleId: module.id,
@@ -14,9 +15,19 @@ import {ShelterService} from '../../app/shelter/shelter.service'
 })
 export class BcMask {
   @Input() shelter:IShelter;
-  @Input() ref:string;
 
-  constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService){}
+  constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService){
+  }
+
+  ngOnInit(){
+    if(this.shelter==undefined){
+      this._route.params.subscribe(params=>{
+        this.shelterService.getShelter(params['id']).subscribe(shelter=>{
+            this.shelter=shelter;
+        });
+      });
+    }
+  }
 
   isRevisionig(){
     let route=this._route;
@@ -27,18 +38,20 @@ export class BcMask {
   }
 
   save(){
-    this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
-      if(!value){
-       console.log("Error in Confirm"); 
+    this.shared.maskConfirmSave$.subscribe((obj)=>{
+      if(obj.dirty){
+        this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
+          if(!value){
+          console.log("Error in Confirm"); 
+          }else{
+            this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+obj.component+")")
+          }
+        });
       }else{
-        let route=this._route;
-        while(route.children.length>0){
-          route=route.children[0];
-        }
-        let path=route.snapshot.url[0].path;
-        this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+path+")")
+        this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+obj.component+")");
       }
     });
+    this.shared.onMaskSave();
   }
 
   cancel(){
@@ -66,8 +79,6 @@ export class BcMask {
   }
 
   return(){
-    if(this.ref!=undefined)
-      this.router.navigateByUrl(this.ref);
-    else this.router.navigateByUrl("list");
+    this.router.navigateByUrl("list");
   }
 }

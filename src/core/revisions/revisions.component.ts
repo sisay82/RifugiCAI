@@ -1,6 +1,8 @@
 import { Component, Input,OnInit } from '@angular/core';
 import { IShelter } from '../../app/shared/types/interfaces';
 import { BcRevisionsService } from './revisions.service';
+import { BcSharedService } from '../../app/shelter/shelterPage/shared.service';
+
 import {Router,RoutesRecognized} from '@angular/router';
 
 @Component({
@@ -12,8 +14,7 @@ import {Router,RoutesRecognized} from '@angular/router';
 export class BcRevisions implements OnInit{
     ShelterToUpdate:IShelter;
 
-    constructor(private revisionService:BcRevisionsService,private router: Router){
-
+    constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService){
     }
 
     ngOnInit(){

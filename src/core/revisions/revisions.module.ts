@@ -3,14 +3,14 @@ import { NgModule } from '@angular/core';
 import { BcGeoRevisionModule } from './geographics/geo.module';
 import { BcServRevisionModule } from './services/services.module';
 import { BcContactsRevisionModule } from './contacts/contacts.module';
-
+import { BcManagementRevisionModule } from './management/management.module';
 import { BcRevisions } from "./revisions.component";
 import { RouterModule, Routes } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import {BrowserAnimationsModule}from '@angular/platform-browser/animations';
 
 @NgModule({
-    imports: [HttpModule,RouterModule,BcGeoRevisionModule,BcServRevisionModule,BcContactsRevisionModule],
+    imports: [HttpModule,RouterModule,BcGeoRevisionModule,BcServRevisionModule,BcContactsRevisionModule,BcManagementRevisionModule],
     declarations:[BcRevisions],
     exports: [BcRevisions]
 })
