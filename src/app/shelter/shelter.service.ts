@@ -13,7 +13,7 @@ export class ShelterService {
 
     //sheletersBaseUrl: string = '/api/shelters';
     sheletersBaseUrl: string = 'http://localhost:8080/api/shelters';
-    //sheletersBaseUrl: string = 'http://test-mongo-cai.herokuapp.com/api/shelters';
+    //sheletersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 

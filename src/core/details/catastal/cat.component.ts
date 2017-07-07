@@ -41,7 +41,9 @@ export class BcCatastal {
   }
 
   ngOnDestroy(){
-    this.activeComponentSub.unsubscribe();
+    if(this.activeComponentSub!=undefined){
+      this.activeComponentSub.unsubscribe();
+    }
   }
 
   ngOnInit(){
@@ -52,10 +54,18 @@ export class BcCatastal {
           this.drain=shelter.drain;
           let energySub=this.shelterService.getShelterSection(params['id'],"energy").subscribe(shelter=>{
             this.energy=shelter.energy;
-              drainSub.unsubscribe();
-              energySub.unsubscribe();
-              catSub.unsubscribe();
-              routeSub.unsubscribe();
+              if(drainSub!=undefined){
+                drainSub.unsubscribe();
+              }
+              if(energySub!=undefined){
+                energySub.unsubscribe();
+              }
+              if(catSub!=undefined){
+                catSub.unsubscribe();
+              }
+              if(routeSub!=undefined){
+                routeSub.unsubscribe();
+              }
           });
         });
       });

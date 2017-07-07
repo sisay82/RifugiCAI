@@ -47,16 +47,22 @@ export class BcGeo {
   }
 
   ngOnDestroy(){
-    this.activeComponentSub.unsubscribe();
+    if(this.activeComponentSub!=undefined){
+      this.activeComponentSub.unsubscribe();
+    }
   }
 
   ngOnInit(){
     let routeSub:Subscription=this._route.parent.params.subscribe(params=>{
-      let shelterSub=this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
+      let shelSub=this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
         this.data=shelter.geoData;
         this.center.next([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number]);
-        shelterSub.unsubscribe();
-        routeSub.unsubscribe();
+        if(shelSub!=undefined){
+          shelSub.unsubscribe();
+        }
+        if(routeSub!=undefined){
+          routeSub.unsubscribe();
+        }
       });
       
     });

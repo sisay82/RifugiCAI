@@ -27,7 +27,9 @@ export class BcContact {
   }
 
   ngOnDestroy(){
-    this.activeComponentSub.unsubscribe();
+    if(this.activeComponentSub!=undefined){
+      this.activeComponentSub.unsubscribe();
+    }
   }
 
   ngOnInit(){
@@ -36,9 +38,15 @@ export class BcContact {
       this.contacts=shelter.contacts;
       let timeSub=this.shelterService.getShelterSection(params['id'],"openingTime").subscribe(shel=>{
         this.openings=shel.openingTime;
-        timeSub.unsubscribe();
-        contactSub.unsubscribe();
-        routeSub.unsubscribe();
+        if(timeSub!=undefined){
+          timeSub.unsubscribe();
+        }
+        if(contactSub!=undefined){
+          contactSub.unsubscribe();
+        }
+        if(routeSub!=undefined){
+          routeSub.unsubscribe();
+        }
       });
      });
     });

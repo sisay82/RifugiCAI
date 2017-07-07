@@ -29,7 +29,9 @@ export class BcManage {
   }
 
   ngOnDestroy(){
-    this.activeComponentSub.unsubscribe();
+    if(this.activeComponentSub!=undefined){
+      this.activeComponentSub.unsubscribe();
+    }
   }
 
   ngOnInit(){
@@ -45,8 +47,12 @@ export class BcManage {
             }
           })
         }
-        shelSub.unsubscribe();
-        routeSub.unsubscribe();
+        if(shelSub!=undefined){
+          shelSub.unsubscribe();
+        }
+        if(routeSub!=undefined){
+          routeSub.unsubscribe();
+        }
       })
     });
   }

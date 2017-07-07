@@ -4,6 +4,10 @@
 @include bc-typography();
 
 .bc-service-title{
-    color:map-get($bc-teal,400 );
     font-weight: 500;
+}
+
+.bc-content-service{
+    position: relative;
+    margin-left: 1%;
 }
