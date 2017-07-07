@@ -42,7 +42,6 @@ export class BcContactsRevision {
     invalid:boolean=false;
     contacts:IContacts;
     openings:IOpening[];
-    displaySave:Boolean=false;
     displayError:boolean=false;
     maskSaveSub:Subscription;
     activeComponentSub:Subscription;
@@ -166,7 +165,6 @@ export class BcContactsRevision {
                 this.revisionService.onChildSave(shelter,"contacts");
                 let contSub=this.shelterService.preventiveUpdateShelter(shelter,"contacts").subscribe((returnVal)=>{
                     if(returnVal){
-                        this.displaySave=true;
                         this.displayError=false;
                         if(confirm){
                             this.shared.onMaskConfirmSave(true,"contacts");
@@ -175,7 +173,6 @@ export class BcContactsRevision {
                     }else{
                         console.log(returnVal);
                         this.displayError=true;
-                        this.displaySave=false;
                     }
                     if(contSub!=undefined){
                         contSub.unsubscribe();
@@ -188,7 +185,6 @@ export class BcContactsRevision {
             }else{
                 console.log(returnVal);
                 this.displayError=true;
-                this.displaySave=false;
                 if(openSub!=undefined){
                     openSub.unsubscribe();
                 }
@@ -225,8 +221,12 @@ export class BcContactsRevision {
         if(this.openingChange||this.contactForm.dirty){
             this.save(false);
         }
-        this.activeComponentSub.unsubscribe();
-        this.maskSaveSub.unsubscribe();
+        if(this.activeComponentSub!=undefined){
+            this.activeComponentSub.unsubscribe();
+        }
+        if(this.maskSaveSub!=undefined){
+            this.maskSaveSub.unsubscribe();
+        }
     }
 
     ngOnInit(){

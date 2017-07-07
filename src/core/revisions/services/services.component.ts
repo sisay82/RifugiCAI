@@ -31,7 +31,6 @@ export class BcServRevision {
     data:IService[];
     serviceToRemove:String[]=[];
     currentService:number=0;
-    displaySave:Boolean=false;
     displayError:boolean=false;
     activeComponentSub:Subscription;
     maskSaveSub:Subscription;
@@ -216,7 +215,6 @@ export class BcServRevision {
         this.revisionService.onChildSave(shelter,"services");
         let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"services").subscribe((returnVal)=>{
             if(returnVal){
-                this.displaySave=true;
                 this.displayError=false;
                 if(confirm){
                     this.shared.onMaskConfirmSave(true,"services");
@@ -225,7 +223,6 @@ export class BcServRevision {
             }else{
                 console.log(returnVal);
                 this.displayError=true;
-                this.displaySave=false;
             }
             if(shelSub!=undefined){
                 shelSub.unsubscribe();

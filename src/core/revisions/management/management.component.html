@@ -1,5 +1,6 @@
 <form [formGroup]="managForm">
     <div style="display:block;margin-left:4px;background:white">
+        <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
         <div class="bc-management-title bc-h6">Proprietà:</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
@@ -99,7 +100,7 @@
                 <div class="bc-body" style="white-space: nowrap">Tipo di Affitto</div>
                 <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control" formControlName="rentType">
-                    <option [selected]="managForm.controls['rentType'].value==undefined" value="">-- Tipo Affitto --</option>
+                    <option [selected]="managForm.controls['rentType'].value==undefined" value="null">-- Tipo Affitto --</option>
                     <option *ngFor="let name of getEnumCustodyNames()" [selected]="checkEnum(name)" [value]="name">{{name}}</option>
                 </select>
             </div>

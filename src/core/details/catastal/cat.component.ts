@@ -10,12 +10,12 @@ import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   moduleId: module.id,
-  selector: 'bc-cadastrad',
-  templateUrl: 'cad.component.html',
-  styleUrls: ['cad.component.scss'],
+  selector: 'bc-catastal',
+  templateUrl: 'cat.component.html',
+  styleUrls: ['cat.component.scss'],
   providers:[ShelterService]
 })
-export class BcCadastral {
+export class BcCatastal {
   catastal:ICatastal={};
   drain:IDrain={type:null};
   energy:IEnergy={};

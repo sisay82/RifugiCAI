@@ -43,7 +43,6 @@ export class BcManagementRevision {
     data:IManagement;
     property:ISubject;
     invalid:Boolean=false;
-    displaySave:Boolean=false;
     displayError:boolean=false;
     activeRouteSub:Subscription;
     maskSaveSub:Subscription;
@@ -201,7 +200,6 @@ export class BcManagementRevision {
         if(this.managForm.valid){
             let managSub=this.shelterService.preventiveUpdateShelter(shelter,"management").subscribe((returnVal)=>{
                 if(returnVal){
-                    this.displaySave=true;
                     this.displayError=false;
                     if(confirm){
                         this.shared.onMaskConfirmSave(true,"management");
@@ -210,7 +208,6 @@ export class BcManagementRevision {
                 }else{
                     console.log("Err "+returnVal);
                     this.displayError=true;
-                    this.displaySave=false;
                 }
                 if(managSub!=undefined){
                     managSub.unsubscribe();

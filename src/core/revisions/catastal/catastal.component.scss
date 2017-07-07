@@ -3,17 +3,24 @@
 
 @include bc-typography();
 
-.bc-contact-title{
-    margin-bottom: 4px;
-    color:map-get($bc-teal,400 );
+.bc-catastal-title{
+  margin-bottom: 4px;
+  color:map-get($bc-teal,400 );
+}
+
+.bc-catastal-check{
+  position:relative;
+  align-items: center;
+  margin-left:2%;
+  margin-right:2%
 }
 
 .bc-add-tag:hover{
   color:map-get($bc-teal,400);
 }
 
-.bc-revision-contact{
-  width:20%;
+.bc-revision-catastal{
+  width:30%;
   margin-right:1%
 }
 

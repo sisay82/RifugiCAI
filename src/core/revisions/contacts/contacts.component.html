@@ -1,6 +1,7 @@
 <form style="position:relative" [formGroup]="contactForm">
     <div style="display:block;margin-left:4px;background:white">
-        <div class="bc-h6 bc-revision-title">Contatti</div>
+        <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
+        <div class="bc-h6 bc-contact-title">Contatti</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-contact">
                 <div class="bc-body" style="white-space: nowrap">Telefono</div>
@@ -18,7 +19,7 @@
                 <div class="bc-body" style="white-space: nowrap">Ruolo</div>
                 <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control" formControlName="role">
-                    <option [selected]="contactForm.controls['role'].value==undefined" value="">-- Ruolo --</option>
+                    <option [selected]="contactForm.controls['role'].value==undefined" value="null">-- Ruolo --</option>
                     <option *ngFor="let name of getEnumOwnerNames()" [selected]="checkEnum(name)" [value]="name">{{name}}</option>
                 </select>
             </div>
@@ -45,7 +46,7 @@
         </div>
         <br>
         <bc-divider></bc-divider>
-        <div class="bc-h6 bc-detail-title">Aperture</div>
+        <div class="bc-h6 bc-contact-title">Aperture</div>
         <div *ngFor="let open of contactForm.controls['openings'].controls;let i = index" formArrayName="openings">
             <div [formGroupName]="i" style="display: flex;flex-direction:row;align-items:center">
                 <div class="bc-revision-contact">

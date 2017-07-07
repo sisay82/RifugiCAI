@@ -28,7 +28,6 @@ export class BcGeoRevision {
     geoForm: FormGroup; 
     data:IGeographic;
     invalid:boolean=false;
-    displaySave:Boolean=false;
     activeComponentSub:Subscription;
     maskSaveSub:Subscription;
     tagChange:boolean=false
@@ -116,7 +115,6 @@ export class BcGeoRevision {
         this.revisionService.onChildSave(shelter,"geoData");
         let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"geoData").subscribe((returnVal)=>{
             if(returnVal){
-                this.displaySave=true;
                 this.displayError=false;
                 if(confirm){
                     this.shared.onMaskConfirmSave(true,"geographic");
@@ -125,7 +123,6 @@ export class BcGeoRevision {
             }else{
                 console.log("Err "+returnVal);
                 this.displayError=true;
-                this.displaySave=false;
             }
             if(shelSub!=undefined){
                 shelSub.unsubscribe();

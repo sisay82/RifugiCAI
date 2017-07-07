@@ -11,6 +11,11 @@
   border-left: 5px solid #a94442; /* red */
 }
 
+.bc-geographic-title{
+    margin-bottom: 4px;
+    color:map-get($bc-teal,400 );
+}
+
 .bc-add-tag:hover{
   color:map-get($bc-teal,400);
 }

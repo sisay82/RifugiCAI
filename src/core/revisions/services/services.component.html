@@ -1,4 +1,5 @@
 <form style="position:relative" [formGroup]="servForm">
+    <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
     <div style="position:relative">
         <div *ngIf="data!=undefined" formArrayName="services">
             <div *ngFor="let service of servForm.controls.services.controls;let i = index">
