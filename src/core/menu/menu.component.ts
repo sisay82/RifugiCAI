@@ -21,7 +21,7 @@ import { BcMenuService } from './menu-toggle.service'
 export class BcMenu {
   current_check:BcMenuItem;
   @ViewChildren(BcMenuItem) _list_layers: QueryList<BcMenuItem>;
-  menuState:string = 'left';
+  menuState:string = 'right';
   @Input() menuElements: IMenu;
 
   ngAfterContentInit(){

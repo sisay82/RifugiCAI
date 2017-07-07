@@ -7,6 +7,7 @@ import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angu
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   moduleId: module.id,
@@ -22,6 +23,9 @@ export class BcGeoRevision {
     data:IGeographic;
     invalid:boolean=false;
     displaySave:Boolean=false;
+    activeComponentSub:Subscription;
+    maskSaveSub:Subscription;
+    tagChange:boolean=false
     displayError:boolean=false;
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
@@ -41,14 +45,19 @@ export class BcGeoRevision {
             newValue:["Valore",[Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/),Validators.required]]
         }); 
 
-        shared.maskSave$.subscribe(()=>{
-            if(this.geoForm.dirty){
-                this.click(this);
-                shared.onMaskConfirmSave(true,"geographic");
+        shared.onActiveOutletChange("revision");
+
+        this.maskSaveSub=shared.maskSave$.subscribe(()=>{
+            if(this.tagChange||this.geoForm.dirty){
+                this.save(true);
             }else{
-                shared.onMaskConfirmSave(false,"geographic");
+                this.shared.onMaskConfirmSave(false,"geographic");
             }
             
+        });
+
+        this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
+            shared.onActiveComponentAnswer("geographic");
         });
     } 
 
@@ -58,11 +67,13 @@ export class BcGeoRevision {
     }
 
     removeTag(index){
+        this.tagChange=true;
         const control = <FormArray>this.geoForm.controls['tags'];
         control.removeAt(index);
     }
 
     addNewTag(key:String,value:String){
+        this.tagChange=true;
         if(this.geoForm.controls['newKey'].valid&&this.geoForm.controls['newValue'].valid){
             const control = <FormArray>this.geoForm.controls['tags'];
             for(let c of control.controls){
@@ -83,31 +94,36 @@ export class BcGeoRevision {
         });
     }
 
-    click(ref:any){
-        let shelter:any={_id:ref._id,name:ref.name,geoData:{location:ref.data.location}};
-        for(let prop in ref.geoForm.controls){
-            if(ref.geoForm.controls[prop].dirty){
-                shelter.geoData.location[prop]=ref.geoForm.controls[prop].value;
+    save(confirm){
+        let shelter:IShelter={_id:this._id,name:this.name,geoData:{location:this.data.location}};
+        for(let prop in this.geoForm.controls){
+            if(this.geoForm.controls[prop].dirty){
+                shelter.geoData.location[prop]=this.geoForm.controls[prop].value;
             }
         }
-        const control = <FormArray>ref.geoForm.controls['tags'];
-        let tags:any[]=[];
+        const control = <FormArray>this.geoForm.controls['tags'];
+        let tags:any=[];
         for(let c of control.controls){
             tags.push({key:c.value.key,value:c.value.value});
         }
         shelter.geoData.tags=tags;
-        ref.revisionService.onChildSave(shelter,"geoData");
-        ref.shelterService.preventiveUpdateShelter(shelter,"geoData").subscribe((returnVal)=>{
+        this.revisionService.onChildSave(shelter,"geoData");
+        let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"geoData").subscribe((returnVal)=>{
             if(returnVal){
-                ref.displaySave=true;
-                ref.displayError=false;
+                this.displaySave=true;
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave(true,"geographic");
+                }
                 //location.reload();
             }else{
                 console.log("Err "+returnVal);
-                ref.displayError=true;
-                ref.displaySave=false;
+                this.displayError=true;
+                this.displaySave=false;
             }
-            
+            if(shelSub!=undefined){
+                shelSub.unsubscribe();
+            }
         });
     }
 
@@ -135,26 +151,48 @@ export class BcGeoRevision {
     }   
 
     ngOnDestroy(){
-        if(this.geoForm.dirty){
-            this.click(this);
+        if(this.tagChange||this.geoForm.dirty){
+            this.save(false);
+        }
+        if(this.maskSaveSub!=undefined){
+            this.maskSaveSub.unsubscribe();
+        }
+        if(this.activeComponentSub!=undefined){
+            this.activeComponentSub.unsubscribe();
         }
         
     }
 
     ngOnInit(){
-        this._route.parent.params.subscribe(params=>{
+        let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
-            this.revisionService.load$.subscribe(shelter=>{
+            let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.geoData!=undefined){
                     this.initForm(shelter);
+                    if(revSub!=undefined){
+                        revSub.unsubscribe();
+                    }
+                    if(routeSub!=undefined){
+                        routeSub.unsubscribe();
+                    }
                 }else{
-                    this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
+                    let shelSub=this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
                         this.initForm(shelter);
+                        if(shelSub!=undefined){
+                            shelSub.unsubscribe();
+                        }
+                        if(revSub!=undefined){
+                            revSub.unsubscribe();
+                        }
+                        if(routeSub!=undefined){
+                            routeSub.unsubscribe();
+                        }
                     });
                 }
 
             });
             this.revisionService.onChildLoadRequest("geoData");
+            
         });
 
     }

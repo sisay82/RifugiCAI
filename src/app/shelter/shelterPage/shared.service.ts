@@ -1,18 +1,25 @@
 import {Injectable } from '@angular/core'
 import { Subject } from 'rxjs/Subject';
+import { IShelter } from '../../shared/types/interfaces';
 
 @Injectable()
 export class BcSharedService{
-    private fatherCallSource = new Subject<string>();
-    fatherCall$ = this.fatherCallSource.asObservable();
-    onFatherCall(section:string){
-        this.fatherCallSource.next(section);
+    private maskSaveSource = new Subject<any>();
+    maskSave$ = this.maskSaveSource.asObservable();
+    onMaskSave(shelter:any){
+        this.maskSaveSource.next(shelter);
     }
 
-    private maskSaveSource = new Subject<string>();
-    maskSave$ = this.maskSaveSource.asObservable();
-    onMaskSave(){
-        this.maskSaveSource.next();
+    private maskCancelSource = new Subject<void>();
+    maskCancel$ = this.maskCancelSource.asObservable();
+    onMaskCancel(){
+        this.maskCancelSource.next();
+    }
+
+    private maskCancelConfirmSource = new Subject<void>();
+    maskCancelConfirm$ = this.maskCancelConfirmSource.asObservable();
+    onMaskConfirmCancel(){
+        this.maskCancelConfirmSource.next();
     }
 
     private maskConfirmSaveSource = new Subject<{dirty:boolean,component:string}>();
@@ -33,11 +40,10 @@ export class BcSharedService{
         this.activeComponentAnswerSource.next(component);
     }
 
-    private childCallSource = new Subject<string>();
-    childCall$ = this.childCallSource.asObservable();
-    onChildCall(section:string){
-        this.childCallSource.next(section);
+    private activeOutletChangeSource = new Subject<string>();
+    activeOutletChange$ = this.activeOutletChangeSource.asObservable();
+    onActiveOutletChange(outlet:string){
+        this.activeOutletChangeSource.next(outlet);
     }
-
 
 }

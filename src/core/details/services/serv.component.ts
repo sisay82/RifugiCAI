@@ -1,9 +1,11 @@
 import {
-  Component,Input,OnInit
+  Component,Input,OnInit,OnDestroy
 } from '@angular/core';
-import { IService } from '../../../app/shared/types/interfaces'
-import {ShelterService} from '../../../app/shelter/shelter.service'
+import { IService } from '../../../app/shared/types/interfaces';
+import {ShelterService} from '../../../app/shelter/shelter.service';
 import { ActivatedRoute } from '@angular/router';
+import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   moduleId: module.id,
@@ -15,14 +17,26 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class BcServ {
   services:IService[];
+  activeComponentSub:Subscription;
+  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
+    this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
+      this.shared.onActiveComponentAnswer("services");
+    })
 
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
+    this.shared.onActiveOutletChange("content");
+  }
+
+  ngOnDestroy(){
+    this.activeComponentSub.unsubscribe();
+  }
 
 
   ngOnInit(){
-    this._route.parent.params.subscribe(params=>{
-      this.shelterService.getShelterSection(params['id'],"services").subscribe(shelter=>{
+    let routeSub=this._route.parent.params.subscribe(params=>{
+      let shelSub=this.shelterService.getShelterSection(params['id'],"services").subscribe(shelter=>{
         this.services=shelter.services;
+        shelSub.unsubscribe();
+        routeSub.unsubscribe();
       });
     });
   }

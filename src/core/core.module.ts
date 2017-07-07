@@ -8,7 +8,7 @@ import { BcListModule } from './list/list.module';
 import { BcDetailsModule } from './details/details.module';
 import { BcRevisionsModule } from './revisions/revisions.module';
 import { BcMapModule } from './map/map.module';
-import { BcMaskModule } from './fixed_mask/mask-detail/mask.module';
+import { BcMaskControllerModule } from './fixed_mask/mask-controller.module';
 import { BcButtonModule } from './button/button.module';
 import { BcSelectGroupModule } from './button/selectGroup.module';
 import { BcMenuModule } from './menu/menu.module';
@@ -27,8 +27,8 @@ const COMPONENTS_MODULES = [
     BcListModule,
     BcDetailsModule,
     BcMapModule,
-    BcMaskModule,
     BcRevisionsModule,
+    BcMaskControllerModule,
     BcButtonModule,
     BcSelectGroupModule,
     BcMenuModule

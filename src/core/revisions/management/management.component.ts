@@ -6,6 +6,8 @@ import { ISubject, IManagement, IButton, IShelter } from '../../../app/shared/ty
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
+import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   moduleId: module.id,
@@ -22,8 +24,10 @@ export class BcManagementRevision {
     invalid:Boolean=false;
     displaySave:Boolean=false;
     displayError:boolean=false;
+    activeRouteSub:Subscription;
+    maskSaveSub:Subscription;
 
-    constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.managForm = fb.group({
             rent:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],//required and string
             period:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],//string with some character
@@ -45,6 +49,20 @@ export class BcManagementRevision {
             newWebSite:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
             newType:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]
         }); 
+
+        shared.onActiveOutletChange("revision");
+
+        this.maskSaveSub=shared.maskSave$.subscribe(()=>{
+            if(this.managForm.dirty){
+                this.save(true);
+            }else{
+                shared.onMaskConfirmSave(false,"management");
+            }
+        });
+
+        this.activeRouteSub=shared.activeComponentRequest$.subscribe(()=>{
+            shared.onActiveComponentAnswer("management");
+        });
     } 
 
     removeSubject(index){
@@ -92,21 +110,21 @@ export class BcManagementRevision {
         });
     }
 
-    click(ref:any){
-        let shelter:IShelter={_id:ref._id,name:ref.name};
+    save(confirm){
+        let shelter:IShelter={_id:this._id,name:this.name};
         let management:IManagement={
-            rent:ref.managForm.controls["rent"].value||null,
-            period:ref.managForm.controls["period"].value||null,
-            contract_start_date:ref.managForm.controls["contract_start_date"].value||null,
-            contract_end_date:ref.managForm.controls["contract_end_date"].value||null,
-            contract_duration:ref.managForm.controls["contract_duration"].value||null,
-            contract_fee:ref.managForm.controls["contract_fee"].value||null,
-            valuta:ref.managForm.controls["valuta"].value||null,
-            rentType:ref.managForm.controls["rentType"].value||null,
-            pickupKey:ref.managForm.controls["pickupKey"].value||null
+            rent:this.managForm.controls["rent"].value||null,
+            period:this.managForm.controls["period"].value||null,
+            contract_start_date:this.managForm.controls["contract_start_date"].value||null,
+            contract_end_date:this.managForm.controls["contract_end_date"].value||null,
+            contract_duration:this.managForm.controls["contract_duration"].value||null,
+            contract_fee:this.managForm.controls["contract_fee"].value||null,
+            valuta:this.managForm.controls["valuta"].value||null,
+            rentType:this.managForm.controls["rentType"].value||null,
+            pickupKey:this.managForm.controls["pickupKey"].value||null
         };
 
-        const control = <FormArray>ref.geoForm.controls['subjects'];
+        const control = <FormArray>this.managForm.controls['subjects'];
         let subjects:any=[];
         for(let c of control.controls){
             subjects.push({
@@ -124,18 +142,23 @@ export class BcManagementRevision {
         }
         shelter.management=management
         shelter.management.subject=subjects;
-        ref.revisionService.onChildSave(shelter,"management");
-        ref.shelterService.preventiveUpdateShelter(shelter,"management").subscribe((returnVal)=>{
+        this.revisionService.onChildSave(shelter,"management");
+        let managSub=this.shelterService.preventiveUpdateShelter(shelter,"management").subscribe((returnVal)=>{
             if(returnVal){
-                ref.displaySave=true;
-                ref.displayError=false;
+                this.displaySave=true;
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave(true,"management");
+                }
                 //location.reload();
             }else{
                 console.log("Err "+returnVal);
-                ref.displayError=true;
-                ref.displaySave=false;
+                this.displayError=true;
+                this.displaySave=false;
             }
-            
+            if(managSub!=undefined){
+                managSub.unsubscribe();
+            }
         });
     }
 
@@ -162,24 +185,45 @@ export class BcManagementRevision {
 
     ngOnDestroy(){
         if(this.managForm.dirty){
-            this.click(this);
+            this.save(false);
         }
-        
+        if(this.activeRouteSub!=undefined){
+            this.activeRouteSub.unsubscribe();
+        }
+        if(this.maskSaveSub!=undefined){
+            this.maskSaveSub.unsubscribe();
+        }
     }
 
     ngOnInit(){
-        this._route.parent.params.subscribe(params=>{
+        let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
-            this.revisionService.load$.subscribe(shelter=>{
+            let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.geoData!=undefined){
                     this.initForm(shelter);
+                    if(revSub!=undefined){
+                        revSub.unsubscribe();
+                    }
+                    if(routeSub!=undefined){
+                        routeSub.unsubscribe();
+                    }
                 }else{
-                    this.shelterService.getShelterSection(params['id'],"management").subscribe(shelter=>{
+                    let managSub=this.shelterService.getShelterSection(params['id'],"management").subscribe(shelter=>{
                         this.initForm(shelter);
+                        if(managSub!=undefined){
+                            managSub.unsubscribe();
+                        }
+                        if(revSub!=undefined){
+                            revSub.unsubscribe();
+                        }
+                        if(routeSub!=undefined){
+                            routeSub.unsubscribe();
+                        }
                     });
                 }
-
+                
             });
+            
             this.revisionService.onChildLoadRequest("management");
         });
 

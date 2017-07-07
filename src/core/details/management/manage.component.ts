@@ -1,10 +1,12 @@
 import {
-  Component,Input,OnInit
+  Component,Input,OnInit,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IManagement,ISubject } from '../../../app/shared/types/interfaces'
-import {ShelterService} from '../../../app/shelter/shelter.service'
-import { Enums } from '../../../app/shared/types/enums'
+import { IManagement,ISubject } from '../../../app/shared/types/interfaces';
+import {ShelterService} from '../../../app/shelter/shelter.service';
+import { Enums } from '../../../app/shared/types/enums';
+import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   moduleId: module.id,
@@ -17,11 +19,22 @@ export class BcManage {
   data:IManagement={rent:null,period:null,subject:[{name:null}]};
   owner:ISubject;
   managers:ISubject[]=[];
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
+  activeComponentSub:Subscription;
+  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
+    this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
+      this.shared.onActiveComponentAnswer("management");
+    })
+
+    this.shared.onActiveOutletChange("content");
+  }
+
+  ngOnDestroy(){
+    this.activeComponentSub.unsubscribe();
+  }
 
   ngOnInit(){
-    this._route.parent.params.subscribe(params=>{
-      this.shelterService.getShelterSection(params['id'],"management").subscribe(shelter=>{
+    let routeSub=this._route.parent.params.subscribe(params=>{
+      let shelSub=this.shelterService.getShelterSection(params['id'],"management").subscribe(shelter=>{
         this.data=shelter.management;
         if(this.data!=undefined&&this.data.subject!=undefined){
           this.data.subject.forEach(subject=>{
@@ -32,6 +45,8 @@ export class BcManage {
             }
           })
         }
+        shelSub.unsubscribe();
+        routeSub.unsubscribe();
       })
     });
   }

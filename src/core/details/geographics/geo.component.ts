@@ -1,11 +1,14 @@
 import {
-  Component,Input,OnInit
+  Component,Input,OnInit,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IGeographic } from '../../../app/shared/types/interfaces'
 import {BcMap} from '../../map/map.component';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
+
+import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service'
 
 @Component({
   moduleId: module.id,
@@ -17,8 +20,14 @@ import { Subject } from 'rxjs/Subject';
 export class BcGeo {
   data:IGeographic={location:{longitude:null,latitude:null}};
   center:Subject<L.LatLng|L.LatLngExpression>=new Subject();
+  private activeComponentSub:Subscription;
+  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
+    this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
+      this.shared.onActiveComponentAnswer("geographic");
+    })
 
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
+    this.shared.onActiveOutletChange("content");
+  }
 
   getCenter(){
     if(this.data!=undefined && this.data.location!=undefined
@@ -37,12 +46,19 @@ export class BcGeo {
     }
   }
 
+  ngOnDestroy(){
+    this.activeComponentSub.unsubscribe();
+  }
+
   ngOnInit(){
-    this._route.parent.params.subscribe(params=>{
-      this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
+    let routeSub:Subscription=this._route.parent.params.subscribe(params=>{
+      let shelterSub=this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
         this.data=shelter.geoData;
         this.center.next([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number]);
+        shelterSub.unsubscribe();
+        routeSub.unsubscribe();
       });
+      
     });
   }
 

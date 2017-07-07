@@ -4,9 +4,11 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { IButton, IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
-import {ShelterService} from '../../../app/shelter/shelter.service'
+import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
+import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   moduleId: module.id,
@@ -21,23 +23,40 @@ export class BcServRevision {
     name:String;
     servForm: FormGroup; 
     data:IService[];
+    serviceToRemove:String[]=[];
     currentService:number=0;
     displaySave:Boolean=false;
     displayError:boolean=false;
-    constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    activeComponentSub:Subscription;
+    maskSaveSub:Subscription;
+    serviceListChange:boolean=false;
+    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.servForm = fb.group({
-            services:fb.array([
-            ]),
-            newServiceName:["Nome Nuovo Servizio",[Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/),Validators.required]],
-            newServiceCategory:["Categoria Nuovo Servizio",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)],
-            newServiceDescription:["Descrizione Nuovo Servizio",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)],
+            services:fb.array([]),
+            newServiceName:["Nome Nuovo Servizio",[Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)+$/),Validators.required]],
+            newServiceCategory:["Categoria Nuovo Servizio",Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)+$/)],
+            newServiceDescription:["Descrizione Nuovo Servizio",Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)+$/)],
             newServiceTags:fb.array([]),
-            newServiceTagKey:["Chiave Tag",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)],
-            newServiceTagValue:["Valore Tag",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)]
+            newServiceTagKey:["Chiave Tag",Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)+$/)],
+            newServiceTagValue:["Valore Tag",Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)+$/)]
         }); 
+
+        shared.onActiveOutletChange("revision");
+
+        this.maskSaveSub=shared.maskSave$.subscribe(()=>{
+            if(this.serviceListChange||this.servForm.dirty){
+                this.save(true);
+            }else{
+                shared.onMaskConfirmSave(false,"services");
+            }
+        });
+
+        this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
+            shared.onActiveComponentAnswer("services");
+        });
     } 
 
-    public toggle(index): void {
+    toggle(index): void {
         if(this.currentService==index){
             this.currentService=-1;
         }else{
@@ -45,7 +64,7 @@ export class BcServRevision {
         }
     }
 
-    public isCollapsed(index): boolean {
+    isCollapsed(index): boolean {
         if(this.currentService==index){
             return false;
         }
@@ -53,7 +72,12 @@ export class BcServRevision {
     }
 
     removeService(index){
+        this.serviceListChange=true;
         const control = <FormArray>this.servForm.controls['services'];
+        let service=this.data.filter(ser=>control.at(index).value.id==ser._id)
+        if(service.length>0){
+            this.serviceToRemove.push(service[0]._id);
+        }
         control.removeAt(index);
     }
 
@@ -80,22 +104,24 @@ export class BcServRevision {
 
     initService(service:IService){
         let group:FormGroup = this.fb.group({
-            name:[service.name,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            category: [service.category,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            description: [service.description,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
+            id:[service._id],
+            name:[service.name,Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)*$/)],
+            category: [service.category,Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)*$/)],
+            description: [service.description,Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)*$/)],
             tags:this.fb.array([]),
-            newTagKey:["Chiave Tag",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)],
-            newTagValue:["Valore Tag",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)]
+            newTagKey:["Chiave Tag",Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)+$/)],
+            newTagValue:["Valore Tag",Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)+$/)]
         });
 
         for(let tag of service.tags){
             (<FormArray>group.controls["tags"]).push(this.initTag(tag.key,tag.value));
         }
 
-        return group;
+        return group;        
     }
 
     removeTag(serviceIndex:number,index:number){
+        this.serviceListChange=true;
         const control = <FormGroup>(<FormArray>this.servForm.controls['services']).at(serviceIndex);
         const tag=<FormArray>control.controls['tags'];
         tag.removeAt(index);
@@ -153,39 +179,50 @@ export class BcServRevision {
 
     initTag(key:String,value:String){
         return this.fb.group({
-            key:[key,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            value: [value,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]
+            key:[key,Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)*$/)],
+            value: [value,Validators.pattern(/^([A-Za-z0-9À-ÿ ,.:;!?|)(_-]*)*$/)]
         });
     }
 
-    click(ref:any){
-        let shelter:any={_id:ref._id,name:ref.name};
+    save(confirm){
+        let shelter:any={_id:this._id,name:this.name};
         let services:IService[]=[]
 
-        for(let serv of (<FormArray>ref.servForm.control["services"]).controls){
+        for(let serv of (<FormArray>this.servForm.controls["services"]).controls){
             let service:IService={
+                _id:serv.value.id,
                 name:serv.value.name,
                 category:serv.value.category,
                 description:serv.value.description,
             };
-            let tags:any=[];
-            for (let tag of (<FormArray>serv.value.tags).controls){
-                tags.push({key:tag.value.key,value:tag.value.value});
+            let tags:ITag[]=[];
+            let tagControls=serv.value.tags;
+            for (let tag of tagControls){
+                tags.push({key:tag.key,value:tag.value});
             }
-            service.tags=tags;
+            service.tags=tags as [ITag];
             services.push(service);
         }
+        this.serviceToRemove.forEach(service=>{
+            services.push({_id:service})
+        });
         shelter.services=services;
-        ref.revisionService.onChildSave(shelter,"services");
-        ref.shelterService.preventiveUpdateShelter(shelter,"services").subscribe((returnVal)=>{
+        this.revisionService.onChildSave(shelter,"services");
+        let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"services").subscribe((returnVal)=>{
             if(returnVal){
-                ref.displaySave=true;
-                ref.displayError=false;
+                this.displaySave=true;
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave(true,"services");
+                }
                 //location.reload();
             }else{
                 console.log(returnVal);
-                ref.displayError=true;
-                ref.displaySave=false;
+                this.displayError=true;
+                this.displaySave=false;
+            }
+            if(shelSub!=undefined){
+                shelSub.unsubscribe();
             }
         });
     }
@@ -194,33 +231,55 @@ export class BcServRevision {
         this.name=shelter.name;
         this.data=shelter.services;
         for(let service of shelter.services){
-            (<FormArray>this.servForm.controls["services"]).push(this.initService(service));
+            if(service.category==undefined&&service.name==undefined&&service.description==undefined&&service.tags==undefined){
+                this.serviceToRemove.push(service._id);
+            }else{
+                (<FormArray>this.servForm.controls["services"]).push(this.initService(service));
+            }
         }
     }   
 
     ngOnDestroy(){
-        if(this.servForm.dirty){
-            this.click(this);
+        if(this.serviceListChange||this.servForm.dirty){
+            this.save(false);
+        }
+        if(this.activeComponentSub!=undefined){
+            this.activeComponentSub.unsubscribe();
+        }
+        if(this.maskSaveSub!=undefined){
+            this.maskSaveSub.unsubscribe();
         }
     }
 
     ngOnInit(){
-        this._route.parent.params.subscribe(params=>{
+        let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
-            this.revisionService.load$.subscribe(shelter=>{
+            let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.services!=undefined){
                     this.initForm(shelter);
-                    
+                    if(revSub!=undefined){
+                        revSub.unsubscribe();
+                    }
+                    if(routeSub!=undefined){
+                        routeSub.unsubscribe();
+                    }
                 }else{
-                    this.shelterService.getShelterSection(params['id'],"services").subscribe(shelter=>{
-                        if(shelter.services!=undefined){
-                            this.initForm(shelter);
+                    let shelSub=this.shelterService.getShelterSection(params['id'],"services").subscribe(shelter=>{
+                        this.initForm(shelter);
+                        if(shelSub!=undefined){
+                            shelSub.unsubscribe();
+                        }
+                        if(revSub!=undefined){
+                            revSub.unsubscribe();
+                        }
+                        if(routeSub!=undefined){
+                            routeSub.unsubscribe();
                         }
                     });
                 }
-
             });
             this.revisionService.onChildLoadRequest("services");
+            
         });
 
     }

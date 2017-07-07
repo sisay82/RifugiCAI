@@ -63,6 +63,7 @@ export interface IGeographic{
 }
 
 export interface IService{
+    _id?:String;
     name?:String;
     category?:String;
     description?:String;

@@ -5,21 +5,22 @@
                 <div [formGroupName]="i">
                     <div style="display: flex;flex-direction:row">
                         <div style="display: flex;flex-direction:row;align-items:center">
-                            <div>
+                            <div class="bc-revision-services">
                                 <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">Nome</div>
                                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                                     required class="form-control"  formControlName="name">
                             </div>
-                            <div>
+                            <div class="bc-revision-services">
                                 <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">Categoria</div>
                                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                                     class="form-control"  formControlName="category">
                             </div>
-                            <div>
+                            <div class="bc-revision-services">
                                 <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">Descrizione</div>
                                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                                     class="form-control"  formControlName="description">
                             </div>
+                            <div (click)="removeService(i)" class="fa fa-times bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
                         </div>
                     </div>
                     <bc-button [button]="{text:'Collapse Tags',action:null,ref:null}" (click)="toggle(i)" class="bc-body"></bc-button>
@@ -27,12 +28,12 @@
                         <div *ngFor="let tag of service.controls.tags.controls;let j = index">
                             <div [@slideInOut]="isCollapsed(i)" style="position:relative;height:inherit" [formGroupName]="j">
                                 <div style="display: flex;flex-direction:row;height:inherit">
-                                    <div>
-                                        <div class="bc-body-strong" style="margin-right:4px">Chiave</div>
+                                    <div class="bc-revision-services">
+                                        <div class="bc-body">Chiave</div>
                                         <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                                             class="form-control"  formControlName="key">
                                     </div>
-                                    <div>
+                                    <div class="bc-revision-services">
                                         <div class="bc-body">Valore</div>
                                         <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                                             class="form-control"  formControlName="value">

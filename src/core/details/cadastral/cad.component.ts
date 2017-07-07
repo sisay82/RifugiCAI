@@ -1,10 +1,12 @@
 import {
-  Component,Input,OnInit
+  Component,Input,OnInit,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ICatastal,IDrain,IEnergy } from '../../../app/shared/types/interfaces'
-import {ShelterService} from '../../../app/shelter/shelter.service'
-import { Enums } from '../../../app/shared/types/enums'
+import { ICatastal,IDrain,IEnergy } from '../../../app/shared/types/interfaces';
+import {ShelterService} from '../../../app/shelter/shelter.service';
+import { Enums } from '../../../app/shared/types/enums';
+import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   moduleId: module.id,
@@ -17,8 +19,14 @@ export class BcCadastral {
   catastal:ICatastal={};
   drain:IDrain={type:null};
   energy:IEnergy={};
+  activeComponentSub:Subscription;
+  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
+    this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
+      this.shared.onActiveComponentAnswer("catastal");
+    })
 
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute){}
+    this.shared.onActiveOutletChange("content");
+  }
   
   getSourceValue(value:Enums.Source_Type){
     return Object.keys(Enums.Source_Type).find(k=>Enums.Source_Type[k]===value);
@@ -32,19 +40,24 @@ export class BcCadastral {
     }
   }
 
+  ngOnDestroy(){
+    this.activeComponentSub.unsubscribe();
+  }
+
   ngOnInit(){
-    this._route.parent.params.subscribe(params=>{
-
-      this.shelterService.getShelterSection(params['id'],"catastal").subscribe(shelter=>{
+    let routeSub=this._route.parent.params.subscribe(params=>{
+      let catSub=this.shelterService.getShelterSection(params['id'],"catastal").subscribe(shelter=>{
         this.catastal=shelter.catastal;
-      });
-
-      this.shelterService.getShelterSection(params['id'],"drain").subscribe(shelter=>{
-        this.drain=shelter.drain;
-      });
-
-      this.shelterService.getShelterSection(params['id'],"energy").subscribe(shelter=>{
-        this.energy=shelter.energy;
+        let drainSub=this.shelterService.getShelterSection(params['id'],"drain").subscribe(shelter=>{
+          this.drain=shelter.drain;
+          let energySub=this.shelterService.getShelterSection(params['id'],"energy").subscribe(shelter=>{
+            this.energy=shelter.energy;
+              drainSub.unsubscribe();
+              energySub.unsubscribe();
+              catSub.unsubscribe();
+              routeSub.unsubscribe();
+          });
+        });
       });
     });
   }

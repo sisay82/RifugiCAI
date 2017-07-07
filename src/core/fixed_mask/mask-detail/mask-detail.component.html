@@ -4,13 +4,9 @@
             <div (click)="return()" class="fa fa-arrow-left bc-mask-icon" style="display: inline;margin-left:10px"></div>
             <ng-content></ng-content>
             <div style="display: inline;margin-left:10px">{{shelter?.name || 'Nome Rifugio'}}</div>,
-            <div style="display: inline;margin-left:5px">{{shelter?(shelter.geoData?(shelter.geoData.location?(shelter.geoData.location.municipality||'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'):'Comune Rifugio'}}</div>
+            <div style="display: inline;margin-left:5px">{{shelter?.alias||'Nome Comune'}}</div>
             <div style="display: inline;margin-left:auto;margin-right:1%">
-                <div *ngIf="isRevisionig()" style="display: inline">
-                    <div (click)="cancel()" class="fa fa-times bc-mask-icon" style="display: inline"></div>
-                    <div (click)="save()" class="fa fa-floppy-o bc-mask-icon" style="display: inline"></div>
-                </div>
-                <div *ngIf="!isRevisionig()" (click)="revision()" class="fa fa-edit bc-mask-icon" style="display: inline"></div>
+                <div (click)="revision()" class="fa fa-edit bc-mask-icon" style="display: inline"></div>
             </div>
         </div>
     </div>
