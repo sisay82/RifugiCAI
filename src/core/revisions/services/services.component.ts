@@ -28,28 +28,30 @@ export class BcServRevision {
     _id:String;
     name:String;
     servForm: FormGroup; 
-    data:IService[];
+    serviceCategories:{name:String,services:IService[]}[]=[];
     serviceToRemove:String[]=[];
-    currentService:number=0;
+    currentServiceTag:number=-1;
+    currentCategoryService:number=-1;
+    currentCategoryTag:number=0;
+    hideCategoryAdd:boolean=true;
     displayError:boolean=false;
     activeComponentSub:Subscription;
     maskSaveSub:Subscription;
+    disableSave=false;
+    newServiceAdded=false;
     serviceListChange:boolean=false;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.servForm = fb.group({
-            services:fb.array([]),
-            newServiceName:["Nome Nuovo Servizio",[Validators.pattern(stringValidator),Validators.required]],
-            newServiceCategory:["Categoria Nuovo Servizio",Validators.pattern(stringValidator)],
-            newServiceDescription:["Descrizione Nuovo Servizio",Validators.pattern(stringValidator)],
-            newServiceTags:fb.array([]),
-            newServiceTagKey:["Chiave Tag",Validators.pattern(stringValidator)],
-            newServiceTagValue:["Valore Tag",Validators.pattern(stringValidator)]
+            categories:fb.array([]),
+            newCategory:["Nuova Categoria",Validators.pattern(stringValidator)]
         }); 
 
         shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
+            
             if(this.serviceListChange||this.servForm.dirty){
+                this.disableSave=true;
                 this.save(true);
             }else{
                 shared.onMaskConfirmSave(false,"services");
@@ -61,50 +63,115 @@ export class BcServRevision {
         });
     } 
 
-    toggle(index): void {
-        if(this.currentService==index){
-            this.currentService=-1;
+    toggleTag(categoryIndex:number,serviceIndex:number): void {
+        if(this.currentCategoryTag==categoryIndex){
+            this.currentCategoryTag=categoryIndex;
+            if(this.currentServiceTag==serviceIndex){
+                this.currentServiceTag=-1;
+            }else{
+                this.currentServiceTag=serviceIndex;
+            }
         }else{
-            this.currentService=index;
+            this.currentCategoryTag=categoryIndex;
+            this.currentServiceTag=serviceIndex;
         }
     }
 
-    isCollapsed(index): boolean {
-        if(this.currentService==index){
+    isHiddenTag(categoryIndex,serviceIndex): boolean {
+        if(this.currentServiceTag==serviceIndex&&this.currentCategoryTag==categoryIndex){
             return false;
         }
         return true;
     }
 
-    removeService(index){
-        this.serviceListChange=true;
-        const control = <FormArray>this.servForm.controls['services'];
-        let service=this.data.filter(ser=>control.at(index).value.id==ser._id)
-        if(service.length>0){
-            this.serviceToRemove.push(service[0]._id);
+    toggleService(categoryIndex:number): void {
+        if(this.currentCategoryService==categoryIndex){
+            this.currentCategoryService=-1;
+        }else{
+            this.currentCategoryService=categoryIndex;
         }
-        control.removeAt(index);
     }
 
-    addNewService(){
-        if(this.servForm.controls['newServiceName'].valid&&
-            this.servForm.controls['newServiceCategory'].valid&&
-            this.servForm.controls['newServiceDescription'].valid){
-            const services = <FormArray>this.servForm.controls['services'];
+    isHiddenService(categoryIndex): boolean {
+        if(this.currentCategoryService==categoryIndex){
+            return false;
+        }
+        return true;
+    }
+
+    toggleCategory(): void {
+        this.hideCategoryAdd=!this.hideCategoryAdd;
+    }
+
+    isHiddenCategory(): boolean {
+        return this.hideCategoryAdd;
+    }
+
+    removeService(categoryIndex,serviceIndex){
+        this.serviceListChange=true;
+        const control = <FormArray>(<FormGroup>(<FormArray>this.servForm.controls['categories']).at(categoryIndex)).controls.services;
+        const serv = <FormGroup>control.at(serviceIndex);
+        let service=this.serviceCategories[categoryIndex].services.find(ser=>serv.value.id==ser._id)
+        if(service!=undefined){
+            this.serviceToRemove.push(service._id);
+        }
+        control.removeAt(serviceIndex);
+    }
+
+    addNewCategory(){
+        this.serviceListChange=true;
+        if(this.servForm.controls["newCategory"].valid){
+            const control = (<FormArray>this.servForm.controls["categories"]);
+            if(control.controls.find(cat=>cat.value.name==this.servForm.controls["newCategory"].value)==undefined){
+                let category={
+                    name:this.servForm.controls["newCategory"].value,
+                    services:[]
+                };
+                (<FormArray>this.servForm.controls["categories"]).push(this.initCategory(category));   
+            }
+        }
+        this.toggleCategory();
+    }
+
+    addNewService(categoryIndex:number){
+        this.serviceListChange=true;
+        this.newServiceAdded=true;
+        const category:FormGroup=<FormGroup>(<FormArray>this.servForm.controls["categories"]).at(categoryIndex);
+        if(category.controls.newServiceName.valid&&
+            category.controls.newServiceDescription.valid){
 
             let service:IService={
-                name:this.servForm.controls['newServiceName'].value,
-                category:this.servForm.controls['newServiceCategory'].value,
-                description:this.servForm.controls['newServiceDescription'].value
+                name:category.controls.newServiceName.value,
+                category:category.value.name,
+                description:category.controls.newServiceDescription.value
             }
             let tags:any=[];
 
-            for(let tag of (<FormArray>this.servForm.controls["newServiceTags"]).controls){
+            for(let tag of (<FormArray>category.controls.newServiceTags).controls){
                 tags.push(tag.value.key,tag.value.value);
             }
             service.tags=tags;
-            services.push(this.initService(service));
+            (<FormArray>category.controls.services).controls.push(this.initService(service));
         }
+        this.toggleService(categoryIndex);
+    }
+
+    initCategory(category:{name:String,services:IService[]}){
+        let group:FormGroup = this.fb.group({
+            name:category.name,//Not Change
+            services:this.fb.array([]),
+            newServiceName:["Nome Nuovo Servizio",[Validators.pattern(stringValidator),Validators.required]],
+            newServiceDescription:["Descrizione Nuovo Servizio",Validators.pattern(stringValidator)],
+            newServiceTags:this.fb.array([]),
+            newServiceTagKey:["Chiave Tag",Validators.pattern(stringValidator)],
+            newServiceTagValue:["Valore Tag",Validators.pattern(stringValidator)]
+        });
+
+        for(let service of category.services){
+            (<FormArray>group.controls.services).push(this.initService(service));
+        }
+
+        return group;
     }
 
     initService(service:IService){
@@ -125,27 +192,30 @@ export class BcServRevision {
         return group;        
     }
 
-    removeTag(serviceIndex:number,index:number){
+    removeTag(categoryIndex:number,serviceIndex:number,tagIndex:number){
         this.serviceListChange=true;
-        const control = <FormGroup>(<FormArray>this.servForm.controls['services']).at(serviceIndex);
-        const tag=<FormArray>control.controls['tags'];
-        tag.removeAt(index);
+        const control = <FormGroup>(<FormArray>(<FormGroup>(<FormArray>this.servForm.controls['categories']).at(categoryIndex)).controls.services).at(serviceIndex);
+        const tag=<FormArray>control.controls.tags;
+        tag.removeAt(tagIndex);
     }
 
-    addNewTag(serviceIndex){
-        const service = <FormGroup>(<FormArray>this.servForm.controls['services']).at(serviceIndex);
+    addNewTag(categoryIndex:number,serviceIndex:number){
+        this.serviceListChange=true;
+        const service = <FormGroup>(<FormArray>(<FormGroup>(<FormArray>this.servForm.controls['categories']).at(categoryIndex)).controls.services).at(serviceIndex);
         if(service.controls['newTagKey'].valid&&service.controls['newTagValue'].valid){
             const control = <FormArray>service.controls['tags'];
             for(let c of control.controls){
-                if(c.value.key==service.controls["newKey"].value){
+                if(c.value.key==service.controls["newTagKey"].value){
                     return;
                 }
             }
-            control.push(this.initTag(service.controls["newKey"].value,service.controls["newValue"].value));
+            control.push(this.initTag(service.controls["newTagKey"].value,service.controls["newTagValue"].value));
         }
+        this.toggleTag(categoryIndex,serviceIndex);
     }
 
     addNewServiceTag(){
+        this.serviceListChange=true;
         if(this.servForm.controls['newServiceTagKey'].valid&&this.servForm.controls['newServiceTagValue'].valid){
             const control = <FormArray>this.servForm.controls['newServiceTags'];
             for(let c of control.controls){
@@ -158,6 +228,7 @@ export class BcServRevision {
     }
 
     addNewServiceBoolTag(){
+        this.serviceListChange=true;
         if(this.servForm.controls['newServiceTagKey'].valid&&this.servForm.controls['newServiceTagValue'].valid){
             const control = <FormArray>this.servForm.controls['newServiceTags'];
             for(let c of control.controls){
@@ -169,8 +240,9 @@ export class BcServRevision {
         }
     }
 
-    addNewBoolTag(serviceIndex,key:String){
-        const service = <FormGroup>(<FormArray>this.servForm.controls['services']).at(serviceIndex);
+    addNewBoolTag(categoryIndex,serviceIndex,key:String){
+        this.serviceListChange=true;
+        const service = (<FormArray>this.servForm.controls['categories']).at(categoryIndex).value.services.at(serviceIndex);
         if(service.controls['newTagKey'].valid){
             const control = <FormArray>service.controls['tags'];
             for(let c of control.controls){
@@ -193,33 +265,45 @@ export class BcServRevision {
         let shelter:any={_id:this._id,name:this.name};
         let services:IService[]=[]
 
-        for(let serv of (<FormArray>this.servForm.controls["services"]).controls){
-            let service:IService={
-                _id:serv.value.id,
-                name:serv.value.name,
-                category:serv.value.category,
-                description:serv.value.description,
-            };
-            let tags:ITag[]=[];
-            let tagControls=serv.value.tags;
-            for (let tag of tagControls){
-                tags.push({key:tag.key,value:tag.value});
+        for(let c of (<FormArray>this.servForm.controls["categories"]).controls){
+            const cat=<FormGroup>c;
+            for(let s of (<FormArray>cat.controls.services).controls){
+                let serv=<FormGroup>s;
+                let service:IService={
+                    name:serv.value.name,
+                    category:serv.value.category,
+                    description:serv.value.description,
+                };
+                if(serv.value.id!=undefined){
+                    service._id=serv.value.id;
+                }
+                let tags:ITag[]=[];
+                for (let tag of (<FormArray>serv.controls.tags).controls){
+                    tags.push({key:tag.value.key,value:tag.value.value});
+                }
+                service.tags=tags as [ITag];
+                services.push(service);
             }
-            service.tags=tags as [ITag];
-            services.push(service);
         }
         this.serviceToRemove.forEach(service=>{
-            services.push({_id:service})
+            services.push({_id:service});
         });
+        
+        delete(this.serviceToRemove);
+  
         shelter.services=services;
-        this.revisionService.onChildSave(shelter,"services");
+        if(!this.newServiceAdded){
+            this.revisionService.onChildSave(shelter,"services");
+        }else{
+            this.revisionService.onChildDelete("services");
+        }
+
         let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"services").subscribe((returnVal)=>{
             if(returnVal){
                 this.displayError=false;
                 if(confirm){
                     this.shared.onMaskConfirmSave(true,"services");
                 }
-                //location.reload();
             }else{
                 console.log(returnVal);
                 this.displayError=true;
@@ -232,19 +316,39 @@ export class BcServRevision {
 
     initForm(shelter:IShelter){
         this.name=shelter.name;
-        this.data=shelter.services;
         for(let service of shelter.services){
             if(service.category==undefined&&service.name==undefined&&service.description==undefined&&service.tags==undefined){
                 this.serviceToRemove.push(service._id);
             }else{
-                (<FormArray>this.servForm.controls["services"]).push(this.initService(service));
+                if(service.category!=undefined){
+                    let category=this.serviceCategories.find(cat=>cat.name==service.category);
+                    if(category!=undefined){
+                        category.services.push(service);
+                    }else{
+                        category={
+                            name:service.category,
+                            services:[service]
+                        }
+                        this.serviceCategories.push(category);
+                    }
+                }else{
+                    this.serviceCategories.push({
+                        name:"",
+                        services:[service]
+                    });
+                }
             }
+        }
+
+        for(let category of this.serviceCategories){
+            (<FormArray>this.servForm.controls["categories"]).push(this.initCategory(category));
         }
     }   
 
     ngOnDestroy(){
         if(this.serviceListChange||this.servForm.dirty){
-            this.save(false);
+            if(!this.disableSave)
+                this.save(false);
         }
         if(this.activeComponentSub!=undefined){
             this.activeComponentSub.unsubscribe();
@@ -282,7 +386,6 @@ export class BcServRevision {
                 }
             });
             this.revisionService.onChildLoadRequest("services");
-            
         });
 
     }

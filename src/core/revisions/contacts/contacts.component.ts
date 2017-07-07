@@ -42,6 +42,7 @@ export class BcContactsRevision {
     invalid:boolean=false;
     contacts:IContacts;
     openings:IOpening[];
+    disableSave=false;
     displayError:boolean=false;
     maskSaveSub:Subscription;
     activeComponentSub:Subscription;
@@ -63,6 +64,7 @@ export class BcContactsRevision {
         this.shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
+            this.disableSave=true;
             if(this.openingChange||this.contactForm.dirty){
                 this.save(true);
             }else{
@@ -219,7 +221,8 @@ export class BcContactsRevision {
 
     ngOnDestroy(){
         if(this.openingChange||this.contactForm.dirty){
-            this.save(false);
+            if(!this.disableSave)
+                this.save(false);
         }
         if(this.activeComponentSub!=undefined){
             this.activeComponentSub.unsubscribe();

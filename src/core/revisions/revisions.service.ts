@@ -12,6 +12,9 @@ export class BcRevisionsService{
 
     private childLoadRequestSource = new Subject<string>();
     loadRequest$ = this.childLoadRequestSource.asObservable();
+
+    private childDeleteSource = new Subject<string>();
+    childDelete$ = this.childDeleteSource.asObservable();
     onChildSave(shelter:IShelter,section:string){
         this.childSaveSource.next({shelter:shelter,section:section});
     }
@@ -22,6 +25,10 @@ export class BcRevisionsService{
 
     onChildLoad(shelter:IShelter){
         this.childLoadSource.next(shelter);
+    }
+
+    onChildDelete(section:string){
+        this.childDeleteSource.next(section);
     }
     
 }

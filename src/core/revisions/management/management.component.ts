@@ -44,6 +44,7 @@ export class BcManagementRevision {
     property:ISubject;
     invalid:Boolean=false;
     displayError:boolean=false;
+    disableSave=false;
     activeRouteSub:Subscription;
     maskSaveSub:Subscription;
     subjectChange:boolean=false;
@@ -248,7 +249,8 @@ export class BcManagementRevision {
 
     ngOnDestroy(){
         if(this.subjectChange||this.managForm.dirty){
-            this.save(false);
+            if(!this.disableSave)
+                this.save(false);
         }
         if(this.activeRouteSub!=undefined){
             this.activeRouteSub.unsubscribe();

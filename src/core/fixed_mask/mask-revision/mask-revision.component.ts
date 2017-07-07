@@ -188,8 +188,12 @@ export class BcMaskRevision {
         let shelSub=this.shelterService.getShelter(params['id']).subscribe(shelter=>{
             this.shelter=shelter;
             this.initForm();
-            shelSub.unsubscribe();
-            routeSub.unsubscribe();
+            if(shelSub!=undefined){
+              shelSub.unsubscribe();
+            } 
+            if(routeSub!=undefined){
+              routeSub.unsubscribe();
+            }
         });
       });
     }

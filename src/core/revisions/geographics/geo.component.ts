@@ -28,6 +28,7 @@ export class BcGeoRevision {
     geoForm: FormGroup; 
     data:IGeographic;
     invalid:boolean=false;
+    disableSave=false;
     activeComponentSub:Subscription;
     maskSaveSub:Subscription;
     tagChange:boolean=false
@@ -53,6 +54,7 @@ export class BcGeoRevision {
         shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
+            this.disableSave=true;
             if(this.tagChange||this.geoForm.dirty){
                 this.save(true);
             }else{
@@ -155,7 +157,8 @@ export class BcGeoRevision {
 
     ngOnDestroy(){
         if(this.tagChange||this.geoForm.dirty){
-            this.save(false);
+            if(!this.disableSave)
+                this.save(false);
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();

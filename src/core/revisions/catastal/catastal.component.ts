@@ -47,6 +47,7 @@ export class BcCatastalRevision {
     drain:IDrain;
     displayError:boolean=false;
     maskSaveSub:Subscription;
+    disableSave=false;
     activeComponentSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.catastalForm = fb.group({
@@ -84,6 +85,7 @@ export class BcCatastalRevision {
         this.shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
+            this.disableSave=true;
             if(this.catastalForm.dirty||this.energyForm.dirty||this.drainForm.dirty){
                 this.save(true);
             }else{
@@ -275,7 +277,8 @@ export class BcCatastalRevision {
 
     ngOnDestroy(){
         if(this.catastalForm.dirty||this.energyForm.dirty||this.drainForm.dirty){
-            this.save(false);
+            if(!this.disableSave)
+                this.save(false);
         }
         if(this.activeComponentSub!=undefined){
             this.activeComponentSub.unsubscribe();
