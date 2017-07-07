@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {ShelterService} from '../shelter.service'
 import {IMenu,IShelter}from '../../shared/types/interfaces';
-
+import {BcSharedService} from './shared.service';
 @Component({
     moduleId: module.id,
     selector: 'bc-shelter',
     templateUrl: 'shelter.component.html',
     styleUrls: ['shelter.component.scss'],
-    providers:[ShelterService]
+    providers:[ShelterService,BcSharedService]
 
 })
 export class BcShelter {

@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BcDividerModule} from '../../divider/divider.module';
-import { BcCadastral } from './cad.component';
+import { BcCatastal } from './cat.component';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
-    declarations: [BcCadastral],
-    exports: [BcCadastral],
+    declarations: [BcCatastal],
+    exports: [BcCatastal],
     imports:[BcDividerModule,CommonModule]
 })
-export class BcCadastralModule { }
+export class BcCatastalModule { }
