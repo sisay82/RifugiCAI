@@ -2,12 +2,32 @@ import {
   Component,Input,OnInit,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Enums } from '../../../app/shared/types/enums';
 import { ISubject, IManagement, IButton, IShelter } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+
+let stringValidator=/^([A-Za-z0-99À-ÿ ,.:/;!?|)(_-]*)*$/;
+let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
+let urlValidator=/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+
+function validateDate(c:FormControl){
+    if(c.value!=''&&c.value!=null){
+        let date = Date.parse(c.value);
+        if(!isNaN(date)){
+            return null;
+        }else{
+            return {valid:false};
+        }
+    }
+    return null;
+}
+
 
 @Component({
   moduleId: module.id,
@@ -21,39 +41,46 @@ export class BcManagementRevision {
     name:String;
     managForm: FormGroup; 
     data:IManagement;
+    property:ISubject;
     invalid:Boolean=false;
     displaySave:Boolean=false;
     displayError:boolean=false;
     activeRouteSub:Subscription;
     maskSaveSub:Subscription;
-
+    subjectChange:boolean=false;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.managForm = fb.group({
             rent:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],//required and string
-            period:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],//string with some character
-            contract_start_date:[""],
-            contract_end_date:[""],
-            contract_duration:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],
-            contract_fee:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],
-            valuta:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],//number
-            rentType:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
+            period:["",Validators.pattern(stringValidator)],//string with some character
+            contract_start_date:["",validateDate],
+            contract_end_date:["",validateDate],
+            contract_duration:["",Validators.pattern(numberValidator)],
+            contract_fee:["",Validators.pattern(numberValidator)],
+            valuta:["",Validators.pattern(stringValidator)],
+            rentType:["",Validators.pattern(stringValidator)],
             pickupKey:[""],
             subjects:fb.array([]),
-            newName:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            newSurname:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            newTaxCode:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            newFixedPhone:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            newMobilePhone:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            newPec:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            newMail:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            newWebSite:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            newType:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]
+            newName:["",Validators.pattern(stringValidator)],
+            newSurname:["",Validators.pattern(stringValidator)],
+            newTaxCode:["",Validators.pattern(stringValidator)],
+            newFixedPhone:["",Validators.pattern(telephoneValidator)],
+            newMobilePhone:["",Validators.pattern(telephoneValidator)],
+            newPec:["",Validators.pattern(stringValidator)],
+            newMail:["",Validators.pattern(stringValidator)],
+            newWebSite:["",Validators.pattern(urlValidator)],
+            newType:["",Validators.pattern(stringValidator)],
+            propName:["",Validators.pattern(stringValidator)],
+            propTaxCode:["",Validators.pattern(stringValidator)],
+            propFixedPhone:["",Validators.pattern(telephoneValidator)],
+            propPec:["",Validators.pattern(mailValidator)],
+            propEmail:["",Validators.pattern(mailValidator)],
+            
         }); 
 
         shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            if(this.managForm.dirty){
+            if(this.subjectChange||this.managForm.dirty){
                 this.save(true);
             }else{
                 shared.onMaskConfirmSave(false,"management");
@@ -66,6 +93,7 @@ export class BcManagementRevision {
     } 
 
     removeSubject(index){
+        this.subjectChange=true;
         const control = <FormArray>this.managForm.controls['subjects'];
         control.removeAt(index);
     }
@@ -80,7 +108,7 @@ export class BcManagementRevision {
             this.managForm.controls['newMail'].valid&&
             this.managForm.controls['newWebSite'].valid&&
             this.managForm.controls['newType'].valid){
-            const control = <FormArray>this.managForm.controls['tags'];
+            const control = <FormArray>this.managForm.controls['subjects'];
             let subject:ISubject={
                 name:this.managForm.controls['newName'].value||null,
                 surname:this.managForm.controls['newSurname'].value||null,
@@ -96,17 +124,35 @@ export class BcManagementRevision {
         }
     }
 
+    getEnumCustodyNames():any[]{
+        let names:any[]=[];
+        const objValues = Object.keys(Enums.Custody_Type).map(k => Enums.Custody_Type[k]);
+        objValues.filter(v => typeof v === "string").forEach((val)=>{
+            names.push(val);
+        });
+        return names;
+    }
+
+    checkEnum(value){
+        if(this.managForm.controls['rentType'].value!=undefined){
+            if(this.managForm.controls['rentType'].value!=''&&this.managForm.controls['rentType'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
+                return true;
+            }
+        }
+        return false;
+    }
+
     initSubject(subject:ISubject){
         return this.fb.group({
-            name:[subject.name,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            surname:[subject.surname,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            taxCode:[subject.taxCode,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            fixedPhone:[subject.fixedPhone,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            mobilePhone:[subject.mobilePhone,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            pec:[subject.pec,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            email:[subject.email,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            webSite:[subject.webSite,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            type:[subject.type,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]
+            name:[subject.name,Validators.pattern(stringValidator)],
+            surname:[subject.surname,Validators.pattern(stringValidator)],
+            taxCode:[subject.taxCode,Validators.pattern(stringValidator)],
+            fixedPhone:[subject.fixedPhone,Validators.pattern(telephoneValidator)],
+            mobilePhone:[subject.mobilePhone,Validators.pattern(telephoneValidator)],
+            pec:[subject.pec,Validators.pattern(mailValidator)],
+            email:[subject.email,Validators.pattern(mailValidator)],
+            webSite:[subject.webSite,Validators.pattern(urlValidator)],
+            type:[subject.type,Validators.pattern(stringValidator)]
         });
     }
 
@@ -124,47 +170,58 @@ export class BcManagementRevision {
             pickupKey:this.managForm.controls["pickupKey"].value||null
         };
 
+        let prop:ISubject={
+            name:this.managForm.controls["propName"].value||null,
+            taxCode:this.managForm.controls["propTaxCode"].value||null,
+            fixedPhone:this.managForm.controls["propFixedPhone"].value||null,
+            pec:this.managForm.controls["propPec"].value||null,
+            email:this.managForm.controls["propEmail"].value||null,
+            type:"Proprietario"
+        }
+
         const control = <FormArray>this.managForm.controls['subjects'];
-        let subjects:any=[];
+        let subjects:ISubject[]=[];
+        subjects.push(prop);
         for(let c of control.controls){
             subjects.push({
                 name:c.value.name||null,
-                surname:c.value.name||null,
-                taxCode:c.value.name||null,
-                fixedPhone:c.value.name||null,
-                mobilePhone:c.value.name||null,
-                pec:c.value.name||null,
-                email:c.value.name||null,
-                webSite:c.value.name||null,
-                type:c.value.name||null
-
+                surname:c.value.surname||null,
+                taxCode:c.value.taxCode||null,
+                fixedPhone:c.value.fixedPhone||null,
+                mobilePhone:c.value.mobilePhone||null,
+                pec:c.value.pec||null,
+                email:c.value.email||null,
+                webSite:c.value.webSite||null,
+                type:c.value.type||null
             });
         }
         shelter.management=management
-        shelter.management.subject=subjects;
+        shelter.management.subject=subjects as [ISubject];
         this.revisionService.onChildSave(shelter,"management");
-        let managSub=this.shelterService.preventiveUpdateShelter(shelter,"management").subscribe((returnVal)=>{
-            if(returnVal){
-                this.displaySave=true;
-                this.displayError=false;
-                if(confirm){
-                    this.shared.onMaskConfirmSave(true,"management");
+        if(this.managForm.valid){
+            let managSub=this.shelterService.preventiveUpdateShelter(shelter,"management").subscribe((returnVal)=>{
+                if(returnVal){
+                    this.displaySave=true;
+                    this.displayError=false;
+                    if(confirm){
+                        this.shared.onMaskConfirmSave(true,"management");
+                    }
+                    //location.reload();
+                }else{
+                    console.log("Err "+returnVal);
+                    this.displayError=true;
+                    this.displaySave=false;
                 }
-                //location.reload();
-            }else{
-                console.log("Err "+returnVal);
-                this.displayError=true;
-                this.displaySave=false;
-            }
-            if(managSub!=undefined){
-                managSub.unsubscribe();
-            }
-        });
+                if(managSub!=undefined){
+                    managSub.unsubscribe();
+                }
+            });
+        }
     }
 
     initForm(shelter){
         this.name=shelter.name;
-        this.data=shelter.geoData;
+        this.data=shelter.management;
 
         if(this.data!=undefined){
             for(let prop in this.data){
@@ -177,14 +234,23 @@ export class BcManagementRevision {
             if(this.data.subject!=undefined){
                 const control = <FormArray>this.managForm.controls['subjects'];
                 for(let subj of this.data.subject){
-                    control.push(this.initSubject(subj));
+                    if(subj.type!=undefined&&subj.type.toLowerCase().indexOf("proprietario")>-1){
+                        this.property=subj;
+                        this.managForm.controls["propName"].setValue(subj.name);
+                        this.managForm.controls["propTaxCode"].setValue(subj.taxCode);
+                        this.managForm.controls["propFixedPhone"].setValue(subj.fixedPhone);
+                        this.managForm.controls["propPec"].setValue(subj.pec);
+                        this.managForm.controls["propEmail"].setValue(subj.email);
+                    }else{
+                        control.push(this.initSubject(subj));
+                    }
                 }
             }
         }
     }   
 
     ngOnDestroy(){
-        if(this.managForm.dirty){
+        if(this.subjectChange||this.managForm.dirty){
             this.save(false);
         }
         if(this.activeRouteSub!=undefined){
@@ -199,7 +265,7 @@ export class BcManagementRevision {
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             let revSub=this.revisionService.load$.subscribe(shelter=>{
-                if(shelter!=null&&shelter.geoData!=undefined){
+                if(shelter!=null&&shelter.management!=undefined){
                     this.initForm(shelter);
                     if(revSub!=undefined){
                         revSub.unsubscribe();

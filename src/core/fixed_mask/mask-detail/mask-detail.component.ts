@@ -2,6 +2,7 @@ import {
   Component, Input,OnInit
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
+import { Enums } from '../../../app/shared/types/enums';
 import {Router,ActivatedRoute} from '@angular/router';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service'
@@ -30,6 +31,14 @@ export class BcMask {
 
   return(){
     this.router.navigateByUrl("list");
+  }
+
+  getRegionalType(value){
+    if(value==undefined){
+      return '----';
+    }else{
+      return Object.keys(Enums.Regional_Type).find(k=>Enums.Source_Type[k]===value);
+    }
   }
 
   ngOnInit(){

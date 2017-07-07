@@ -146,11 +146,13 @@ export interface IDrain{
 export interface IShelter{
     _id:String;
     name:String;
+    alias?:String;
     idCai?:String;
     type?:Enums.Shelter_Type;
     branch?:String;
     owner?:String;
     category?:Enums.Shelter_Category;
+    regional_type?:Enums.Regional_Type;
     insertDate?:Date;
     updateDate?:Date;
 

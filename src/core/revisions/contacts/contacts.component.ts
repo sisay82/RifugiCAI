@@ -10,6 +10,12 @@ import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
+let stringValidator=/^([A-Za-z0-99À-ÿ ,.:/;!?|)(_-]*)*$/;
+let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
+let urlValidator=/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
         let date = Date.parse(c.value);
@@ -43,16 +49,16 @@ export class BcContactsRevision {
     openingChange:boolean=false;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.contactForm = fb.group({
-            fixedPhone:["",Validators.pattern(/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/)],
-            mobilePhone:["",Validators.pattern(/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/)],
-            role:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            emailAddress:["",Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)],
-            mailPec:["",Validators.pattern(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)],
-            webAddress:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
+            fixedPhone:["",Validators.pattern(telephoneValidator)],
+            mobilePhone:["",Validators.pattern(telephoneValidator)],
+            role:["",Validators.pattern(stringValidator)],
+            emailAddress:["",Validators.pattern(mailValidator)],
+            mailPec:["",Validators.pattern(mailValidator)],
+            webAddress:["",Validators.pattern(urlValidator)],
             openings:fb.array([]),
             newOpeningStartDate:["Inizio",validateDate],
             newOpeningEndDate:["Fine",validateDate],
-            newOpeningType:["Tipo",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)]
+            newOpeningType:["Tipo",Validators.pattern(stringValidator)]
         }); 
 
         this.shared.onActiveOutletChange("revision");
@@ -128,7 +134,7 @@ export class BcContactsRevision {
         return this.fb.group({
             startDate:[opening.startDate?(new Date(opening.startDate).toUTCString()):null,validateDate],
             endDate:[opening.startDate?(new Date(opening.endDate).toUTCString()):null,validateDate],
-            type:[opening.type,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/)]
+            type:[opening.type,Validators.pattern(stringValidator)]
         });
     }
 
@@ -229,17 +235,29 @@ export class BcContactsRevision {
             let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.contacts!=undefined){
                     this.initForm(shelter);
-                    /*revSub.unsubscribe();
-                    routeSub.unsubscribe();*/
+                    if(revSub!=undefined){
+                        revSub.unsubscribe();
+                    }
+                    if(routeSub!=undefined){
+                        routeSub.unsubscribe();
+                    }
                 }else{
                     let openSub=this.shelterService.getShelterSection(params['id'],"openingTime").subscribe(shelterOpenings=>{
                         let contSub=this.shelterService.getShelterSection(params['id'],"contacts").subscribe(shelter=>{
                             shelter.openingTime=shelterOpenings.openingTime;
                             this.initForm(shelter);
-                            /*contSub.unsubscribe();
-                            openSub.unsubscribe();
-                            revSub.unsubscribe();
-                            routeSub.unsubscribe();*/
+                            if(contSub!=undefined){
+                                contSub.unsubscribe();
+                            }
+                            if(openSub!=undefined){
+                                openSub.unsubscribe();
+                            }
+                            if(revSub!=undefined){
+                                revSub.unsubscribe();
+                            }
+                            if(routeSub!=undefined){
+                                routeSub.unsubscribe();
+                            }
                         });
                     });
                 }

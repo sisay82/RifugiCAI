@@ -38,7 +38,7 @@ export class BcManage {
         this.data=shelter.management;
         if(this.data!=undefined&&this.data.subject!=undefined){
           this.data.subject.forEach(subject=>{
-            if(subject.type.toLowerCase().indexOf("proprietario")>-1){
+            if(subject.type!=undefined&&subject.type.toLowerCase().indexOf("proprietario")>-1){
               this.owner=subject;
             }else{
               this.managers.push(subject);

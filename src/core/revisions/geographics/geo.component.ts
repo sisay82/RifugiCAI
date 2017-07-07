@@ -9,6 +9,12 @@ import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
+let stringValidator=/^([A-Za-z0-99À-ÿ ,.:/;!?|)(_-]*)*$/;
+let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
+let urlValidator=/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+
 @Component({
   moduleId: module.id,
   selector: 'bc-geo-revision',
@@ -29,20 +35,20 @@ export class BcGeoRevision {
     displayError:boolean=false;
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
-            region:["",[Validators.required,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]],//required and string
-            province:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],//string with some character
-            municipality:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            locality:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            ownerRegion:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            authorityJurisdiction:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            altitude:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],//number
-            latitude:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],
-            longitude:["",Validators.pattern(/^[0-9]+[.]{0,1}[0-9]*$/)],
-            massif:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            valley:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
+            region:["",[Validators.required,Validators.pattern(stringValidator)]],//required and string
+            province:["",Validators.pattern(stringValidator)],//string with some character
+            municipality:["",Validators.pattern(stringValidator)],
+            locality:["",Validators.pattern(stringValidator)],
+            ownerRegion:["",Validators.pattern(stringValidator)],
+            authorityJurisdiction:["",Validators.pattern(stringValidator)],
+            altitude:["",Validators.pattern(numberValidator)],//number
+            latitude:["",Validators.pattern(numberValidator)],
+            longitude:["",Validators.pattern(numberValidator)],
+            massif:["",Validators.pattern(stringValidator)],
+            valley:["",Validators.pattern(stringValidator)],
             tags:fb.array([]),
-            newKey:["Chiave",[Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/),Validators.required]],
-            newValue:["Valore",[Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)+$/),Validators.required]]
+            newKey:["Chiave",[Validators.pattern(stringValidator),Validators.required]],
+            newValue:["Valore",[Validators.pattern(stringValidator),Validators.required]]
         }); 
 
         shared.onActiveOutletChange("revision");
@@ -89,8 +95,8 @@ export class BcGeoRevision {
 
     initTag(key:String,value:String){
         return this.fb.group({
-            key:[key,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-            value: [value,Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]
+            key:[key,Validators.pattern(stringValidator)],
+            value: [value,Validators.pattern(stringValidator)]
         });
     }
 

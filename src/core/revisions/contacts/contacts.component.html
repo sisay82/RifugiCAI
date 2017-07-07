@@ -18,7 +18,7 @@
                 <div class="bc-body" style="white-space: nowrap">Ruolo</div>
                 <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control" formControlName="role">
-                    <option [selected]="contactForm.controls['role'].value==undefined||contactForm.controls['role'].value==null||contactForm.controls['role'].value==''" value="">-- Ruolo --</option>
+                    <option [selected]="contactForm.controls['role'].value==undefined" value="">-- Ruolo --</option>
                     <option *ngFor="let name of getEnumOwnerNames()" [selected]="checkEnum(name)" [value]="name">{{name}}</option>
                 </select>
             </div>

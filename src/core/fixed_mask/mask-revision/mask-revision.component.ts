@@ -29,7 +29,7 @@ export class BcMaskRevision {
         branch:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
         owner:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
         category:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-        ownerRegion:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]
+        regional_type:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]
     }); 
   }
 
@@ -40,16 +40,13 @@ export class BcMaskRevision {
         shelter={
           _id:this.shelter._id,
           name:this.maskForm.controls.name.value,
-          idCai:this.maskForm.controls.idCai.value,
-          type:this.maskForm.controls.type.value,
-          branch:this.maskForm.controls.branch.value,
-          owner:this.maskForm.controls.owner.value,
-          category:this.maskForm.controls.category.value,
-          geoData:{
-            location:{
-              ownerRegion:this.maskForm.controls.ownerRegion.value
-            }
-          }
+          alias:this.maskForm.controls.alias.value||null,
+          idCai:this.maskForm.controls.idCai.value||null,
+          type:this.maskForm.controls.type.value||null,
+          branch:this.maskForm.controls.branch.value||null,
+          owner:this.maskForm.controls.owner.value||null,
+          category:this.maskForm.controls.category.value||null,
+          regional_type:this.maskForm.controls.regional_type.value||null
         }
         let shelUpdateSub=this.shelterService.updateShelter(shelter).subscribe(value=>{
           let maskConfirmSub=this.shared.maskConfirmSave$.subscribe((obj)=>{
@@ -132,6 +129,24 @@ export class BcMaskRevision {
     return names;
   }
 
+  getEnumRegionalTypeNames(){
+    let names:any[]=[];
+    const objValues = Object.keys(Enums.Regional_Type).map(k => Enums.Regional_Type[k]);
+    objValues.filter(v => typeof v === "string").forEach((val)=>{
+        names.push(val);
+    });
+    return names;
+  }
+
+  checkRegionalTypeEnum(value){
+    if(this.maskForm.controls['regional_type'].value!=undefined){
+        if(this.maskForm.controls['regional_type'].value!=''&&this.maskForm.controls['regional_type'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
+            return true;
+        }
+    }
+    return false;
+  }
+
   checkCategoryEnum(value){
     if(this.maskForm.controls['category'].value!=undefined){
         if(this.maskForm.controls['category'].value!=''&&this.maskForm.controls['category'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
@@ -157,13 +172,13 @@ export class BcMaskRevision {
   initForm(){
       if(this.shelter!=undefined){
         this.maskForm.controls.name.setValue(this.shelter.name);
-        //this.maskForm.controls.alias.setValue(this.data.alias);
+        this.maskForm.controls.alias.setValue(this.shelter.alias);
         this.maskForm.controls.idCai.setValue(this.shelter.idCai);
-        this.maskForm.controls.type.setValue(this.shelter.name);
+        this.maskForm.controls.type.setValue(this.shelter.type);
         this.maskForm.controls.branch.setValue(this.shelter.branch);
         this.maskForm.controls.owner.setValue(this.shelter.owner);
         this.maskForm.controls.category.setValue(this.shelter.category);
-        this.maskForm.controls.ownerRegion.setValue(this.shelter.geoData.location.ownerRegion);
+        this.maskForm.controls.regional_type.setValue(this.shelter.regional_type);
       }
   }   
 

@@ -36,7 +36,7 @@
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Per la regione:</div>
-            <div class="bc-mask-content bc-body">{{shelter?(shelter.geoData?(shelter.geoData.location?(shelter.geoData.location.ownerRegion || '----'):'----'):'----'):'----'}}</div>
+            <div class="bc-mask-content bc-body">{{shelter?.regional_type||'----'}}</div>
         </div>
         <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
             <div class="bc-mask-title  bc-body-strong">Inserito il:</div>

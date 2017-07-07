@@ -37,7 +37,7 @@
                 <div class="bc-body" style="white-space: nowrap">Tipo</div>
                 <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control" formControlName="type">
-                    <option [selected]="maskForm.controls['type'].value==undefined||maskForm.controls['type'].value==null||maskForm.controls['type'].value==''" value="">-- Tipo --</option>
+                    <option [selected]="maskForm.controls['type'].value==undefined" value="">-- Tipo --</option>
                     <option *ngFor="let name of getEnumTypeNames()" [selected]="checkTypeEnum(name)" [value]="name">{{name}}</option>
                 </select>
             </div>
@@ -60,15 +60,17 @@
                 <div class="bc-body" style="white-space: nowrap">Categoria</div>
                 <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control" formControlName="category">
-                    <option [selected]="maskForm.controls['category'].value==undefined||maskForm.controls['category'].value==null||maskForm.controls['category'].value==''" value="">-- Tipo --</option>
+                    <option [selected]="maskForm.controls['category'].value==undefined" value="">-- Category --</option>
                     <option *ngFor="let name of getEnumCategoryNames()" [selected]="checkCategoryEnum(name)" [value]="name">{{name}}</option>
                 </select>
             </div>
             <div class="bc-mask-revision-control">
                 <div class="bc-body" style="white-space: nowrap">Per la regione</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="ownerRegion">
-                <div [hidden]="maskForm.controls['ownerRegion'].valid" class="alert alert-danger">Invalid</div>
+                <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="regional_type">
+                    <option [selected]="maskForm.controls['regional_type'].value==undefined" value="">-- Tipo Regionale --</option>
+                    <option *ngFor="let name of getEnumRegionalTypeNames()" [selected]="checkRegionalTypeEnum(name)" [value]="name">{{name}}</option>
+                </select>
             </div>
             <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
                 <div class="bc-mask-title  bc-body-strong">Inserito il:</div>
