@@ -16,7 +16,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/of';
 
-let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/;!?|)(_-]*)*$/;
+let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
@@ -55,7 +55,8 @@ export class BcCatastalRevision {
     maskSaveSub:Subscription;
     disableSave=false;
     activeComponentSub:Subscription;
-
+    maskInvalidSub:Subscription;
+    maskValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.catastalForm = fb.group({
             buildingRegulation:[""],
@@ -71,6 +72,16 @@ export class BcCatastalRevision {
             fireRegulation:[""],
             ISO14001:[""]
         }); 
+
+        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
+            this.displayError=true;
+        });
+
+        this.maskValidSub = shared.maskValid$.subscribe(()=>{
+            if(this.catastalForm.valid&&this.drainForm.valid&&this.energyForm.valid){
+                this.displayError=false;
+            }
+        });
 
         this.energyForm = fb.group({
             class:["",Validators.pattern(stringValidator)],
@@ -140,7 +151,7 @@ export class BcCatastalRevision {
     }
 
     save(confirm){
-        if(this.catastalForm.valid&&this.energyForm.valid&&this.drainForm.valid){
+        if(this.catastalForm.valid&&this.drainForm.valid&&this.energyForm.valid){
             let catastal:ICatastal;
             let energy:IEnergy;
             let drain:IDrain;
@@ -292,6 +303,12 @@ export class BcCatastalRevision {
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
+        }
+        if(this.maskInvalidSub!=undefined){
+            this.maskInvalidSub.unsubscribe();
+        }
+        if(this.maskValidSub!=undefined){
+            this.maskValidSub.unsubscribe();
         }
         
     }

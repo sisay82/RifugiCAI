@@ -9,7 +9,7 @@ import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
-let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/;!?|)(_-]*)*$/;
+let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
@@ -33,6 +33,8 @@ export class BcGeoRevision {
     maskSaveSub:Subscription;
     tagChange:boolean=false
     displayError:boolean=false;
+    maskInvalidSub:Subscription;
+    maskValidSub:Subscription;
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
             region:["",[Validators.required,Validators.pattern(stringValidator)]],//required and string
@@ -50,6 +52,16 @@ export class BcGeoRevision {
             newKey:["Chiave",[Validators.pattern(stringValidator),Validators.required]],
             newValue:["Valore",[Validators.pattern(stringValidator),Validators.required]]
         }); 
+
+        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
+            this.displayError=true;
+        });
+
+        this.maskValidSub = shared.maskValid$.subscribe(()=>{
+            if(this.geoForm.valid){
+                this.displayError=false;
+            }
+        });
 
         shared.onActiveOutletChange("revision");
 
@@ -134,8 +146,7 @@ export class BcGeoRevision {
                     shelSub.unsubscribe();
                 }
             });
-        }
-        else{
+        }else{
             this.displayError=true;
         }
     }
@@ -173,6 +184,12 @@ export class BcGeoRevision {
         }
         if(this.activeComponentSub!=undefined){
             this.activeComponentSub.unsubscribe();
+        }
+        if(this.maskInvalidSub!=undefined){
+            this.maskInvalidSub.unsubscribe();
+        }
+        if(this.maskValidSub!=undefined){
+            this.maskValidSub.unsubscribe();
         }
         
     }
