@@ -22,10 +22,10 @@ export class BcSharedService{
         this.maskCancelConfirmSource.next();
     }
 
-    private maskConfirmSaveSource = new Subject<{dirty:boolean,component:string}>();
+    private maskConfirmSaveSource = new Subject<string>();
     maskConfirmSave$ = this.maskConfirmSaveSource.asObservable();
-    onMaskConfirmSave(dirty:boolean,component:string){
-        this.maskConfirmSaveSource.next({dirty:dirty,component:component});
+    onMaskConfirmSave(component:string){
+        this.maskConfirmSaveSource.next(component);
     }
 
     private activeComponentRequestSource = new Subject<void>();

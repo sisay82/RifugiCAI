@@ -49,14 +49,13 @@ export class BcMaskRevision {
           regional_type:this.maskForm.controls.regional_type.value||null
         }
         let shelUpdateSub=this.shelterService.updateShelter(shelter).subscribe(value=>{
-          let maskConfirmSub=this.shared.maskConfirmSave$.subscribe((obj)=>{
-            if(obj.dirty){
+          let maskConfirmSub=this.shared.maskConfirmSave$.subscribe((component)=>{
               let shelSub=this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
                 if(!value){
                   console.log("Error in Confirm"); 
                 }else{
                   this.shared.onActiveOutletChange("content");
-                  this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+obj.component+")");
+                  this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
                 }
                 if(shelSub!=undefined){
                   shelSub.unsubscribe();
@@ -68,43 +67,25 @@ export class BcMaskRevision {
                   shelUpdateSub.unsubscribe();
                 }
               });
-            }else{
-              this.shared.onActiveOutletChange("content");
-              this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+obj.component+")");
-              if(maskConfirmSub!=undefined){
-                maskConfirmSub.unsubscribe();
-              }
-              if(shelUpdateSub!=undefined){
-                shelUpdateSub.unsubscribe();
-              }
-            }
           });
           this.shared.onMaskSave(shelter);
         });
       }else{
-        let maskConfirmSub=this.shared.maskConfirmSave$.subscribe((obj)=>{
-          if(obj.dirty){
-            let shelSub=this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
-              if(!value){
-                console.log("Error in Confirm"); 
-              }else{
-                this.shared.onActiveOutletChange("content");
-                this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+obj.component+")");
-              }
-              if(shelSub!=undefined){
-                shelSub.unsubscribe();
-              }
-              if(maskConfirmSub!=undefined){
-                maskConfirmSub.unsubscribe();
-              }
-            });
-          }else{
-            this.shared.onActiveOutletChange("content");
-            this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+obj.component+")");
+        let maskConfirmSub=this.shared.maskConfirmSave$.subscribe((component)=>{
+          let shelSub=this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
+            if(!value){
+              console.log("Error in Confirm"); 
+            }else{
+              this.shared.onActiveOutletChange("content");
+              this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
+            }
+            if(shelSub!=undefined){
+              shelSub.unsubscribe();
+            }
             if(maskConfirmSub!=undefined){
               maskConfirmSub.unsubscribe();
             }
-          }
+          });
         });
         this.shared.onMaskSave(shelter);
       }
@@ -204,16 +185,21 @@ export class BcMaskRevision {
       let shelSub=this.shelterService.confirmShelter(this.shelter._id,false).subscribe(value=>{
         if(!value){
           console.log("Error in Cancel"); 
-          shelSub.unsubscribe();
-          cancelSub.unsubscribe();
+          if(shelSub!=undefined)
+            shelSub.unsubscribe();
+          if(cancelSub!=undefined)
+            cancelSub.unsubscribe();
         }else{
           let activeComponentSub=this.shared.activeComponentAnswer$.subscribe(component=>{
             this.shared.onActiveOutletChange("content");
             this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
-            activeComponentSub.unsubscribe();
-            shelSub.unsubscribe();
-            cancelSub.unsubscribe();
-          });
+            if(activeComponentSub!=undefined)
+              activeComponentSub.unsubscribe();
+            if(shelSub!=undefined)
+              shelSub.unsubscribe();
+            if(cancelSub!=undefined)
+              cancelSub.unsubscribe();
+            });
           this.shared.onActiveComponentRequest();
         }
         

@@ -80,11 +80,8 @@ export class BcManagementRevision {
         shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            if(this.subjectChange||this.managForm.dirty){
-                this.save(true);
-            }else{
-                shared.onMaskConfirmSave(false,"management");
-            }
+            this.disableSave=true;
+            this.save(true);
         });
 
         this.activeRouteSub=shared.activeComponentRequest$.subscribe(()=>{
@@ -203,7 +200,7 @@ export class BcManagementRevision {
                 if(returnVal){
                     this.displayError=false;
                     if(confirm){
-                        this.shared.onMaskConfirmSave(true,"management");
+                        this.shared.onMaskConfirmSave("management");
                     }
                     //location.reload();
                 }else{
@@ -260,36 +257,41 @@ export class BcManagementRevision {
         }
     }
 
-    ngOnInit(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
+    getManagement(id):Promise<IShelter>{
+        return new Promise<IShelter>((resolve,reject)=>{
             let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.management!=undefined){
-                    this.initForm(shelter);
                     if(revSub!=undefined){
                         revSub.unsubscribe();
                     }
-                    if(routeSub!=undefined){
-                        routeSub.unsubscribe();
-                    }
+                    resolve(shelter);
                 }else{
-                    let managSub=this.shelterService.getShelterSection(params['id'],"management").subscribe(shelter=>{
-                        this.initForm(shelter);
+                    let managSub=this.shelterService.getShelterSection(id,"management").subscribe(shelter=>{
+                        this.revisionService.onChildSave(shelter,"management");
                         if(managSub!=undefined){
                             managSub.unsubscribe();
                         }
                         if(revSub!=undefined){
                             revSub.unsubscribe();
                         }
-                        if(routeSub!=undefined){
-                            routeSub.unsubscribe();
-                        }
+                        resolve(shelter);
                     });
                 }
-                
             });
-            
             this.revisionService.onChildLoadRequest("management");
+        });
+    }
+
+    ngOnInit(){
+        let routeSub=this._route.parent.params.subscribe(params=>{
+            this._id=params["id"];
+            this.getManagement(params["id"])
+            .then(shelter=>{
+                this.initForm(shelter);
+                if(routeSub!=undefined){
+                    routeSub.unsubscribe();
+                }
+            })
         });
 
     }

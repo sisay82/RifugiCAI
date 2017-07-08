@@ -9,6 +9,12 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/throw';
+import { Observer } from 'rxjs/Observer';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/of';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ ,.:/;!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
@@ -49,6 +55,7 @@ export class BcCatastalRevision {
     maskSaveSub:Subscription;
     disableSave=false;
     activeComponentSub:Subscription;
+
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.catastalForm = fb.group({
             buildingRegulation:[""],
@@ -86,11 +93,7 @@ export class BcCatastalRevision {
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             this.disableSave=true;
-            if(this.catastalForm.dirty||this.energyForm.dirty||this.drainForm.dirty){
-                this.save(true);
-            }else{
-                shared.onMaskConfirmSave(false,"catastal");
-            }
+            this.save(true);
         });
 
         this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
@@ -129,7 +132,6 @@ export class BcCatastalRevision {
     checkSourceTypeEnum(value){
         if(this.energyForm.controls['sourceType'].value!=undefined){
             if(this.energyForm.controls['sourceType'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                console.log("A");
                 return true;
             }
         }
@@ -166,7 +168,7 @@ export class BcCatastalRevision {
                     this.displayError=false;
                     updates--;
                     if(confirm&&updates==0){
-                        this.shared.onMaskConfirmSave(true,"catastal");
+                        this.shared.onMaskConfirmSave("catastal");
                     }
                     
                 }else{
@@ -194,7 +196,7 @@ export class BcCatastalRevision {
                     this.displayError=false;
                     updates--;
                     if(confirm&&updates==0){
-                        this.shared.onMaskConfirmSave(true,"catastal");
+                        this.shared.onMaskConfirmSave("catastal");
                     }
                 }else{
                     console.log(returnVal);
@@ -209,6 +211,7 @@ export class BcCatastalRevision {
             let shelter:any={_id:this._id,name:this.name};
             updates++;
             energy={
+                class:this.energyForm.controls["class"].value||null,
                 energy:this.energyForm.controls["energy"].value||null,
                 greenCertification:this.energyForm.controls["greenCertification"].value||null,
                 powerGenerator:this.energyForm.controls["powerGenerator"].value||null,
@@ -223,7 +226,7 @@ export class BcCatastalRevision {
                     this.displayError=false;
                     updates--;
                     if(confirm&&updates==0){
-                        this.shared.onMaskConfirmSave(true,"catastal");
+                        this.shared.onMaskConfirmSave("catastal");
                     }
                 }else{
                     console.log(returnVal);
@@ -289,65 +292,8 @@ export class BcCatastalRevision {
         
     }
 
-    ngOnInit(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            let revCatSub=this.revisionService.load$.subscribe(shelter=>{
-                if(shelter!=null&&shelter.catastal!=undefined){
-                    this.name=shelter.name;
-                    this.initCatastalForm(shelter);
-                    if(revCatSub!=undefined){
-                        revCatSub.unsubscribe();
-                    }
-                    if(routeSub!=undefined){
-                        routeSub.unsubscribe();
-                    }
-                }else{
-                    let catSub=this.shelterService.getShelterSection(params['id'],"catastal").subscribe(shel=>{
-                        this.name=shel.name;
-                        this.initCatastalForm(shel);
-                        if(catSub!=undefined){
-                            catSub.unsubscribe();
-                        }
-                        if(revCatSub!=undefined){
-                            revCatSub.unsubscribe();
-                        }
-                        if(routeSub!=undefined){
-                            routeSub.unsubscribe();
-                        }
-                    });
-                }
-            });
-            this.revisionService.onChildLoadRequest("catastal");
-
-            let revEnerSub=this.revisionService.load$.subscribe(shelter=>{
-                if(shelter!=null&&shelter.energy!=undefined){
-                    this.name=shelter.name;
-                    this.initEnergyForm(shelter);
-                    if(revEnerSub!=undefined){
-                        revEnerSub.unsubscribe();
-                    }
-                    if(routeSub!=undefined){
-                        routeSub.unsubscribe();
-                    }
-                }else{
-                    let catSub=this.shelterService.getShelterSection(params['id'],"energy").subscribe(shel=>{
-                        this.name=shel.name;
-                        this.initEnergyForm(shel);
-                        if(catSub!=undefined){
-                            catSub.unsubscribe();
-                        }
-                        if(revEnerSub!=undefined){
-                            revEnerSub.unsubscribe();
-                        }
-                        if(routeSub!=undefined){
-                            routeSub.unsubscribe();
-                        }
-                    });
-                }
-            });
-            this.revisionService.onChildLoadRequest("energy");
-
+    getDrain(id):Promise<void>{
+        return new Promise<void>((resolve,reject)=>{
             let revDrainSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.drain!=undefined){
                     this.name=shelter.name;
@@ -355,28 +301,98 @@ export class BcCatastalRevision {
                     if(revDrainSub!=undefined){
                         revDrainSub.unsubscribe();
                     }
-                    if(routeSub!=undefined){
-                        routeSub.unsubscribe();
-                    }
+                    resolve();
                 }else{
-                    let catSub=this.shelterService.getShelterSection(params['id'],"drain").subscribe(shel=>{
+                    let catSub=this.shelterService.getShelterSection(id,"drain").subscribe(shel=>{
                         this.name=shel.name;
                         this.initDrainForm(shel);
+                        this.revisionService.onChildSave(shel,"drain");
                         if(catSub!=undefined){
                             catSub.unsubscribe();
                         }
                         if(revDrainSub!=undefined){
                             revDrainSub.unsubscribe();
                         }
-                        if(routeSub!=undefined){
-                            routeSub.unsubscribe();
-                        }
+                        resolve();
                     });
                 }
             });
             this.revisionService.onChildLoadRequest("drain");
+        });
+    }
 
+    getEnergy(id):Promise<void>{
+        return new Promise<void>((resolve,reject)=>{
+            let revEnergySub=this.revisionService.load$.subscribe(shelter=>{
+                if(shelter!=null&&shelter.energy!=undefined){
+                    this.name=shelter.name;
+                    this.initEnergyForm(shelter);
+                    if(revEnergySub!=undefined){
+                        revEnergySub.unsubscribe();
+                    }
+                    resolve();
+                }else{
+                    let catSub=this.shelterService.getShelterSection(id,"energy").subscribe(shel=>{
+                        this.name=shel.name;
+                        this.initEnergyForm(shel);
+                        this.revisionService.onChildSave(shel,"energy");
+                        if(catSub!=undefined){
+                            catSub.unsubscribe();
+                        }
+                        if(revEnergySub!=undefined){
+                            revEnergySub.unsubscribe();
+                        }
+                        resolve();
+                    });
+                }
+            });
+            this.revisionService.onChildLoadRequest("energy");
+        });
+    }
 
+    getCatastal(id):Promise<void>{
+        return new Promise<void>((resolve,reject)=>{
+            let revCatSub=this.revisionService.load$.subscribe(shelter=>{
+                if(shelter!=null&&shelter.catastal!=undefined){
+                    this.name=shelter.name;
+                    this.initCatastalForm(shelter);
+                    if(revCatSub!=undefined){
+                        revCatSub.unsubscribe();
+                    }
+                    resolve();
+                }else{
+                    let catSub=this.shelterService.getShelterSection(id,"catastal").subscribe(shel=>{
+                        this.name=shel.name;
+                        this.initCatastalForm(shel);
+                        this.revisionService.onChildSave(shel,"catastal");
+                        if(catSub!=undefined){
+                            catSub.unsubscribe();
+                        }
+                        if(revCatSub!=undefined){
+                            revCatSub.unsubscribe();
+                        }
+                        resolve();
+                    });
+                }
+            });
+            this.revisionService.onChildLoadRequest("catastal");
+        });
+    }
+
+    ngOnInit(){
+        let routeSub=this._route.parent.params.subscribe(params=>{
+            this._id=params["id"];
+            this.getCatastal(params["id"])
+            .then(()=>{
+                this.getEnergy(params["id"])
+                .then(()=>{
+                    this.getDrain(params["id"])
+                    .then(()=>{
+                        if(routeSub!=undefined)
+                            routeSub.unsubscribe();
+                    });
+                });
+            });
         });
     }
 }

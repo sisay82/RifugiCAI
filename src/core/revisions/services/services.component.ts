@@ -50,12 +50,12 @@ export class BcServRevision {
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             
-            if(this.serviceListChange||this.servForm.dirty){
+            //if(this.serviceListChange||this.servForm.dirty){
                 this.disableSave=true;
                 this.save(true);
-            }else{
-                shared.onMaskConfirmSave(false,"services");
-            }
+            //}else{
+            //    shared.onMaskConfirmSave(false,"services");
+            //}
         });
 
         this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
@@ -302,7 +302,7 @@ export class BcServRevision {
             if(returnVal){
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave(true,"services");
+                    this.shared.onMaskConfirmSave("services");
                 }
             }else{
                 console.log(returnVal);
@@ -358,34 +358,42 @@ export class BcServRevision {
         }
     }
 
-    ngOnInit(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
+    getService(id):Promise<IShelter>{
+        return new Promise<IShelter>((resolve,reject)=>{
             let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.services!=undefined){
-                    this.initForm(shelter);
+                    
                     if(revSub!=undefined){
                         revSub.unsubscribe();
                     }
-                    if(routeSub!=undefined){
-                        routeSub.unsubscribe();
-                    }
+                    resolve(shelter);
                 }else{
-                    let shelSub=this.shelterService.getShelterSection(params['id'],"services").subscribe(shelter=>{
-                        this.initForm(shelter);
+                    let shelSub=this.shelterService.getShelterSection(id,"services").subscribe(shelter=>{
+                        this.revisionService.onChildSave(shelter,"services");
                         if(shelSub!=undefined){
                             shelSub.unsubscribe();
                         }
                         if(revSub!=undefined){
                             revSub.unsubscribe();
                         }
-                        if(routeSub!=undefined){
-                            routeSub.unsubscribe();
-                        }
+                        resolve(shelter);
                     });
                 }
             });
             this.revisionService.onChildLoadRequest("services");
+        });
+    }
+
+    ngOnInit(){
+        let routeSub=this._route.parent.params.subscribe(params=>{
+            this._id=params["id"];
+            this.getService(params["id"])
+            .then(shelter=>{
+                this.initForm(shelter);
+                if(routeSub!=undefined){
+                    routeSub.unsubscribe();
+                }
+            });
         });
 
     }

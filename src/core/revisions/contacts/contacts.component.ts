@@ -65,11 +65,7 @@ export class BcContactsRevision {
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             this.disableSave=true;
-            if(this.openingChange||this.contactForm.dirty){
-                this.save(true);
-            }else{
-                shared.onMaskConfirmSave(false,"contacts");
-            }
+            this.save(true);
         });
 
         this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
@@ -131,7 +127,6 @@ export class BcContactsRevision {
     }
 
     initOpening(opening:IOpening){
-        this.openingChange=true;
         return this.fb.group({
             startDate:[opening.startDate?(new Date(opening.startDate).toUTCString()):null,validateDate],
             endDate:[opening.startDate?(new Date(opening.endDate).toUTCString()):null,validateDate],
@@ -169,7 +164,7 @@ export class BcContactsRevision {
                     if(returnVal){
                         this.displayError=false;
                         if(confirm){
-                            this.shared.onMaskConfirmSave(true,"contacts");
+                            this.shared.onMaskConfirmSave("contacts");
                         }
                         //location.reload();
                     }else{
@@ -232,40 +227,70 @@ export class BcContactsRevision {
         }
     }
 
-    ngOnInit(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
+     getOpening(id):Promise<IOpening[]>{
+        return new Promise<IOpening[]>((resolve,reject)=>{
             let revSub=this.revisionService.load$.subscribe(shelter=>{
-                if(shelter!=null&&shelter.contacts!=undefined){
-                    this.initForm(shelter);
+                if(shelter!=null&&shelter.openingTime!=undefined){
                     if(revSub!=undefined){
                         revSub.unsubscribe();
                     }
-                    if(routeSub!=undefined){
-                        routeSub.unsubscribe();
-                    }
+                    resolve(shelter.openingTime);
                 }else{
-                    let openSub=this.shelterService.getShelterSection(params['id'],"openingTime").subscribe(shelterOpenings=>{
-                        let contSub=this.shelterService.getShelterSection(params['id'],"contacts").subscribe(shelter=>{
-                            shelter.openingTime=shelterOpenings.openingTime;
-                            this.initForm(shelter);
-                            if(contSub!=undefined){
-                                contSub.unsubscribe();
-                            }
-                            if(openSub!=undefined){
-                                openSub.unsubscribe();
-                            }
-                            if(revSub!=undefined){
-                                revSub.unsubscribe();
-                            }
-                            if(routeSub!=undefined){
-                                routeSub.unsubscribe();
-                            }
-                        });
+                    let openSub=this.shelterService.getShelterSection(id,"openingTime").subscribe(shelter=>{
+                        this.revisionService.onChildSave(shelter,"openingTime");
+                        if(openSub!=undefined){
+                            openSub.unsubscribe();
+                        }
+                        if(revSub!=undefined){
+                            revSub.unsubscribe();
+                        }
+                        resolve(shelter.openingTime);
+                    });
+                }
+            });
+            this.revisionService.onChildLoadRequest("openingTime");
+        });
+     }
+
+     getContact(id):Promise<IContacts>{
+        return new Promise<IContacts>((resolve,reject)=>{
+            let revSub=this.revisionService.load$.subscribe(shelter=>{
+                if(shelter!=null&&shelter.contacts!=undefined){
+                    if(revSub!=undefined){
+                        revSub.unsubscribe();
+                    }
+                    resolve(shelter.contacts);
+                }else{
+                    let contSub=this.shelterService.getShelterSection(id,"contacts").subscribe(shelter=>{
+                        this.revisionService.onChildSave(shelter,"contacts");
+                        if(contSub!=undefined){
+                            contSub.unsubscribe();
+                        }
+                        if(revSub!=undefined){
+                            revSub.unsubscribe();
+                        }
+                        resolve(shelter.contacts);
                     });
                 }
             });
             this.revisionService.onChildLoadRequest("contacts");
+        });
+     }
+
+    ngOnInit(){
+        let routeSub=this._route.parent.params.subscribe(params=>{
+            this._id=params["id"];
+            this.getContact(params["id"])
+            .then((contacts)=>{
+                this.getOpening(params["id"])
+                .then((openings)=>{
+                    let shelter={_id:params["id"],contacts:contacts,openingTime:openings};
+                    this.initForm(shelter);
+                    if(routeSub!=undefined){
+                        routeSub.unsubscribe();
+                    }
+                });
+            });
         });
     }
 }
