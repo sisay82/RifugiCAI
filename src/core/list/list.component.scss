@@ -1,74 +1,54 @@
-@import './list-item.component';
+@import '../style/vendor-prefixes';
+@import '../style/typography';
+
+@import './listItem/list-item.component';
+@import './listHeader/list-header.directive';
+
+@import '../icon/icon.component';
 
 // Normal list variables
-$bc-list-top-padding: 8px;
-$bc-list-font-size: 16px;
-$bc-list-base-height: 48px;
-// // $bc-list-secondary-font: 14px;
+$bc-list-padding-start: 16px;
+$bc-list-padding-end: 0px;
 
-// // // height for single-line lists
+$bc-list-no-border: 0px;
 
-// // // height for single-line lists with avatars
-// // $bc-list-avatar-height: 56px;
-// // // spec requires two- and three-line lists be taller
-// // $bc-list-two-line-height: 72px;
-// // $bc-list-three-line-height: 88px;
-// // $bc-list-avatar-size: 40px;
-// // $bc-list-icon-size: 24px;
-
-// Dense list variables
-$bc-dense-top-padding: 4px;
-$bc-dense-font-size: 13px;
-$bc-dense-base-height: 40px;
-// // $bc-dense-avatar-height: 48px;
-// // $bc-dense-two-line-height: 60px;
-// // $bc-dense-three-line-height: 76px;
-// // $bc-dense-list-icon-size: 20px;
 
 @mixin bc-list-theme($theme) {
   .bc-list {
-     @include bc-list-item-theme($theme)
+    // bc-list-header theme
+    @include bc-list-header-theme($theme);
+    // bc-list-item theme
+    @include bc-list-item-theme($theme);
   }
 }
 
 .bc-list {
-  padding-top: $bc-list-top-padding;
   display: block;
+  list-style-type: none;
 
-  // .mat-subheader {
-  // @include mat-subheader-base(
-  // $mat-list-top-padding,
-  // $mat-list-secondary-font,
-  // $mat-list-base-height
-  // );
-  // }
+  // bc-list-header style
+  @include bc-list-header-base($bc-list-padding-start, $bc-list-padding-end);
 
-
-  
-    @include bc-list-item-base(
-      $bc-list-font-size,
-      $bc-list-base-height
-    );
-
-  // @include mat-line-base($mat-list-secondary-font);
-}
-
-.bc-list[dense] {
-  padding-top: $bc-dense-top-padding;
-  display: block;
-
-  // .mat-subheader {
-  //   @include mat-subheader-base(
-  //     $mat-dense-top-padding,
-  //     $mat-dense-font-size,
-  //     $mat-dense-base-height
-  //   );
-  // }
-
+  // bc-list-item style
   @include bc-list-item-base(
-    $bc-dense-font-size,
-    $bc-dense-base-height
+    $bc-icon-size,
+    $bc-list-padding-start, $bc-list-padding-end
   );
 
-    // @include mat-line-base($mat-dense-font-size);
+  &[no-border], &[data-no-border] {
+    @include bc-list-item-no-border();
+    & bc-divider {
+      display:none;
+    }
+  }
+
+  &[dense], &[data-dense] {
+    @include bc-list-item-base(
+      $bc-dense-icon-size,
+      $bc-list-padding-start, $bc-list-padding-end,
+      dense
+    );
+  }
 }
+
+@include bc-typography;
