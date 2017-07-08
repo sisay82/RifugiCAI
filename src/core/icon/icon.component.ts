@@ -1,174 +1,52 @@
-// import {
-//   Component,
-//   ViewEncapsulation,
-//   ContentChildren,
-//   ContentChild,
-//   QueryList,
-//   Directive,
-//   ElementRef,
-//   Input,
-//   Optional,
-//   Renderer2,
-//   AfterContentInit,
-// } from '@angular/core';
-// //import {MdLine, MdLineSetter, coerceBooleanProperty} from '../core';
+import {
+    Component,
+    Input,
+    ViewEncapsulation,
+    ElementRef,
+    Renderer2,
+} from '@angular/core';
 
-// @Directive({
-//   selector: 'bc-divider'
-// })
-// export class BcListDivider {}
+import { BcStyler } from '../shared/types/bc-styler';
 
-// @Component({
-//   moduleId: module.id,
-//   selector: 'bc-list',
-//   host: { 'role': 'list'},
-//   templateUrl: 'list.component.html',
-//   styleUrls: ['list.css'],
-//   encapsulation: ViewEncapsulation.None
-// })
-// export class BcList {
-//   private _disableRipple: boolean = false;
+@Component({
+    moduleId: module.id,
+    selector: 'bc-icon',
+    templateUrl: 'icon.component.html',
+    styleUrls: ['icon.component.scss'],
+    host: {
+        '[class.bc-icon]': 'true',
+        '[class.fa]': 'true',
+        'role': 'img'
+    },
+    encapsulation: ViewEncapsulation.None
+})
+export class BcIcon extends BcStyler {
+    private _name: string;
+    private _size: string;
 
-//   /**
-//    * Whether the ripple effect should be disabled on the list-items or not.
-//    * This flag only has an effect for `md-nav-list` components.
-//    */
-//   @Input()
-//   get disableRipple() { return this._disableRipple; }
-//   set disableRipple(value: boolean) { this._disableRipple = coerceBooleanProperty(value); }
-// }
+    constructor(elementRef: ElementRef, _renderer2: Renderer2) {
+        super(elementRef, _renderer2);
+    }
 
-// /**
-//  * Directive whose purpose is to add the bc- CSS styling to this selector.
-//  * @docs-private
-//  */
-// @Directive({
-//   selector: 'bc-list',
-//   host: {
-//     '[class.bc-list]': 'true'
-//   }
-// })
-// export class MdListCssMatStyler {}
+    /** The name of the icon.*/
+    @Input()
+    get name(): string {
+        return this._name;
+    }
 
-// /**
-//  * Directive whose purpose is to add the bc- CSS styling to this selector.
-//  * @docs-private
-//  */
-// @Directive({
-//   selector: 'bc-alternate',
-//   host: {
-//     '[class.bc-alternate]': 'true'
-//   }
-// })
-// export class MdAlternateCssMatStyler {}
+    set name(value: string) {
+        let newClassName: string = (value != null && value != '') ? `fa-${value}` : null;
+        this.updateClass("_name", newClassName);
+    }
 
-// /**
-//  * Directive whose purpose is to add the bc- CSS styling to this selector.
-//  * @docs-private
-//  */
-// @Directive({
-//   selector: 'bc-divider',
-//   host: {
-//     '[class.bc-divider]': 'true'
-//   }
-// })
-// export class MdDividerCssMatStyler {}
+    /** The size of the icon. Can be xs, s, m, l, or xl. */
+    @Input()
+    get size(): string {
+        return this._size;
+    }
 
-// /**
-//  * Directive whose purpose is to add the bc- CSS styling to this selector.
-//  * @docs-private
-//  */
-// @Directive({
-//   selector: '[bc-list-avatar]',
-//   host: {
-//     '[class.bc-list-avatar]': 'true'
-//   }
-// })
-// export class MdListAvatarCssMatStyler {}
-
-// /**
-//  * Directive whose purpose is to add the bc- CSS styling to this selector.
-//  * @docs-private
-//  */
-// @Directive({
-//   selector: '[bc-list-icon]',
-//   host: {
-//     '[class.bc-list-icon]': 'true'
-//   }
-// })
-// export class MdListIconCssMatStyler {}
-
-// /**
-//  * Directive whose purpose is to add the bc- CSS styling to this selector.
-//  * @docs-private
-//  */
-// @Directive({
-//   selector: '[bc-subheader]',
-//   host: {
-//     '[class.bc-subheader]': 'true'
-//   }
-// })
-// export class MdListSubheaderCssMatStyler {}
-
-// @Component({
-//   moduleId: module.id,
-//   selector: 'bc-list-item, a[bc-list-item]',
-//   host: {
-//     'role': 'listitem',
-//     '(focus)': '_handleFocus()',
-//     '(blur)': '_handleBlur()',
-//     '[class.bc-list-item]': 'true',
-//   },
-//   templateUrl: 'list-item.html',
-//   encapsulation: ViewEncapsulation.None
-// })
-// export class MdListItem implements AfterContentInit {
-//   private _lineSetter: MdLineSetter;
-//   private _disableRipple: boolean = false;
-//   private _isNavList: boolean = false;
-
-//   _hasFocus: boolean = false;
-
-//   /**
-//    * Whether the ripple effect on click should be disabled. This applies only to list items that are
-//    * part of a nav list. The value of `disableRipple` on the `md-nav-list` overrides this flag.
-//    */
-//   @Input()
-//   get disableRipple() { return this._disableRipple; }
-//   set disableRipple(value: boolean) { this._disableRipple = coerceBooleanProperty(value); }
-
-//   @ContentChildren(MdLine) _lines: QueryList<MdLine>;
-
-//   @ContentChild(MdListAvatarCssMatStyler)
-//   set _hasAvatar(avatar: MdListAvatarCssMatStyler) {
-//     if (avatar != null) {
-//       this._renderer.addClass(this._element.nativeElement, 'bc-list-item-avatar');
-//     } else {
-//       this._renderer.removeClass(this._element.nativeElement, 'bc-list-item-avatar');
-//     }
-//   }
-
-//   constructor(private _renderer: Renderer2,
-//               private _element: ElementRef,
-//               @Optional() private _list: BcList,
-//               @Optional() navList: MdNavListCssMatStyler) {
-//     this._isNavList = !!navList;
-//   }
-
-//   ngAfterContentInit() {
-//     this._lineSetter = new MdLineSetter(this._lines, this._renderer, this._element);
-//   }
-
-//   /** Whether this list item should show a ripple effect when clicked.  */
-//   isRippleEnabled() {
-//     return !this.disableRipple && this._isNavList && !this._list.disableRipple;
-//   }
-
-//   _handleFocus() {
-//     this._hasFocus = true;
-//   }
-
-//   _handleBlur() {
-//     this._hasFocus = false;
-//   }
-// }
+    set size(value: string) {
+        let newClassName: string = (value != null && value != '') ? `bc-icon-${value}` : null;
+        this.updateClass("_color", newClassName);
+    }
+}

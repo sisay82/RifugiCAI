@@ -67,7 +67,7 @@
                         required class="form-control"  formControlName="type">
                     <div [hidden]="open.controls['type'].valid" class="alert alert-danger">Invalid</div>
                 </div>
-                <div (click)="removeOpening(i)" class="fa fa-times bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
+                <bc-icon (click)="removeOpening(i)" class="bc-add-tag" name="times" size=s></bc-icon>
             </div>
         </div>
         <br>
@@ -84,7 +84,7 @@
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     required class="form-control"  formControlName="newOpeningType">
             </div>
-            <div (click)="addNewOpening()" class="fa fa-plus bc-add-tag" style="margin-left:1%;font-size:16px"></div>
+            <bc-icon (click)="addNewOpening()" class="bc-add-tag" name="plus" size=s></bc-icon>
         </div>
         <div [hidden]="!invalid&&(contactForm.controls['newOpeningType'].valid)" style="position:relative;width:62%" class="alert alert-danger">Invalid</div>
 

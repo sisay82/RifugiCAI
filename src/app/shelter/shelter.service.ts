@@ -7,6 +7,7 @@ import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { IPagedResults, IShelter, IMarker } from '../shared/types/interfaces';
+import { Enums  } from '../shared/types/enums';
 
 @Injectable()
 export class ShelterService {

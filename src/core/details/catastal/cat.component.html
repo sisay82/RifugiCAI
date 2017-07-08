@@ -21,8 +21,8 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <i *ngIf="catastal.ISO14001!='undefined'&&catastal.ISO14001=='true'" class="fa fa-check-square-o" style="font-size:10px"></i>
-            <i *ngIf="catastal.ISO14001=='undefined'||catastal.ISO14001=='false'" class="fa fa-square-o" style="font-size:10px"></i>
+            <bc-icon *ngIf="catastal.ISO14001!='undefined'&&catastal.ISO14001=='true'" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.ISO14001=='undefined'||catastal.ISO14001=='false'" name="square-o" size=s></bc-icon>
             <div class="bc-body-strong" style="margin-right:4px">ISO14001</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">

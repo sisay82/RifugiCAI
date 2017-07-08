@@ -128,7 +128,7 @@
                             class="form-control" formControlName="type">
                         <div [hidden]="open.controls['type'].valid" class="alert alert-danger">Invalid</div>
                     </div>
-                    <div (click)="removeSubject(i)" class="fa fa-times bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
+                    <bc-icon (click)="removeSubject(i)" class="bc-add-tag" name="times" size=s></bc-icon>
                 </div>
                 <div style="display: flex;flex-direction:row">
                     <div class="bc-revision-management">
@@ -193,7 +193,7 @@
                     class="form-control" formControlName="newType">
                 <div [hidden]="managForm.controls['newType'].valid" class="alert alert-danger">Invalid</div>
             </div>
-            <div (click)="addNewSubject()" class="fa fa-plus bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
+            <bc-icon (click)="addNewSubject()" class="bc-add-tag" name="plus" size=s></bc-icon>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
