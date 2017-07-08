@@ -15,12 +15,12 @@ export interface IMarker{
 }
 
 export interface IButton {
-    ref:string;
+    ref?:any;
     icon?:string;
     dark_theme?:Boolean;
     text?:string;
-    enabled?:Boolean;
     action?:Function;
+    enabled?:Boolean;
 }
 
 export interface IMenuElement{
@@ -64,6 +64,7 @@ export interface IGeographic{
 }
 
 export interface IService{
+    _id?:String;
     name?:String;
     category?:String;
     description?:String;
@@ -78,7 +79,7 @@ export interface IOpening{
 
 export interface IContacts{
     name?:String;
-    role?:String;
+    role?:Enums.Owner_Type;
     fixedPhone?:String;
     mobilePhone?:String;
     mailPec?:String;
@@ -146,11 +147,13 @@ export interface IDrain{
 export interface IShelter{
     _id:String;
     name:String;
+    alias?:String;
     idCai?:String;
     type?:Enums.Shelter_Type;
     branch?:String;
     owner?:String;
     category?:Enums.Shelter_Category;
+    regional_type?:Enums.Regional_Type;
     insertDate?:Date;
     updateDate?:Date;
 

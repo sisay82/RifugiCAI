@@ -1,5 +1,5 @@
 
-<button (click)="btnClick()" [class]="local_style"  [disabled]="!button.enabled">
+<button (click)="btnClick()" [class]="local_style"  [disabled]="!enabled">
     <i class="{{button.icon}}" aria-hidden="true"></i>
     <span *ngIf="checkPlatform()"> {{button.text}} </span>
 </button>

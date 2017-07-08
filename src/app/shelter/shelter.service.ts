@@ -14,8 +14,8 @@ import { IPagedResults, IShelter, IMarker } from '../shared/types/interfaces';
 export class ShelterService {
 
     //sheletersBaseUrl: string = '/api/shelters';
-    //sheletersBaseUrl: string = 'http://localhost:8080/api/shelters';
-    sheletersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
+    sheletersBaseUrl: string = 'http://localhost:8080/api/shelters';
+    //sheletersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 
@@ -83,9 +83,21 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
+    confirmShelter(shelterId:String,confirm:boolean): Observable<boolean>{
+        return this.http.put(this.sheletersBaseUrl + '/confirm/'+shelterId,{confirm:confirm})
+            .map((res: Response) => res.json())
+            .catch(this.handleError);
+    }
+
+    preventiveUpdateShelter(shelter: IShelter,section:string): Observable<boolean> {
+        return this.http.put(this.sheletersBaseUrl + '/confirm/' + section + '/' + shelter._id, shelter)
+            .map((res: Response) => res.json())
+            .catch(this.handleError);
+    }
+
     updateShelter(shelter: IShelter): Observable<boolean> {
         return this.http.put(this.sheletersBaseUrl + '/' + shelter._id, shelter)
-            .map((res: Response) => res.json())
+            .map((res: Response) => res.json().status)
             .catch(this.handleError);
     }
 

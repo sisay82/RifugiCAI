@@ -2,6 +2,7 @@ export namespace Enums{
     //tipo rifugio
     export enum Shelter_Type
     {
+        Rifugio,
         Bivacco,
         Rifugio_Custodito,
         Rifugio_Incustodito,
@@ -42,6 +43,12 @@ export namespace Enums{
         Energetica,
         Idrica,
         Riscaldamento
+    }
+
+    export enum Owner_Type
+    {
+        Custode,
+        Proprietario
     }
 
     //tipo custodia

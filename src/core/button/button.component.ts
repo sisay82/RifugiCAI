@@ -5,6 +5,8 @@ import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class BcButtonService{
+
+
     private selectSource = new Subject<string>();
     select$ = this.selectSource.asObservable();
 
@@ -22,8 +24,9 @@ export class BcButtonService{
 export class BcButton{
     @Input() button:IButton;
     @Input() pre_selected:Boolean;
-    private _selected:Boolean;
+    @Input() enabled:boolean=true;
     local_style:string;
+    private _selected:Boolean;
 
     constructor(private router:Router,@Optional() private _button_service: BcButtonService){
         this.local_style=this.getClass();
@@ -36,11 +39,13 @@ export class BcButton{
             let style=this.getClass();
             this.local_style=style.concat(" bc-selected-button-light");
         }
+        console.log(this.button.ref);
         if(this.button.action==undefined){
             this.router.navigateByUrl(this.button.ref);
         }else{
-            this.button.action();
+            this.button.action(this.button.ref);
         }
+        
     }
 
     btnUncheck(){
@@ -68,8 +73,8 @@ export class BcButton{
     getClass(){
         if(this.button!=undefined){
             let ret_class="btn btn-default bc-button";
-            if(this.button.enabled===undefined){
-                this.button.enabled=true;
+            if(this.enabled===undefined){
+                this.enabled=true;
             }
             if(this.button.dark_theme===undefined){
                 this.button.dark_theme=false;

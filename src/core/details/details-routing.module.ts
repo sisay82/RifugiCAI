@@ -6,7 +6,7 @@ import { BcServ } from "./services/serv.component";
 import { BcGeo } from "./geographics/geo.component";
 import { BcDetails } from "./details.component";
 import { BcManage } from "./management/manage.component";
-import { BcCadastral } from "./cadastral/cad.component";
+import { BcCatastal } from "./catastal/cat.component";
 
 
 @NgModule({
@@ -23,7 +23,7 @@ export class DetailsRoutingModule {
     { path: 'services', component: BcServ,outlet:'content' },
     { path: 'contacts', component: BcContact,outlet:'content' },
     { path: 'management', component: BcManage,outlet:'content' },
-    { path: 'catastal', component: BcCadastral,outlet:'content' },
+    { path: 'catastal', component: BcCatastal,outlet:'content' },
     { path: 'documents', component: BcGeo,outlet:'content' },
     { path: 'images', component: BcGeo,outlet:'content' },
     { path: 'economy', component: BcGeo,outlet:'content' },

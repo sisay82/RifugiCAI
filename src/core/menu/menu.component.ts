@@ -4,9 +4,7 @@ import {
 import {
   Animations
 } from './menu-animations';
-import { 
-  IMenu
-} from '../../app/shared/types/interfaces';
+import { IMenu } from '../../app/shared/types/interfaces';
 import {
   BcMenuItem,BcItemService
 } from './menu-item.component';
@@ -23,7 +21,7 @@ import { BcMenuService } from './menu-toggle.service'
 export class BcMenu {
   current_check:BcMenuItem;
   @ViewChildren(BcMenuItem) _list_layers: QueryList<BcMenuItem>;
-  menuState:string = 'left';
+  menuState:string = 'right';
   @Input() menuElements: IMenu;
 
   ngAfterContentInit(){
@@ -33,12 +31,13 @@ export class BcMenu {
       }
       this.current_check=this._layer_service.current_select;
     });
-
-    this._menu_service.select$.subscribe(item=>{
-      this.toggleMenu();
-    });
-
     this.checkWinPlatform();
+
+    if(this._menu_service!=undefined){
+      this._menu_service.select$.subscribe(item=>{
+        this.toggleMenu();
+      });
+    }
   }
 
   constructor(private _layer_service:BcItemService,@Optional() private _menu_service:BcMenuService){

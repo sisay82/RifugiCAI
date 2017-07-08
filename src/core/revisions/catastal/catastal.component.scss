@@ -1,0 +1,33 @@
+@import '../../style/typography';
+@import '../../style/palette';
+
+@include bc-typography();
+
+.bc-catastal-title{
+  margin-bottom: 4px;
+  color:map-get($bc-teal,400 );
+}
+
+.bc-catastal-check{
+  position:relative;
+  align-items: center;
+  margin-left:2%;
+  margin-right:2%
+}
+
+.bc-add-tag:hover{
+  color:map-get($bc-teal,400);
+}
+
+.bc-revision-catastal{
+  width:30%;
+  margin-right:1%
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form):not(div)  {
+  border-left: 5px solid #a94442; /* red */
+}

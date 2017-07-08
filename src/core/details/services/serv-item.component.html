@@ -1,17 +1,17 @@
-<div>
+<div class="bc-content-service">
     <div style="display: flex;flex-direction:row;align-items:center">
         <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{item.name}}</div>
     </div>
 
     <div style="display: flex;flex-direction:row">
-        <div *ngFor="let option of options" style="display: flex;flex-direction:row;align-items:center;flex:1">
+        <div *ngFor="let option of options" class="bc-content-service" style="display: flex;flex-direction:row;align-items:center;flex:1">
             <div class="bc-body-strong" style="margin-right:4px">{{option.key}}</div>
             <div *ngIf="option.value!=undefined&&option.value!=''" class="bc-body">: {{option.value}}</div>
         </div>
     </div>
 
     <div>
-        <div *ngFor="let check of checks" class="bc-body" style="margin-bottom:4px;display: flex;flex-direction:row;align-items:center">
+        <div *ngFor="let check of checks" class="bc-body bc-content-service" style="margin-bottom:4px;display: flex;flex-direction:row;align-items:center">
             <div style="display:flex;flex-direction:row;align-items:center" *ngIf="check.value=='true'">
                 <i class="fa fa-check-square-o" style="font-size:10px"></i>
                 <div style="margin-left:2px">{{check.key}}</div>

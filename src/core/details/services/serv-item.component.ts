@@ -16,13 +16,15 @@ export class BcServItem {
   checks:ITag[]=[];
 
   ngOnInit(){
-    for(let it of this.item.tags){
-      if(it.value=="true"||it.value=="false"){
-        this.checks.push(it);
-      }else{
-        this.options.push(it);
+    if(this.item!=undefined&&this.item.tags){
+      for(let it of this.item.tags){
+        if(it.value=="true"||it.value=="false"){
+          this.checks.push(it);
+        }else{
+          this.options.push(it);
+        }
       }
     }
-
+    
   }
 }

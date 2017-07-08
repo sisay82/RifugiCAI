@@ -2,3 +2,8 @@
 @import '../../style/palette';
 
 @include bc-typography();
+
+.bc-category-title{
+    color:map-get($bc-teal,400);
+    font-weight: 500;
+}

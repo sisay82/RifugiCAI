@@ -6,12 +6,12 @@ import { BcDividerModule } from './divider/divider.module';
 import { BcNavbarModule } from './navbar/navbar.module';
 import { BcListModule } from './list/list.module';
 import { BcDetailsModule } from './details/details.module';
+import { BcRevisionsModule } from './revisions/revisions.module';
 import { BcMapModule } from './map/map.module';
+import { BcMaskControllerModule } from './fixed_mask/mask-controller.module';
 import { BcButtonModule } from './button/button.module';
 import { BcSelectGroupModule } from './button/selectGroup.module';
-import { BcMaskModule } from './fixed_mask/mask.module';
 import { BcMenuModule } from './menu/menu.module';
-
 // import { FilterService } from './services/filter.service';
 // import { SorterService } from './services/sorter.service';
 // import { TrackByService } from './services/trackby.service';
@@ -25,13 +25,13 @@ const COMPONENTS_MODULES = [
     BcDividerModule,
     BcNavbarModule,
     BcListModule,
-    BcMapModule,
-    BcSelectGroupModule,
-    BcMaskModule,
-    BcMenuModule,
-    BcButtonModule,
     BcDetailsModule,
-
+    BcMapModule,
+    BcRevisionsModule,
+    BcMaskControllerModule,
+    BcButtonModule,
+    BcSelectGroupModule,
+    BcMenuModule
 ];
 const PIPES_MODULES = [
     CapitalizePipe,

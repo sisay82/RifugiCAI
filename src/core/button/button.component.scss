@@ -31,6 +31,7 @@ $button_margin: 1px 1px;
 }
 
 .bc-button:hover:enabled{
+ //   color:map-get($bc-light-theme-background,focused-button);
     background:map-get($bc-light-theme-background,background);
     border-width: 1px;
     border-color: map-get($bc-light-theme-background,selected-button);

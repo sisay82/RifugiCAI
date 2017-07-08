@@ -6,11 +6,11 @@ import { BcContactModule } from './contacts/contact.module';
 import { BcDetails } from "./details.component";
 import { RouterModule, Routes } from '@angular/router';
 import { BcManageModule } from "./management/manage.module";
-import { BcCadastralModule } from "./cadastral/cad.module";
+import { BcCatastalModule } from "./catastal/cat.module";
 import { HttpModule } from '@angular/http';
 
 @NgModule({
-    imports: [HttpModule,RouterModule,BcGeoModule,BcServModule,BcContactModule,BcCadastralModule,BcManageModule],
+    imports: [HttpModule,RouterModule,BcGeoModule,BcServModule,BcContactModule,BcCatastalModule,BcManageModule],
     declarations:[BcDetails],
     exports: [BcGeoModule,BcDetails]
 })
