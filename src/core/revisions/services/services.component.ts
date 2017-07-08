@@ -10,7 +10,7 @@ import { Animations } from './serviceAnimation';
 import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
-let stringValidator=/^([A-Za-z0-99À-ÿ ,.:/;!?|)(_-]*)*$/;
+let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
@@ -40,6 +40,8 @@ export class BcServRevision {
     disableSave=false;
     newServiceAdded=false;
     serviceListChange:boolean=false;
+    maskInvalidSub:Subscription;
+    maskValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.servForm = fb.group({
             categories:fb.array([]),
@@ -49,13 +51,18 @@ export class BcServRevision {
         shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            
-            //if(this.serviceListChange||this.servForm.dirty){
-                this.disableSave=true;
-                this.save(true);
-            //}else{
-            //    shared.onMaskConfirmSave(false,"services");
-            //}
+            this.disableSave=true;
+            this.save(true);
+        });
+
+        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
+            this.displayError=true;
+        });
+
+        this.maskValidSub = shared.maskValid$.subscribe(()=>{
+            if(this.servForm.valid){
+                this.displayError=false;
+            }
         });
 
         this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
@@ -265,56 +272,60 @@ export class BcServRevision {
     }
 
     save(confirm){
-        let shelter:any={_id:this._id,name:this.name};
-        let services:IService[]=[]
+        if(this.servForm.value){
+            let shelter:any={_id:this._id,name:this.name};
+            let services:IService[]=[]
 
-        for(let c of (<FormArray>this.servForm.controls["categories"]).controls){
-            const cat=<FormGroup>c;
-            for(let s of (<FormArray>cat.controls.services).controls){
-                let serv=<FormGroup>s;
-                let service:IService={
-                    name:serv.value.name,
-                    category:serv.value.category,
-                    description:serv.value.description,
-                };
-                if(serv.value.id!=undefined){
-                    service._id=serv.value.id;
+            for(let c of (<FormArray>this.servForm.controls["categories"]).controls){
+                const cat=<FormGroup>c;
+                for(let s of (<FormArray>cat.controls.services).controls){
+                    let serv=<FormGroup>s;
+                    let service:IService={
+                        name:serv.value.name,
+                        category:serv.value.category,
+                        description:serv.value.description,
+                    };
+                    if(serv.value.id!=undefined){
+                        service._id=serv.value.id;
+                    }
+                    let tags:ITag[]=[];
+                    for (let tag of (<FormArray>serv.controls.tags).controls){
+                        tags.push({key:tag.value.key,value:tag.value.value});
+                    }
+                    service.tags=tags as [ITag];
+                    services.push(service);
                 }
-                let tags:ITag[]=[];
-                for (let tag of (<FormArray>serv.controls.tags).controls){
-                    tags.push({key:tag.value.key,value:tag.value.value});
-                }
-                service.tags=tags as [ITag];
-                services.push(service);
             }
-        }
-        this.serviceToRemove.forEach(service=>{
-            services.push({_id:service});
-        });
-        
-        delete(this.serviceToRemove);
-  
-        shelter.services=services;
-        if(!this.newServiceAdded){
-            this.revisionService.onChildSave(shelter,"services");
-        }else{
-            this.revisionService.onChildDelete("services");
-        }
-
-        let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"services").subscribe((returnVal)=>{
-            if(returnVal){
-                this.displayError=false;
-                if(confirm){
-                    this.shared.onMaskConfirmSave("services");
-                }
+            this.serviceToRemove.forEach(service=>{
+                services.push({_id:service});
+            });
+            
+            delete(this.serviceToRemove);
+    
+            shelter.services=services;
+            if(!this.newServiceAdded){
+                this.revisionService.onChildSave(shelter,"services");
             }else{
-                console.log(returnVal);
-                this.displayError=true;
+                this.revisionService.onChildDelete("services");
             }
-            if(shelSub!=undefined){
-                shelSub.unsubscribe();
-            }
-        });
+
+            let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"services").subscribe((returnVal)=>{
+                if(returnVal){
+                    this.displayError=false;
+                    if(confirm){
+                        this.shared.onMaskConfirmSave("services");
+                    }
+                }else{
+                    console.log(returnVal);
+                    this.displayError=true;
+                }
+                if(shelSub!=undefined){
+                    shelSub.unsubscribe();
+                }
+            });
+        }else{
+            this.displayError=true;
+        }
     }
 
     initForm(shelter:IShelter){
@@ -358,6 +369,12 @@ export class BcServRevision {
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
+        }
+        if(this.maskInvalidSub!=undefined){
+            this.maskInvalidSub.unsubscribe();
+        }
+        if(this.maskValidSub!=undefined){
+            this.maskValidSub.unsubscribe();
         }
     }
 

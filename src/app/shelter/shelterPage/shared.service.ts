@@ -10,6 +10,18 @@ export class BcSharedService{
         this.maskSaveSource.next(shelter);
     }
 
+    private maskInvalidSource = new Subject<void>();
+    maskInvalid$ = this.maskInvalidSource.asObservable();
+    onMaskInvalid(){
+        this.maskInvalidSource.next();
+    }
+
+    private masValidSource = new Subject<void>();
+    maskValid$ = this.masValidSource.asObservable();
+    onMaskValid(){
+        this.masValidSource.next();
+    }
+
     private maskCancelSource = new Subject<void>();
     maskCancel$ = this.maskCancelSource.asObservable();
     onMaskCancel(){

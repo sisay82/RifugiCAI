@@ -9,7 +9,7 @@ import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
-let stringValidator=/^([A-Za-z0-99À-ÿ ,.:/;!?|)(_-]*)*$/;
+let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
@@ -33,6 +33,8 @@ export class BcGeoRevision {
     maskSaveSub:Subscription;
     tagChange:boolean=false
     displayError:boolean=false;
+    maskInvalidSub:Subscription;
+    maskValidSub:Subscription;
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
             region:["",[Validators.required,Validators.pattern(stringValidator)]],//required and string
@@ -50,6 +52,16 @@ export class BcGeoRevision {
             newKey:["Chiave",[Validators.pattern(stringValidator),Validators.required]],
             newValue:["Valore",[Validators.pattern(stringValidator),Validators.required]]
         }); 
+
+        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
+            this.displayError=true;
+        });
+
+        this.maskValidSub = shared.maskValid$.subscribe(()=>{
+            if(this.geoForm.valid){
+                this.displayError=false;
+            }
+        });
 
         shared.onActiveOutletChange("revision");
 
@@ -97,42 +109,47 @@ export class BcGeoRevision {
     }
 
     save(confirm){
-        let shelter:IShelter={_id:this._id,name:this.name,geoData:{location:this.data.location}};
-        let location:ILocation={
-            region:this.geoForm.controls.region.value||null,
-            province:this.geoForm.controls.province.value||null,
-            municipality:this.geoForm.controls.municipality.value||null,
-            locality:this.geoForm.controls.locality.value||null,
-            ownerRegion:this.geoForm.controls.ownerRegion.value||null,
-            authorityJurisdiction:this.geoForm.controls.authorityJurisdiction.value||null,
-            altitude:this.geoForm.controls.altitude.value||null,
-            latitude:this.geoForm.controls.latitude.value||null,
-            longitude:this.geoForm.controls.longitude.value||null,
-            massif:this.geoForm.controls.massif.value||null,
-            valley:this.geoForm.controls.valley.value||null
-        }
-        const control = (<FormArray>this.geoForm.controls['tags']).controls;
-        let tags:ITag[]=[];
-        for(let c of control){
-            tags.push({key:c.value.key,value:c.value.value});
-        }
-        shelter.geoData.tags=tags as [ITag];
-        shelter.geoData.location=location;
-        this.revisionService.onChildSave(shelter,"geoData");
-        let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"geoData").subscribe((returnVal)=>{
-            if(returnVal){
-                this.displayError=false;
-                if(confirm){
-                    this.shared.onMaskConfirmSave("geographic");
+        console.log(this.geoForm);
+        if(this.geoForm.valid){
+            let shelter:IShelter={_id:this._id,name:this.name,geoData:{location:this.data.location}};
+            let location:ILocation={
+                region:this.geoForm.controls.region.value||null,
+                province:this.geoForm.controls.province.value||null,
+                municipality:this.geoForm.controls.municipality.value||null,
+                locality:this.geoForm.controls.locality.value||null,
+                ownerRegion:this.geoForm.controls.ownerRegion.value||null,
+                authorityJurisdiction:this.geoForm.controls.authorityJurisdiction.value||null,
+                altitude:this.geoForm.controls.altitude.value||null,
+                latitude:this.geoForm.controls.latitude.value||null,
+                longitude:this.geoForm.controls.longitude.value||null,
+                massif:this.geoForm.controls.massif.value||null,
+                valley:this.geoForm.controls.valley.value||null
+            }
+            const control = (<FormArray>this.geoForm.controls['tags']).controls;
+            let tags:ITag[]=[];
+            for(let c of control){
+                tags.push({key:c.value.key,value:c.value.value});
+            }
+            shelter.geoData.tags=tags as [ITag];
+            shelter.geoData.location=location;
+            this.revisionService.onChildSave(shelter,"geoData");
+            let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"geoData").subscribe((returnVal)=>{
+                if(returnVal){
+                    this.displayError=false;
+                    if(confirm){
+                        this.shared.onMaskConfirmSave("geographic");
+                    }
+                }else{
+                    console.log("Err "+returnVal);
+                    this.displayError=true;
                 }
-            }else{
-                console.log("Err "+returnVal);
-                this.displayError=true;
-            }
-            if(shelSub!=undefined){
-                shelSub.unsubscribe();
-            }
-        });
+                if(shelSub!=undefined){
+                    shelSub.unsubscribe();
+                }
+            });
+        }else{
+            this.displayError=true;
+        }
     }
 
     initForm(shelter){
@@ -168,6 +185,12 @@ export class BcGeoRevision {
         }
         if(this.activeComponentSub!=undefined){
             this.activeComponentSub.unsubscribe();
+        }
+        if(this.maskInvalidSub!=undefined){
+            this.maskInvalidSub.unsubscribe();
+        }
+        if(this.maskValidSub!=undefined){
+            this.maskValidSub.unsubscribe();
         }
         
     }

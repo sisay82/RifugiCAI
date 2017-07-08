@@ -16,7 +16,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/of';
 
-let stringValidator=/^([A-Za-z0-99À-ÿ ,.:/;!?|)(_-]*)*$/;
+let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
@@ -55,7 +55,8 @@ export class BcCatastalRevision {
     maskSaveSub:Subscription;
     disableSave=false;
     activeComponentSub:Subscription;
-
+    maskInvalidSub:Subscription;
+    maskValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.catastalForm = fb.group({
             buildingRegulation:[""],
@@ -71,6 +72,16 @@ export class BcCatastalRevision {
             fireRegulation:[""],
             ISO14001:[""]
         }); 
+
+        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
+            this.displayError=true;
+        });
+
+        this.maskValidSub = shared.maskValid$.subscribe(()=>{
+            if(this.catastalForm.valid&&this.drainForm.valid&&this.energyForm.valid){
+                this.displayError=false;
+            }
+        });
 
         this.energyForm = fb.group({
             class:["",Validators.pattern(stringValidator)],
@@ -140,102 +151,106 @@ export class BcCatastalRevision {
     }
 
     save(confirm){
-        let catastal:ICatastal;
-        let energy:IEnergy;
-        let drain:IDrain;
-        let updates:number=0;
-        if(this.catastalForm.dirty){
-            let shelter:any={_id:this._id,name:this.name};
-            updates++;
-            catastal={
-                buildingRegulation:this.catastalForm.controls["buildingRegulation"].value||null,
-                buildYear:this.catastalForm.controls["buildYear"].value||null,
-                rebuildYear:this.catastalForm.controls["rebuildYear"].value||null,
-                class:this.catastalForm.controls["class"].value||null,
-                code:this.catastalForm.controls["code"].value||null,
-                typologicalCoherence:this.catastalForm.controls["typologicalCoherence"].value||null,
-                matericalCoherence:this.catastalForm.controls["matericalCoherence"].value||null,
-                cityPlanRegulation:this.catastalForm.controls["cityPlanRegulation"].value||null,
-                mainBody:this.catastalForm.controls["mainBody"].value||null,
-                secondaryBody:this.catastalForm.controls["secondaryBody"].value||null,
-                fireRegulation:this.catastalForm.controls["fireRegulation"].value||null,
-                ISO14001:this.catastalForm.controls["ISO14001"].value||null
-            }
-            shelter.catastal=catastal;
-            this.revisionService.onChildSave(shelter,"catastal");
-            let catSub=this.shelterService.preventiveUpdateShelter(shelter,"catastal").subscribe((returnVal)=>{
-                if(returnVal){
-                    this.displayError=false;
-                    updates--;
-                    if(confirm&&updates==0){
-                        this.shared.onMaskConfirmSave("catastal");
+        if(this.catastalForm.valid&&this.drainForm.valid&&this.energyForm.valid){
+            let catastal:ICatastal;
+            let energy:IEnergy;
+            let drain:IDrain;
+            let updates:number=0;
+            if(this.catastalForm.dirty){
+                let shelter:any={_id:this._id,name:this.name};
+                updates++;
+                catastal={
+                    buildingRegulation:this.catastalForm.controls["buildingRegulation"].value||null,
+                    buildYear:this.catastalForm.controls["buildYear"].value||null,
+                    rebuildYear:this.catastalForm.controls["rebuildYear"].value||null,
+                    class:this.catastalForm.controls["class"].value||null,
+                    code:this.catastalForm.controls["code"].value||null,
+                    typologicalCoherence:this.catastalForm.controls["typologicalCoherence"].value||null,
+                    matericalCoherence:this.catastalForm.controls["matericalCoherence"].value||null,
+                    cityPlanRegulation:this.catastalForm.controls["cityPlanRegulation"].value||null,
+                    mainBody:this.catastalForm.controls["mainBody"].value||null,
+                    secondaryBody:this.catastalForm.controls["secondaryBody"].value||null,
+                    fireRegulation:this.catastalForm.controls["fireRegulation"].value||null,
+                    ISO14001:this.catastalForm.controls["ISO14001"].value||null
+                }
+                shelter.catastal=catastal;
+                this.revisionService.onChildSave(shelter,"catastal");
+                let catSub=this.shelterService.preventiveUpdateShelter(shelter,"catastal").subscribe((returnVal)=>{
+                    if(returnVal){
+                        this.displayError=false;
+                        updates--;
+                        if(confirm&&updates==0){
+                            this.shared.onMaskConfirmSave("catastal");
+                        }
+                        
+                    }else{
+                        console.log(returnVal);
+                        this.displayError=true;
                     }
-                    
-                }else{
-                    console.log(returnVal);
-                    this.displayError=true;
-                }
-                if(catSub!=undefined){
-                    catSub.unsubscribe();
-                }
-            });
-        }
-        if(this.drainForm.dirty){
-            let shelter:any={_id:this._id,name:this.name};
-            updates++;
-            drain={
-                type:this.drainForm.controls["type"].value||null,
-                regulation:this.drainForm.controls["regulation"].value||null,
-                oilSeparator:this.drainForm.controls["oilSeparator"].value||null,
-                recycling:this.drainForm.controls["recycling"].value||null
-            }
-            shelter.drain=drain;
-            this.revisionService.onChildSave(shelter,"drain");
-            let drainSub=this.shelterService.preventiveUpdateShelter(shelter,"drain").subscribe((returnVal)=>{
-                if(returnVal){
-                    this.displayError=false;
-                    updates--;
-                    if(confirm&&updates==0){
-                        this.shared.onMaskConfirmSave("catastal");
+                    if(catSub!=undefined){
+                        catSub.unsubscribe();
                     }
-                }else{
-                    console.log(returnVal);
-                    this.displayError=true;
-                }
-                if(drainSub!=undefined){
-                    drainSub.unsubscribe();
-                }
-            });
-        }
-        if(this.energyForm.dirty){
-            let shelter:any={_id:this._id,name:this.name};
-            updates++;
-            energy={
-                class:this.energyForm.controls["class"].value||null,
-                energy:this.energyForm.controls["energy"].value||null,
-                greenCertification:this.energyForm.controls["greenCertification"].value||null,
-                powerGenerator:this.energyForm.controls["powerGenerator"].value||null,
-                photovoltaic:this.energyForm.controls["photovoltaic"].value||null,
-                sourceType:this.energyForm.controls["sourceType"].value||null,
-                sourceName:this.energyForm.controls["sourceName"].value||null,
+                });
             }
-            shelter.energy=energy;
-            this.revisionService.onChildSave(shelter,"energy");
-            let energySub=this.shelterService.preventiveUpdateShelter(shelter,"energy").subscribe((returnVal)=>{
-                if(returnVal){
-                    this.displayError=false;
-                    updates--;
-                    if(confirm&&updates==0){
-                        this.shared.onMaskConfirmSave("catastal");
+            if(this.drainForm.dirty){
+                let shelter:any={_id:this._id,name:this.name};
+                updates++;
+                drain={
+                    type:this.drainForm.controls["type"].value||null,
+                    regulation:this.drainForm.controls["regulation"].value||null,
+                    oilSeparator:this.drainForm.controls["oilSeparator"].value||null,
+                    recycling:this.drainForm.controls["recycling"].value||null
+                }
+                shelter.drain=drain;
+                this.revisionService.onChildSave(shelter,"drain");
+                let drainSub=this.shelterService.preventiveUpdateShelter(shelter,"drain").subscribe((returnVal)=>{
+                    if(returnVal){
+                        this.displayError=false;
+                        updates--;
+                        if(confirm&&updates==0){
+                            this.shared.onMaskConfirmSave("catastal");
+                        }
+                    }else{
+                        console.log(returnVal);
+                        this.displayError=true;
                     }
-                }else{
-                    console.log(returnVal);
-                    this.displayError=true;
+                    if(drainSub!=undefined){
+                        drainSub.unsubscribe();
+                    }
+                });
+            }
+            if(this.energyForm.dirty){
+                let shelter:any={_id:this._id,name:this.name};
+                updates++;
+                energy={
+                    class:this.energyForm.controls["class"].value||null,
+                    energy:this.energyForm.controls["energy"].value||null,
+                    greenCertification:this.energyForm.controls["greenCertification"].value||null,
+                    powerGenerator:this.energyForm.controls["powerGenerator"].value||null,
+                    photovoltaic:this.energyForm.controls["photovoltaic"].value||null,
+                    sourceType:this.energyForm.controls["sourceType"].value||null,
+                    sourceName:this.energyForm.controls["sourceName"].value||null,
                 }
-                if(energySub!=undefined){
-                    energySub.unsubscribe();
-                }
-            });
+                shelter.energy=energy;
+                this.revisionService.onChildSave(shelter,"energy");
+                let energySub=this.shelterService.preventiveUpdateShelter(shelter,"energy").subscribe((returnVal)=>{
+                    if(returnVal){
+                        this.displayError=false;
+                        updates--;
+                        if(confirm&&updates==0){
+                            this.shared.onMaskConfirmSave("catastal");
+                        }
+                    }else{
+                        console.log(returnVal);
+                        this.displayError=true;
+                    }
+                    if(energySub!=undefined){
+                        energySub.unsubscribe();
+                    }
+                });
+            }
+        }else{
+            this.displayError=true;
         }
     }
 
@@ -288,6 +303,12 @@ export class BcCatastalRevision {
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
+        }
+        if(this.maskInvalidSub!=undefined){
+            this.maskInvalidSub.unsubscribe();
+        }
+        if(this.maskValidSub!=undefined){
+            this.maskValidSub.unsubscribe();
         }
         
     }

@@ -10,7 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
-let stringValidator=/^([A-Za-z0-99À-ÿ ,.:/;!?|)(_-]*)*$/;
+let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
@@ -47,6 +47,8 @@ export class BcContactsRevision {
     maskSaveSub:Subscription;
     activeComponentSub:Subscription;
     openingChange:boolean=false;
+    maskInvalidSub:Subscription;
+    maskValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.contactForm = fb.group({
             fixedPhone:["",Validators.pattern(telephoneValidator)],
@@ -60,6 +62,16 @@ export class BcContactsRevision {
             newOpeningEndDate:["Fine",validateDate],
             newOpeningType:["Tipo",Validators.pattern(stringValidator)]
         }); 
+
+        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
+            this.displayError=true;
+        });
+
+        this.maskValidSub = shared.maskValid$.subscribe(()=>{
+            if(this.contactForm.valid){
+                this.displayError=false;
+            }
+        });
 
         this.shared.onActiveOutletChange("revision");
 
@@ -135,60 +147,63 @@ export class BcContactsRevision {
     }
 
     save(confirm){
-        let shelter:any={_id:this._id,name:this.name};
-        let contacts:IContacts={
-            fixedPhone:this.contactForm.controls.fixedPhone.value || null,
-            mobilePhone:this.contactForm.controls.mobilePhone.value || null,
-            role:this.contactForm.controls.role.value || null,
-            emailAddress:this.contactForm.controls.emailAddress.value || null,
-            mailPec:this.contactForm.controls.mailPec.value || null,
-            webAddress:this.contactForm.controls.webAddress.value || null
-            
-        }
-        const control = <FormArray>this.contactForm.controls['openings'];
-        let openings:IOpening[]=[];
-        for(let c of control.controls){
-            openings.push({
-                startDate:c.value.startDate?(new Date(c.value.startDate)):null,
-                endDate:c.value.endDate?(new Date(c.value.endDate)):null,
-                type:c.value.type||null
-            });
-        }
-        shelter.openingTime=openings;
-        this.revisionService.onChildSave(shelter,"openingTime");
-        let openSub=this.shelterService.preventiveUpdateShelter(shelter,"openingTime").subscribe((returnVal)=>{
-            if(returnVal){
-                shelter.contacts=contacts;
-                this.revisionService.onChildSave(shelter,"contacts");
-                let contSub=this.shelterService.preventiveUpdateShelter(shelter,"contacts").subscribe((returnVal)=>{
-                    if(returnVal){
-                        this.displayError=false;
-                        if(confirm){
-                            this.shared.onMaskConfirmSave("contacts");
+        if(this.contactForm.valid){
+            let shelter:any={_id:this._id,name:this.name};
+            let contacts:IContacts={
+                fixedPhone:this.contactForm.controls.fixedPhone.value || null,
+                mobilePhone:this.contactForm.controls.mobilePhone.value || null,
+                role:this.contactForm.controls.role.value || null,
+                emailAddress:this.contactForm.controls.emailAddress.value || null,
+                mailPec:this.contactForm.controls.mailPec.value || null,
+                webAddress:this.contactForm.controls.webAddress.value || null
+                
+            }
+            const control = <FormArray>this.contactForm.controls['openings'];
+            let openings:IOpening[]=[];
+            for(let c of control.controls){
+                openings.push({
+                    startDate:c.value.startDate?(new Date(c.value.startDate)):null,
+                    endDate:c.value.endDate?(new Date(c.value.endDate)):null,
+                    type:c.value.type||null
+                });
+            }
+            shelter.openingTime=openings;
+            this.revisionService.onChildSave(shelter,"openingTime");
+            let openSub=this.shelterService.preventiveUpdateShelter(shelter,"openingTime").subscribe((returnVal)=>{
+                if(returnVal){
+                    shelter.contacts=contacts;
+                    this.revisionService.onChildSave(shelter,"contacts");
+                    let contSub=this.shelterService.preventiveUpdateShelter(shelter,"contacts").subscribe((returnVal)=>{
+                        if(returnVal){
+                            this.displayError=false;
+                            if(confirm){
+                                this.shared.onMaskConfirmSave("contacts");
+                            }
+                            //location.reload();
+                        }else{
+                            console.log(returnVal);
+                            this.displayError=true;
                         }
-                        //location.reload();
-                    }else{
-                        console.log(returnVal);
-                        this.displayError=true;
-                    }
-                    if(contSub!=undefined){
-                        contSub.unsubscribe();
-                    }
+                        if(contSub!=undefined){
+                            contSub.unsubscribe();
+                        }
+                        if(openSub!=undefined){
+                            openSub.unsubscribe();
+                        }
+                    });
+
+                }else{
+                    console.log(returnVal);
+                    this.displayError=true;
                     if(openSub!=undefined){
                         openSub.unsubscribe();
                     }
-                });
-
-            }else{
-                console.log(returnVal);
-                this.displayError=true;
-                if(openSub!=undefined){
-                    openSub.unsubscribe();
                 }
-            }
-            
-        });
-        
+                
+            });
+        }else{
+            this.displayError=true;
+        }
 
     }
 
@@ -224,6 +239,12 @@ export class BcContactsRevision {
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
+        }
+        if(this.maskInvalidSub!=undefined){
+            this.maskInvalidSub.unsubscribe();
+        }
+        if(this.maskValidSub!=undefined){
+            this.maskValidSub.unsubscribe();
         }
     }
 

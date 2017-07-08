@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnInit
+  Component, Input, OnInit, OnDestroy
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
@@ -9,7 +9,7 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service'
 import { Subscription } from 'rxjs/Subscription';
 
-let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/;!?|)(_-]*)*$/;
+let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
@@ -25,7 +25,7 @@ let urlValidator=/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b
 export class BcMaskRevision {
   @Input() shelter:IShelter;
   maskForm: FormGroup; 
-
+  formValiditySub:Subscription;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
     this.maskForm = fb.group({
         name:["",Validators.pattern(stringValidator)],
@@ -37,6 +37,15 @@ export class BcMaskRevision {
         category:["",Validators.pattern(stringValidator)],
         regional_type:["",Validators.pattern(stringValidator)],
     }); 
+
+    this.formValiditySub = this.maskForm.statusChanges.subscribe((value)=>{
+      console.log(value);
+      if(value=="VALID"){
+        shared.onMaskValid();
+      }else if(value=="INVALID"){
+        shared.onMaskInvalid();
+      }
+    });
   }
 
   save(){
@@ -95,6 +104,8 @@ export class BcMaskRevision {
         });
         this.shared.onMaskSave(shelter);
       }
+    }else{
+      this.shared.onMaskInvalid();
     }
   }
 
@@ -168,6 +179,12 @@ export class BcMaskRevision {
         this.maskForm.controls.regional_type.setValue(this.shelter.regional_type);
       }
   }   
+
+  ngOnDestroy(){
+    if(this.formValiditySub!=undefined){
+      this.formValiditySub.unsubscribe();
+    }
+  }
 
   ngOnInit(){
     if(this.shelter==undefined){
