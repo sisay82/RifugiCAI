@@ -1,12 +1,12 @@
-@import '../style/constants';
-
 $bc-avatar-container-height: 56px;
 $bc-dense-avatar-container-height: 48px;
 
+$bc-avatar-margin: 5px;
 $bc-avatar-size: 40px;
 
 .bc-avatar {
     flex-shrink: 0;
+    margin: $bc-avatar-margin;
     width: $bc-avatar-size;
     height: $bc-avatar-size;
 }

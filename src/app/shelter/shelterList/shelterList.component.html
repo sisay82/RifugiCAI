@@ -13,15 +13,16 @@
           placeholder="&#xF002; Search for shelter, municipality" [(ngModel)]="filterText" (keyup)="filterChanged(filterText)"/>
       </div>
     </bc-navbar>
-  </bc-content-header>
-  <bc-content-section>
-    <bc-list dense>
-      <a bc-list-item *ngFor="let item of filteredShelter" [href]="'shelter/'+item._id">
-        <div style="flex:1; padding:8px; font-weight: 500;">{{item.name}}</div>
-        <div style="flex:1; padding:8px;">{{item.municipality}}</div>
-        <div style="flex:1; padding:8px;">{{item.province}}</div>
-        <div style="flex:1; padding:8px;">{{item.region}}</div>
-      </a>
-    </bc-list>
-  </bc-content-section>
+    </bc-content-header>
+    <bc-content-section>
+      <bc-list>
+        <a bc-list-item *ngFor="let item of rifugiSample" [href]="'shelter/'+item._id">
+          <div bc-line>{{item.name}}</div>
+          <div bc-line style="display:flex; flex-direction:row;">
+            <div style="flex:1">{{item.type}}</div>
+            <div style="flex:1">{{item.owner}}</div>
+          </div>
+        </a>
+      </bc-list>
+    </bc-content-section>
 </bc-content>

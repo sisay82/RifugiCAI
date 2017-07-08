@@ -1,0 +1,8 @@
+<div class="bc-list-item-content">
+  <ng-content select="[item-start], [data-item-start]"></ng-content>
+  <div class="bc-list-item-inner">
+    <div class="bc-list-text"><ng-content select="[bc-line], [data-bc-line]"></ng-content></div>
+    <ng-content></ng-content>
+    <ng-content select="[item-end], [data-item-end]"></ng-content>
+  </div>
+</div>

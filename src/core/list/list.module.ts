@@ -1,16 +1,22 @@
 import { NgModule } from '@angular/core';
 
-import { BcList, BcListStyler } from './list.component';
+import { BcDividerModule } from '../divider/divider.module';
 
-import { BcListItemModule } from './list-item.module';
+import { BcList, BcListStyler, BcListAvatarStyler} from './list.component';
+
+import { BcListItemModule } from './listItem/list-item.module';
+import { BcListHeaderModule } from './listHeader/list-header.module';
 
 @NgModule({
-    imports: [BcListItemModule],
-    declarations: [BcList, BcListStyler],
+    imports: [BcListItemModule, BcListHeaderModule, BcDividerModule],
+    declarations: [BcList, BcListStyler, BcListAvatarStyler],
     exports: [
         BcList,
         BcListStyler,
-        BcListItemModule
+        BcListAvatarStyler,
+        BcListHeaderModule,
+        BcListItemModule,
+        BcDividerModule
     ]
 })
 export class BcListModule { }

@@ -9,6 +9,7 @@ import 'rxjs/add/operator/catch';
 import * as L from 'leaflet';
 import { Map } from 'leaflet';
 import { IPagedResults, IShelter, IMarker } from '../shared/types/interfaces';
+import { Enums  } from '../shared/types/enums';
 
 @Injectable()
 export class ShelterService {
