@@ -1,46 +1,8 @@
-// import {NgModule} from '@angular/core';
-// import {MdLineModule, MdRippleModule, MdCommonModule} from '../core';
-// import {
-//   MdList,
-//   MdListItem,
-//   MdListDivider,
-//   MdListAvatarCssMatStyler,
-//   MdListIconCssMatStyler,
-//   MdListCssMatStyler,
-//   MdNavListCssMatStyler,
-//   MdDividerCssMatStyler,
-//   MdListSubheaderCssMatStyler,
-// } from './list';
+import {NgModule} from '@angular/core';
+import {BcIcon} from './icon.component';
 
-
-// @NgModule({
-//   imports: [MdLineModule, MdRippleModule, MdCommonModule],
-//   exports: [
-//     MdList,
-//     MdListItem,
-//     MdListDivider,
-//     MdListAvatarCssMatStyler,
-//     MdLineModule,
-//     MdCommonModule,
-//     MdListIconCssMatStyler,
-//     MdListCssMatStyler,
-//     MdNavListCssMatStyler,
-//     MdDividerCssMatStyler,
-//     MdListSubheaderCssMatStyler,
-//   ],
-//   declarations: [
-//     MdList,
-//     MdListItem,
-//     MdListDivider,
-//     MdListAvatarCssMatStyler,
-//     MdListIconCssMatStyler,
-//     MdListCssMatStyler,
-//     MdNavListCssMatStyler,
-//     MdDividerCssMatStyler,
-//     MdListSubheaderCssMatStyler,
-//   ],
-// })
-// export class MdListModule {}
-
-
-// export * from './list';
+@NgModule({
+  declarations: [BcIcon],
+  exports: [BcIcon]
+})
+export class BcIconModule {}

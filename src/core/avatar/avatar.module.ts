@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {BcAvatar} from './avatar.component';
+import {BcAvatar} from './avatar.directive';
 
 @NgModule({
   declarations: [BcAvatar],

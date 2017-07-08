@@ -1,4 +1,3 @@
-
 import {
     Component,
     Directive,
@@ -50,6 +49,18 @@ export class BcListItemDisableStyler {
     @Input('bc-disable-item') _DisableItem: boolean;
 }
 
+/**
+ * Directive whose purpose is to add the bc- CSS styling to this selector.
+ */
+@Directive({
+    selector: '[bc-line], [data-bc-line]',
+    host: {
+        '[class.bc-line]': 'true'
+    }
+})
+export class BcLineStyler {
+}
+
 @Component({
     moduleId: module.id,
     selector: 'bc-list-item, a[bc-list-item], button[bc-list-item]',
@@ -72,9 +83,11 @@ export class BcListItem {
     constructor(private _ElementRef: ElementRef, private _Renderer2: Renderer2, private _SelectionService: ItemSelectionService) {
         this.listItemId = _nextListItemId++;
     }
+
     ngAfterViewInit() {
         this.isNavItem = this._ElementRef.nativeElement.attributes["bc-nav-item"] !== undefined;
     }
+
     selected(event: any): void {
         this._SelectionService.selectionChange(this.listItemUniqueName);
     }
