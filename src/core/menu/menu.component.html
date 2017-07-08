@@ -2,7 +2,10 @@
     <div [@slideLeftRight]="menuState" class="bc-menu-select" id="side-menu" [style.visibility]="_visibility">
         <ul class="nav flex-column">
             <bc-menu-layer *ngFor="let layer of menuElements.layers">
-                <bc-menu-item [menu_item]="item" *ngFor="let item of layer.elements" ><i class="fa {{item.icon}}" aria-hidden="true"></i> {{item.name}}</bc-menu-item>
+                <bc-menu-item [menu_item]="item" *ngFor="let item of layer.elements" >
+                    <bc-icon [name]="item.icon" size=s></bc-icon>
+                    {{item.name}}
+                </bc-menu-item>
             </bc-menu-layer>
         </ul>
     </div>

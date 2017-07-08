@@ -1,6 +1,6 @@
 import {Component,Injectable,Input,OnInit} from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-import { IMenuElement } from '../../shared/interfaces';
+import { IMenuElement } from '../../app/shared/types/interfaces';
 import { Router,ActivatedRoute } from '@angular/router';
 
 @Injectable()
@@ -32,16 +32,17 @@ export class BcMenuItem {
 
     clickItem(){
         if(this._item_service!=undefined){
-            /*
+            
             let route=this._route;
             while(route.children.length>0){
             route=route.children[0];
             }
-            let path=route.snapshot.url[0].path;
-            */
-            //this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+path+")");
-            //[{outlets:({'content': ['geographic']})}]
-            this._router.navigate(this.menu_item.link,{relativeTo:this._route});
+            if(route.outlet=="revision"){
+                this._router.navigate([{outlets:({'revision': [this.menu_item.link],'content': null})}],{relativeTo:this._route});
+            }else{
+                this._router.navigate([{outlets:({'content': [this.menu_item.link],'revision': null})}],{relativeTo:this._route});
+            }
+            
             this._selected=true;
             this._item_service.onSelect(this);
             let style=this.getClass();
