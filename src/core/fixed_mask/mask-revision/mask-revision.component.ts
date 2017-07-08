@@ -9,6 +9,12 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service'
 import { Subscription } from 'rxjs/Subscription';
 
+let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/;!?|)(_-]*)*$/;
+let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
+let urlValidator=/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+
 @Component({
     moduleId: module.id,
     selector: 'bc-mask-revision',
@@ -22,14 +28,14 @@ export class BcMaskRevision {
 
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
     this.maskForm = fb.group({
-        name:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-        alias:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-        idCai:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-        type:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-        branch:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-        owner:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-        category:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)],
-        regional_type:["",Validators.pattern(/^([A-Za-z0-9 ,.:;!?|)(_-]*)*$/)]
+        name:["",Validators.pattern(stringValidator)],
+        alias:["",Validators.pattern(stringValidator)],
+        idCai:["",Validators.pattern(stringValidator)],
+        type:["",Validators.pattern(stringValidator)],
+        branch:["",Validators.pattern(stringValidator)],
+        owner:["",Validators.pattern(stringValidator)],
+        category:["",Validators.pattern(stringValidator)],
+        regional_type:["",Validators.pattern(stringValidator)],
     }); 
   }
 
