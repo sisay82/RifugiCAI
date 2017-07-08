@@ -66,8 +66,8 @@
         </div>
     </div>
     <div class="bc-body">
-        <i *ngIf="data!=undefined&&data.pickupKey==true" class="fa fa-check-square-o" style="font-size:10px"></i>
-        <i *ngIf="data==undefined||data.pickupKey==false" class="fa fa-square-o" style="font-size:10px"></i>
+        <bc-icon *ngIf="data!=undefined&&data.pickupKey==true" name="check-square-o" size=s></bc-icon>
+        <bc-icon *ngIf="data==undefined||data.pickupKey==false" name="square-o" size=s></bc-icon>
         Ritiro Chiavi
     </div>
     <bc-divider></bc-divider>

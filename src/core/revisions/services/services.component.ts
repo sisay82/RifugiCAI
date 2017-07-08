@@ -104,13 +104,16 @@ export class BcServRevision {
 
     removeService(categoryIndex,serviceIndex){
         this.serviceListChange=true;
-        const control = <FormArray>(<FormGroup>(<FormArray>this.servForm.controls['categories']).at(categoryIndex)).controls.services;
-        const serv = <FormGroup>control.at(serviceIndex);
-        let service=this.serviceCategories[categoryIndex].services.find(ser=>serv.value.id==ser._id)
-        if(service!=undefined){
-            this.serviceToRemove.push(service._id);
+        const category=<FormGroup>(<FormArray>this.servForm.controls['categories']).at(categoryIndex);
+        const services = <FormArray>category.controls.services;
+        const serv = <FormGroup>services.at(serviceIndex);
+        if(this.serviceCategories[categoryIndex]!=undefined){
+            let service=this.serviceCategories[categoryIndex].services.find(ser=>serv.value.id==ser._id)
+            if(service!=undefined){
+                this.serviceToRemove.push(service._id);
+            }
         }
-        control.removeAt(serviceIndex);
+        services.removeAt(serviceIndex);
     }
 
     addNewCategory(){

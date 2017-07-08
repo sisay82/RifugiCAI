@@ -18,7 +18,7 @@
                                     <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                                         class="form-control"  formControlName="category">
                                 </div>
-                                <div (click)="removeService(t,i)" class="fa fa-times bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
+                                <bc-icon (click)="removeService(t,i)" class="bc-add-tag" name="times" size=s></bc-icon>
                             </div>
                             <!--
                             <div class="bc-revision-services" style="width:64%">
@@ -41,7 +41,7 @@
                                                 <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                                                     class="form-control"  formControlName="value">
                                             </div>
-                                            <div (click)="removeTag(t,i,j)" class="fa fa-times bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
+                                            <bc-icon (click)="removeTag(t,i,j)" class="bc-add-tag" name="times" size=s></bc-icon>
                                         </div>
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
                                     <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                                         class="form-control"  formControlName="newTagValue">
                                 </div>
-                                <div (click)="addNewTag(t,i)" class="fa fa-plus bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
+                                <bc-icon (click)="addNewTag(t,i)" class="bc-add-tag" name="plus" size=s></bc-icon>
                             </div>
                         </div>
                         <br>
@@ -81,7 +81,7 @@
                             class="form-control"  formControlName="newServiceDescription">
                     </div>
                     -->
-                    <div (click)="addNewService(t)" class="fa fa-plus bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
+                    <bc-icon (click)="addNewService(t)" class="bc-add-tag" name="plus" size=s></bc-icon>
                 </div>
             </div>
             <br>
@@ -94,7 +94,7 @@
             <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="newCategory">
         </div>
-        <div (click)="addNewCategory()" class="fa fa-plus bc-add-tag" style="position:relative;margin-left:1%;font-size:16px"></div>
+        <bc-icon (click)="addNewCategory()" class="bc-add-tag" name="plus" size=s></bc-icon>
     </div>
 
 </form>

@@ -1,12 +1,12 @@
 <div class="bc-mask-container">
     <div class="bc-mask-line">
-        <div class="bc-h6" style="display:flex;flex-direction:row;align-items:center;white-space:center;width:100%">
-            <div (click)="return()" class="fa fa-arrow-left bc-mask-icon" style="display: inline;margin-left:10px"></div>
+        <div class="bc-h6" style="display:flex;flex-direction:row;align-items:center;white-space:nowrap;width:100%">
+            <bc-icon (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:10px" name="arrow-left" size=s></bc-icon>
             <ng-content></ng-content>
             <div style="display: inline;margin-left:10px">{{shelter?.name || 'Nome Rifugio'}}</div>,
             <div style="display: inline;margin-left:5px">{{shelter?.alias||'Nome Comune'}}</div>
             <div style="display: inline;margin-left:auto;margin-right:1%">
-                <div (click)="revision()" class="fa fa-edit bc-mask-icon" style="display: inline"></div>
+                <bc-icon (click)="revision()" class="bc-mask-icon" style="display: inline" name="edit" size=s></bc-icon>
             </div>
         </div>
     </div>

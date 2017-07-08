@@ -1,5 +1,5 @@
 
 <button (click)="btnClick()" [class]="local_style"  [disabled]="!enabled">
-    <i class="{{button.icon}}" aria-hidden="true"></i>
+    <bc-icon *ngIf="button.icon!=undefined" [name]="button.icon" size=s></bc-icon>
     <span *ngIf="checkPlatform()"> {{button.text}} </span>
 </button>
