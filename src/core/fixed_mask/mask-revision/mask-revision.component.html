@@ -8,13 +8,11 @@
                     <div class="bc-body" style="white-space: nowrap;margin-right:1%">Nome:</div>
                     <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                         class="form-control"  formControlName="name">
-                    <div [hidden]="maskForm.controls['name'].valid" class="alert alert-danger">Invalid</div>
                 </div>
                 <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
                     <div class="bc-body" style="white-space: nowrap;margin-right:1%">Nome Comune:</div>
                     <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                         class="form-control"  formControlName="alias">
-                    <div [hidden]="maskForm.controls['alias'].valid" class="alert alert-danger">Invalid</div>
                 </div>
                 <div style="display: inline;margin-left:auto;margin-right:1%">
                     <bc-icon (click)="cancel()" class="bc-mask-icon" name="times" size=s></bc-icon>
