@@ -16,33 +16,16 @@
         />
       </div>
     </bc-navbar>
-  </bc-content-header>
-  <bc-content-section>
-    <!--<div class="list-group">
-  <a class="list-group-item" href="#">-->
-    <!--<img src="http://orig10.deviantart.net/36a3/f/2011/213/4/b/scrooge_mc_duck_by_solvernia-d42dp2y.png" bc-avatar />-->
-    <!--&nbsp; Home</a>-->
-    <!--<a class="list-group-item" href="#">
-    <bc-icon data-name="book" data-size="xs"></bc-icon>
-    <bc-icon data-name="book" data-size="s"></bc-icon>
-    <bc-icon data-name="book"></bc-icon>
-    <bc-icon data-name="book" data-size="l" data-item-end></bc-icon>
-    <bc-icon data-name="book" data-size="xl"></bc-icon>&nbsp; Library</a>
-  <a class="list-group-item" href="#"><bc-icon data-name="pencil" data-size="s"></bc-icon>&nbsp; Applications</a>
-  <a class="list-group-item" href="#"><bc-icon data-name="cog"></bc-icon>&nbsp; Settings</a>
-</div>-->
-    <bc-list>
-      <bc-list-header>lista rifugi lunghissimisisiisismsmisianaaaa</bc-list-header>
-      <a bc-list-item *ngFor="let item of rifugiSample">
-        <img bc-avatar item-start src="http://orig10.deviantart.net/36a3/f/2011/213/4/b/scrooge_mc_duck_by_solvernia-d42dp2y.png"/>
-        <bc-icon data-name="book" data-size="s" item-start></bc-icon>
-        <bc-icon data-name="pencil" data-size="s" item-start></bc-icon>
-        <div style="flex:1; padding:8px; font-weight: 500;" bc-line class="bc-line">{{item.name}}</div>
-        <div style="flex:1; padding:8px;" bc-line class="bc-line">{{item.type}}</div>
-        <div style="flex:1; padding:8px;">{{item.branch}}</div>
-        <div style="flex:1; padding:8px;">{{item.owner}}</div>
-        <bc-icon data-name="book" data-size="l" item-end></bc-icon>
-      </a>
-    </bc-list>
-  </bc-content-section>
+    </bc-content-header>
+    <bc-content-section>
+      <bc-list>
+        <a bc-list-item *ngFor="let item of rifugiSample">
+          <div bc-line>{{item.name}}</div>
+          <div bc-line style="display:flex; flex-direction:row;">
+            <div style="flex:1">{{item.type}}</div>
+            <div style="flex:1">{{item.owner}}</div>
+          </div>
+        </a>
+      </bc-list>
+    </bc-content-section>
 </bc-content>
