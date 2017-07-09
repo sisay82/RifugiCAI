@@ -47,6 +47,14 @@ export class BcMaskRevision {
     });
   }
 
+  toggleMenu(){
+    this.shared.onToggleMenu();
+  }
+
+  checkWinPlatform(){
+    return (navigator.userAgent.toLowerCase().indexOf("win")==-1);
+  }
+
   remove(){
     let removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val)=>{
       if(val){
