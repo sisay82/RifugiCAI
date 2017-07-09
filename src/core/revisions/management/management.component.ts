@@ -40,6 +40,7 @@ export class BcManagementRevision {
     _id:String;
     name:String;
     managForm: FormGroup; 
+    newSubjectForm: FormGroup;
     data:IManagement;
     property:ISubject;
     invalid:Boolean=false;
@@ -50,6 +51,8 @@ export class BcManagementRevision {
     subjectChange:boolean=false;
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
+    maskError:boolean=false;
+    formValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.managForm = fb.group({
             rent:["",Validators.pattern(numberValidator)],
@@ -62,6 +65,14 @@ export class BcManagementRevision {
             rentType:["",Validators.pattern(stringValidator)],
             pickupKey:[""],
             subjects:fb.array([]),
+            propName:["",Validators.pattern(stringValidator)],
+            propTaxCode:["",Validators.pattern(stringValidator)],
+            propFixedPhone:["",Validators.pattern(telephoneValidator)],
+            propPec:["",Validators.pattern(mailValidator)],
+            propEmail:["",Validators.pattern(mailValidator)],
+        }); 
+
+        this.newSubjectForm = fb.group({
             newName:["",Validators.pattern(stringValidator)],
             newSurname:["",Validators.pattern(stringValidator)],
             newTaxCode:["",Validators.pattern(stringValidator)],
@@ -70,30 +81,34 @@ export class BcManagementRevision {
             newPec:["",Validators.pattern(stringValidator)],
             newMail:["",Validators.pattern(stringValidator)],
             newWebSite:["",Validators.pattern(urlValidator)],
-            newType:["",Validators.pattern(stringValidator)],
-            propName:["",Validators.pattern(stringValidator)],
-            propTaxCode:["",Validators.pattern(stringValidator)],
-            propFixedPhone:["",Validators.pattern(telephoneValidator)],
-            propPec:["",Validators.pattern(mailValidator)],
-            propEmail:["",Validators.pattern(mailValidator)],
-            
-        }); 
+            newType:["",Validators.pattern(stringValidator)]
+        });
 
         shared.onActiveOutletChange("revision");
 
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.displayError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            if(this.managForm.valid){
+        this.formValidSub = this.managForm.statusChanges.subscribe((value)=>{
+            if(value=="VALID"){
                 this.displayError=false;
+            }else if(value=="INVALID"){
+                this.displayError=true;
             }
         });
 
+        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
+            this.maskError=true;
+        });
+
+        this.maskValidSub = shared.maskValid$.subscribe(()=>{
+            this.maskError=false;
+        });
+
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            this.disableSave=true;
-            this.save(true);
+            if(this.subjectChange||this.managForm.dirty){
+                this.disableSave=true;
+                this.save(true);
+            }else{
+                this.shared.onMaskConfirmSave("management");
+            }
         });
 
         this.activeRouteSub=shared.activeComponentRequest$.subscribe(()=>{
@@ -108,26 +123,19 @@ export class BcManagementRevision {
     }
 
     addNewSubject(){
-        if(this.managForm.controls['newName'].valid&&
-            this.managForm.controls['newSurname'].valid&&
-            this.managForm.controls['newTaxCode'].valid&&
-            this.managForm.controls['newFixedPhone'].valid&&
-            this.managForm.controls['newMobilePhone'].valid&&
-            this.managForm.controls['newPec'].valid&&
-            this.managForm.controls['newMail'].valid&&
-            this.managForm.controls['newWebSite'].valid&&
-            this.managForm.controls['newType'].valid){
+        this.subjectChange=true;
+        if(this.newSubjectForm.valid){
             const control = <FormArray>this.managForm.controls['subjects'];
             let subject:ISubject={
-                name:this.managForm.controls['newName'].value||null,
-                surname:this.managForm.controls['newSurname'].value||null,
-                taxCode:this.managForm.controls['newFixedPhone'].value||null,
-                fixedPhone:this.managForm.controls['newFixedPhone'].value||null,
-                mobilePhone:this.managForm.controls['newMobilePhone'].value||null,
-                pec:this.managForm.controls['newPec'].value||null,
-                email:this.managForm.controls['newMail'].value||null,
-                webSite:this.managForm.controls['newWebSite'].value||null,
-                type:this.managForm.controls['newType'].value||null
+                name:this.newSubjectForm.controls['newName'].value||null,
+                surname:this.newSubjectForm.controls['newSurname'].value||null,
+                taxCode:this.newSubjectForm.controls['newFixedPhone'].value||null,
+                fixedPhone:this.newSubjectForm.controls['newFixedPhone'].value||null,
+                mobilePhone:this.newSubjectForm.controls['newMobilePhone'].value||null,
+                pec:this.newSubjectForm.controls['newPec'].value||null,
+                email:this.newSubjectForm.controls['newMail'].value||null,
+                webSite:this.newSubjectForm.controls['newWebSite'].value||null,
+                type:this.newSubjectForm.controls['newType'].value||null
             }
             control.push(this.initSubject(subject));
         }
@@ -289,6 +297,7 @@ export class BcManagementRevision {
                     resolve(shelter);
                 }else{
                     let managSub=this.shelterService.getShelterSection(id,"management").subscribe(shelter=>{
+                        if(shelter.management==undefined) shelter.management={subject:[] as [ISubject]};
                         this.revisionService.onChildSave(shelter,"management");
                         if(managSub!=undefined){
                             managSub.unsubscribe();
@@ -313,7 +322,7 @@ export class BcManagementRevision {
                 if(routeSub!=undefined){
                     routeSub.unsubscribe();
                 }
-            })
+            });
         });
 
     }

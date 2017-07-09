@@ -47,6 +47,20 @@ export class BcMaskRevision {
     });
   }
 
+  remove(){
+    let removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val)=>{
+      if(val){
+        this.return();
+      }else{
+        
+        this.shared.onMaskInvalid();
+      }
+      if(removeShelSub!=undefined){
+        removeShelSub.unsubscribe();
+      }
+    });
+  }
+
   save(){
     if(this.maskForm.valid){
       let shelter:IShelter;

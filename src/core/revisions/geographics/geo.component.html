@@ -1,5 +1,5 @@
 <form style="position:relative" [formGroup]="geoForm">
-    <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
+    <div [hidden]="!displayError&&!maskError" class="alert alert-danger">Error Occurred!</div>
     <div style="display:flex;flex-direction:row">
         <div style="position:relative;width:20%">
             <div class="bc-body" style="white-space: nowrap">Località</div>
@@ -112,18 +112,18 @@
             </div>
         </div>
         <br>
-        <div style="display:flex;flex-direction:row;align-items:center">
-            <div style="width:20%">
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    required class="form-control"  formControlName="newKey">
-            </div>
-            <div style="width:20%;margin-left:1%">
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="newValue">
-            </div>
-            <bc-icon (click)="addNewTag()" class="bc-add-tag" name="plus" size=s></bc-icon>
+   </div>
+</form>
+<form [formGroup]="newTagForm">
+    <div style="display:flex;flex-direction:row;align-items:center">
+        <div style="width:20%">
+            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                required class="form-control"  formControlName="newKey">
         </div>
-        <div [hidden]="!invalid&&(geoForm.controls['newKey'].valid&&geoForm.controls['newValue'].valid)" style="position:relative;width:41%" class="alert alert-danger">Invalid</div>
+        <div style="width:20%;margin-left:1%">
+            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                class="form-control"  formControlName="newValue">
+        </div>
+        <bc-icon (click)="addNewTag()" class="bc-add-tag" name="plus" size=s></bc-icon>
     </div>
-
 </form>

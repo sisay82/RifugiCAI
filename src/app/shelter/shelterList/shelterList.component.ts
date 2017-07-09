@@ -14,12 +14,23 @@ export class BcShelterList {
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
 
-    constructor(private shelterService: ShelterService) { }
+    constructor(private shelterService: ShelterService) {
+
+    }
 
     ngOnInit() {
         this.filterText = "";
         this.shelterService.getShelters().subscribe(shelters => {
             this.rifugiSample = shelters;
+        });
+    }
+
+    createShel(){
+        let newShelSub=this.shelterService.getNewId().subscribe((obj)=>{
+            if(newShelSub!=undefined){
+                newShelSub.unsubscribe();
+            }
+            location.href="shelter/"+obj.id+"/(revision:geographic)";
         });
     }
 

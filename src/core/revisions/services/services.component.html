@@ -1,5 +1,5 @@
 <form style="position:relative" [formGroup]="servForm">
-    <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
+    <div [hidden]="!displayError&&!maskError" class="alert alert-danger">Error Occurred!</div>
     <div formArrayName="categories">
         <div *ngFor="let category of servForm.controls.categories.controls;let t = index">
             <div [formGroupName]="t">
@@ -48,18 +48,22 @@
                             </div>
                             <br>
                             <div (click)="toggleTag(t,i)" class="bc-body bc-revision-services-tags bc-add-tag" style="white-space:nowrap;flex:1">Aggiungi Attributo</div>
-                            <div *ngIf="!isHiddenTag(t,i)" style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                                <div class="bc-revision-services-tags">
-                                    <div class="bc-body">Nuova Chiave</div>
-                                    <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                                        class="form-control"  formControlName="newTagKey">
-                                </div>
-                                <div class="bc-revision-services-tags">
-                                    <div class="bc-body">Nuovo Valore</div>
-                                    <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                                        class="form-control"  formControlName="newTagValue">
-                                </div>
-                                <bc-icon (click)="addNewTag(t,i)" class="bc-add-tag" name="plus" size=s></bc-icon>
+                            <div *ngIf="!isHiddenTag(t,i)">
+                                <form [formGroup]="newTagForm">
+                                    <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
+                                        <div class="bc-revision-services-tags">
+                                            <div class="bc-body">Nuova Chiave</div>
+                                            <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                                                class="form-control"  formControlName="newTagKey">
+                                        </div>
+                                        <div class="bc-revision-services-tags">
+                                            <div class="bc-body">Nuovo Valore</div>
+                                            <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                                                class="form-control"  formControlName="newTagValue">
+                                        </div>
+                                        <bc-icon (click)="addNewTag(t,i)" class="bc-add-tag" name="plus" size=s></bc-icon>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                         <br>
@@ -68,33 +72,41 @@
                 </div>
                 <br>
                 <div (click)="toggleService(t)" class="bc-body bc-revision-services bc-add-tag" style="white-space:nowrap;flex:1">Aggiungi Servizio</div>
-                <div *ngIf="!isHiddenService(t)" style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                    <div class="bc-revision-services">
-                        <div class="bc-body">Nome</div>
-                        <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control"  formControlName="newServiceName">
-                    </div>
-                    <!--
-                    <div class="bc-revision-services">
-                        <div class="bc-body">Descrizione</div>
-                        <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control"  formControlName="newServiceDescription">
-                    </div>
-                    -->
-                    <bc-icon (click)="addNewService(t)" class="bc-add-tag" name="plus" size=s></bc-icon>
+                <div *ngIf="!isHiddenService(t)">
+                    <form [formGroup]="newServiceForm">
+                        <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
+                            <div class="bc-revision-services">
+                                <div class="bc-body">Nome</div>
+                                <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                                    class="form-control"  formControlName="newServiceName">
+                            </div>
+                            <!--
+                            <div class="bc-revision-services">
+                                <div class="bc-body">Descrizione</div>
+                                <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                                    class="form-control"  formControlName="newServiceDescription">
+                            </div>
+                            -->
+                            <bc-icon (click)="addNewService(t)" class="bc-add-tag" name="plus" size=s></bc-icon>
+                        </div>
+                    </form>
                 </div>
             </div>
             <br>
         </div>
     </div>
     <div (click)="toggleCategory()" class="bc-body bc-add-tag" style="white-space:nowrap;flex:1">Aggiungi Categoria</div>
-    <div *ngIf="!isHiddenCategory()" style="display: flex;flex-direction:row;height:inherit;align-items:center">
-        <div>
-            <div class="bc-body">Categoria</div>
-            <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="newCategory">
-        </div>
-        <bc-icon (click)="addNewCategory()" class="bc-add-tag" name="plus" size=s></bc-icon>
+    <div *ngIf="!isHiddenCategory()">
+        <form [formGroup]="newCatForm">
+            <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
+                <div>
+                    <div class="bc-body">Categoria</div>
+                    <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                        class="form-control"  formControlName="newCategory">
+                </div>
+                <bc-icon (click)="addNewCategory()" class="bc-add-tag" name="plus" size=s></bc-icon>
+            </div>
+        </form>
     </div>
 
 </form>

@@ -49,7 +49,6 @@ export class BcMask {
             routeSub.unsubscribe();
             shelSub.unsubscribe();
         });
-        //
       });
     }
   }

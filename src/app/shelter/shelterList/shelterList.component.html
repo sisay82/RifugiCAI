@@ -3,10 +3,13 @@
     <bc-navbar>
       <ul class="nav navbar-nav">
         <li class="navbar-item">
-          <a href="#" class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>
+          <a href="list" class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>
         </li>
         <li class="navbar-item">
-          <a href="#" class="btn btn-default"><i class="fa fa-map" aria-hidden="true"></i>  Map View</a>
+          <a href="map" class="btn btn-default"><i class="fa fa-map" aria-hidden="true"></i>  Map View</a>
+        </li>
+        <li class="navbar-item">
+          <a (click)="createShel()" class="btn btn-default"><i class="fa fa-plus" aria-hidden="true"></i>  New Shelter</a>
         </li>
       </ul>
       <span class="bc-navbar-filler"></span>

@@ -39,6 +39,7 @@ export class BcContactsRevision {
     _id:String;
     name:String;
     contactForm: FormGroup; 
+    newOpeningForm: FormGroup;
     invalid:boolean=false;
     contacts:IContacts;
     openings:IOpening[];
@@ -47,8 +48,10 @@ export class BcContactsRevision {
     maskSaveSub:Subscription;
     activeComponentSub:Subscription;
     openingChange:boolean=false;
+    formValidSub:Subscription;
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
+    maskError:boolean=false;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.contactForm = fb.group({
             fixedPhone:["",Validators.pattern(telephoneValidator)],
@@ -57,27 +60,40 @@ export class BcContactsRevision {
             emailAddress:["",Validators.pattern(mailValidator)],
             mailPec:["",Validators.pattern(mailValidator)],
             webAddress:["",Validators.pattern(urlValidator)],
-            openings:fb.array([]),
+            openings:fb.array([])
+        }); 
+        
+        this.newOpeningForm = fb.group({
             newOpeningStartDate:["Inizio",validateDate],
             newOpeningEndDate:["Fine",validateDate],
             newOpeningType:["Tipo",Validators.pattern(stringValidator)]
-        }); 
+        });
+
+        this.formValidSub = this.contactForm.statusChanges.subscribe((value)=>{
+            if(value=="VALID"){
+                this.displayError=false;
+            }else if(value=="INVALID"){
+                this.displayError=true;
+            }
+        });
 
         this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.displayError=true;
+            this.maskError=true;
         });
 
         this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            if(this.contactForm.valid){
-                this.displayError=false;
-            }
+            this.maskError=false;
         });
 
         this.shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            this.disableSave=true;
-            this.save(true);
+            if(this.openingChange||this.contactForm.dirty){
+                this.disableSave=true;
+                this.save(true);
+            }else{
+                this.shared.onMaskConfirmSave("contacts");
+            }
         });
 
         this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
@@ -112,13 +128,13 @@ export class BcContactsRevision {
 
     addNewOpening(){
         this.openingChange=true;
-        if(this.contactForm.controls['newOpeningStartDate'].valid&&this.contactForm.controls['newOpeningEndDate'].valid&&this.contactForm.controls['newOpeningType'].valid){
+        if(this.newOpeningForm.controls['newOpeningStartDate'].valid&&this.newOpeningForm.controls['newOpeningEndDate'].valid&&this.newOpeningForm.controls['newOpeningType'].valid){
             let startDate;
             let endDate;
-            if(this.contactForm.controls['newOpeningStartDate'].value!=null&&this.contactForm.controls['newOpeningStartDate'].value!=""&&
-                this.contactForm.controls['newOpeningEndDate'].value!=null&&this.contactForm.controls['newOpeningEndDate'].value!=""){
-                startDate=Date.parse(this.contactForm.controls['newOpeningStartDate'].value);
-                endDate=Date.parse(this.contactForm.controls['newOpeningEndDate'].value);
+            if(this.newOpeningForm.controls['newOpeningStartDate'].value!=null&&this.newOpeningForm.controls['newOpeningStartDate'].value!=""&&
+                this.newOpeningForm.controls['newOpeningEndDate'].value!=null&&this.newOpeningForm.controls['newOpeningEndDate'].value!=""){
+                startDate=Date.parse(this.newOpeningForm.controls['newOpeningStartDate'].value);
+                endDate=Date.parse(this.newOpeningForm.controls['newOpeningEndDate'].value);
                 if(startDate<endDate){
                     this.invalid=true;
                     return;
@@ -132,7 +148,7 @@ export class BcContactsRevision {
             let opening:IOpening = {
                 startDate:startDate,
                 endDate:endDate,
-                type:this.contactForm.controls['newOpeningType'].value
+                type:this.newOpeningForm.controls['newOpeningType'].value
             }
             control.push(this.initOpening(opening));
         }
@@ -258,6 +274,7 @@ export class BcContactsRevision {
                     resolve(shelter.openingTime);
                 }else{
                     let openSub=this.shelterService.getShelterSection(id,"openingTime").subscribe(shelter=>{
+                        if(shelter.openingTime==undefined) shelter.openingTime=[] as [IOpening];
                         this.revisionService.onChildSave(shelter,"openingTime");
                         if(openSub!=undefined){
                             openSub.unsubscribe();
@@ -283,6 +300,7 @@ export class BcContactsRevision {
                     resolve(shelter.contacts);
                 }else{
                     let contSub=this.shelterService.getShelterSection(id,"contacts").subscribe(shelter=>{
+                        if(shelter.contacts==undefined) shelter.contacts={};
                         this.revisionService.onChildSave(shelter,"contacts");
                         if(contSub!=undefined){
                             contSub.unsubscribe();
