@@ -26,6 +26,7 @@ export class BcGeoRevision {
     _id:String;
     name:String;
     geoForm: FormGroup; 
+    newTagForm: FormGroup;
     data:IGeographic;
     invalid:boolean=false;
     disableSave=false;
@@ -33,8 +34,10 @@ export class BcGeoRevision {
     maskSaveSub:Subscription;
     tagChange:boolean=false
     displayError:boolean=false;
+    maskError:boolean=false;
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
+    formValidSub:Subscription;
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
             region:["",[Validators.required,Validators.pattern(stringValidator)]],//required and string
@@ -48,26 +51,39 @@ export class BcGeoRevision {
             longitude:["",Validators.pattern(numberValidator)],
             massif:["",Validators.pattern(stringValidator)],
             valley:["",Validators.pattern(stringValidator)],
-            tags:fb.array([]),
-            newKey:["Chiave",[Validators.pattern(stringValidator),Validators.required]],
-            newValue:["Valore",[Validators.pattern(stringValidator),Validators.required]]
+            tags:fb.array([])
         }); 
 
+        this.newTagForm = fb.group({
+            newKey:["Chiave",[Validators.pattern(stringValidator),Validators.required]],
+            newValue:["Valore",[Validators.pattern(stringValidator),Validators.required]]
+        });
+
+        this.formValidSub = this.geoForm.statusChanges.subscribe((value)=>{
+            if(value=="VALID"){
+                this.displayError=false;
+            }else if(value=="INVALID"){
+                this.displayError=true;
+            }
+        });
+
         this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.displayError=true;
+            this.maskError=true;
         });
 
         this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            if(this.geoForm.valid){
-                this.displayError=false;
-            }
+            this.maskError=false;
         });
 
         shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            this.disableSave=true;
-            this.save(true);
+            if(this.tagChange||this.geoForm.dirty){
+                this.disableSave=true;
+                this.save(true);
+            }else{
+                this.shared.onMaskConfirmSave("geographic");
+            }
         });
 
         this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
@@ -88,16 +104,16 @@ export class BcGeoRevision {
 
     addNewTag(key:String,value:String){
         this.tagChange=true;
-        if(this.geoForm.controls['newKey'].valid&&this.geoForm.controls['newValue'].valid){
+        if(this.newTagForm.controls['newKey'].valid&&this.newTagForm.controls['newValue'].valid){
             const control = <FormArray>this.geoForm.controls['tags'];
             for(let c of control.controls){
-                if(c.value.key==this.geoForm.controls["newKey"].value){
+                if(c.value.key==this.newTagForm.controls["newKey"].value){
                     this.invalid=true;
                     return;
                 }
             }
             this.invalid=false;
-            control.push(this.initTag(this.geoForm.controls["newKey"].value,this.geoForm.controls["newValue"].value));
+            control.push(this.initTag(this.newTagForm.controls["newKey"].value,this.newTagForm.controls["newValue"].value));
         }
     }
 
@@ -204,6 +220,7 @@ export class BcGeoRevision {
                     resolve(shelter);
                 }else{
                     let shelSub=this.shelterService.getShelterSection(id,"geoData").subscribe(shelter=>{
+                        if(shelter.geoData==undefined) shelter.geoData={location:{},tags:[] as [ITag]};
                         this.revisionService.onChildSave(shelter,"geoData");
                         if(shelSub!=undefined){
                             shelSub.unsubscribe();

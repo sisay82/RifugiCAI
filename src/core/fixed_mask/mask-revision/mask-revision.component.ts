@@ -26,6 +26,7 @@ export class BcMaskRevision {
   @Input() shelter:IShelter;
   maskForm: FormGroup; 
   formValiditySub:Subscription;
+  activeOutltRequest:Subscription;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
     this.maskForm = fb.group({
         name:["",Validators.pattern(stringValidator)],
@@ -43,6 +44,28 @@ export class BcMaskRevision {
         shared.onMaskValid();
       }else if(value=="INVALID"){
         shared.onMaskInvalid();
+      }
+    });
+  }
+
+  toggleMenu(){
+    this.shared.onToggleMenu();
+  }
+
+  checkWinPlatform(){
+    return (navigator.userAgent.toLowerCase().indexOf("win")==-1);
+  }
+
+  remove(){
+    let removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val)=>{
+      if(val){
+        this.return();
+      }else{
+        
+        this.shared.onMaskInvalid();
+      }
+      if(removeShelSub!=undefined){
+        removeShelSub.unsubscribe();
       }
     });
   }

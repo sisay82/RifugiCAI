@@ -15,8 +15,8 @@ import { Enums  } from '../shared/types/enums';
 export class ShelterService {
 
     //sheletersBaseUrl: string = '/api/shelters';
-    //sheletersBaseUrl: string = 'http://localhost:8080/api/shelters';
-    sheletersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
+    sheletersBaseUrl: string = 'http://localhost:8080/api/shelters';
+    //sheletersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 
@@ -26,6 +26,12 @@ export class ShelterService {
                 let shelters = res.json();
                 return shelters;
             })
+            .catch(this.handleError);
+    }
+
+    getNewId():Observable<{id:string}>{
+        return this.http.put(this.sheletersBaseUrl + '/confirm/newId',{new:true})
+            .map((res: Response) => res.json())
             .catch(this.handleError);
     }
 
@@ -98,13 +104,13 @@ export class ShelterService {
 
     updateShelter(shelter: IShelter): Observable<boolean> {
         return this.http.put(this.sheletersBaseUrl + '/' + shelter._id, shelter)
-            .map((res: Response) => res.json().status)
+            .map((res: Response) => res.json())
             .catch(this.handleError);
     }
 
-    deleteShelter(id: string): Observable<boolean> {
+    deleteShelter(id: String): Observable<boolean> {
         return this.http.delete(this.sheletersBaseUrl + '/' + id)
-            .map((res: Response) => res.json().status)
+            .map((res: Response) => res.json())
             .catch(this.handleError);
     }
 

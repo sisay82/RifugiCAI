@@ -10,6 +10,12 @@ export class BcSharedService{
         this.maskSaveSource.next(shelter);
     }
 
+    private toggleMenuSource = new Subject<void>();
+    toggleMenu$ = this.toggleMenuSource.asObservable();
+    onToggleMenu(){
+        this.toggleMenuSource.next();
+    }
+
     private maskInvalidSource = new Subject<void>();
     maskInvalid$ = this.maskInvalidSource.asObservable();
     onMaskInvalid(){

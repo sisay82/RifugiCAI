@@ -6,14 +6,12 @@ import { CoreModule } from '../../../core/core.module';
 import { ShelterRoutingModule } from './shelter-routing.module';
 
 import { BcShelter } from './shelter.component';
-import {BcMenuToggleModule} from '../../../core/menu/menu-toggle.module';
 
 @NgModule({
   imports: [
     CommonModule,
     CoreModule,
-    ShelterRoutingModule,
-    BcMenuToggleModule
+    ShelterRoutingModule
   ],
   declarations: [BcShelter],
   bootstrap: [BcShelter]

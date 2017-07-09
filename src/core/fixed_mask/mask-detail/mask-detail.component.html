@@ -1,12 +1,14 @@
 <div class="bc-mask-container">
     <div class="bc-mask-line">
         <div class="bc-h6" style="display:flex;flex-direction:row;align-items:center;white-space:nowrap;width:100%">
-            <bc-icon (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:10px" name="arrow-left" size=s></bc-icon>
-            <ng-content></ng-content>
-            <div style="display: inline;margin-left:10px">{{shelter?.name || 'Nome Rifugio'}}</div>,
-            <div style="display: inline;margin-left:5px">{{shelter?.alias||'Nome Comune'}}</div>
+            <bc-icon (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:1%" name="arrow-left" size=s></bc-icon>
+            <bc-icon *ngIf="checkWinPlatform()" (click)="toggleMenu()" class="bc-mask-icon" name="bars" size=s></bc-icon>
+            <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
+                <div style="white-space: nowrap;margin-right:1%">{{shelter?.name || 'Nome Rifugio'}},</div>
+                <div style="white-space: nowrap;margin-right:1%">{{shelter?.alias||'Nome Comune'}}</div>
+            </div>
             <div style="display: inline;margin-left:auto;margin-right:1%">
-                <bc-icon (click)="revision()" class="bc-mask-icon" style="display: inline" name="edit" size=s></bc-icon>
+                <bc-icon (click)="revision()" class="bc-mask-icon" name="edit" size=s></bc-icon>
             </div>
         </div>
     </div>

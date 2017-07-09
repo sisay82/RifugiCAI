@@ -20,6 +20,14 @@ export class BcMask {
 
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService){}
 
+  toggleMenu(){
+    this.shared.onToggleMenu();
+  }
+
+  checkWinPlatform(){
+    return (navigator.userAgent.toLowerCase().indexOf("win")==-1);
+  }
+
   revision(){
     const activeComponentSub=this.shared.activeComponentAnswer$.subscribe(component=>{
       this.shared.onActiveOutletChange("revision");
@@ -49,7 +57,6 @@ export class BcMask {
             routeSub.unsubscribe();
             shelSub.unsubscribe();
         });
-        //
       });
     }
   }

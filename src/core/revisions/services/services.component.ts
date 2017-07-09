@@ -28,6 +28,9 @@ export class BcServRevision {
     _id:String;
     name:String;
     servForm: FormGroup; 
+    newServiceForm: FormGroup;
+    newCatForm: FormGroup;
+    newTagForm: FormGroup;
     serviceCategories:{name:String,services:IService[]}[]=[];
     serviceToRemove:String[]=[];
     currentServiceTag:number=-1;
@@ -42,31 +45,60 @@ export class BcServRevision {
     serviceListChange:boolean=false;
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
+    maskError:boolean=false;
+    formValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.servForm = fb.group({
-            categories:fb.array([]),
-            newCategory:["Nuova Categoria",Validators.pattern(stringValidator)]
+            categories:fb.array([])
+            
         }); 
+
+        this.newCatForm = fb.group({
+            newCategory:["Nuova Categoria",Validators.pattern(stringValidator)]
+        });
+
+        this.newServiceForm = fb.group({
+            newServiceName:["Nome Nuovo Servizio",[Validators.pattern(stringValidator),Validators.required]],
+            newServiceDescription:["Descrizione Nuovo Servizio",Validators.pattern(stringValidator)],
+            newServiceTags:this.fb.array([]),
+            newServiceTagKey:["Chiave Tag",Validators.pattern(stringValidator)],
+            newServiceTagValue:["Valore Tag",Validators.pattern(stringValidator)]
+        });
+
+        this.newTagForm = fb.group({
+            newTagKey:["Chiave Tag",Validators.pattern(stringValidator)],
+            newTagValue:["Valore Tag",Validators.pattern(stringValidator)]
+        });
 
         shared.onActiveOutletChange("revision");
 
-        this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            this.disableSave=true;
-            this.save(true);
+        this.formValidSub = this.servForm.statusChanges.subscribe((value)=>{
+            if(value=="VALID"){
+                this.displayError=false;
+            }else if(value=="INVALID"){
+                this.displayError=true;
+            }
         });
 
         this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.displayError=true;
+            this.maskError=true;
         });
 
         this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            if(this.servForm.valid){
-                this.displayError=false;
-            }
+            this.maskError=false;
         });
 
         this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
             shared.onActiveComponentAnswer("services");
+        });
+
+        this.maskSaveSub=shared.maskSave$.subscribe(()=>{
+            if(this.serviceListChange||this.servForm.dirty){
+                this.disableSave=true;
+                this.save(true);
+            }else{
+                this.shared.onMaskConfirmSave("services");
+            }
         });
     } 
 
@@ -130,14 +162,14 @@ export class BcServRevision {
 
     addNewCategory(){
         this.serviceListChange=true;
-        if(this.servForm.controls["newCategory"].valid){
+        if(this.newCatForm.valid){
             const control = (<FormArray>this.servForm.controls["categories"]);
-            if(control.controls.find(cat=>cat.value.name==this.servForm.controls["newCategory"].value)==undefined){
+            if(control.controls.find(cat=>cat.value.name==this.newCatForm.controls["newCategory"].value)==undefined){
                 let category={
-                    name:this.servForm.controls["newCategory"].value,
+                    name:this.newCatForm.controls["newCategory"].value,
                     services:[]
                 };
-                (<FormArray>this.servForm.controls["categories"]).push(this.initCategory(category));   
+                control.push(this.initCategory(category));   
             }
         }
         this.toggleCategory();
@@ -146,18 +178,17 @@ export class BcServRevision {
     addNewService(categoryIndex:number){
         this.serviceListChange=true;
         this.newServiceAdded=true;
-        const category:FormGroup=<FormGroup>(<FormArray>this.servForm.controls["categories"]).at(categoryIndex);
-        if(category.controls.newServiceName.valid&&
-            category.controls.newServiceDescription.valid){
-
+        
+        if(this.newServiceForm.valid){
+            const category:FormGroup=<FormGroup>(<FormArray>this.servForm.controls["categories"]).at(categoryIndex);
             let service:IService={
-                name:category.controls.newServiceName.value,
+                name:this.newServiceForm.controls.newServiceName.value,
                 category:category.value.name,
-                description:category.controls.newServiceDescription.value
+                description:this.newServiceForm.controls.newServiceDescription.value
             }
             let tags:any=[];
 
-            for(let tag of (<FormArray>category.controls.newServiceTags).controls){
+            for(let tag of (<FormArray>this.newServiceForm.controls.newServiceTags).controls){
                 tags.push(tag.value.key,tag.value.value);
             }
             service.tags=tags;
@@ -170,11 +201,6 @@ export class BcServRevision {
         let group:FormGroup = this.fb.group({
             name:category.name,//Not Change
             services:this.fb.array([]),
-            newServiceName:["Nome Nuovo Servizio",[Validators.pattern(stringValidator),Validators.required]],
-            newServiceDescription:["Descrizione Nuovo Servizio"],
-            newServiceTags:this.fb.array([]),
-            newServiceTagKey:["Chiave Tag",Validators.pattern(stringValidator)],
-            newServiceTagValue:["Valore Tag",Validators.pattern(stringValidator)]
         });
 
         for(let service of category.services){
@@ -189,10 +215,8 @@ export class BcServRevision {
             id:[service._id],
             name:[service.name,Validators.pattern(stringValidator)],
             category: [service.category,Validators.pattern(stringValidator)],
-            description: [service.description],
-            tags:this.fb.array([]),
-            newTagKey:["Chiave Tag",Validators.pattern(stringValidator)],
-            newTagValue:["Valore Tag",Validators.pattern(stringValidator)]
+            description: [service.description,Validators.pattern(stringValidator)],
+            tags:this.fb.array([])
         });
 
         for(let tag of service.tags){
@@ -212,41 +236,41 @@ export class BcServRevision {
     addNewTag(categoryIndex:number,serviceIndex:number){
         this.serviceListChange=true;
         const service = <FormGroup>(<FormArray>(<FormGroup>(<FormArray>this.servForm.controls['categories']).at(categoryIndex)).controls.services).at(serviceIndex);
-        if(service.controls['newTagKey'].valid&&service.controls['newTagValue'].valid){
+        if(this.newTagForm.valid){
             const control = <FormArray>service.controls['tags'];
             for(let c of control.controls){
-                if(c.value.key==service.controls["newTagKey"].value){
+                if(c.value.key==this.newTagForm.controls["newTagKey"].value){
                     return;
                 }
             }
-            control.push(this.initTag(service.controls["newTagKey"].value,service.controls["newTagValue"].value));
+            control.push(this.initTag(this.newTagForm.controls["newTagKey"].value,this.newTagForm.controls["newTagValue"].value));
         }
         this.toggleTag(categoryIndex,serviceIndex);
     }
 
     addNewServiceTag(){
         this.serviceListChange=true;
-        if(this.servForm.controls['newServiceTagKey'].valid&&this.servForm.controls['newServiceTagValue'].valid){
+        if(this.newServiceForm.controls['newServiceTagKey'].valid&&this.newServiceForm.controls['newServiceTagValue'].valid){
             const control = <FormArray>this.servForm.controls['newServiceTags'];
             for(let c of control.controls){
-                if(c.value.key==this.servForm.controls["newServiceTagKey"].value){
+                if(c.value.key==this.newServiceForm.controls["newServiceTagKey"].value){
                     return;
                 }
             }
-            control.push(this.initTag(this.servForm.controls["newServiceTagKey"].value,this.servForm.controls["newServiceTagValue"].value));
+            control.push(this.initTag(this.newServiceForm.controls["newServiceTagKey"].value,this.newServiceForm.controls["newServiceTagValue"].value));
         }
     }
 
     addNewServiceBoolTag(){
         this.serviceListChange=true;
-        if(this.servForm.controls['newServiceTagKey'].valid&&this.servForm.controls['newServiceTagValue'].valid){
+        if(this.newServiceForm.controls['newServiceTagKey'].valid&&this.newServiceForm.controls['newServiceTagValue'].valid){
             const control = <FormArray>this.servForm.controls['newServiceTags'];
             for(let c of control.controls){
-                if(c.value.key==this.servForm.controls["newServiceTagKey"].value){
+                if(c.value.key==this.newServiceForm.controls["newServiceTagKey"].value){
                     return;
                 }
             }
-            control.push(this.initTag(this.servForm.controls["newServiceTagKey"].value,"true"));
+            control.push(this.initTag(this.newServiceForm.controls["newServiceTagKey"].value,"true"));
         }
     }
 
@@ -272,7 +296,7 @@ export class BcServRevision {
     }
 
     save(confirm){
-        if(this.servForm.value){
+        if(this.servForm.valid){
             let shelter:any={_id:this._id,name:this.name};
             let services:IService[]=[]
 
@@ -382,13 +406,13 @@ export class BcServRevision {
         return new Promise<IShelter>((resolve,reject)=>{
             let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.services!=undefined){
-                    
                     if(revSub!=undefined){
                         revSub.unsubscribe();
                     }
                     resolve(shelter);
                 }else{
                     let shelSub=this.shelterService.getShelterSection(id,"services").subscribe(shelter=>{
+                        if(shelter.services==undefined) shelter.services=[] as [IService];
                         this.revisionService.onChildSave(shelter,"services");
                         if(shelSub!=undefined){
                             shelSub.unsubscribe();

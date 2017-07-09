@@ -6,7 +6,6 @@ import {BcSharedService} from './shared.service'
     selector: 'bc-shelter',
     templateUrl: 'shelter.component.html',
     styleUrls: ['shelter.component.scss'],
-    providers:[BcSharedService]
 
 })
 export class BcShelter {

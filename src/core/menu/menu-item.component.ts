@@ -35,7 +35,7 @@ export class BcMenuItem {
             let activeOutletSub=this.shared.activeOutletAnswer$.subscribe(outlet=>{
                 if(outlet=="revision"){
                     this._router.navigate([{outlets:({'revision': [this.menu_item.link],'content': null})}],{relativeTo:this._route});
-                }else{
+                }else if(outlet=="content"){
                     this._router.navigate([{outlets:({'content': [this.menu_item.link],'revision': null})}],{relativeTo:this._route});
                 }
                 

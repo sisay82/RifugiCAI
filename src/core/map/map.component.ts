@@ -78,7 +78,9 @@ export class BcMap implements OnInit{
         this.map.setView(BcMap.defaultCenter,this.initialZoom);
         if(this.initialCenter!=undefined){
             this.initialCenter.subscribe(value=>{
-                this.map.setView(value,this.initialZoom);
+                if(value[0]!=null&&value[1]!=null){
+                    this.map.setView(value,this.initialZoom);
+                }
             });
         }
 
