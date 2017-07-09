@@ -22,16 +22,14 @@
 // Represents list item heights definition.
 $bc-list-item-heights: (
     base: 48px,
-    2line: 72px,
-    3line: 88px,
     multiline: 100%,
     avatar: $bc-avatar-container-height,
+    thumbnail: 80px,
     dense:(
         base: 40px,
-        2line: 60px,
-        3line: 76px,
         multiline: 100%,
-        avatar: $bc-dense-avatar-container-height
+        avatar: $bc-dense-avatar-container-height,
+        thumbnail: 72px
     )
 );
 // Represents the desired item height.
@@ -158,7 +156,7 @@ $bc-list-item-heights: (
             // margin and padding
             // --------------------------------------------------
             margin: 0px 0px 0px $bc-list-item-padding-start;
-            padding: 0px 8px 0px 0px;
+            padding: 8px 8px 8px 0px;
 
             & > *:not([item-end]):not([data-item-end]) {
                 @include flex(1);
@@ -210,23 +208,16 @@ $bc-list-item-heights: (
     }
 
     &.bc-list-avatar .bc-list-item .bc-list-item-content {
-        height: bc-item-height($bc-list-item-heights, 'avatar', $dense);
+        min-height: bc-item-height($bc-list-item-heights, 'avatar', $dense);
     }
 
-
-    &.bc-2-line .bc-list-item-content {
-    height:  bc-item-height($bc-list-item-heights, 2line, $dense);
+    &.bc-list-thumbnail .bc-list-item .bc-list-item-content {
+        min-height: bc-item-height($bc-list-item-heights, 'thumbnail', $dense);
     }
-
-
-    &.bc-3-line .bc-list-item-content {
-    height: bc-item-height($bc-list-item-heights, 3line, $dense);
-    }
-    
 
     // list items with more than 3 lines should expand to match
     // the height of its contained text
-    &.bc-multi-line .bc-list-item-content {
+    & .bc-multi-line .bc-list-item-content {
     height: bc-item-height($bc-list-item-heights, multiline, $dense);
     }
 
