@@ -109,7 +109,6 @@ export class BcGeoRevision {
     }
 
     save(confirm){
-        console.log(this.geoForm);
         if(this.geoForm.valid){
             let shelter:IShelter={_id:this._id,name:this.name,geoData:{location:this.data.location}};
             let location:ILocation={

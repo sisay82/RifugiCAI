@@ -39,7 +39,6 @@ export class BcMaskRevision {
     }); 
 
     this.formValiditySub = this.maskForm.statusChanges.subscribe((value)=>{
-      console.log(value);
       if(value=="VALID"){
         shared.onMaskValid();
       }else if(value=="INVALID"){

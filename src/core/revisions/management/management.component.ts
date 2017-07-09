@@ -217,7 +217,7 @@ export class BcManagementRevision {
                         }
                         //location.reload();
                     }else{
-                        console.log("Err "+returnVal);
+                        console.log(returnVal);
                         this.displayError=true;
                     }
                     if(managSub!=undefined){
