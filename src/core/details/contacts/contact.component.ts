@@ -4,7 +4,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { IContacts, IOpening } from '../../../app/shared/types/interfaces';
 import {ShelterService} from '../../../app/shelter/shelter.service';
-import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -17,19 +17,13 @@ import { Subscription } from 'rxjs/Subscription';
 export class BcContact {
   contacts:IContacts={name:null,role:null};
   openings:IOpening[]=[];
-  activeComponentSub:Subscription;
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
-    this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
-      this.shared.onActiveComponentAnswer("contacts");
-    })
-
+    shared.activeComponent="contact";
     this.shared.onActiveOutletChange("content");
   }
 
   ngOnDestroy(){
-    if(this.activeComponentSub!=undefined){
-      this.activeComponentSub.unsubscribe();
-    }
+
   }
 
   ngOnInit(){

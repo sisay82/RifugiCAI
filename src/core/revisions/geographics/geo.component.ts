@@ -6,7 +6,7 @@ import { ITag,ILocation,IGeographic, IButton, IShelter } from '../../../app/shar
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
-import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
@@ -30,7 +30,6 @@ export class BcGeoRevision {
     data:IGeographic;
     invalid:boolean=false;
     disableSave=false;
-    activeComponentSub:Subscription;
     maskSaveSub:Subscription;
     tagChange:boolean=false
     displayError:boolean=false;
@@ -86,9 +85,7 @@ export class BcGeoRevision {
             }
         });
 
-        this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
-            shared.onActiveComponentAnswer("geographic");
-        });
+        shared.activeComponent="geographic";
     } 
 
     addTag(key:String,value:String){
@@ -197,9 +194,6 @@ export class BcGeoRevision {
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
-        }
-        if(this.activeComponentSub!=undefined){
-            this.activeComponentSub.unsubscribe();
         }
         if(this.maskInvalidSub!=undefined){
             this.maskInvalidSub.unsubscribe();

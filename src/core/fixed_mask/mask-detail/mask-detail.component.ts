@@ -5,7 +5,7 @@ import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
 import {Router,ActivatedRoute} from '@angular/router';
 import {ShelterService} from '../../../app/shelter/shelter.service'
-import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service'
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -29,12 +29,9 @@ export class BcMask {
   }
 
   revision(){
-    const activeComponentSub=this.shared.activeComponentAnswer$.subscribe(component=>{
-      this.shared.onActiveOutletChange("revision");
-      this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(revision:"+component+")");
-      activeComponentSub.unsubscribe();
-    })
-    this.shared.onActiveComponentRequest();
+    let component = this.shared.activeComponent;
+    this.shared.onActiveOutletChange("revision");
+    this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(revision:"+component+")");
   }
 
   return(){

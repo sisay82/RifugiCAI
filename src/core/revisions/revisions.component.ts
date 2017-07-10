@@ -1,7 +1,7 @@
 import { Component,OnDestroy } from '@angular/core';
 import { IShelter } from '../../app/shared/types/interfaces';
 import { BcRevisionsService } from './revisions.service';
-import { BcSharedService } from '../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {Router,RoutesRecognized} from '@angular/router';
 
@@ -40,7 +40,7 @@ export class BcRevisions{
         });
 
         this.childDeleteSub=revisionService.childDelete$.subscribe(section=>{
-            if(this.ShelterToUpdate.hasOwnProperty(section))
+            if(this.ShelterToUpdate!=undefined&&this.ShelterToUpdate.hasOwnProperty(section))
                 delete(this.ShelterToUpdate[section]);
         })
     }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ShelterService} from '../shelter.service';
-import {BcSharedService} from '../shelterPage/shared.service';
+import {BcSharedService} from '../../shared/shared.service';
 import {IShelter,IButton}from '../../shared/types/interfaces';
 
 
@@ -33,7 +33,8 @@ export class BcShelterList {
 
     createShel(ref){
         let newShelSub=ref.shelterService.getNewId().subscribe((obj)=>{
-            ref.shared.onActiveOutletChange("revision");
+            ref.shared.activeOutlet="revision";
+            ref.shared.activeComponent="geographic";
             if(newShelSub!=undefined){
                 newShelSub.unsubscribe();
             }

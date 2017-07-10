@@ -1,4 +1,4 @@
-<div [hidden]="!displayError&&!maskError" class="alert alert-danger">Error Occurred!</div>
+<div [hidden]="!displayError&&!maskError" class="alert alert-danger">Invalid!</div>
 <div class="bc-h6 bc-catastal-title">Catastali</div>
 <form style="position:relative" [formGroup]="catastalForm">
     <div style="display: flex;flex-direction:row">
@@ -6,14 +6,12 @@
             <div class="bc-body" style="white-space: nowrap">Anno di Costruzione</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="buildYear">
-            <div [hidden]="catastalForm.controls['buildYear'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         <div class="bc-revision-catastal">
             <div class="bc-body" style="white-space: nowrap">Anno di Ristrutturazione</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="rebuildYear">
-            <div [hidden]="catastalForm.controls['rebuildYear'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
     </div>
@@ -22,14 +20,12 @@
             <div class="bc-body" style="white-space: nowrap">Codice Catastale</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="code">
-            <div [hidden]="catastalForm.controls['code'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         <div class="bc-revision-catastal">
             <div class="bc-body" style="white-space: nowrap">Classe Catastale</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="class">
-            <div [hidden]="catastalForm.controls['class'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
     </div>
@@ -38,14 +34,12 @@
             <div class="bc-body" style="white-space: nowrap">Consistenza Corpo Principale</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="mainBody">
-            <div [hidden]="catastalForm.controls['mainBody'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         <div class="bc-revision-catastal">
             <div class="bc-body" style="white-space: nowrap">Consistenza Corpi Secondari</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="secondaryBody">
-            <div [hidden]="catastalForm.controls['secondaryBody'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         <div class="bc-revision-catastal">
@@ -108,14 +102,12 @@
             <div class="bc-body" style="white-space: nowrap">Classe Energetica</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="class">
-            <div [hidden]="energyForm.controls['class'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         <div class="bc-revision-catastal">
             <div class="bc-body" style="white-space: nowrap">Quantità</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="energy">
-            <div [hidden]="energyForm.controls['energy'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
     </div>
@@ -132,7 +124,6 @@
             <div class="bc-body" style="white-space: nowrap">Nome Fonte Energetica</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="sourceName">
-            <div [hidden]="energyForm.controls['sourceName'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
     </div>
@@ -171,7 +162,6 @@
             <div class="bc-body" style="white-space: nowrap">Tipo</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="type">
-            <div [hidden]="drainForm.controls['type'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         <div class="bc-catastal-check">

@@ -1,5 +1,5 @@
 import {
-  Component,Input,OnInit, trigger, state, style, transition, animate//,OnDestroy
+  Component,Input,OnInit, trigger, state, style, transition, animate,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IButton, IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
@@ -7,7 +7,7 @@ import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angu
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
-import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
@@ -38,7 +38,6 @@ export class BcServRevision {
     currentCategoryTag:number=0;
     hideCategoryAdd:boolean=true;
     displayError:boolean=false;
-    activeComponentSub:Subscription;
     maskSaveSub:Subscription;
     disableSave=false;
     newServiceAdded=false;
@@ -88,9 +87,7 @@ export class BcServRevision {
             this.maskError=false;
         });
 
-        this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
-            shared.onActiveComponentAnswer("services");
-        });
+        shared.activeComponent="services";
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(this.serviceListChange||this.servForm.dirty){
@@ -387,9 +384,6 @@ export class BcServRevision {
         if(this.serviceListChange||this.servForm.dirty){
             if(!this.disableSave)
                 this.save(false);
-        }
-        if(this.activeComponentSub!=undefined){
-            this.activeComponentSub.unsubscribe();
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();

@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IManagement,ISubject } from '../../../app/shared/types/interfaces';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
-import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -19,19 +19,13 @@ export class BcManage {
   data:IManagement={rent:null,period:null,subject:[{name:null}]};
   owner:ISubject;
   managers:ISubject[]=[];
-  activeComponentSub:Subscription;
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
-    this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
-      this.shared.onActiveComponentAnswer("management");
-    })
-
+    shared.activeComponent="management";
     this.shared.onActiveOutletChange("content");
   }
 
   ngOnDestroy(){
-    if(this.activeComponentSub!=undefined){
-      this.activeComponentSub.unsubscribe();
-    }
+
   }
 
   ngOnInit(){

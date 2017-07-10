@@ -1,18 +1,16 @@
 <form style="position:relative" [formGroup]="geoForm">
-    <div [hidden]="!displayError&&!maskError" class="alert alert-danger">Error Occurred!</div>
+    <div [hidden]="!displayError&&!maskError" class="alert alert-danger">Invalid!</div>
     <div style="display:flex;flex-direction:row">
         <div style="position:relative;width:20%">
             <div class="bc-body" style="white-space: nowrap">Località</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 required class="form-control"  formControlName="locality">
-            <div [hidden]="geoForm.controls['locality'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         <div style="position:relative;width:20%;margin-left:1%">
             <div class="bc-body" style="white-space: nowrap">Ente Sovracomunale di Competenza</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="authorityJurisdiction">
-            <div [hidden]="geoForm.controls['authorityJurisdiction'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
     </div>
@@ -21,14 +19,12 @@
             <div class="bc-body" style="white-space: nowrap">Comune</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 required class="form-control"  formControlName="municipality">
-            <div [hidden]="geoForm.controls['municipality'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         <div style="position:relative;width:20%;margin-left:1%">
             <div class="bc-body" style="white-space: nowrap">Gruppo Montuoso</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="massif">
-            <div [hidden]="geoForm.controls['massif'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
     </div>
@@ -37,7 +33,6 @@
             <div class="bc-body" style="white-space: nowrap">Provincia</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="province">
-            <div [hidden]="geoForm.controls['province'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         
@@ -45,7 +40,6 @@
             <div class="bc-body" style="white-space: nowrap">Valle</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="valley">
-            <div [hidden]="geoForm.controls['valley'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
     </div>
@@ -54,14 +48,12 @@
             <div class="bc-body" style="white-space: nowrap">Regione</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 required class="form-control"  formControlName="region">
-            <div [hidden]="geoForm.controls['region'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>   
         <div style="position:relative;width:20%;margin-left:1%">
             <div class="bc-body" style="white-space: nowrap">Quota</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="altitude">
-            <div [hidden]="geoForm.controls['altitude'].valid" class="alert alert-danger">Invalid</div>
             <br>    
         </div>
     </div>
@@ -70,7 +62,6 @@
             <div class="bc-body" style="white-space: nowrap">Regione loc. Proprietà</div>
             <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control"  formControlName="ownerRegion">
-            <div [hidden]="geoForm.controls['ownerRegion'].valid" class="alert alert-danger">Invalid</div>
             <br>
         </div>
         <div style="position:relative;width:20%;margin-left:1%">
@@ -79,13 +70,11 @@
                 <div>
                     <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                         class="form-control"  formControlName="latitude">
-                    <div [hidden]="geoForm.controls['latitude'].valid" class="alert alert-danger">Invalid</div>
                     <br>
                 </div>
                 <div>
                     <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                         class="form-control"  formControlName="longitude">
-                    <div [hidden]="geoForm.controls['longitude'].valid" class="alert alert-danger">Invalid</div>
                     <br>
                 </div>
             </div>
@@ -108,7 +97,6 @@
                     <bc-icon (click)="removeTag(i)" class="bc-add-tag" name="times" size=s></bc-icon>
                     <br>
                 </div>
-                <div [hidden]="geoForm.controls['tags'].at(i).valid" class="alert alert-danger" style="position:relative;width:41%">Invalid Key-Value</div>
             </div>
         </div>
         <br>

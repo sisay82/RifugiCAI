@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import {IMenu} from '../../shared/types/interfaces';
-import {BcSharedService} from './shared.service'
 @Component({
     moduleId: module.id,
     selector: 'bc-shelter',
     templateUrl: 'shelter.component.html',
-    styleUrls: ['shelter.component.scss'],
+    styleUrls: ['shelter.component.scss']
 
 })
 export class BcShelter {
@@ -32,8 +31,5 @@ export class BcShelter {
         ]}
         ]
     };
-
-    constructor(private shared:BcSharedService){
-    }
     
 }

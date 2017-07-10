@@ -6,7 +6,7 @@ import { Enums } from '../../../app/shared/types/enums';
 import {Router,ActivatedRoute} from '@angular/router';
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
-import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service'
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
@@ -235,17 +235,14 @@ export class BcMaskRevision {
           if(cancelSub!=undefined)
             cancelSub.unsubscribe();
         }else{
-          let activeComponentSub=this.shared.activeComponentAnswer$.subscribe(component=>{
-            this.shared.onActiveOutletChange("content");
-            this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
-            if(activeComponentSub!=undefined)
-              activeComponentSub.unsubscribe();
-            if(shelSub!=undefined)
-              shelSub.unsubscribe();
-            if(cancelSub!=undefined)
-              cancelSub.unsubscribe();
-            });
-          this.shared.onActiveComponentRequest();
+          let component = this.shared.activeComponent;
+          this.shared.onActiveOutletChange("content");
+          console.log(this.shared.activeOutlet);
+          this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
+          if(shelSub!=undefined)
+            shelSub.unsubscribe();
+          if(cancelSub!=undefined)
+            cancelSub.unsubscribe();
         }
         
       });

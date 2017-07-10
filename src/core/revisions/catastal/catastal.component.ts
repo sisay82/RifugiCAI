@@ -7,7 +7,7 @@ import {Enums} from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
-import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
@@ -54,7 +54,6 @@ export class BcCatastalRevision {
     displayError:boolean=false;
     maskSaveSub:Subscription;
     disableSave=false;
-    activeComponentSub:Subscription;
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
     formCatValidSub:Subscription;
@@ -141,9 +140,7 @@ export class BcCatastalRevision {
             
         });
 
-        this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
-            shared.onActiveComponentAnswer("catastal");
-        });
+        shared.activeComponent="catastal";
     } 
 
     getEnumTypoNames():any[]{
@@ -335,9 +332,6 @@ export class BcCatastalRevision {
         if(this.catastalForm.dirty||this.energyForm.dirty||this.drainForm.dirty){
             if(!this.disableSave)
                 this.save(false);
-        }
-        if(this.activeComponentSub!=undefined){
-            this.activeComponentSub.unsubscribe();
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();

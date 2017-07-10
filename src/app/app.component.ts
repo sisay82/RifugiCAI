@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 
 import {IButton} from './shared/types/interfaces';
 import {IMenu}from './shared/types/interfaces';
-import { BcSharedService } from './shelter/shelterPage/shared.service';
+import { BcSharedService } from './shared/shared.service';
+
 @Component({ 
   moduleId: module.id,
   selector: 'bc-app-component',
