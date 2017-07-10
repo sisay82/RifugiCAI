@@ -7,7 +7,7 @@ import { ISubject, IManagement, IButton, IShelter } from '../../../app/shared/ty
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
-import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
@@ -46,7 +46,6 @@ export class BcManagementRevision {
     invalid:Boolean=false;
     displayError:boolean=false;
     disableSave=false;
-    activeRouteSub:Subscription;
     maskSaveSub:Subscription;
     subjectChange:boolean=false;
     maskInvalidSub:Subscription;
@@ -111,9 +110,7 @@ export class BcManagementRevision {
             }
         });
 
-        this.activeRouteSub=shared.activeComponentRequest$.subscribe(()=>{
-            shared.onActiveComponentAnswer("management");
-        });
+        shared.activeComponent="management";
     } 
 
     removeSubject(index){
@@ -272,9 +269,6 @@ export class BcManagementRevision {
         if(this.subjectChange||this.managForm.dirty){
             if(!this.disableSave)
                 this.save(false);
-        }
-        if(this.activeRouteSub!=undefined){
-            this.activeRouteSub.unsubscribe();
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();

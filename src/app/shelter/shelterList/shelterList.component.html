@@ -22,7 +22,7 @@
     </bc-content-header>
     <bc-content-section>
       <bc-list>
-        <a bc-list-item *ngFor="let item of rifugiSample" [href]="'shelter/'+item._id">
+        <a bc-list-item *ngFor="let item of rifugiSample" [href]="'shelter/'+item._id+'/(content:geographic)'">
           <div bc-line>{{item.name}}</div>
           <div bc-line style="display:flex; flex-direction:row;">
             <div style="flex:1">{{item.type}}</div>

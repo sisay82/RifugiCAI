@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ICatastal,IDrain,IEnergy } from '../../../app/shared/types/interfaces';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
-import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -19,13 +19,9 @@ export class BcCatastal {
   catastal:ICatastal={};
   drain:IDrain={type:null};
   energy:IEnergy={};
-  activeComponentSub:Subscription;
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
-    this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
-      this.shared.onActiveComponentAnswer("catastal");
-    })
-
-    this.shared.onActiveOutletChange("content");
+    shared.activeComponent="catastal";
+    shared.onActiveOutletChange("content");
   }
   
   getSourceValue(value:Enums.Source_Type){
@@ -41,9 +37,7 @@ export class BcCatastal {
   }
 
   ngOnDestroy(){
-    if(this.activeComponentSub!=undefined){
-      this.activeComponentSub.unsubscribe();
-    }
+
   }
 
   ngOnInit(){

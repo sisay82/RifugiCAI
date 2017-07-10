@@ -4,7 +4,7 @@ import {
 import { IService } from '../../../app/shared/types/interfaces';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { ActivatedRoute } from '@angular/router';
-import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -17,19 +17,13 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class BcServ {
   categories:{name:String,services:IService[]}[]=[];
-  activeComponentSub:Subscription;
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
-    this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
-      this.shared.onActiveComponentAnswer("services");
-    })
-
+    shared.activeComponent="services";
     this.shared.onActiveOutletChange("content");
   }
 
   ngOnDestroy(){
-    if(this.activeComponentSub!=undefined){
-      this.activeComponentSub.unsubscribe();
-    }
+
   }
 
 

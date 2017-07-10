@@ -1,9 +1,12 @@
 import {Injectable } from '@angular/core'
 import { Subject } from 'rxjs/Subject';
-import { IShelter } from '../../shared/types/interfaces';
+import { IShelter } from '../shared/types/interfaces';
 
 @Injectable()
 export class BcSharedService{
+    activeOutlet:string;
+    activeComponent:string;
+
     private maskSaveSource = new Subject<any>();
     maskSave$ = this.maskSaveSource.asObservable();
     onMaskSave(shelter:any){
@@ -46,21 +49,10 @@ export class BcSharedService{
         this.maskConfirmSaveSource.next(component);
     }
 
-    private activeComponentRequestSource = new Subject<void>();
-    activeComponentRequest$ = this.activeComponentRequestSource.asObservable();
-    onActiveComponentRequest(){
-        this.activeComponentRequestSource.next();
-    }
-
-    private activeComponentAnswerSource = new Subject<string>();
-    activeComponentAnswer$ = this.activeComponentAnswerSource.asObservable();
-    onActiveComponentAnswer(component:string){
-        this.activeComponentAnswerSource.next(component);
-    }
-
     private activeOutletChangeSource = new Subject<string>();
     activeOutletChange$ = this.activeOutletChangeSource.asObservable();
     onActiveOutletChange(outlet:string){
+        this.activeOutlet=outlet;
         this.activeOutletChangeSource.next(outlet);
     }
 

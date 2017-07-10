@@ -2,6 +2,7 @@ import {Component,Injectable,Input,OnInit} from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { IMenuElement } from '../../app/shared/types/interfaces';
 import { Router,ActivatedRoute } from '@angular/router';
+import {BcSharedService} from '../../app/shared/shared.service';
 
 @Injectable()
 export class BcItemService{
@@ -26,20 +27,17 @@ export class BcMenuItem {
     private _selected:Boolean;
     local_style:string;
 
-    constructor(private _item_service: BcItemService, private _router:Router,private _route:ActivatedRoute){
+    constructor(private _item_service: BcItemService, private _router:Router,private shared:BcSharedService,private _route:ActivatedRoute){
          this.local_style=this.getClass();
     }   
 
     clickItem(){
         if(this._item_service!=undefined){
             
-            let route=this._route;
-            while(route.children.length>0){
-            route=route.children[0];
-            }
-            if(route.outlet=="revision"){
+            let outlet = this.shared.activeOutlet;
+            if(outlet=="revision"){
                 this._router.navigate([{outlets:({'revision': [this.menu_item.link],'content': null})}],{relativeTo:this._route});
-            }else{
+            }else if(outlet=="content"){
                 this._router.navigate([{outlets:({'content': [this.menu_item.link],'revision': null})}],{relativeTo:this._route});
             }
             

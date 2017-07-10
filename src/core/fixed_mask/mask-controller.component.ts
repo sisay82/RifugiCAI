@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { IShelter } from '../../app/shared/types/interfaces';
 import {Router,ActivatedRoute} from '@angular/router';
-import {BcSharedService} from '../../app/shelter/shelterPage/shared.service'
+import {BcSharedService} from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -14,9 +14,10 @@ import { Subscription } from 'rxjs/Subscription';
 export class BcMaskController {
   @Input() shelter:IShelter;
   @Input() ref:string;
-  currentOutlet:string="content";
+  currentOutlet:string="";
   activeOutletSub:Subscription;
   constructor(private shared:BcSharedService,private route:ActivatedRoute){
+    this.currentOutlet=shared.activeOutlet;
     this.activeOutletSub=shared.activeOutletChange$.subscribe(outlet=>{
         this.currentOutlet=outlet;
     });

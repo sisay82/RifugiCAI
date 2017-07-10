@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ShelterService } from '../shelter.service'
 import { IShelter } from '../../shared/types/interfaces';
+import {BcSharedService} from '../../shared/shared.service';
 
 @Component({
     moduleId: module.id,
@@ -14,7 +15,7 @@ export class BcShelterList {
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
 
-    constructor(private shelterService: ShelterService) {
+    constructor(private shelterService: ShelterService,private shared:BcSharedService) {
 
     }
 
@@ -27,6 +28,8 @@ export class BcShelterList {
 
     createShel(){
         let newShelSub=this.shelterService.getNewId().subscribe((obj)=>{
+            this.shared.activeOutlet="revision";
+            this.shared.activeComponent="geographic";
             if(newShelSub!=undefined){
                 newShelSub.unsubscribe();
             }

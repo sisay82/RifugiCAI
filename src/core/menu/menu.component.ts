@@ -8,7 +8,7 @@ import { IMenu } from '../../app/shared/types/interfaces';
 import {
   BcMenuItem,BcItemService
 } from './menu-item.component';
-import {BcSharedService} from '../../app/shelter/shelterPage/shared.service'
+import {BcSharedService} from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({

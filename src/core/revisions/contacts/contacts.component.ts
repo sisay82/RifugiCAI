@@ -7,7 +7,7 @@ import {Enums} from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
-import { BcSharedService } from '../../../app/shelter/shelterPage/shared.service';
+import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
@@ -46,7 +46,6 @@ export class BcContactsRevision {
     disableSave=false;
     displayError:boolean=false;
     maskSaveSub:Subscription;
-    activeComponentSub:Subscription;
     openingChange:boolean=false;
     formValidSub:Subscription;
     maskInvalidSub:Subscription;
@@ -96,9 +95,7 @@ export class BcContactsRevision {
             }
         });
 
-        this.activeComponentSub=shared.activeComponentRequest$.subscribe(()=>{
-            this.shared.onActiveComponentAnswer("contacts");
-        });
+        shared.activeComponent="contacts";
     } 
 
     getEnumOwnerNames():any[]{
@@ -249,9 +246,6 @@ export class BcContactsRevision {
         if(this.openingChange||this.contactForm.dirty){
             if(!this.disableSave)
                 this.save(false);
-        }
-        if(this.activeComponentSub!=undefined){
-            this.activeComponentSub.unsubscribe();
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();

@@ -7,8 +7,7 @@ import {BcMap} from '../../map/map.component';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-
-import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service'
+import {BcSharedService} from '../../../app/shared/shared.service';
 
 @Component({
   moduleId: module.id,
@@ -20,12 +19,8 @@ import {BcSharedService} from '../../../app/shelter/shelterPage/shared.service'
 export class BcGeo {
   data:IGeographic={location:{longitude:null,latitude:null}};
   center:Subject<L.LatLng|L.LatLngExpression>=new Subject();
-  private activeComponentSub:Subscription;
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
-    this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
-      this.shared.onActiveComponentAnswer("geographic");
-    })
-
+    shared.activeComponent="geographic";
     this.shared.onActiveOutletChange("content");
   }
 
@@ -47,9 +42,7 @@ export class BcGeo {
   }
 
   ngOnDestroy(){
-    if(this.activeComponentSub!=undefined){
-      this.activeComponentSub.unsubscribe();
-    }
+
   }
 
   ngOnInit(){
