@@ -7,14 +7,12 @@
 // Represents a collection of typographic scale.
 @function bc-list-item-typographic-scale(
   $font-family: $bc-font-family,
-  $list-item: bc-typography-style(16px, 20px, 400),
-  $list-item-first-line: bc-typography-style(16px, 20px, 500),
+  $list-item: bc-typography-style($bc-font-size-base, ($bc-font-size-base+4), 500),
   $list-item-secondary-line: bc-typography-style($bc-font-size-base, ($bc-font-size-base+4), 400)
 ) {
   @return (
     font-family: $font-family,
     normal: $list-item,
-    first: $list-item-first-line,
     secondary: $list-item-secondary-line
   );
 }
@@ -71,13 +69,18 @@ $bc-list-item-heights: (
             .bc-line {
                 color: bc-color($foreground, 'text');
                 // all lines but the top line should have smaller text
-                &:nth-child(n+2) {
-                    color: bc-color($foreground, 'text');
-                }
                 &:nth-last-child(1) {
                     color: bc-color($foreground, 'secondary-text');
                 }
+
+                &:nth-child(1) {
+                    color: bc-color($foreground, 'text');
+                }
             }
+        }
+
+        .bc-icon {
+            color: bc-color($foreground, 'secondary-text');
         }
     }
 }
@@ -156,12 +159,15 @@ $bc-list-item-heights: (
             // margin and padding
             // --------------------------------------------------
             margin: 0px 0px 0px $bc-list-item-padding-start;
-            padding: 8px 8px 8px 0px;
+            padding: 8px 0px;
 
             & > *:not([item-end]):not([data-item-end]) {
                 @include flex(1);
                 @include truncate-line();
                 padding-right: 16px;
+            }
+            & > *:not([item-end]):not([data-item-end]):last-child {
+                padding-right: 0px;
             }
         }
 
@@ -238,23 +244,28 @@ $bc-list-item-heights: (
 }
 
 @mixin bc-list-item-active($accent, $background, $foreground){
-    &.active {
-        color: bc-color($accent, '500-contrast');
-        background: bc-color($accent);
+    &.active {        
+        color: bc-color($accent, 700);
+        background: bc-color($background, 'focused-button');
         border-color: bc-color($accent);
 
         @include bc-list-item-disable($accent, $background, $foreground);
         
         .bc-line {
-            color: bc-color($accent, '500-contrast');
+            color: bc-color($accent, 700);
+            
             // all lines but the top line should have smaller text
-            &:nth-child(n+2) {
-                color: bc-color($accent, '600-contrast');
+            &:nth-last-child(1) {
+                color: bc-color($accent, 400);
             }
 
-            &:nth-last-child(1) {
-                color: bc-color($accent, '800-contrast');
+            &:nth-child(1) {
+                color: bc-color($accent, 700);
             }
+        }
+        
+        .bc-icon {
+            color: bc-color($accent, 400);
         }
     }
 }
@@ -265,7 +276,7 @@ $bc-list-item-heights: (
     box-sizing: border-box;
     width:100%;
 
-    @include bc-typography-scale-to-styles(bc-list-item-typographic-scale(), first);
+    @include bc-typography-scale-to-styles(bc-list-item-typographic-scale(), normal);
 
     @include truncate-line();
 

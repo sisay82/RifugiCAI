@@ -1,8 +1,12 @@
+// Import all the components themes indipendents.
+@import '../backdrop/backdrop.directive';
+
 // Import all the components themes.
 @import '../icon/icon.component';
 @import '../divider/divider.component';
 @import '../navbar/navbar.component';
 @import '../list/list.component';
+
 // Create a full theme.
 @mixin bc-theme($theme) {
   @include bc-icon-theme($theme);
