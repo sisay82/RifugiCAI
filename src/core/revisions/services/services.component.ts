@@ -29,14 +29,12 @@ export class BcServRevision {
     name:String;
     servForm: FormGroup; 
     newServiceForm: FormGroup;
-    newCatForm: FormGroup;
     newTagForm: FormGroup;
     serviceCategories:{name:String,services:IService[]}[]=[];
     serviceToRemove:String[]=[];
     currentServiceTag:number=-1;
-    currentCategoryService:number=-1;
+    serviceHidden:boolean=true;
     currentCategoryTag:number=0;
-    hideCategoryAdd:boolean=true;
     displayError:boolean=false;
     maskSaveSub:Subscription;
     disableSave=false;
@@ -52,21 +50,18 @@ export class BcServRevision {
             
         }); 
 
-        this.newCatForm = fb.group({
-            newCategory:["Nuova Categoria",Validators.pattern(stringValidator)]
-        });
-
         this.newServiceForm = fb.group({
             newServiceName:["Nome Nuovo Servizio",[Validators.pattern(stringValidator),Validators.required]],
             newServiceDescription:["Descrizione Nuovo Servizio",Validators.pattern(stringValidator)],
+            newServiceCategory:["Categoria Nuovo Servizio",Validators.pattern(stringValidator)],
             newServiceTags:this.fb.array([]),
-            newServiceTagKey:["Chiave Tag",Validators.pattern(stringValidator)],
-            newServiceTagValue:["Valore Tag",Validators.pattern(stringValidator)]
+            newServiceTagKey:["Informazione",Validators.pattern(stringValidator)],
+            newServiceTagValue:["Valore",Validators.pattern(stringValidator)]
         });
 
         this.newTagForm = fb.group({
-            newTagKey:["Chiave Tag",Validators.pattern(stringValidator)],
-            newTagValue:["Valore Tag",Validators.pattern(stringValidator)]
+            newTagKey:["Informazione",Validators.pattern(stringValidator)],
+            newTagValue:["Valore",Validators.pattern(stringValidator)]
         });
 
         shared.onActiveOutletChange("revision");
@@ -120,27 +115,12 @@ export class BcServRevision {
         return true;
     }
 
-    toggleService(categoryIndex:number): void {
-        if(this.currentCategoryService==categoryIndex){
-            this.currentCategoryService=-1;
-        }else{
-            this.currentCategoryService=categoryIndex;
-        }
+    toggleService(): void {
+        this.serviceHidden=!this.serviceHidden;
     }
 
-    isHiddenService(categoryIndex): boolean {
-        if(this.currentCategoryService==categoryIndex){
-            return false;
-        }
-        return true;
-    }
-
-    toggleCategory(): void {
-        this.hideCategoryAdd=!this.hideCategoryAdd;
-    }
-
-    isHiddenCategory(): boolean {
-        return this.hideCategoryAdd;
+    isHiddenService(): boolean {
+        return this.serviceHidden;
     }
 
     removeService(categoryIndex,serviceIndex){
@@ -157,30 +137,16 @@ export class BcServRevision {
         services.removeAt(serviceIndex);
     }
 
-    addNewCategory(){
-        this.serviceListChange=true;
-        if(this.newCatForm.valid){
-            const control = (<FormArray>this.servForm.controls["categories"]);
-            if(control.controls.find(cat=>cat.value.name==this.newCatForm.controls["newCategory"].value)==undefined){
-                let category={
-                    name:this.newCatForm.controls["newCategory"].value,
-                    services:[]
-                };
-                control.push(this.initCategory(category));   
-            }
-        }
-        this.toggleCategory();
-    }
-
-    addNewService(categoryIndex:number){
+    addNewService(){
         this.serviceListChange=true;
         this.newServiceAdded=true;
         
         if(this.newServiceForm.valid){
-            const category:FormGroup=<FormGroup>(<FormArray>this.servForm.controls["categories"]).at(categoryIndex);
+            const control=(<FormArray>this.servForm.controls["categories"]);
+            
             let service:IService={
                 name:this.newServiceForm.controls.newServiceName.value,
-                category:category.value.name,
+                category:this.newServiceForm.controls.newServiceCategory.value,
                 description:this.newServiceForm.controls.newServiceDescription.value
             }
             let tags:any=[];
@@ -189,9 +155,16 @@ export class BcServRevision {
                 tags.push(tag.value.key,tag.value.value);
             }
             service.tags=tags;
-            (<FormArray>category.controls.services).controls.push(this.initService(service));
+            const category:FormGroup=<FormGroup>control.controls.find(cat=>
+                cat.value.name.toLowerCase().indexOf(this.newServiceForm.controls.newServiceCategory.value.toLowerCase())>-1);
+            if(category!=undefined){
+                (<FormArray>category.controls.services).controls.push(this.initService(service));
+            }else{
+                control.push(this.initCategory({name:service.category,services:[service]}));
+            }
+            
         }
-        this.toggleService(categoryIndex);
+        this.toggleService();
     }
 
     initCategory(category:{name:String,services:IService[]}){

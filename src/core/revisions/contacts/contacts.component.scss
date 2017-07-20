@@ -10,6 +10,7 @@
 
 .bc-add-tag:hover{
   color:map-get($bc-teal,400);
+  cursor: pointer;
 }
 
 .bc-revision-contact{
@@ -17,8 +18,8 @@
   margin-right:1%
 }
 
-.ng-valid[required], .ng-valid.required  {
-  border-left: 5px solid #42A948; /* green */
+input, select{
+    font-family: inherit !important;
 }
 
 .ng-invalid:not(form):not(div)  {
@@ -26,5 +27,6 @@
 }
 
 .bc-add-tag{
+  font-weight: bold;
   margin-left:1%
 }

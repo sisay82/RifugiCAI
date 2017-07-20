@@ -3,10 +3,6 @@
 
 @include bc-typography();
 
-.ng-valid[required], .ng-valid.required  {
-  border-left: 5px solid #42A948; /* green */
-}
-
 .ng-invalid:not(form):not(div)  {
   border-left: 5px solid #a94442; /* red */
 }
@@ -18,8 +14,14 @@
 
 .bc-add-tag:hover{
   color:map-get($bc-teal,400);
+  cursor: pointer;
+}
+
+input, select{
+    font-family: inherit !important;
 }
 
 .bc-add-tag{
-  margin-left:1%
+  font-weight: bold;
+  margin-left:1%;
 }

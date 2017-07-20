@@ -1,5 +1,5 @@
 <div [hidden]="!displayError&&!maskError" class="alert alert-danger">Error Occurred!</div>
-<div class="bc-h6 bc-catastal-title">Catastali</div>
+<div class="bc-h6 bc-catastal-title">Dati Catastali</div>
 <form style="position:relative" [formGroup]="catastalForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
@@ -59,42 +59,44 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">ISO14001</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-body" style="display:inline;white-space: nowrap">ISO14001</div>
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="ISO14001">
+                    class="form-control bc-catastal-check-content"  formControlName="ISO14001">
                 <br>
             </div>
         </div>
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Regolarità Edilizia</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="buildingRegulation">
+                    class="form-control bc-catastal-check-content"  formControlName="buildingRegulation">
                 <br>
             </div>
         </div>
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Coerenza Materica</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="matericalCoherence">
+                    class="form-control bc-catastal-check-content"  formControlName="matericalCoherence">
                 <br>
             </div>
         </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Regolarità Urbana</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="cityPlanRegulation">
+                    class="form-control bc-catastal-check-content"  formControlName="cityPlanRegulation">
                 <br>
             </div>
         </div>
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Regolarità Antincendio</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="fireRegulation">
+                    class="form-control bc-catastal-check-content"  formControlName="fireRegulation">
                 <br>
             </div>
         </div>
@@ -139,25 +141,25 @@
     <div style="display: flex;flex-direction:row">
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Total Green</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="greenCertification">
+                    class="form-control bc-catastal-check-content"  formControlName="greenCertification">
                 <br>
             </div>
         </div>
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Generatore</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="powerGenerator">
+                    class="form-control bc-catastal-check-content"  formControlName="powerGenerator">
                 <br>
             </div>
         </div>
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Fotovoltaico</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="photovoltaic">
+                    class="form-control bc-catastal-check-content"  formControlName="photovoltaic">
                 <br>
             </div>
         </div>
@@ -176,25 +178,25 @@
         </div>
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Scarico a Norma</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="regulation">
+                    class="form-control bc-catastal-check-content"  formControlName="regulation">
                 <br>
             </div>
         </div>
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Separatore</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="oilSeparator">
+                    class="form-control bc-catastal-check-content"  formControlName="oilSeparator">
                 <br>
             </div>
         </div>
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Riciclaggio</div>
-            <div style="width:50%;margin-left:25%">
+            <div class="bc-catastal-check-content">
                 <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="recycling">
+                    class="form-control bc-catastal-check-content"  formControlName="recycling">
                 <br>
             </div>
         </div>

@@ -176,57 +176,63 @@
         <bc-divider></bc-divider>
     </div>
  </form>
- <form [formGroup]="newSubjectForm">
-    <div style="display: flex;flex-direction:row;align-items:center">
-        <div class="bc-revision-management">
-            <div class="bc-body" style="white-space: nowrap">Nome</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="newName">
+<div (click)="toggleSubject()" class="bc-body bc-add-tag" style="white-space:nowrap;flex:1">
+    <bc-icon name="plus" size=s></bc-icon>
+    Aggiungi Custode
+</div>
+<div *ngIf="!isHiddenSubject()">
+    <form [formGroup]="newSubjectForm">
+        <div style="display: flex;flex-direction:row;align-items:center">
+            <div class="bc-revision-management">
+                <div class="bc-body" style="white-space: nowrap">Nome</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="newName">
+            </div>
+            <div class="bc-revision-management">
+                <div class="bc-body" style="white-space: nowrap">Cognome</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="newSurname">
+            </div>
+            <div class="bc-revision-management">
+                <div class="bc-body" style="white-space: nowrap">Tipo</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="newType">
+            </div>
+            <bc-icon (click)="addNewSubject()" class="bc-add-tag" name="check" size=s></bc-icon>
         </div>
-        <div class="bc-revision-management">
-            <div class="bc-body" style="white-space: nowrap">Cognome</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="newSurname">
+        <div style="display: flex;flex-direction:row">
+            <div class="bc-revision-management">
+                <div class="bc-body" style="white-space: nowrap">Telefono Fisso</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="newFixedPhone">
+            </div>
+            <div class="bc-revision-management">
+                <div class="bc-body" style="white-space: nowrap">Cellulare</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="newMobilePhone">
+            </div>
+            <div class="bc-revision-management">
+                <div class="bc-body" style="white-space: nowrap">P.IVA</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="newTaxCode">
+            </div>
         </div>
-        <div class="bc-revision-management">
-            <div class="bc-body" style="white-space: nowrap">Tipo</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="newType">
+        <div style="display: flex;flex-direction:row">
+            <div class="bc-revision-management">
+                <div class="bc-body" style="white-space: nowrap">Mail</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="newMail">
+            </div>
+            <div class="bc-revision-management">
+                <div class="bc-body" style="white-space: nowrap">PEC</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="newPec">
+            </div>
+            <div class="bc-revision-management">
+                <div class="bc-body" style="white-space: nowrap">WebSite</div>
+                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                    class="form-control" formControlName="newWebSite">
+            </div>
         </div>
-        <bc-icon (click)="addNewSubject()" class="bc-add-tag" name="plus" size=s></bc-icon>
-    </div>
-    <div style="display: flex;flex-direction:row">
-        <div class="bc-revision-management">
-            <div class="bc-body" style="white-space: nowrap">Telefono Fisso</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="newFixedPhone">
-        </div>
-        <div class="bc-revision-management">
-            <div class="bc-body" style="white-space: nowrap">Cellulare</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="newMobilePhone">
-        </div>
-        <div class="bc-revision-management">
-            <div class="bc-body" style="white-space: nowrap">P.IVA</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="newTaxCode">
-        </div>
-    </div>
-    <div style="display: flex;flex-direction:row">
-        <div class="bc-revision-management">
-            <div class="bc-body" style="white-space: nowrap">Mail</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="newMail">
-        </div>
-        <div class="bc-revision-management">
-            <div class="bc-body" style="white-space: nowrap">PEC</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="newPec">
-        </div>
-        <div class="bc-revision-management">
-            <div class="bc-body" style="white-space: nowrap">WebSite</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="newWebSite">
-        </div>
-    </div>
- </form>
+    </form>
+</div>

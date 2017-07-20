@@ -37,6 +37,8 @@ export class BcGeoRevision {
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
     formValidSub:Subscription;
+    hiddenTag:boolean=true;
+
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
             region:["",[Validators.required,Validators.pattern(stringValidator)]],//required and string
@@ -54,7 +56,7 @@ export class BcGeoRevision {
         }); 
 
         this.newTagForm = fb.group({
-            newKey:["Chiave",[Validators.pattern(stringValidator),Validators.required]],
+            newKey:["Informazione",[Validators.pattern(stringValidator),Validators.required]],
             newValue:["Valore",[Validators.pattern(stringValidator),Validators.required]]
         });
 
@@ -87,6 +89,14 @@ export class BcGeoRevision {
 
         shared.activeComponent="geographic";
     } 
+
+    isHiddenTag(){
+        return this.hiddenTag;
+    }
+
+    toggleTag(){
+        this.hiddenTag=!this.hiddenTag;
+    }
 
     addTag(key:String,value:String){
         const control = <FormArray>this.geoForm.controls['tags'];

@@ -199,6 +199,7 @@ export class BcMaskRevision {
         this.maskForm.controls.category.setValue(this.shelter.category);
         this.maskForm.controls.regional_type.setValue(this.shelter.regional_type);
       }
+
   }   
 
   ngOnDestroy(){
