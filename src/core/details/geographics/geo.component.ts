@@ -36,7 +36,7 @@ export class BcGeo {
 
   getZoom(){
     if(this.data!=undefined && this.data.location!=undefined){
-      return 11;
+      return 17;
     }else{
       return 6;//default
     }
