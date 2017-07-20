@@ -252,20 +252,20 @@ $bc-list-item-heights: (
         @include bc-list-item-disable($accent, $background, $foreground);
         
         .bc-line {
-            color: bc-color($accent, 700);
+            color: bc-color($accent, 500);
             
             // all lines but the top line should have smaller text
             &:nth-last-child(1) {
-                color: bc-color($accent, 400);
+                color: bc-color($accent, 500);
             }
 
             &:nth-child(1) {
-                color: bc-color($accent, 700);
+                color: bc-color($accent, 500);
             }
         }
         
         .bc-icon {
-            color: bc-color($accent, 400);
+            color: bc-color($accent, 500);
         }
     }
 }
