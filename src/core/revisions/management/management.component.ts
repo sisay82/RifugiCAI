@@ -51,6 +51,7 @@ export class BcManagementRevision {
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
     maskError:boolean=false;
+    hiddenSubject:boolean=true;
     formValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.managForm = fb.group({
@@ -112,6 +113,15 @@ export class BcManagementRevision {
 
         shared.activeComponent="management";
     } 
+
+
+    isHiddenSubject(){
+        return this.hiddenSubject;
+    }
+
+    toggleSubject(){
+        this.hiddenSubject=!this.hiddenSubject;
+    }
 
     removeSubject(index){
         this.subjectChange=true;

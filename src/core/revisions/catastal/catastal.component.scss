@@ -10,13 +10,27 @@
 
 .bc-catastal-check{
   position:relative;
-  align-items: center;
   margin-left:2%;
-  margin-right:2%
+  display: flex;
+  flex-direction: row;
+  margin-right:2%;
+  align-items: center;
+  white-space:nowrap;
+}
+
+.bc-catastal-check-content{
+  width:20px;
+  height:20px;
+  margin-left:1%;
 }
 
 .bc-add-tag:hover{
   color:map-get($bc-teal,400);
+  cursor: pointer;
+}
+
+input, select{
+    font-family: inherit !important;
 }
 
 .bc-revision-catastal{
@@ -24,14 +38,11 @@
   margin-right:1%
 }
 
-.ng-valid[required], .ng-valid.required  {
-  border-left: 5px solid #42A948; /* green */
-}
-
 .ng-invalid:not(form):not(div)  {
   border-left: 5px solid #a94442; /* red */
 }
 
 .bc-add-tag{
+  font-weight: bold;
   margin-left:1%
 }

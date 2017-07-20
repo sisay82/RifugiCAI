@@ -51,6 +51,7 @@ export class BcContactsRevision {
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
     maskError:boolean=false;
+    hiddenOpening:boolean=true;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.contactForm = fb.group({
             fixedPhone:["",Validators.pattern(telephoneValidator)],
@@ -97,6 +98,14 @@ export class BcContactsRevision {
 
         shared.activeComponent="contacts";
     } 
+
+    toggleOpenings(){
+        this.hiddenOpening=!this.hiddenOpening;
+    }
+
+    isHiddenOpenings(){
+        return this.hiddenOpening;
+    }
 
     getEnumOwnerNames():any[]{
         let names:any[]=[];
