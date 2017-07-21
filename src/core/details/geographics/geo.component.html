@@ -28,7 +28,7 @@
     <div style="display:flex;flex-direction:row">
         <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Commissione Regionale:</div>  {{data?(data.location?(data.location.ownerRegion || '----'):'----'):'----'}}</div>
     </div>
-    <div style="width: 100%;height:256px;position:absolute">
+    <div style="width: 100%;height:256px;position:absolute;z-index:1">
         <bc-map [initialCenter]="center" [openTooltipCenter]=true [initialZoom]="getZoom()" [enableExpansion]=false></bc-map>
     </div>
     
