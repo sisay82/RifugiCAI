@@ -1,5 +1,5 @@
 <form style="position:relative" [formGroup]="servForm">
-    <div [hidden]="!displayError&&!maskError" class="alert alert-danger">Error Occurred!</div>
+    <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
     <div formArrayName="categories">
         <div *ngFor="let category of servForm.controls.categories.controls;let t = index">
             <div [formGroupName]="t">

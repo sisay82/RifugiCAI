@@ -126,7 +126,7 @@ export class BcMaskRevision {
         this.shared.onMaskSave(shelter);
       }
     }else{
-      this.shared.onMaskInvalid();
+      this.shared.onMaskSave(null);
     }
   }
 

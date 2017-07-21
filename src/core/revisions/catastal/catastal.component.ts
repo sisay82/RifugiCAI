@@ -17,10 +17,10 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/of';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
-let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+let telephoneValidator=/[0-9]*/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
-let urlValidator=/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+let urlValidator=/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
 
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
@@ -95,28 +95,23 @@ export class BcCatastalRevision {
 
         this.formCatValidSub = this.catastalForm.statusChanges.subscribe((value)=>{
             if(value=="VALID"){
-                if(this.drainForm.valid&&this.energyForm.valid)
+                if(this.drainForm.valid&&this.energyForm.valid&&!this.maskError){
                     this.displayError=false;
-            }else if(value=="INVALID"){
-                this.displayError=true;
+                }
             }
         });
 
         this.formDrainValidSub = this.drainForm.statusChanges.subscribe((value)=>{
             if(value=="VALID"){
-                if(this.catastalForm.valid&&this.energyForm.valid)
+                if(this.catastalForm.valid&&this.energyForm.valid&&!this.maskError)
                     this.displayError=false;
-            }else if(value=="INVALID"){
-                this.displayError=true;
             }
         });
 
         this.formEnergyValidSub = this.energyForm.statusChanges.subscribe((value)=>{
             if(value=="VALID"){
-                if(this.drainForm.valid&&this.catastalForm.valid)
+                if(this.drainForm.valid&&this.catastalForm.valid&&!this.maskError)
                     this.displayError=false;
-            }else if(value=="INVALID"){
-                this.displayError=true;
             }
         });
 
@@ -126,18 +121,24 @@ export class BcCatastalRevision {
 
         this.maskValidSub = shared.maskValid$.subscribe(()=>{
             this.maskError=false;
+            if(this.drainForm.valid&&this.catastalForm.valid&&this.energyForm.valid){
+                this.displayError=false;
+            }
         });
 
         this.shared.onActiveOutletChange("revision");
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            if(this.catastalForm.dirty||this.energyForm.dirty||this.drainForm.dirty){
-                this.disableSave=true;
-                this.save(true);
+            if(!this.maskError&&this.catastalForm.valid&&this.energyForm.valid&&this.drainForm.valid){
+                if(this.catastalForm.dirty||this.energyForm.dirty||this.drainForm.dirty){
+                    this.disableSave=true;
+                    this.save(true);
+                }else{
+                    this.shared.onMaskConfirmSave("catastal");
+                }
             }else{
-                this.shared.onMaskConfirmSave("catastal");
+                this.displayError=true;
             }
-            
         });
 
         shared.activeComponent="catastal";

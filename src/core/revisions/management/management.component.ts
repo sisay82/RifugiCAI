@@ -11,10 +11,10 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
-let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+let telephoneValidator=/[0-9]*/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
-let urlValidator=/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+let urlValidator=/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
 
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
@@ -88,9 +88,9 @@ export class BcManagementRevision {
 
         this.formValidSub = this.managForm.statusChanges.subscribe((value)=>{
             if(value=="VALID"){
-                this.displayError=false;
-            }else if(value=="INVALID"){
-                this.displayError=true;
+                if(!this.maskError){
+                    this.displayError=false;
+                }
             }
         });
 
@@ -100,14 +100,21 @@ export class BcManagementRevision {
 
         this.maskValidSub = shared.maskValid$.subscribe(()=>{
             this.maskError=false;
+            if(this.managForm.valid){
+                this.displayError=false;
+            }
         });
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            if(this.subjectChange||this.managForm.dirty){
-                this.disableSave=true;
-                this.save(true);
+            if(!this.maskError&&this.managForm.valid){
+                if(this.subjectChange||this.managForm.dirty){
+                    this.disableSave=true;
+                    this.save(true);
+                }else{
+                    this.shared.onMaskConfirmSave("management");
+                }
             }else{
-                this.shared.onMaskConfirmSave("management");
+                this.displayError=true;
             }
         });
 
