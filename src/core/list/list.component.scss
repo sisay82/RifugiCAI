@@ -37,9 +37,6 @@ $bc-list-no-border: 0px;
 
   &[no-border], &[data-no-border] {
     @include bc-list-item-no-border();
-    & bc-divider {
-      display:none;
-    }
   }
 
   &[dense], &[data-dense] {
