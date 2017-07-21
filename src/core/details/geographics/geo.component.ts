@@ -49,7 +49,7 @@ export class BcGeo {
     let routeSub:Subscription=this._route.parent.params.subscribe(params=>{
       let shelSub=this.shelterService.getShelterSection(params['id'],"geoData").subscribe(shelter=>{
         this.data=shelter.geoData;
-        if(this.data.location!=undefined){
+        if(this.data!=undefined&&this.data.location!=undefined){
           this.center.next([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number]);
         }
         if(shelSub!=undefined){
