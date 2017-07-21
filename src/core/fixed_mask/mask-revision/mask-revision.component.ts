@@ -28,12 +28,12 @@ export class BcMaskRevision {
   formValiditySub:Subscription;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
     this.maskForm = fb.group({
-        name:["",Validators.pattern(stringValidator)],
-        alias:["",Validators.pattern(stringValidator)],
+        name:["",[Validators.required,Validators.pattern(stringValidator)]],
+        alias:["",[Validators.required,Validators.pattern(stringValidator)]],
         idCai:["",Validators.pattern(stringValidator)],
-        type:["",Validators.pattern(stringValidator)],
-        branch:["",Validators.pattern(stringValidator)],
-        owner:["",Validators.pattern(stringValidator)],
+        type:["",[Validators.required,Validators.pattern(stringValidator)]],
+        branch:["",[Validators.required,Validators.pattern(stringValidator)]],
+        owner:["",[Validators.required,Validators.pattern(stringValidator)]],
         category:["",Validators.pattern(stringValidator)],
         regional_type:["",Validators.pattern(stringValidator)],
     }); 
