@@ -17,7 +17,7 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/of';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
-let telephoneValidator=/[0-9]*/;
+let telephoneValidator=/^([0-9]*)*$/;
 let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
 let urlValidator=/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
@@ -123,6 +123,14 @@ export class BcCatastalRevision {
             this.maskError=false;
             if(this.drainForm.valid&&this.catastalForm.valid&&this.energyForm.valid){
                 this.displayError=false;
+            }
+        });
+
+        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
+            this.disableSave=true;
+            this.revisionService.onChildDisableSaveAnswer();
+            if(disableSaveSub!=undefined){
+                disableSaveSub.unsubscribe();
             }
         });
 

@@ -15,6 +15,21 @@ export class BcRevisionsService{
 
     private childDeleteSource = new Subject<string>();
     childDelete$ = this.childDeleteSource.asObservable();
+
+    private childDisableSaveRequestSource = new Subject<void>();
+    childDisableSaveRequest$ = this.childDisableSaveRequestSource.asObservable();
+
+    private childDisableSaveAnswerSource = new Subject<void>();
+    childDisableSaveAnswer$ = this.childDisableSaveAnswerSource.asObservable();
+
+    onChildDisableSaveRequest(){
+        this.childDisableSaveRequestSource.next();
+    }
+
+    onChildDisableSaveAnswer(){
+        this.childDisableSaveAnswerSource.next();
+    }
+
     onChildSave(shelter:IShelter,section:string){
         this.childSaveSource.next({shelter:shelter,section:section});
     }

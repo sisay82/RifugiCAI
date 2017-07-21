@@ -36,7 +36,13 @@ export class BcRevisions{
         
         this.maskCancelSub=shared.maskCancel$.subscribe(()=>{
             delete(this.ShelterToUpdate);
-            shared.onMaskConfirmCancel();
+            let disableSaveSub = this.revisionService.childDisableSaveAnswer$.subscribe(()=>{
+                shared.onMaskConfirmCancel();
+                if(disableSaveSub!=undefined){
+                    disableSaveSub.unsubscribe();
+                }
+            });
+            this.revisionService.onChildDisableSaveRequest();
         });
 
         this.childDeleteSub=revisionService.childDelete$.subscribe(section=>{
