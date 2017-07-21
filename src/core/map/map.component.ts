@@ -111,7 +111,6 @@ export class BcMap implements OnInit{
         L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
             attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
         }).addTo(this.map);
-        this.map.on("zoom",this.moveEvent,this);
         this.map.on("click",function(e:L.MouseEvent){
             e.target.eachLayer(function(layer){layer.closeTooltip()})
         });
