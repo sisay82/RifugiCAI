@@ -118,7 +118,6 @@ export class BcMap implements OnInit{
         L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
             attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
         }).addTo(this.map);
-        this.map.on("zoom",this.moveEvent,this);
         this.map.on("click",function(e:L.MouseEvent){
             e.target.eachLayer(function(layer){layer.closeTooltip()})
         });
@@ -140,7 +139,7 @@ export class BcMap implements OnInit{
 
     markRegions(){
         for(let item of BcMap.latLngCountries){       
-            let markerNumberSub = this.shelterService.getConutryMarkersNumber(item.optional.id).subscribe(obj=>{
+            let countryMarkerSub=this.shelterService.getConutryMarkersNumber(item.optional.id).subscribe(obj=>{
                 if(obj!=undefined&&obj.num!=undefined&&obj.num>0){
                     let regionIcon= L.divIcon({
                         className:'',
@@ -157,8 +156,8 @@ export class BcMap implements OnInit{
                     });
                     this.addMarker(L.marker(item.latLng,{icon:regionIcon}).on("click",this.openPopupRegion,this));
                 }
-                if(markerNumberSub!=undefined){
-                    markerNumberSub.unsubscribe();
+                if(countryMarkerSub!=undefined){
+                    countryMarkerSub.unsubscribe();
                 }
             });
         }
@@ -183,7 +182,7 @@ export class BcMap implements OnInit{
     }
 
     setMarkersAround(point:L.LatLng){
-        let sheltersAroundSub=this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom()).subscribe(shelters=>{
+        let sheltersAroundSub = this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom()).subscribe(shelters=>{
             for(let shelter of shelters){
                 if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){
                     let popup:string=`<div style="width:250px;height:150px;background:white;border:0.1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
