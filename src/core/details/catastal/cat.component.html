@@ -1,4 +1,5 @@
 <div style="display:block;margin-left:4px;background:white">
+    <div class="bc-h6 bc-detail-title">Dati Catastali e Certificazioni</div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Anno di Costruzione:</div>
@@ -21,49 +22,101 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <bc-icon *ngIf="catastal.ISO14001!='undefined'&&catastal.ISO14001=='true'" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="catastal.ISO14001=='undefined'||catastal.ISO14001=='false'" name="square-o" size=s></bc-icon>
-            <div class="bc-body-strong" style="margin-right:4px">ISO14001</div>
+            <bc-icon *ngIf="catastal.fireRegulation!=null&&catastal.fireRegulation==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.fireRegulation==null||catastal.fireRegulation==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Regolarità Antincendio</div>
         </div>
+        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="catastal.buildingRegulation!=null&&catastal.buildingRegulation==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.buildingRegulation==null||catastal.buildingRegulation==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Regolarità Urbanistica</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="catastal.cityPlanRegulation!=null&&catastal.cityPlanRegulation==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.cityPlanRegulation==null||catastal.cityPlanRegulation==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Regolarità Edilizia</div>
+        </div>
+        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="catastal.ISO14001!=null&&catastal.ISO14001==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.ISO14001==null||catastal.ISO14001==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Certificazione ISO 14001</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Consistenza Tipologica:</div>
             <div class="bc-body">{{getTypoValue()||'----'}}</div>
         </div>
-    </div>
-    <bc-divider></bc-divider>
-    <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Classe Energetica:</div>
-            <div class="bc-body">{{energy?(energy.class || '----'):'----'}}</div>
-        </div>        
-    </div>
-    <div style="display: flex;flex-direction:row">
-        <div style="flex:1" class="bc-body" *ngIf="catastal!=undefined&&catastal.fireRegulation!=undefined&&catastal.fireRegulation==true">Regolarità Antincendio</div>       
-        <div style="flex:1" class="bc-body" *ngIf="catastal!=undefined&&catastal.buildingRegulation!=undefined&&catastal.buildingRegulation==true">Regolarità Urbana</div>       
-        <div style="flex:1" class="bc-body" *ngIf="energy!=undefined&&energy.greenCertification!=undefined&&greenCertification==true">Green</div>       
-        <div style="flex:1" class="bc-body" *ngIf="drain!=undefined&&drain.recycling!=undefined&&drain.recycling==true">Riciclaggio</div>       
-        <div style="flex:1" class="bc-body" *ngIf="drain!=undefined&&drain.regulation!=undefined&&drain.regulation==true">Scarico a Norma</div>       
-        <div style="flex:1" class="bc-body" *ngIf="drain!=undefined&&drain.oilSeparator!=undefined&&drain.oilSeparator==true">Smaltimento Reflui</div>       
-    </div>
-    <bc-divider></bc-divider>
-    <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Tipo:</div>
-            <div class="bc-body">{{drain?(drain.type):'----'}}</div>
-        </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Energia Necessaria:</div>
-            <div class="bc-body">{{energy?(energy.energy || '----'):'----'}}</div>
+        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="catastal.matericalCoherence!=null&&catastal.matericalCoherence==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.matericalCoherence==null||catastal.matericalCoherence==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Consistenza Materica</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Consistenza Corpo Principale:</div>
-            <div class="bc-body">{{catastal?(catastal.mainBody):'----'}}</div>
+            <div class="bc-body">{{catastal?(catastal.mainBody || '----'):'----'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Consistenza Corpi Secondari:</div>
-            <div class="bc-body">{{catastal?(catastal.secondaryBody):'----'}}</div>
+            <div class="bc-body">{{catastal?(catastal.secondaryBody || '----'):'----'}}</div>
+        </div>
+    </div>
+    <bc-divider></bc-divider>
+    <div class="bc-h6 bc-detail-title">Energia</div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Classe Energetica:</div>
+            <div class="bc-body">{{energy?(energy.class || '----'):'----'}}</div>
+        </div>        
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Energia (KW):</div>
+            <div class="bc-body">{{energy?(energy.energy || '----'):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div *ngIf="energy!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="energy.photovoltaic!=null&&energy.photovoltaic==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="energy.photovoltaic==null||energy.photovoltaic==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Fotovoltaico</div>
+        </div>
+        <div *ngIf="energy!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="energy.powerGenerator!=null&&energy.powerGenerator==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="energy.powerGenerator==null||energy.powerGenerator==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Generatore Diesel</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">      
+        <div *ngIf="energy!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="energy.greenCertification!=null&&energy.greenCertification==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="energy.greenCertification==null||energy.greenCertification==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Green</div>
+        </div>  
+    </div>
+    <bc-divider></bc-divider>
+    <div class="bc-h6 bc-detail-title">Scarico</div>
+    <div style="display: flex;flex-direction:row">   
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.recycling!=null&&drain.recycling==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.recycling==null||drain.recycling==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Riciclaggio</div>
+        </div>  
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.regulation!=null&&drain.regulation==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.regulation==null||drain.regulation==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Scarico a Norma</div>
+        </div>  
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.oilSeparator!=null&&drain.oilSeparator==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.oilSeparator==null||drain.oilSeparator==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Disoleatore</div>
+        </div>  
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Tipo di Scarico:</div>
+            <div class="bc-body">{{drain?(drain.type):'----'}}</div>
         </div>
     </div>
 </div>
