@@ -9,16 +9,18 @@
             <div class="bc-body-strong" style="margin-right:4px">Cellulare:</div>
             <div class="bc-body">{{contacts?(contacts.mobilePhone || '------------'):'------------'}}</div>
         </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Ruolo:</div>
             <div class="bc-body">{{contacts?(contacts.role || '------------'):'------------'}}</div>
         </div>
-    </div>
-    <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Mail:</div>
             <div class="bc-body">{{contacts?(contacts.emailAddress || '------------'):'------------'}}</div>
         </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">PEC:</div>
             <div class="bc-body">{{contacts?(contacts.mailPec || '------------'):'------------'}}</div>
@@ -29,18 +31,20 @@
     </div>
     <bc-divider></bc-divider>
     <div class="bc-h6 bc-detail-title">Aperture:</div>
-    <div style="display: flex;flex-direction:row">
-        <div style="flex:1">
-            <div class="bc-body-strong">Inizio</div>
-            <div class="bc-body" *ngFor="let item of openings">{{item.startDate | date:"dd/MM/yy" }}</div>
-        </div>
-        <div style="flex:1">
-            <div class="bc-body-strong">Fine</div>
-            <div class="bc-body" *ngFor="let item of openings">{{item.endDate | date:"dd/MM/yy" }}</div>
-        </div>
-        <div style="flex:1">
-            <div class="bc-body-strong">Tipo</div>
-            <div class="bc-body" *ngFor="let item of openings">{{item.type}}</div>
+    <div *ngFor="let item of openings">
+        <div style="display: flex;flex-direction:row">
+            <div style="flex:1;display: flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:1%">Tipo:</div>
+                <div class="bc-body">{{item.type}}</div>
+            </div>
+            <div *ngIf="item.startDate!=undefined&&item.startDate!=null" style="flex:1;display: flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:1%">Inizio:</div>
+                <div class="bc-body"> {{item.startDate | date:"dd/MM/yy" }}</div>
+            </div>
+            <div *ngIf="item.endDate!=undefined&&item.endDate!=null" style="flex:1;display: flex;flex-direction:row">
+                <div class="bc-body-strong" style="margin-right:1%">Fine:</div>
+                <div class="bc-body">{{item.endDate | date:"dd/MM/yy" }}</div>
+            </div>
         </div>
     </div>
 </div>

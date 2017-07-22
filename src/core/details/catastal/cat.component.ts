@@ -23,7 +23,7 @@ export class BcCatastal {
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
     this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
       this.shared.onActiveComponentAnswer("catastal");
-    })
+    });
 
     this.shared.onActiveOutletChange("content");
   }
