@@ -78,40 +78,40 @@
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
-        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <bc-icon *ngIf="catastal.photovoltaic!=null&&catastal.photovoltaic==true" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="catastal.photovoltaic==null||catastal.photovoltaic==false" name="square-o" size=s></bc-icon>
+        <div *ngIf="energy!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="energy.photovoltaic!=null&&energy.photovoltaic==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="energy.photovoltaic==null||energy.photovoltaic==false" name="square-o" size=s></bc-icon>
             <div class="bc-body-strong" style="margin-right:4px">Fotovoltaico</div>
         </div>
-        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <bc-icon *ngIf="catastal.powerGenerator!=null&&catastal.powerGenerator==true" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="catastal.powerGenerator==null||catastal.powerGenerator==false" name="square-o" size=s></bc-icon>
+        <div *ngIf="energy!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="energy.powerGenerator!=null&&energy.powerGenerator==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="energy.powerGenerator==null||energy.powerGenerator==false" name="square-o" size=s></bc-icon>
             <div class="bc-body-strong" style="margin-right:4px">Generatore Diesel</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">      
-        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <bc-icon *ngIf="catastal.greenCertification!=null&&catastal.greenCertification==true" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="catastal.greenCertification==null||catastal.greenCertification==false" name="square-o" size=s></bc-icon>
+        <div *ngIf="energy!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="energy.greenCertification!=null&&energy.greenCertification==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="energy.greenCertification==null||energy.greenCertification==false" name="square-o" size=s></bc-icon>
             <div class="bc-body-strong" style="margin-right:4px">Green</div>
         </div>  
     </div>
     <bc-divider></bc-divider>
     <div class="bc-h6 bc-detail-title">Scarico</div>
     <div style="display: flex;flex-direction:row">   
-        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <bc-icon *ngIf="catastal.recycling!=null&&catastal.recycling==true" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="catastal.recycling==null||catastal.recycling==false" name="square-o" size=s></bc-icon>
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.recycling!=null&&drain.recycling==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.recycling==null||drain.recycling==false" name="square-o" size=s></bc-icon>
             <div class="bc-body-strong" style="margin-right:4px">Riciclaggio</div>
         </div>  
-        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <bc-icon *ngIf="catastal.regulation!=null&&catastal.regulation==true" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="catastal.regulation==null||catastal.regulation==false" name="square-o" size=s></bc-icon>
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.regulation!=null&&drain.regulation==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.regulation==null||drain.regulation==false" name="square-o" size=s></bc-icon>
             <div class="bc-body-strong" style="margin-right:4px">Scarico a Norma</div>
         </div>  
-        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <bc-icon *ngIf="catastal.oilSeparator!=null&&catastal.oilSeparator==true" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="catastal.oilSeparator==null||catastal.oilSeparator==false" name="square-o" size=s></bc-icon>
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.oilSeparator!=null&&drain.oilSeparator==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.oilSeparator==null||drain.oilSeparator==false" name="square-o" size=s></bc-icon>
             <div class="bc-body-strong" style="margin-right:4px">Disoleatore</div>
         </div>  
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
