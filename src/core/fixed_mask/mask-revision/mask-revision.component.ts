@@ -238,7 +238,6 @@ export class BcMaskRevision {
         }else{
           let component = this.shared.activeComponent;
           this.shared.onActiveOutletChange("content");
-          console.log(this.shared.activeOutlet);
           this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
           if(shelSub!=undefined)
             shelSub.unsubscribe();

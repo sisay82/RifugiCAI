@@ -9,7 +9,7 @@ import {IShelter,IButton}from '../../shared/types/interfaces';
     selector: 'bc-shelters-List',
     templateUrl: 'shelterList.component.html',
     styleUrls: ['shelterList.component.scss'],
-    providers: [ShelterService]
+    providers: [ShelterService,BcSharedService]
 })
 export class BcShelterList {
     list_view_button:IButton={ref:'list',icon:'th-list',text:'Lista',dark_theme:false};

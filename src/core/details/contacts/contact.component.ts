@@ -18,7 +18,7 @@ export class BcContact {
   contacts:IContacts={name:null,role:null};
   openings:IOpening[]=[];
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
-    shared.activeComponent="contact";
+    shared.activeComponent="contacts";
     this.shared.onActiveOutletChange("content");
   }
 

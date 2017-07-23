@@ -30,13 +30,8 @@ export interface IMenuElement{
     default?:boolean
 }
 
-export interface IMenuLayer{
-    layerName?:String,
-    elements:[IMenuElement]
-}
-
 export interface IMenu{
-    layers:[IMenuLayer];
+    elements:[IMenuElement];
 }
 
 export interface ILocation{

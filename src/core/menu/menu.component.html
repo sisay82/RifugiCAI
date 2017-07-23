@@ -1,12 +1,10 @@
-<div [class]="getClass()">
-    <div [@slideLeftRight]="menuState" class="bc-menu-select" id="side-menu" [style.visibility]="_visibility">
-        <ul class="nav flex-column">
-            <bc-menu-layer *ngFor="let layer of menuElements.layers">
-                <bc-menu-item [menu_item]="item" *ngFor="let item of layer.elements" >
-                    <bc-icon [name]="item.icon" size=xs></bc-icon>
-                    {{item.name}}
-                </bc-menu-item>
-            </bc-menu-layer>
-        </ul>
-    </div>
+<div style="width:200px;position:relative">
+    <bc-list dense>
+        <button (click)="clickItem(item.link)" bc-list-item *ngFor="let item of menuElements.elements">
+            <div style="display:flex;flex-direction:row;align-items:center">
+                <bc-icon [name]="item.icon" size=xs></bc-icon>
+                <div>{{item.name}}</div>
+            </div>
+        </button>
+    </bc-list>
 </div>
