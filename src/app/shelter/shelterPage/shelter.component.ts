@@ -10,7 +10,7 @@ import {IMenu} from '../../shared/types/interfaces';
 export class BcShelter {
     appMenuElements:IMenu={
       elements:[
-        {name:"Dati geografici",icon:"map-signs",link:"geographic"},
+        {name:"Dati geografici",icon:"map-signs",link:"geographic",default:true},
         {name:"Servizi",icon:"home",link:"services"},
         {name:"Contatti e apertura",icon:"phone",link:"contacts"},
         {name:"Proprietá e gestione",icon:"user",link:"management"},
