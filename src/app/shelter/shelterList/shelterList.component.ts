@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ShelterService } from '../shelter.service'
+import { BcSharedService } from '../shared.service'
 import { IShelter,IMenu } from '../../shared/types/interfaces';
 
 @Component({
@@ -7,30 +8,21 @@ import { IShelter,IMenu } from '../../shared/types/interfaces';
     selector: 'bc-shelters-List',
     templateUrl: 'shelterList.component.html',
     styleUrls: ['shelterList.component.scss'],
-    providers: [ShelterService]
+    providers: [ShelterService,BcSharedService]
 })
 export class BcShelterList {
     appMenuElements:IMenu={
-    layers:[{
-      layerName:"Publics",
       elements:[
         {name:"Dati geografici",icon:"map-signs",link:"geographics"},
         {name:"Servizi",icon:"home",link:"#"},
         {name:"Contatti e apertura",icon:"phone",link:"#"},
         {name:"Proprietá e gestione",icon:"user",link:"#"},
-        {name:"Dati catastali",icon:"book",link:"#"}
-        ]},{
-      layerName:"Documents",
-      elements:[
+        {name:"Dati catastali",icon:"book",link:"#"},
         {name:"Documenti",icon:"file-pdf-o",link:"#"},
-        {name:"Immagini",icon:"picture-o",link:"#"}
-        ]},{
-      layerName:"Economy",
-      elements:[
+        {name:"Immagini",icon:"picture-o",link:"#"},
         {name:"Economia",icon:"certificate",link:"#"},
         {name:"Richiesta contributi",icon:"eur",link:"#"},
         {name:"Fruizione",icon:"bar-chart",link:"#"}
-      ]}
     ]
   };
 
