@@ -22,7 +22,7 @@ export namespace Enums {
     //tipo rifugio regionale
     export enum Regional_Type {
         Escursionistico,
-        Aplinistico,
+        Alpinistico,
         Bivacco,
         Non_Classificabile
     }
