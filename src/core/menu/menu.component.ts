@@ -21,7 +21,7 @@ export class BcMenu {
   @Input() menuElements: IMenu;
   toggleMenuSub:Subscription;
 
-  clickItem(link:string){
+  clickItem(link:String){
     console.log(link);
     let outlet=this.shared.activeOutlet;
     if(outlet=="revision"){
