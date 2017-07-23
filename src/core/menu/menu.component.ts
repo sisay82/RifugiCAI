@@ -7,6 +7,7 @@ import {
 import { IMenu } from '../../app/shared/types/interfaces';
 import {BcSharedService} from '../../app/shelter/shared.service'
 import { Subscription } from 'rxjs/Subscription';
+import { Router,ActivatedRoute } from '@angular/router';
 
 @Component({
   moduleId: module.id,
@@ -21,11 +22,11 @@ export class BcMenu {
   toggleMenuSub:Subscription;
 
   clickItem(link:string){
-    /*let outlet=this.shared.currentOutlet
+    /*let outlet=this.shared.activeOutlet
     if(outlet=="revision"){
-        this._router.navigate([{outlets:({'revision': [link],'content': null})}],{relativeTo:this._route});
+        this.router.navigate([{outlets:({'revision': [link],'content': null})}],{relativeTo:this.route});
     }else{
-        this._router.navigate([{outlets:({'content': [link],'revision': null})}],{relativeTo:this._route});
+        this.router.navigate([{outlets:({'content': [link],'revision': null})}],{relativeTo:this.route});
     }*/
   }
 
@@ -39,12 +40,21 @@ export class BcMenu {
     this.checkWinPlatform();
   }
 
-  constructor( private shared:BcSharedService){
-    this.menuElements={
-      elements:[
-        {name:"No Menu Provided",icon:"",link:"#"}
-      ]
-    };
+  constructor(private route:ActivatedRoute,private router:Router,private shared:BcSharedService){
+    if(this.menuElements==undefined){
+      this.menuElements={
+        elements:[
+          {name:"No Menu Provided",icon:"",link:"#"}
+        ]
+      };
+    }else{
+      for(let element of this.menuElements.elements){
+        if(element.default!=undefined&&element.default){
+          this.clickItem(element.link);
+          return
+        }
+      }
+    }
   }
   
   checkWinPlatform(){
