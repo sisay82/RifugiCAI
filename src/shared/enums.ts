@@ -13,7 +13,7 @@ export namespace Enums{
     export enum Regional_Type
     {
         Escursionistico,
-        Aplinistico,
+        Alpinistico,
         Bivacco,
         Non_Classificabile
     }
