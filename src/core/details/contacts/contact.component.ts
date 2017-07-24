@@ -32,6 +32,13 @@ export class BcContact {
     }
   }
 
+  gotoSite(webSite:string){
+    if(webSite!=undefined){
+      location.href=webSite;
+    }
+  }
+
+
   ngOnInit(){
     let routeSub=this._route.parent.params.subscribe(params=>{
      let contactSub=this.shelterService.getShelterSection(params['id'],"contacts").subscribe(shelter=>{
