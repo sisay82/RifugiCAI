@@ -1,5 +1,6 @@
 <form style="position:relative" [formGroup]="geoForm">
     <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
+    <div class="bc-h6 bc-geographic-title">Posizione</div>
     <div style="display:flex;flex-direction:row">
         <div style="position:relative;width:20%">
             <div class="bc-body" style="white-space: nowrap">Località</div>
@@ -81,6 +82,7 @@
         </div>  
     </div>
     <bc-divider></bc-divider>
+    <div class="bc-geographic-title bc-h6">Informazioni Aggiuntive</div>
     <div style="position:relative">
         <div *ngIf="data!=undefined&&data.tags!=undefined" formArrayName="tags">
             <div *ngFor="let tag of geoForm.controls.tags.controls;let i = index">

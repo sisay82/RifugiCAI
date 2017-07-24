@@ -186,13 +186,21 @@ export class BcContactsRevision {
     save(confirm){
         if(this.contactForm.valid){
             let shelter:any={_id:this._id,name:this.name};
+            let wSite=null;
+            if(this.contactForm.controls.webAddress.value!=null){
+                wSite="http";
+                if(this.contactForm.controls.webAddress.value.indexOf(wSite)==-1){
+                    wSite+="://"+this.contactForm.controls.webAddress.value;
+                }
+            }
+
             let contacts:IContacts={
                 fixedPhone:this.contactForm.controls.fixedPhone.value || null,
                 mobilePhone:this.contactForm.controls.mobilePhone.value || null,
                 role:this.contactForm.controls.role.value || null,
                 emailAddress:this.contactForm.controls.emailAddress.value || null,
                 mailPec:this.contactForm.controls.mailPec.value || null,
-                webAddress:this.contactForm.controls.webAddress.value || null
+                webAddress:wSite
                 
             }
             const control = <FormArray>this.contactForm.controls['openings'];

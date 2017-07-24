@@ -30,3 +30,19 @@ input, select{
 .ng-invalid:not(form):not(div)  {
   border-left: 5px solid #a94442; /* red */
 }
+
+.bc-management-check{
+  position:relative;
+  margin-left:2%;
+  display: flex;
+  flex-direction: row;
+  margin-right:2%;
+  align-items: center;
+  white-space:nowrap;
+}
+
+.bc-management-check-content{
+  width:20px;
+  height:20px;
+  margin-left:1%;
+}
