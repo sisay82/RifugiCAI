@@ -142,7 +142,7 @@ export class BcGeoRevision {
 
     initTag(key:String,value:String){
         return this.fb.group({
-            key:[key,Validators.pattern(stringValidator)],
+            key:[key,[Validators.pattern(stringValidator),Validators.required]],
             value: [value,Validators.pattern(stringValidator)]
         });
     }

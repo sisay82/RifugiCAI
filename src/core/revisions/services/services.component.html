@@ -27,9 +27,11 @@
                                     <div style="position:relative;height:inherit" [formGroupName]="j">
                                         <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
                                             <div class="bc-revision-services-tags">
-                                                <div class="bc-body">Chiave</div>
+                                                <div class="bc-body">Informazione
+                                                    <div class="bc-h6" style="display:inline;color:red;margin-right:1%">*</div>
+                                                </div>
                                                 <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                                                    class="form-control"  formControlName="key">
+                                                    required class="form-control"  formControlName="key">
                                             </div>
                                             <div class="bc-revision-services-tags">
                                                 <div class="bc-body">Valore</div>
@@ -90,13 +92,6 @@
                 <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="newServiceCategory">
             </div>
-            <!--
-            <div class="bc-revision-services">
-                <div class="bc-body">Descrizione</div>
-                <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="newServiceDescription">
-            </div>
-            -->
             <bc-icon (click)="addNewService()" class="bc-add-tag" name="check" size=s></bc-icon>
         </div>
     </form>

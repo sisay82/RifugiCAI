@@ -198,7 +198,7 @@ export class BcServRevision {
     initService(service:IService){
         let group:FormGroup = this.fb.group({
             id:[service._id],
-            name:[service.name,[Validators.required,Validators.pattern(stringValidator)]],
+            name:[service.name,[Validators.pattern(stringValidator),Validators.required]],
             category: [service.category,Validators.pattern(stringValidator)],
             description: [service.description,Validators.pattern(stringValidator)],
             tags:this.fb.array([])
