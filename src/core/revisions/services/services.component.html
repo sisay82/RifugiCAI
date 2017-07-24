@@ -9,7 +9,9 @@
                         <div [formGroupName]="i">
                             <div style="display: flex;flex-direction:row;align-items:center">
                                 <div class="bc-revision-services">
-                                    <div class="bc-h6" style="white-space:nowrap;flex:1">Servizio</div>
+                                    <div class="bc-h6" style="white-space:nowrap;flex:1">Servizio
+                                        <div class="bc-h6" style="display:inline;color:red;margin-right:1%">*</div>
+                                    </div>
                                     <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                                         required class="form-control"  formControlName="name">
                                 </div>
@@ -20,13 +22,6 @@
                                 </div>
                                 <bc-icon (click)="removeService(t,i)" class="bc-add-tag" name="times" size=s></bc-icon>
                             </div>
-                            <!--
-                            <div class="bc-revision-services" style="width:64%">
-                                <div class="bc-h6" style="white-space:nowrap;flex:1">Descrizione</div>
-                                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                                    class="form-control"  formControlName="description">
-                            </div>
-                            -->
                             <div formArrayName="tags">
                                 <div *ngFor="let tag of service.controls.tags.controls;let j = index">
                                     <div style="position:relative;height:inherit" [formGroupName]="j">
@@ -56,7 +51,7 @@
                                     <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
                                         <div class="bc-revision-services-tags">
                                             <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                                                class="form-control"  formControlName="newTagKey">
+                                                required class="form-control"  formControlName="newTagKey">
                                         </div>
                                         <div class="bc-revision-services-tags">
                                             <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
@@ -84,9 +79,11 @@
     <form [formGroup]="newServiceForm">
         <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
             <div class="bc-revision-services">
-                <div class="bc-body">Servizio</div>
+                <div class="bc-body">Servizio
+                    <div class="bc-h6" style="display:inline;color:red;margin-right:1%">*</div>
+                </div>
                 <input style="position:relative;height:inherit" type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="newServiceName">
+                    required class="form-control"  formControlName="newServiceName">
             </div>
             <div class="bc-revision-services">
                 <div class="bc-body">Categoria</div>

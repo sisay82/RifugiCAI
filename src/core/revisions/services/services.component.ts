@@ -60,7 +60,7 @@ export class BcServRevision {
         });
 
         this.newTagForm = fb.group({
-            newTagKey:["Informazione",Validators.pattern(stringValidator)],
+            newTagKey:["Informazione",[Validators.pattern(stringValidator),Validators.required]],
             newTagValue:["Valore",Validators.pattern(stringValidator)]
         });
 
@@ -198,7 +198,7 @@ export class BcServRevision {
     initService(service:IService){
         let group:FormGroup = this.fb.group({
             id:[service._id],
-            name:[service.name,Validators.pattern(stringValidator)],
+            name:[service.name,[Validators.required,Validators.pattern(stringValidator)]],
             category: [service.category,Validators.pattern(stringValidator)],
             description: [service.description,Validators.pattern(stringValidator)],
             tags:this.fb.array([])

@@ -66,7 +66,7 @@ export class BcContactsRevision {
         this.newOpeningForm = fb.group({
             newOpeningStartDate:["Inizio",validateDate],
             newOpeningEndDate:["Fine",validateDate],
-            newOpeningType:["Tipo",Validators.pattern(stringValidator)]
+            newOpeningType:["Tipo",[Validators.pattern(stringValidator),Validators.required]]
         });
 
         this.formValidSub = this.contactForm.statusChanges.subscribe((value)=>{

@@ -5,11 +5,13 @@
                 <bc-icon (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:1%" name="arrow-left" size=s></bc-icon>
                 <bc-icon *ngIf="checkWinPlatform()" (click)="toggleMenu()" class="bc-mask-icon" name="bars" size=s></bc-icon>
                 <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
+                    <div class="bc-h6" style="color:red;margin-right:1%">*</div>
                     <div class="bc-body" style="white-space: nowrap;margin-right:1%">Nome:</div>
                     <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                         required class="form-control"  formControlName="name">
                 </div>
                 <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
+                    <div class="bc-h6" style="color:red;margin-right:1%">*</div>
                     <div class="bc-body" style="white-space: nowrap;margin-right:1%">Nome Comune:</div>
                     <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                         required class="form-control"  formControlName="alias">
@@ -28,6 +30,7 @@
                     class="form-control"  formControlName="idCai">
             </div>
             <div class="bc-mask-revision-control">
+                <div class="bc-h6" style="color:red;margin-right:1%">*</div>
                 <div class="bc-body" style="white-space: nowrap;margin-right:1%">Tipo:</div>
                 <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     required class="form-control" formControlName="type">
@@ -36,12 +39,14 @@
                 </select>
             </div>
             <div class="bc-mask-revision-control">
+                <div class="bc-h6" style="color:red;margin-right:1%">*</div>
                 <div class="bc-body" style="white-space: nowrap;margin-right:1%">Sezione:</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     required class="form-control"  formControlName="branch">
             </div>
 
             <div class="bc-mask-revision-control">
+                <div class="bc-h6" style="color:red;margin-right:1%">*</div>
                 <div class="bc-body" style="white-space: nowrap;margin-right:1%">Proprietà:</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     required class="form-control"  formControlName="owner">

@@ -41,7 +41,7 @@ export class BcGeoRevision {
 
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
-            region:["",[Validators.required,Validators.pattern(stringValidator)]],//required and string
+            region:["",Validators.pattern(stringValidator)],//required and string
             province:["",Validators.pattern(stringValidator)],//string with some character
             municipality:["",Validators.pattern(stringValidator)],
             locality:["",Validators.pattern(stringValidator)],
@@ -57,7 +57,7 @@ export class BcGeoRevision {
 
         this.newTagForm = fb.group({
             newKey:["Informazione",[Validators.pattern(stringValidator),Validators.required]],
-            newValue:["Valore",[Validators.pattern(stringValidator),Validators.required]]
+            newValue:["Valore",Validators.pattern(stringValidator)]
         });
 
         this.formValidSub = this.geoForm.statusChanges.subscribe((value)=>{
