@@ -12,19 +12,43 @@ import { IShelter,IMenu } from '../../shared/types/interfaces';
 })
 export class BcShelterList {
     appMenuElements:IMenu={
-      elements:[
-        {name:"Dati geografici",icon:"map-signs",link:"geographics"},
-        {name:"Servizi",icon:"home",link:"#"},
-        {name:"Contatti e apertura",icon:"phone",link:"#"},
-        {name:"Proprietá e gestione",icon:"user",link:"#"},
-        {name:"Dati catastali",icon:"book",link:"#"},
-        {name:"Documenti",icon:"file-pdf-o",link:"#"},
-        {name:"Immagini",icon:"picture-o",link:"#"},
-        {name:"Economia",icon:"certificate",link:"#"},
-        {name:"Richiesta contributi",icon:"eur",link:"#"},
-        {name:"Fruizione",icon:"bar-chart",link:"#"}
-    ]
-  };
+        elements:[
+            {name:"Dati geografici",icon:"map-signs",link:"geographic"},
+            {name:"Servizi",icon:"home",link:"services"},
+            {name:"Contatti e apertura",icon:"phone",link:"contacts"},
+            {name:"Proprietá e gestione",icon:"user",link:"management"},
+            {name:"Dati catastali",icon:"book",link:"catastal"},
+            {name:"Documenti",icon:"file-pdf-o",link:"geographic"},
+            {name:"Immagini",icon:"picture-o",link:"geographic"},
+            {name:"Economia",icon:"certificate",link:"geographic"},
+            {name:"Richiesta contributi",icon:"eur",link:"geographic"},
+            {name:"Fruizione",icon:"bar-chart",link:"geographic"}
+        ]};
+
+    /*appMenuElements:IMenu={
+      layers:[
+        {
+            layerName:"",
+            elements:[
+                {name:"Dati geografici",icon:"map-signs",link:"geographics"},
+                {name:"Servizi",icon:"home",link:"#"},
+                {name:"Contatti e apertura",icon:"phone",link:"#"},
+                {name:"Proprietá e gestione",icon:"user",link:"#"},
+                {name:"Dati catastali",icon:"book",link:"#"}
+            ]},{
+            layerName:"",
+            elements:[
+                {name:"Documenti",icon:"file-pdf-o",link:"#"},
+                {name:"Immagini",icon:"picture-o",link:"#"},
+            ]},{
+            layerName:"",
+            elements:[
+                {name:"Economia",icon:"certificate",link:"#"},
+                {name:"Richiesta contributi",icon:"eur",link:"#"},
+                {name:"Fruizione",icon:"bar-chart",link:"#"}
+            ]}
+        ]
+    };*/
 
     filterText: string = "";
     filteredShelter: IShelter[] = [];

@@ -21,13 +21,13 @@ export class BcMenu {
   @Input() menuElements: IMenu;
   toggleMenuSub:Subscription;
 
-  clickItem(link:String){
-    /*let outlet=this.shared.activeOutlet
+  getLink(link:String):any{
+    let outlet//=this.shared.activeOutlet
     if(outlet=="revision"){
-        this.router.navigate([{outlets:({'revision': [link],'content': null})}],{relativeTo:this.route});
+      return "/(revision:"+link+")";
     }else{
-        this.router.navigate([{outlets:({'content': [link],'revision': null})}],{relativeTo:this.route});
-    }*/
+      return "/(content:"+link+")";
+    }
   }
 
   ngAfterContentInit(){
@@ -46,15 +46,18 @@ export class BcMenu {
         elements:[
           {name:"No Menu Provided",icon:"",link:"#"}
         ]
-      };
+    };
     }else{
-      for(let element of this.menuElements.elements){
-        if(element.default!=undefined&&element.default){
-          this.clickItem(element.link);
-          return
+      /*for(let layer of this.menuElements.layers){
+        for(let element of layer.elements){
+          if(element.default!=undefined&&element.default){
+            this.clickItem(element.link);
+            return
+          }
         }
-      }
+      }*/
     }
+    
   }
   
   checkWinPlatform(){
