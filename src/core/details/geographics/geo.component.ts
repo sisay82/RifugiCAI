@@ -35,7 +35,7 @@ export class BcGeo {
 
   getZoom(){
     if(this.data!=undefined && this.data.location!=undefined){
-      return 11;
+      return 17;
     }else{
       return 6;//default
     }
@@ -65,9 +65,13 @@ export class BcGeo {
 
   getTag(key:String){
     if(this.data!=undefined && this.data.tags!=undefined){
-      let index=this.data.tags.findIndex((tag)=>tag.key==key)
+      let index=this.data.tags.findIndex((tag)=>tag.key.toLowerCase().indexOf(key.toLowerCase())>-1)
       if(index>-1){
-        return this.data.tags[index].value;
+        if(this.data.tags[index].value!=""){
+          return this.data.tags[index].value;
+        }else{
+          return '----';
+        }
       }else{
         return '----';
       }

@@ -12,7 +12,7 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Telefono Fisso:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Telefono:</div>
             <div class="bc-body">{{owner?(owner.fixedPhone || '----'):'----'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
@@ -26,7 +26,7 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Canone Affitto:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Canone Annuale:</div>
             <div class="bc-body">{{data?(data.rent || '----'):'----'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
@@ -64,10 +64,17 @@
             <div class="bc-body">{{data?(data.rentType || '----'):'----'}}</div>
         </div>
     </div>
-    <div class="bc-body">
-        <bc-icon *ngIf="data!=undefined&&data.pickupKey==true" name="check-square-o" size=s></bc-icon>
-        <bc-icon *ngIf="data==undefined||data.pickupKey==false" name="square-o" size=s></bc-icon>
-        Ritiro Chiavi
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="data.pickupKey!=null&&data.pickupKey==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="data.pickupKey==null||data.pickupKey==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Ritiro Chiavi</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="data.self_management!=null&&data.self_management==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="data.self_management==null||data.self_management==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">AutoGestione</div>
+        </div>  
     </div>
     <bc-divider></bc-divider>
     <div class="bc-detail-title bc-h6">Custodia:</div>
@@ -97,9 +104,10 @@
                 <div class="bc-body-strong" style="margin-right:4px">PEC:</div>
                 <div class="bc-body">{{manager?(manager.pec || '----'):'----'}}</div>
             </div>
-            <div *ngIf="manager!=undefined&&manager.webSite!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
+            <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
                 <div class="bc-body-strong" style="margin-right:4px">Sito Web:</div>
-                <div (click)="gotoSite(manager.webSite)" class="bc-body bc-link">{{manager?(manager.webSite || '----'):'----'}}</div>
+                <div *ngIf="manager.webSite!=undefined" (click)="gotoSite(manager.webSite)" class="bc-body bc-link">{{manager.webSite}}</div>
+                <div class="bc-body" *ngIf="manager.webSite==undefined">----</div>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">

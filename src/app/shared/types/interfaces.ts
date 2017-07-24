@@ -105,6 +105,7 @@ export interface IManagement{
     contract_end_date?:Date;
     contract_duration?:Number;
     contract_fee?:Number;
+    self_management?:Boolean;
     valuta?:String;
     rentType?:Enums.Custody_Type;
     pickupKey?:Boolean;

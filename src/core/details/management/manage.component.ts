@@ -52,7 +52,9 @@ export class BcManage {
   }
 
   gotoSite(webSite:string){
-    location.replace(webSite);
+    if(webSite!=undefined){
+      location.href=webSite;
+    }
   }
 
   getValue(){

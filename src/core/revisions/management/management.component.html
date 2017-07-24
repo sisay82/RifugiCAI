@@ -7,21 +7,18 @@
                 <div class="bc-body" style="white-space: nowrap">Ente</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="propName">
-                <div [hidden]="managForm.controls['propName'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
             <div class="bc-revision-management">
                 <div class="bc-body" style="white-space: nowrap">P.IVA</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="propTaxCode">
-                <div [hidden]="managForm.controls['propTaxCode'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
             <div class="bc-revision-management">
                 <div class="bc-body" style="white-space: nowrap">Telefono</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="propFixedPhone">
-                <div [hidden]="managForm.controls['propFixedPhone'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
         </div>
@@ -30,15 +27,31 @@
                 <div class="bc-body" style="white-space: nowrap">Mail</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="propEmail">
-                <div [hidden]="managForm.controls['propEmail'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
             <div class="bc-revision-management">
                 <div class="bc-body" style="white-space: nowrap">PEC</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="propPec">
-                <div [hidden]="managForm.controls['propPec'].valid" class="alert alert-danger">Invalid</div>
                 <br>
+            </div>
+        </div>
+        <div style="display: flex;flex-direction:row">
+            <div class="bc-management-check">
+                <div class="bc-body" style="white-space: nowrap">Ritiro Chiavi</div>
+                <div class="bc-management-check-content">
+                    <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                        class="form-control bc-management-check-content"  formControlName="pickupKey">
+                    <br>
+                </div>
+            </div>
+            <div class="bc-management-check">
+                <div class="bc-body" style="white-space: nowrap">Autogestione</div>
+                <div class="bc-management-check-content">
+                    <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                        class="form-control bc-management-check-content"  formControlName="self_management">
+                    <br>
+                </div>
             </div>
         </div>
         <bc-divider></bc-divider>
@@ -47,21 +60,18 @@
                 <div class="bc-body" style="white-space: nowrap">Canone Affitto</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="rent">
-                <div [hidden]="managForm.controls['rent'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
             <div class="bc-revision-management">
                 <div class="bc-body" style="white-space: nowrap">Tipo Canone</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="period">
-                <div [hidden]="managForm.controls['period'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
             <div class="bc-revision-management">
                 <div class="bc-body" style="white-space: nowrap">Valuta</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="valuta">
-                <div [hidden]="managForm.controls['valuta'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
         </div>
@@ -70,21 +80,18 @@
                 <div class="bc-body" style="white-space: nowrap">Data di Inizio Contratto</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="contract_start_date">
-                <div [hidden]="managForm.controls['contract_start_date'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
             <div class="bc-revision-management">
                 <div class="bc-body" style="white-space: nowrap">Data di Fine Contratto</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="contract_end_date">
-                <div [hidden]="managForm.controls['contract_end_date'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
             <div class="bc-revision-management">
                 <div class="bc-body" style="white-space: nowrap">Durata Contratto</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="contract_duration">
-                <div [hidden]="managForm.controls['contract_duration'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>
         </div>
@@ -93,7 +100,6 @@
                 <div class="bc-body" style="white-space: nowrap">Canone Contratto</div>
                 <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                     class="form-control"  formControlName="contract_fee">
-                <div [hidden]="managForm.controls['contract_fee'].valid" class="alert alert-danger">Invalid</div>
                 <br>
             </div>            
             <div class="bc-revision-management">
@@ -114,19 +120,16 @@
                         <div class="bc-body" style="white-space: nowrap">Nome</div>
                         <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                             class="form-control" formControlName="name">
-                        <div [hidden]="open.controls['name'].valid" class="alert alert-danger">Invalid</div>
                     </div>
                     <div class="bc-revision-management">
                         <div class="bc-body" style="white-space: nowrap">Cognome</div>
                         <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                             class="form-control" formControlName="surname">
-                        <div [hidden]="open.controls['surname'].valid" class="alert alert-danger">Invalid</div>
                     </div>
                     <div class="bc-revision-management">
                         <div class="bc-body" style="white-space: nowrap">Tipo</div>
                         <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                             class="form-control" formControlName="type">
-                        <div [hidden]="open.controls['type'].valid" class="alert alert-danger">Invalid</div>
                     </div>
                     <bc-icon (click)="removeSubject(i)" class="bc-add-tag" name="times" size=s></bc-icon>
                 </div>
@@ -135,19 +138,16 @@
                         <div class="bc-body" style="white-space: nowrap">Telefono Fisso</div>
                         <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                             class="form-control" formControlName="fixedPhone">
-                        <div [hidden]="open.controls['fixedPhone'].valid" class="alert alert-danger">Invalid</div>
                     </div>
                     <div class="bc-revision-management">
                         <div class="bc-body" style="white-space: nowrap">Cellulare</div>
                         <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                             class="form-control" formControlName="mobilePhone">
-                        <div [hidden]="open.controls['mobilePhone'].valid" class="alert alert-danger">Invalid</div>
                     </div>
                     <div class="bc-revision-management">
                         <div class="bc-body" style="white-space: nowrap">P.IVA</div>
                         <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                             class="form-control" formControlName="taxCode">
-                        <div [hidden]="open.controls['taxCode'].valid" class="alert alert-danger">Invalid</div>
                     </div>
                 </div>
                 <div style="display: flex;flex-direction:row">
@@ -155,19 +155,16 @@
                         <div class="bc-body" style="white-space: nowrap">Mail</div>
                         <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                             class="form-control" formControlName="email">
-                        <div [hidden]="open.controls['email'].valid" class="alert alert-danger">Invalid</div>
                     </div>
                     <div class="bc-revision-management">
                         <div class="bc-body" style="white-space: nowrap">PEC</div>
                         <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                             class="form-control" formControlName="pec">
-                        <div [hidden]="open.controls['pec'].valid" class="alert alert-danger">Invalid</div>
                     </div>
                     <div class="bc-revision-management">
                         <div class="bc-body" style="white-space: nowrap">WebSite</div>
                         <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                             class="form-control" formControlName="webSite">
-                        <div [hidden]="open.controls['webSite'].valid" class="alert alert-danger">Invalid</div>
                     </div>
                 </div>
             </div>

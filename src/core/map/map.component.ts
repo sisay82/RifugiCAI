@@ -189,7 +189,7 @@ export class BcMap implements OnInit{
                     let mark=L.marker([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number],{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
                         let isOpen=e.target.isTooltipOpen();
                         if(isOpen){
-                            this.router.navigateByUrl("/shelter/"+shelter._id+"/(content:geographic)");
+                            location.href="/shelter/"+shelter._id+"/(content:geographic)";
                         }
                         this.map.eachLayer(function(layer){layer.closeTooltip()})               
                         if(!isOpen)

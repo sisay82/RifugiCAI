@@ -64,6 +64,7 @@ export class BcManagementRevision {
             valuta:["",Validators.pattern(stringValidator)],
             rentType:["",Validators.pattern(stringValidator)],
             pickupKey:[""],
+            self_management:[""],
             subjects:fb.array([]),
             propName:["",Validators.pattern(stringValidator)],
             propTaxCode:["",Validators.pattern(stringValidator)],
@@ -207,6 +208,7 @@ export class BcManagementRevision {
                 contract_fee:this.managForm.controls["contract_fee"].value||null,
                 valuta:this.managForm.controls["valuta"].value||null,
                 rentType:this.managForm.controls["rentType"].value||null,
+                self_management:this.managForm.controls["self_management"].value||null,
                 pickupKey:this.managForm.controls["pickupKey"].value||null
             };
 
@@ -223,6 +225,14 @@ export class BcManagementRevision {
             let subjects:ISubject[]=[];
             subjects.push(prop);
             for(let c of control.controls){
+                let wSite=null;
+                if(c.value.webSite!=null){
+                    wSite="http";
+                    if(c.value.webSite.indexOf(wSite)==-1){
+                        wSite+="://"+c.value.webSite
+                    }
+                }
+                
                 subjects.push({
                     name:c.value.name||null,
                     surname:c.value.surname||null,
@@ -231,7 +241,7 @@ export class BcManagementRevision {
                     mobilePhone:c.value.mobilePhone||null,
                     pec:c.value.pec||null,
                     email:c.value.email||null,
-                    webSite:c.value.webSite||null,
+                    webSite:wSite,
                     type:c.value.type||null
                 });
             }
