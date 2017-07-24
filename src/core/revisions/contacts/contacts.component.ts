@@ -66,7 +66,7 @@ export class BcContactsRevision {
         this.newOpeningForm = fb.group({
             newOpeningStartDate:["Inizio",validateDate],
             newOpeningEndDate:["Fine",validateDate],
-            newOpeningType:["Tipo",Validators.pattern(stringValidator)]
+            newOpeningType:["Tipo",[Validators.pattern(stringValidator),Validators.required]]
         });
 
         this.formValidSub = this.contactForm.statusChanges.subscribe((value)=>{
@@ -179,7 +179,7 @@ export class BcContactsRevision {
         return this.fb.group({
             startDate:[opening.startDate?(new Date(opening.startDate).toUTCString()):null,validateDate],
             endDate:[opening.startDate?(new Date(opening.endDate).toUTCString()):null,validateDate],
-            type:[opening.type,Validators.pattern(stringValidator)]
+            type:[opening.type,[Validators.pattern(stringValidator),Validators.required]]
         });
     }
 
