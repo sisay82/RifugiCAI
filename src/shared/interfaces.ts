@@ -127,15 +127,19 @@ export interface IEnergy{
     greenCertification?:Boolean;
     powerGenerator?:Boolean;
     photovoltaic?:Boolean;
+    heating_type?:Enums.Heating_Type;
     sourceType?:Enums.Source_Type;
     sourceName?:String;
 }
 
 export interface IDrain{
-    type?:String;
+    type?:Enums.Drain_Type;
     regulation?:Boolean;
     oilSeparator?:Boolean;
     recycling?:Boolean;
+    water_type?:Enums.Water_Type;
+    water_availability?:Enums.Water_Availability;
+    droughts?:Enums.Seasons;
 }
 
 export interface IShelter{
