@@ -8,7 +8,7 @@ import {BcSharedService} from '../../shared/shared.service';
     selector: 'bc-shelters-List',
     templateUrl: 'shelterList.component.html',
     styleUrls: ['shelterList.component.scss'],
-    providers: [ShelterService]
+    providers: [ShelterService,BcSharedService]
 })
 export class BcShelterList {
     filterText: string = "";
