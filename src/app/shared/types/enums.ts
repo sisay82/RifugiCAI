@@ -10,82 +10,82 @@ export namespace Enums {
 
     //tipo riscaldamento
     export enum Heating_Type {
-        ELETTRICO = "Elettrico",
-        GAS = "Gas",
-        SOLARE = "Solare",
-        LEGNA = "Legna",
-        ASSENTE = "Assente"
+        ELETTRICO = <any>"Elettrico",
+        GAS = <any>"Gas",
+        SOLARE = <any>"Solare",
+        LEGNA = <any>"Legna",
+        ASSENTE = <any>"Assente"
     }
 
     //stagioni
     export enum Seasons {
-        PRIMAVERA = "Primavera",
-        ESTATE = "Estate",
-        AUTUNNO = "Autunno",
-        INVERNO = "Inverno"
+        PRIMAVERA = <any>"Primavera",
+        ESTATE = <any>"Estate",
+        AUTUNNO = <any>"Autunno",
+        INVERNO = <any>"Inverno"
     }
 
     //disponibilitá acqua
     export enum Water_Availability {
-        SCARSA = "Scarsa", 
-        COSTANTE = "Costante", 
-        MEDIA = "Media",
-        ABBONDANTE = "Abbondante"
+        SCARSA = <any>"Scarsa", 
+        COSTANTE = <any>"Costante", 
+        MEDIA = <any>"Media",
+        ABBONDANTE = <any>"Abbondante"
     }
 
     //tipologia fonte acqua
     export enum Water_Type {
-        ASSENTE = "Assente", 
-        ACQUEDOTTO = "Acquedotto", 
-        CAPTAZIONE = "Captazione"
+        ASSENTE = <any>"Assente", 
+        ACQUEDOTTO =<any> "Acquedotto", 
+        CAPTAZIONE = <any>"Captazione"
     }
 
     //tipo rifugio
     export enum Shelter_Type {
-        RIFUGIO="Rifugio",
-        BIVACCO="Bivacco",
-        RIFUGIO_CUSTODITO="Rifugio custodito",
-        RIFUGIO_INCUSTODITO="Rifugio incustodito",
-        CAPANNA_SOCIALE="Capanna sociale",
-        PUNTO_dAPPOGGIO="Punto d'appoggio"
+        RIFUGIO=<any>"Rifugio",
+        BIVACCO=<any>"Bivacco",
+        RIFUGIO_CUSTODITO=<any>"Rifugio custodito",
+        RIFUGIO_INCUSTODITO=<any>"Rifugio incustodito",
+        CAPANNA_SOCIALE=<any>"Capanna sociale",
+        PUNTO_dAPPOGGIO=<any>"Punto d'appoggio"
     }
 
     //tipo rifugio regionale
     export enum Regional_Type {
-        ESCURSIONISTICO = "Escursionistico",
-        ALPINISTICO = "Alpinistico",
-        BIVACCO = "Bivacco",
-        NON_CLASSIFICABILE = "Non classificabile"
+        ESCURSIONISTICO = <any>"Escursionistico",
+        ALPINISTICO = <any>"Alpinistico",
+        BIVACCO = <any>"Bivacco",
+        NON_CLASSIFICABILE = <any>"Non classificabile"
     }
 
     //categoria rifugio
     export enum Shelter_Category {
-        A="A",
-        B="B",
-        C="C",
-        D="D"
+        A=<any>"A",
+        B=<any>"B",
+        C=<any>"C",
+        D=<any>"D"
     }
 
     //tipologia scarico
     export enum Drain_Type {
-        IMOF_FOGNATURA="IMOF fognatura",
-        IMOF_POZZO_PERDENTE="IMOF pozzo perdente",
-        IMOF_DISPERSORE_SOTTOSUOLO="IMOF dispersore sottosuolo"
+        IMOF_FOGNATURA=<any>"IMOF fognatura",
+        IMOF_POZZO_PERDENTE=<any>"IMOF pozzo perdente",
+        IMOF_DISPERSORE_SOTTOSUOLO=<any>"IMOF dispersore sottosuolo"
     }
 
     //coerenza tipologica
     export enum Typo_consistency {
-        PIENA="Piena",
-        PARZIALE="Parziale",
-        RECUPERABILE="Recuperabile",
-        NESSUNA="Nessuna"
+        PIENA=<any>"Piena",
+        PARZIALE=<any>"Parziale",
+        RECUPERABILE=<any>"Recuperabile",
+        NESSUNA=<any>"Nessuna"
     }
 
     //tipo fonte risorsa
     export enum Source_Type {
-        ENERGETICA = "Energetica",
-        IDRICA = "Idrica",
-        RISCALDAMENTO = "Riscaldamento"
+        ENERGETICA = <any>"Energetica",
+        IDRICA = <any>"Idrica",
+        RISCALDAMENTO = <any>"Riscaldamento"
     }
 
     export enum Owner_Type
@@ -96,10 +96,10 @@ export namespace Enums {
 
     //tipo custodia
     export enum Custody_Type {
-        DIRETTA = "Diretta",
-        AFFIRRO_A_GESTORE = "Affitto a gestore",
-        AFFITTO_RAMO_AZIENDA = "Affito ramo azienda",
-        CAPANNA_SOCIALE = "Capanna sociale",
-        CUSTODIA = "Custodia"
+        DIRETTA = <any>"Diretta",
+        AFFIRRO_A_GESTORE = <any>"Affitto a gestore",
+        AFFITTO_RAMO_AZIENDA = <any>"Affito ramo azienda",
+        CAPANNA_SOCIALE = <any>"Capanna sociale",
+        CUSTODIA = <any>"Custodia"
     }
 }
