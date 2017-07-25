@@ -20,9 +20,11 @@
     <bc-content-section>
       <bc-list>
         <a bc-list-item *ngFor="let item of rifugiSample">
-          <div bc-line>{{item.type}}</div>
           <div bc-line style="display:flex; flex-direction:row;">
             <div style="flex:1">{{item.name}}</div>
+          </div>
+          <div bc-line style="display:flex; flex-direction:row;">
+            <div style="flex:1">{{item.type}}</div>
             <div style="flex:1">{{item.owner}}</div>
             <div style="flex:1">{{item.branch}}</div>
             <div style="flex:1">{{item.region}}</div>
