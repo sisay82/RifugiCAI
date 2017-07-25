@@ -42,6 +42,7 @@ export namespace Enums {
 
     //tipo rifugio
     export enum Shelter_Type {
+        RIFUGIO="Rifugio",
         BIVACCO="Bivacco",
         RIFUGIO_CUSTODITO="Rifugio custodito",
         RIFUGIO_INCUSTODITO="Rifugio incustodito",
