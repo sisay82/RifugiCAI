@@ -16,11 +16,11 @@ export class BcShelter {
             {name:"Contatti e apertura",icon:"phone",link:"contacts"},
             {name:"Proprietá e gestione",icon:"user",link:"management"},
             {name:"Dati catastali",icon:"book",link:"catastal"},
-            {name:"Documenti",icon:"file-pdf-o",link:"geographic"},
-            {name:"Immagini",icon:"picture-o",link:"geographic"},
-            {name:"Economia",icon:"certificate",link:"geographic"},
-            {name:"Richiesta contributi",icon:"eur",link:"geographic"},
-            {name:"Fruizione",icon:"bar-chart",link:"geographic"}
+            {name:"Documenti",icon:"file-pdf-o",link:"documents"},
+            {name:"Immagini",icon:"picture-o",link:"images"},
+            {name:"Economia",icon:"certificate",link:"economy"},
+            {name:"Richiesta contributi",icon:"eur",link:"contribution"},
+            {name:"Fruizione",icon:"bar-chart",link:"use"}
         ]};
 
     /*appMenuElements:IMenu={

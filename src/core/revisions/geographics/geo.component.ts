@@ -7,13 +7,8 @@ import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angu
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
+import {validators} from '../../inputs/text/text_input.component';
 import { Subscription } from 'rxjs/Subscription';
-
-let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
-let telephoneValidator=/^([0-9]*)*$/;
-let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
-let urlValidator=/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
 
 @Component({
   moduleId: module.id,
@@ -41,23 +36,23 @@ export class BcGeoRevision {
 
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
-            region:["",Validators.pattern(stringValidator)],//required and string
-            province:["",Validators.pattern(stringValidator)],//string with some character
-            municipality:["",Validators.pattern(stringValidator)],
-            locality:["",Validators.pattern(stringValidator)],
-            ownerRegion:["",Validators.pattern(stringValidator)],
-            authorityJurisdiction:["",Validators.pattern(stringValidator)],
-            altitude:["",Validators.pattern(numberValidator)],//number
-            latitude:["",Validators.pattern(numberValidator)],
-            longitude:["",Validators.pattern(numberValidator)],
-            massif:["",Validators.pattern(stringValidator)],
-            valley:["",Validators.pattern(stringValidator)],
+            region:["",Validators.pattern(validators.stringValidator)],//required and string
+            province:["",Validators.pattern(validators.stringValidator)],//string with some character
+            municipality:["",Validators.pattern(validators.stringValidator)],
+            locality:["",Validators.pattern(validators.stringValidator)],
+            ownerRegion:["",Validators.pattern(validators.stringValidator)],
+            authorityJurisdiction:["",Validators.pattern(validators.stringValidator)],
+            altitude:["",Validators.pattern(validators.numberValidator)],//number
+            latitude:["",Validators.pattern(validators.numberValidator)],
+            longitude:["",Validators.pattern(validators.numberValidator)],
+            massif:["",Validators.pattern(validators.stringValidator)],
+            valley:["",Validators.pattern(validators.stringValidator)],
             tags:fb.array([])
         }); 
 
         this.newTagForm = fb.group({
-            newKey:["Informazione",[Validators.pattern(stringValidator),Validators.required]],
-            newValue:["Valore",Validators.pattern(stringValidator)]
+            newKey:["Informazione",[Validators.pattern(validators.stringValidator),Validators.required]],
+            newValue:["Valore",Validators.pattern(validators.stringValidator)]
         });
 
         this.formValidSub = this.geoForm.statusChanges.subscribe((value)=>{
@@ -142,8 +137,8 @@ export class BcGeoRevision {
 
     initTag(key:String,value:String){
         return this.fb.group({
-            key:[key,[Validators.pattern(stringValidator),Validators.required]],
-            value: [value,Validators.pattern(stringValidator)]
+            key:[key,[Validators.pattern(validators.stringValidator),Validators.required]],
+            value: [value,Validators.pattern(validators.stringValidator)]
         });
     }
 

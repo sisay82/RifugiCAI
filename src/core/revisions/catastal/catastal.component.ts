@@ -10,17 +10,12 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+import {validators} from '../../inputs/text/text_input.component';
 import 'rxjs/add/observable/throw';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/of';
-
-let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
-let telephoneValidator=/^([0-9]*)*$/;
-let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
-let urlValidator=/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
 
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
@@ -63,38 +58,38 @@ export class BcCatastalRevision {
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.catastalForm = fb.group({
             buildingRegulation:[""],
-            buildYear:["",Validators.pattern(numberValidator)],
-            rebuildYear:["",Validators.pattern(numberValidator)],
-            class:["",Validators.pattern(stringValidator)],
-            code:["",Validators.pattern(stringValidator)],
-            typologicalCoherence:["",Validators.pattern(stringValidator)],
+            buildYear:["",Validators.pattern(validators.numberValidator)],
+            rebuildYear:["",Validators.pattern(validators.numberValidator)],
+            class:["",Validators.pattern(validators.stringValidator)],
+            code:["",Validators.pattern(validators.stringValidator)],
+            typologicalCoherence:["",Validators.pattern(validators.stringValidator)],
             matericalCoherence:[""],
             cityPlanRegulation:[""],
-            mainBody:["",Validators.pattern(stringValidator)],
-            secondaryBody:["",Validators.pattern(stringValidator)],
+            mainBody:["",Validators.pattern(validators.stringValidator)],
+            secondaryBody:["",Validators.pattern(validators.stringValidator)],
             fireRegulation:[""],
             ISO14001:[""]
         }); 
 
         this.energyForm = fb.group({
-            class:["",Validators.pattern(stringValidator)],
-            energy:["",Validators.pattern(numberValidator)],
+            class:["",Validators.pattern(validators.stringValidator)],
+            energy:["",Validators.pattern(validators.numberValidator)],
             greenCertification:[""],
             powerGenerator:[""],
             photovoltaic:[""],
-            heating_type:["",Validators.pattern(stringValidator)],
-            sourceType:["",Validators.pattern(stringValidator)],
-            sourceName:["",Validators.pattern(stringValidator)]
+            heating_type:["",Validators.pattern(validators.stringValidator)],
+            sourceType:["",Validators.pattern(validators.stringValidator)],
+            sourceName:["",Validators.pattern(validators.stringValidator)]
         });
 
         this.drainForm = fb.group({
-            type:["",Validators.pattern(stringValidator)],
+            type:["",Validators.pattern(validators.stringValidator)],
             regulation:[""],
             oilSeparator:[""],
             recycling:[""],
-            water_type:["",Validators.pattern(stringValidator)],
-            water_availability:["",Validators.pattern(stringValidator)],
-            droughts:["",Validators.pattern(stringValidator)]
+            water_type:["",Validators.pattern(validators.stringValidator)],
+            water_availability:["",Validators.pattern(validators.stringValidator)],
+            droughts:["",Validators.pattern(validators.stringValidator)]
         });
 
         this.formCatValidSub = this.catastalForm.statusChanges.subscribe((value)=>{

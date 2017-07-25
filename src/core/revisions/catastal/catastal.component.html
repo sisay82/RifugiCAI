@@ -3,44 +3,26 @@
 <form style="position:relative" [formGroup]="catastalForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Anno di Costruzione</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="buildYear">
-            <br>
+            <bc-text-input formControlName="buildYear" title="Anno di Costruzione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Anno di Ristrutturazione</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="rebuildYear">
-            <br>
+            <bc-text-input formControlName="rebuildYear" title="Anno di Ristrutturazione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Codice Catastale</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="code">
-            <br>
+            <bc-text-input formControlName="code" title="Codice Catastale" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Classe Catastale</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="class">
-            <br>
+            <bc-text-input formControlName="class" title="Classe Catastale" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Consistenza Corpo Principale</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="mainBody">
-            <br>
+            <bc-text-input formControlName="mainBody" title="Consistenza Corpo Principale" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Consistenza Corpi Secondari</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="secondaryBody">
-            <br>
+            <bc-text-input formControlName="secondaryBody" title="Consistenza Corpi Secondari" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -104,16 +86,10 @@
 <form style="position:relative" [formGroup]="energyForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Classe Energetica</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="class">
-            <br>
+            <bc-text-input formControlName="class" title="Classe Energetica" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Quantità</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="energy">
-            <br>
+            <bc-text-input formControlName="energy" title="Quantità" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -126,10 +102,7 @@
             </select>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Nome Fonte Energetica</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="sourceName">
-            <br>
+            <bc-text-input formControlName="sourceName" title="Nome Fonte Energetica" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -175,10 +148,7 @@
 <form style="position:relative" [formGroup]="drainForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Tipo</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="type">
-            <br>
+            <bc-text-input formControlName="type" title="Tipo" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-catastal-check">
             <div class="bc-body" style="white-space: nowrap">Scarico a Norma</div>

@@ -7,10 +7,11 @@ import { FormsModule } from '@angular/forms';
 import {ReactiveFormsModule} from "@angular/forms"; 
 import {BcButtonModule} from '../../button/button.module';
 import {BcIconModule} from '../../icon/icon.module';
+import {BcTextInputModule} from '../../inputs/text/text_input.module';
 
 @NgModule({
     declarations: [BcContactsRevision],
     exports: [BcContactsRevision],
-    imports:[BcIconModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
+    imports:[BcTextInputModule,BcIconModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
 })
 export class BcContactsRevisionModule { }

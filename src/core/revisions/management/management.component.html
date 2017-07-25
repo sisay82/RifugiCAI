@@ -4,36 +4,21 @@
         <div class="bc-management-title bc-h6">Proprietà:</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Ente</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="propName">
-                <br>
+                <bc-text-input formControlName="propName" title="Ente" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">P.IVA</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="propTaxCode">
-                <br>
+                <bc-text-input formControlName="propTaxCode" title="P.IVA" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Telefono</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="propFixedPhone">
-                <br>
+                <bc-text-input formControlName="propFixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Mail</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="propEmail">
-                <br>
+                <bc-text-input formControlName="propEmail" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">PEC</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="propPec">
-                <br>
+                <bc-text-input formControlName="propPec" title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
@@ -57,50 +42,29 @@
         <bc-divider></bc-divider>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Canone Affitto</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="rent">
-                <br>
+                <bc-text-input formControlName="rent" title="Canone Affitto" validator="numberValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Tipo Canone</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="period">
-                <br>
+                <bc-text-input formControlName="period" title="Tipo Canone" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Valuta</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="valuta">
-                <br>
+                <bc-text-input formControlName="valuta" title="Valuta" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Data di Inizio Contratto</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="contract_start_date">
-                <br>
+                <bc-text-input formControlName="contract_start_date" title="Data di Inizio Contratto" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Data di Fine Contratto</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="contract_end_date">
-                <br>
+                <bc-text-input formControlName="contract_end_date" title="Data di Fine Contratto" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Durata Contratto</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="contract_duration">
-                <br>
+                <bc-text-input formControlName="contract_duration" validator="numberValidator" title="Durata Contratto" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Canone Contratto</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="contract_fee">
-                <br>
+                <bc-text-input formControlName="contract_fee" title="Canone Contratto" validator="numberValidator" [displayError]="displayError"></bc-text-input>
             </div>            
             <div class="bc-revision-management">
                 <div class="bc-body" style="white-space: nowrap">Tipo di Affitto</div>
@@ -117,54 +81,36 @@
             <div [formGroupName]="i">
                 <div style="display: flex;flex-direction:row;align-items:center">
                     <div class="bc-revision-management">
-                        <div class="bc-body" style="white-space: nowrap">Nome</div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control" formControlName="name">
+                        <bc-text-input formControlName="name" title="Nome" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
-                        <div class="bc-body" style="white-space: nowrap">Cognome</div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control" formControlName="surname">
+                        <bc-text-input formControlName="surname" title="Cognome" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
-                        <div class="bc-body" style="white-space: nowrap">Tipo</div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control" formControlName="type">
+                        <bc-text-input formControlName="type" title="Tipo" [displayError]="displayError"></bc-text-input>
                     </div>
                     <bc-icon (click)="removeSubject(i)" class="bc-add-tag" name="times" size=s></bc-icon>
                 </div>
                 <div style="display: flex;flex-direction:row">
                     <div class="bc-revision-management">
-                        <div class="bc-body" style="white-space: nowrap">Telefono Fisso</div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control" formControlName="fixedPhone">
+                        <bc-text-input formControlName="fixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
-                        <div class="bc-body" style="white-space: nowrap">Cellulare</div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control" formControlName="mobilePhone">
+                        <bc-text-input formControlName="mobilePhone" title="Cellulare" validator="numberValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
-                        <div class="bc-body" style="white-space: nowrap">P.IVA</div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control" formControlName="taxCode">
+                        <bc-text-input formControlName="taxCode" title="P.IVA" [displayError]="displayError"></bc-text-input>
                     </div>
                 </div>
                 <div style="display: flex;flex-direction:row">
                     <div class="bc-revision-management">
-                        <div class="bc-body" style="white-space: nowrap">Mail</div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control" formControlName="email">
+                        <bc-text-input formControlName="email" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
-                        <div class="bc-body" style="white-space: nowrap">PEC</div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control" formControlName="pec">
+                        <bc-text-input formControlName="pec" title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
-                        <div class="bc-body" style="white-space: nowrap">WebSite</div>
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control" formControlName="webSite">
+                        <bc-text-input formControlName="webSite" title="Sito Web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                 </div>
             </div>
@@ -181,54 +127,36 @@
     <form [formGroup]="newSubjectForm">
         <div style="display: flex;flex-direction:row;align-items:center">
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Nome</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="newName">
+                <bc-text-input formControlName="newName" title="Nome" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Cognome</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="newSurname">
+                <bc-text-input formControlName="newSurname" title="Cognome" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Tipo</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="newType">
+                <bc-text-input formControlName="newType" title="Tipo" [displayError]="displayError"></bc-text-input>
             </div>
             <bc-icon (click)="addNewSubject()" class="bc-add-tag" name="check" size=s></bc-icon>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Telefono Fisso</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="newFixedPhone">
+                <bc-text-input formControlName="newFixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Cellulare</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="newMobilePhone">
+                <bc-text-input formControlName="newMobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">P.IVA</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="newTaxCode">
+                <bc-text-input formControlName="newTaxCode" title="P.IVA" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Mail</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="newMail">
+                <bc-text-input formControlName="newMail" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">PEC</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="newPec">
+                <bc-text-input formControlName="newPec" title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">WebSite</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="newWebSite">
+                <bc-text-input formControlName="newWebSite" title="Sito Web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
     </form>

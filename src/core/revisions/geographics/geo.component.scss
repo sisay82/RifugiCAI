@@ -3,22 +3,20 @@
 
 @include bc-typography();
 
-.ng-invalid:not(form):not(div)  {
-  border-left: 5px solid #a94442; /* red */
-}
-
 .bc-geographic-title{
     margin-bottom: 4px;
     color:map-get($bc-teal,400 );
 }
 
+.bc-geographic-input{
+    position:relative;
+    width:30%;
+    margin-left:1%;
+}
+
 .bc-add-tag:hover{
   color:map-get($bc-teal,400);
   cursor: pointer;
-}
-
-input, select{
-    font-family: inherit !important;
 }
 
 .bc-add-tag{

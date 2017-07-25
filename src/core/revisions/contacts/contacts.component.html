@@ -4,16 +4,10 @@
         <div class="bc-h6 bc-contact-title">Contatti</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-contact">
-                <div class="bc-body" style="white-space: nowrap">Telefono</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="fixedPhone">
-                <div [hidden]="contactForm.controls['fixedPhone'].valid" class="alert alert-danger">Invalid</div>
+                <bc-text-input formControlName="fixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <div class="bc-body" style="white-space: nowrap">Cellulare</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="mobilePhone">
-                <div [hidden]="contactForm.controls['mobilePhone'].valid" class="alert alert-danger">Invalid</div>
+                <bc-text-input formControlName="mobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
                 <div class="bc-body" style="white-space: nowrap">Ruolo</div>
@@ -26,22 +20,13 @@
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-contact">
-                <div class="bc-body" style="white-space: nowrap">Mail</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="emailAddress">
-                <div [hidden]="contactForm.controls['emailAddress'].valid" class="alert alert-danger">Invalid</div>
+                <bc-text-input formControlName="emailAddress" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <div class="bc-body" style="white-space: nowrap">PEC</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="mailPec">
-                <div [hidden]="contactForm.controls['mailPec'].valid" class="alert alert-danger">Invalid</div>
+                <bc-text-input formControlName="mailPec" title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <div class="bc-body" style="white-space: nowrap">Sito Web</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="webAddress">
-                <div [hidden]="contactForm.controls['webAddress'].valid" class="alert alert-danger">Invalid</div>
+                <bc-text-input formControlName="webAddress" title="Sito Web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <br>
@@ -50,24 +35,13 @@
         <div *ngFor="let open of contactForm.controls['openings'].controls;let i = index" formArrayName="openings">
             <div [formGroupName]="i" style="display: flex;flex-direction:row;align-items:center">
                 <div class="bc-revision-contact">
-                    <div class="bc-body" style="white-space: nowrap">Inizio</div>
-                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                        class="form-control" formControlName="startDate">
-                    <div [hidden]="open.controls['startDate'].valid" class="alert alert-danger">Invalid</div>
+                    <bc-text-input formControlName="startDate" title="Inizio" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div class="bc-revision-contact">
-                    <div class="bc-body" style="white-space: nowrap">Fine</div>
-                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                        class="form-control"  formControlName="endDate">
-                    <div [hidden]="open.controls['endDate'].valid" class="alert alert-danger">Invalid</div>
+                    <bc-text-input formControlName="endDate" title="Fine" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div class="bc-revision-contact">
-                    <div class="bc-body" style="white-space: nowrap">Tipo
-                        <div class="bc-h6" style="display:inline;color:red;margin-right:1%">*</div>
-                    </div>
-                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                        required class="form-control"  formControlName="type">
-                    <div [hidden]="open.controls['type'].valid" class="alert alert-danger">Invalid</div>
+                    <bc-text-input formControlName="type" title="Tipo" required="true" [displayError]="displayError"></bc-text-input>
                 </div>
                 <bc-icon (click)="removeOpening(i)" class="bc-add-tag" name="times" size=s></bc-icon>
             </div>
@@ -83,16 +57,13 @@
     <form [formGroup]="newOpeningForm">
         <div style="display:flex;flex-direction:row;align-items:center">    
             <div style="width:20%;margin-right:1%">
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="newOpeningStartDate">
+                <bc-text-input formControlName="newOpeningStartDate" [displayError]="displayError"></bc-text-input>
             </div>
             <div style="width:20%;margin-right:1%">
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="newOpeningEndDate">
+                <bc-text-input formControlName="newOpeningEndDate" [displayError]="displayError"></bc-text-input>
             </div>
             <div style="width:20%;margin-right:1%">
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    required class="form-control"  formControlName="newOpeningType">
+                <bc-text-input formControlName="newOpeningType" [displayError]="displayError"></bc-text-input>
             </div>
             <bc-icon (click)="addNewOpening()" class="bc-add-tag" name="check" size=s></bc-icon>
         </div>
