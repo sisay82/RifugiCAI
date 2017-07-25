@@ -75,7 +75,7 @@ export class BcLineStyler {
         '(click)': 'selected($event)',
         '[class.bc-list-item]': 'true',
         '[class.list-group-item]': 'true',
-        '[class.active]': 'isNavItem && active'
+        //'[class.active]': 'isNavItem && active'
     },
     templateUrl: 'list-item.component.html',
     encapsulation: ViewEncapsulation.None

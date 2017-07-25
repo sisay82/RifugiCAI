@@ -23,18 +23,6 @@ export class BcCatastal {
     shared.activeComponent="catastal";
     shared.onActiveOutletChange("content");
   }
-  
-  getSourceValue(value:Enums.Source_Type){
-    return Object.keys(Enums.Source_Type).find(k=>Enums.Source_Type[k]===value);
-  }
-
-  getTypoValue(){
-    if(this.catastal!=undefined&&this.catastal.typologicalCoherence!=undefined){
-      return Object.keys(Enums.Typo_consistency).find(k=>Enums.Typo_consistency[k]===this.catastal.typologicalCoherence);
-    }else{
-      return '----';
-    }
-  }
 
   ngOnDestroy(){
 

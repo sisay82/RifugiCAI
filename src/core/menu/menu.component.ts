@@ -1,5 +1,5 @@
 import {
-  Component, trigger, state, style, transition, animate, Input,Output,Injectable, OnDestroy, ViewChildren,QueryList
+  Component, trigger, state, style, transition, animate, Input, QueryList,ViewChildren,Injectable, OnDestroy
 } from '@angular/core';
 import {
   Animations
@@ -8,7 +8,6 @@ import { IMenu } from '../../app/shared/types/interfaces';
 import {BcSharedService} from '../../app/shared/shared.service'
 import { Subscription } from 'rxjs/Subscription';
 import { Router,ActivatedRoute } from '@angular/router';
-import { BcListItem } from '../list/listItem/list-item.component';
 
 @Component({
   moduleId: module.id,
@@ -21,15 +20,16 @@ export class BcMenu {
   menuState:string = 'left';
   @Input() menuElements: IMenu;
   toggleMenuSub:Subscription;
-  @ViewChildren(BcListItem) items:QueryList<BcListItem>;
-
-  clickItem(link:String){
-    let outlet=this.shared.activeOutlet;
+  
+  getLink(link:String):any{
+    let outlet=this.shared.activeOutlet
+    let routerLink;
     if(outlet=="revision"){
-        this.router.navigate([{outlets:({'revision': [link],'content': null})}],{relativeTo:this.route});
+      routerLink = [{outlets:({'revision': [link],'content': null})}];
     }else{
-        this.router.navigate([{outlets:({'content': [link],'revision': null})}],{relativeTo:this.route});
+      routerLink = [{outlets:({'content': [link],'revision': null})}];
     }
+    return routerLink;
   }
 
   ngAfterContentInit(){
@@ -42,16 +42,6 @@ export class BcMenu {
     this.checkWinPlatform();
   }
 
-  ngAfterViewInit() {
-    if(this.items!=undefined){
-      this.items.forEach(item => {
-        if(this.shared.activeComponent.toLowerCase().indexOf(this.menuElements.elements[item.listItemId].link.toLowerCase())>-1){
-          item.selected(null);
-        }
-      });
-    }
-  }
-
   constructor(private route:ActivatedRoute,private router:Router,private shared:BcSharedService){
     if(this.menuElements==undefined){
       this.menuElements={
@@ -59,14 +49,8 @@ export class BcMenu {
           {name:"No Menu Provided",icon:"",link:"#"}
         ]
       };
-    }else{
-      for(let element of this.menuElements.elements){
-        if(element.default!=undefined&&element.default){
-          this.clickItem(element.link);
-          return
-        }
-      }
     }
+    
   }
   
   checkWinPlatform(){

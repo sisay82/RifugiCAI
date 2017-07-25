@@ -4,9 +4,10 @@ import { BcMenu } from './menu.component';
 import { CommonModule } from '@angular/common';
 import {BcIconModule} from '../icon/icon.module';
 import { BcListModule } from '../list/list.module';
+import {RouterModule } from '@angular/router';
 
 @NgModule({
-    imports:[BcListModule,BcIconModule,CommonModule,BrowserAnimationsModule],
+    imports:[RouterModule,BcListModule,BcIconModule,CommonModule,BrowserAnimationsModule],
     declarations: [BcMenu],
     exports: [BcMenu,CommonModule,BrowserAnimationsModule]
 })

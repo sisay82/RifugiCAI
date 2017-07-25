@@ -82,6 +82,7 @@ export class BcCatastalRevision {
             greenCertification:[""],
             powerGenerator:[""],
             photovoltaic:[""],
+            heating_type:["",Validators.pattern(stringValidator)],
             sourceType:["",Validators.pattern(stringValidator)],
             sourceName:["",Validators.pattern(stringValidator)]
         });
@@ -90,7 +91,10 @@ export class BcCatastalRevision {
             type:["",Validators.pattern(stringValidator)],
             regulation:[""],
             oilSeparator:[""],
-            recycling:[""]
+            recycling:[""],
+            water_type:["",Validators.pattern(stringValidator)],
+            water_availability:["",Validators.pattern(stringValidator)],
+            droughts:["",Validators.pattern(stringValidator)]
         });
 
         this.formCatValidSub = this.catastalForm.statusChanges.subscribe((value)=>{
@@ -150,7 +154,34 @@ export class BcCatastalRevision {
         });
 
         shared.activeComponent="catastal";
-    } 
+    }
+
+    getEnumWaterTypeNames():any[]{
+        let names:any[]=[];
+        const objValues = Object.keys(Enums.Water_Type).map(k => Enums.Water_Type[k]);
+        objValues.filter(v => typeof v === "string").forEach((val)=>{
+            names.push(val);
+        });
+        return names;
+    }
+
+    getEnumWaterAvailNames():any[]{
+        let names:any[]=[];
+        const objValues = Object.keys(Enums.Water_Availability).map(k => Enums.Water_Availability[k]);
+        objValues.filter(v => typeof v === "string").forEach((val)=>{
+            names.push(val);
+        });
+        return names;
+    }
+
+    getEnumSeasonNames():any[]{
+        let names:any[]=[];
+        const objValues = Object.keys(Enums.Seasons).map(k => Enums.Seasons[k]);
+        objValues.filter(v => typeof v === "string").forEach((val)=>{
+            names.push(val);
+        });
+        return names;
+    }
 
     getEnumTypoNames():any[]{
         let names:any[]=[];
@@ -161,6 +192,51 @@ export class BcCatastalRevision {
         return names;
     }
 
+    getEnumHeatNames():any[]{
+        let names:any[]=[];
+        const objValues = Object.keys(Enums.Heating_Type).map(k => Enums.Heating_Type[k]);
+        objValues.filter(v => typeof v === "string").forEach((val)=>{
+            names.push(val);
+        });
+        return names;
+    }
+
+    checkWaterTypeEnum(value){
+        if(this.drainForm.controls['water_type'].value!=undefined){
+            if(this.drainForm.controls['water_type'].value!=''&&this.drainForm.controls['water_type'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    checkWaterAvailEnum(value){
+        if(this.drainForm.controls['water_availability'].value!=undefined){
+            if(this.drainForm.controls['water_availability'].value!=''&&this.drainForm.controls['water_availability'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    checkSeasonEnum(value){
+        if(this.drainForm.controls['droughts'].value!=undefined){
+            if(this.drainForm.controls['droughts'].value!=''&&this.drainForm.controls['droughts'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    checkHeatEnum(value){
+        if(this.energyForm.controls['heating_type'].value!=undefined){
+            if(this.energyForm.controls['heating_type'].value!=''&&this.energyForm.controls['heating_type'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
+                return true;
+            }
+        }
+        return false;
+    }
+
     checkTypoEnum(value){
         if(this.catastalForm.controls['typologicalCoherence'].value!=undefined){
             if(this.catastalForm.controls['typologicalCoherence'].value!=''&&this.catastalForm.controls['typologicalCoherence'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
@@ -168,7 +244,6 @@ export class BcCatastalRevision {
             }
         }
         return false;
-        
     }
 
     getEnumSourceTypeNames():any[]{
@@ -242,7 +317,10 @@ export class BcCatastalRevision {
                         type:this.drainForm.controls["type"].value||null,
                         regulation:this.drainForm.controls["regulation"].value||null,
                         oilSeparator:this.drainForm.controls["oilSeparator"].value||null,
-                        recycling:this.drainForm.controls["recycling"].value||null
+                        recycling:this.drainForm.controls["recycling"].value||null,
+                        water_type:this.drainForm.controls["water_type"].value||null,
+                        water_availability:this.drainForm.controls["water_availability"].value||null,
+                        droughts:this.drainForm.controls["droughts"].value||null
                     }
                     shelter.drain=drain;
                     this.revisionService.onChildSave(shelter,"drain");
@@ -273,6 +351,7 @@ export class BcCatastalRevision {
                         photovoltaic:this.energyForm.controls["photovoltaic"].value||null,
                         sourceType:this.energyForm.controls["sourceType"].value||null,
                         sourceName:this.energyForm.controls["sourceName"].value||null,
+                        heating_type:this.energyForm.controls["heating_type"].value||null
                     }
                     shelter.energy=energy;
                     this.revisionService.onChildSave(shelter,"energy");

@@ -42,15 +42,18 @@
                 class="form-control"  formControlName="secondaryBody">
             <br>
         </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
             <div class="bc-body" style="white-space: nowrap">Consistenza Tipologica</div>
             <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control" formControlName="typologicalCoherence">
-                <option [selected]="catastalForm.controls['typologicalCoherence'].value==undefined" value="null">-- Consistenza Tipologica --</option>
+                <option [selected]="catastalForm.controls['typologicalCoherence'].value==undefined" value="">-- Consistenza Tipologica --</option>
                 <option *ngFor="let name of getEnumTypoNames()" [selected]="checkTypoEnum(name)" [value]="name">{{name}}</option>
             </select>
         </div>
     </div>
+    <br>
     <div style="display: flex;flex-direction:row">
         <div class="bc-catastal-check">
             <div class="bc-body" style="display:inline;white-space: nowrap">ISO14001</div>
@@ -118,7 +121,7 @@
             <div class="bc-body" style="white-space: nowrap">Tipo Fonte Energetica</div>
             <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
                 class="form-control" formControlName="sourceType">
-                <option [selected]="energyForm.controls['sourceType'].value==undefined" value="null">-- Tipo Fonte --</option>
+                <option [selected]="energyForm.controls['sourceType'].value==undefined" value="">-- Tipo Fonte --</option>
                 <option *ngFor="let name of getEnumSourceTypeNames()" [selected]="checkSourceTypeEnum(name)" [value]="name">{{name}}</option>
             </select>
         </div>
@@ -155,6 +158,17 @@
             </div>
         </div>
     </div>
+    <br>
+    <div style="display: flex;flex-direction:row">
+        <div class="bc-revision-catastal">
+            <div class="bc-body" style="white-space: nowrap">Tipo riscaldamento</div>
+            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                class="form-control" formControlName="heating_type">
+                <option [selected]="energyForm.controls['heating_type'].value==undefined" value="">-- Tipo riscaldamento --</option>
+                <option *ngFor="let name of getEnumHeatNames()" [selected]="checkHeatEnum(name)" [value]="name">{{name}}</option>
+            </select>
+        </div>
+    </div>
 </form>
 <bc-divider></bc-divider>
 <div class="bc-h6 bc-catastal-title">Rifiuti</div>
@@ -189,6 +203,32 @@
                     class="form-control bc-catastal-check-content"  formControlName="recycling">
                 <br>
             </div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div class="bc-revision-catastal">
+            <div class="bc-body" style="white-space: nowrap">Acqua</div>
+            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                class="form-control" formControlName="water_type">
+                <option [selected]="drainForm.controls['water_type'].value==undefined" value="">-- Acqua --</option>
+                <option *ngFor="let name of getEnumWaterTypeNames()" [selected]="checkWaterTypeEnum(name)" [value]="name">{{name}}</option>
+            </select>
+        </div>
+        <div class="bc-revision-catastal">
+            <div class="bc-body" style="white-space: nowrap">Disponibilità acqua</div>
+            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                class="form-control" formControlName="water_availability">
+                <option [selected]="drainForm.controls['water_availability'].value==undefined" value="">-- Tipo disponibilità --</option>
+                <option *ngFor="let name of getEnumWaterAvailNames()" [selected]="checkWaterAvailEnum(name)" [value]="name">{{name}}</option>
+            </select>
+        </div>
+        <div class="bc-revision-catastal">
+            <div class="bc-body" style="white-space: nowrap">Periodi di siccità</div>
+            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
+                class="form-control" formControlName="droughts">
+                <option [selected]="drainForm.controls['droughts'].value==undefined" value="">-- Stagione --</option>
+                <option *ngFor="let name of getEnumSeasonNames()" [selected]="checkSeasonEnum(name)" [value]="name">{{name}}</option>
+            </select>
         </div>
     </div>
 </form>
