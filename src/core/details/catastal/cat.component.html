@@ -1,5 +1,5 @@
 <div style="display:block;margin-left:4px;background:white">
-    <div class="bc-h6 bc-detail-title">Dati Catastali e Certificazioni</div>
+    <div class="bc-h6 bc-detail-title">Dati catastali e Certificazioni</div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Anno di Costruzione:</div>
@@ -47,7 +47,7 @@
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Consistenza Tipologica:</div>
-            <div class="bc-body">{{getTypoValue()||'----'}}</div>
+            <div class="bc-body">{{catastal?(catastal.typologicalCoherence||'----'):'----'}}</div>
         </div>
         <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
             <bc-icon *ngIf="catastal.matericalCoherence!=null&&catastal.matericalCoherence==true" name="check-square-o" size=s></bc-icon>
@@ -66,7 +66,7 @@
         </div>
     </div>
     <bc-divider></bc-divider>
-    <div class="bc-h6 bc-detail-title">Energia</div>
+    <div class="bc-h6 bc-detail-title">Energia e riscaldamento</div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Classe Energetica:</div>
@@ -95,9 +95,13 @@
             <bc-icon *ngIf="energy.greenCertification==null||energy.greenCertification==false" name="square-o" size=s></bc-icon>
             <div class="bc-body-strong" style="margin-right:4px">Green</div>
         </div>  
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Tipo riscaldamento:</div>
+            <div class="bc-body">{{energy?(energy.heating_type || '----'):'----'}}</div>
+        </div>
     </div>
     <bc-divider></bc-divider>
-    <div class="bc-h6 bc-detail-title">Scarico</div>
+    <div class="bc-h6 bc-detail-title">Scarico e acqua</div>
     <div style="display: flex;flex-direction:row">   
         <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
             <bc-icon *ngIf="drain.recycling!=null&&drain.recycling==true" name="check-square-o" size=s></bc-icon>
@@ -116,7 +120,21 @@
         </div>  
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Tipo di Scarico:</div>
-            <div class="bc-body">{{drain?(drain.type):'----'}}</div>
+            <div class="bc-body">{{drain?(drain.type || '----'):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Acqua:</div>
+            <div class="bc-body">{{drain?(drain.water_type || '----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Disponibilità acqua:</div>
+            <div class="bc-body">{{drain?(drain.water_availability || '----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Periodi di siccità:</div>
+            <div class="bc-body">{{drain?(drain.droughts || '----'):'----'}}</div>
         </div>
     </div>
 </div>

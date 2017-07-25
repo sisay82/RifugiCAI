@@ -70,13 +70,13 @@ export class BcGeo {
         if(this.data.tags[index].value!=""){
           return this.data.tags[index].value;
         }else{
-          return '----';
+          return null;
         }
       }else{
-        return '----';
+        return null;
       }
     }else{
-      return '----';
+      return null;
     } 
   }
 }
