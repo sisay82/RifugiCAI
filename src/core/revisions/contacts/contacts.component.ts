@@ -164,7 +164,7 @@ export class BcContactsRevision {
         if(this.contactForm.valid){
             let shelter:any={_id:this._id,name:this.name};
             let wSite=null;
-            if(this.contactForm.controls.webAddress.value!=null){
+            if(this.contactForm.controls.webAddress.value!=""){
                 wSite="http";
                 if(this.contactForm.controls.webAddress.value.indexOf(wSite)==-1){
                     wSite+="://"+this.contactForm.controls.webAddress.value;

@@ -6,6 +6,7 @@ import { IShelter } from '../shared/types/interfaces';
 export class BcSharedService{
     activeOutlet:string;
     activeComponent:string;
+    newShelter:boolean=false;
 
     private displayErrorSource = new Subject<void>();
     displayError$ = this.displayErrorSource.asObservable();

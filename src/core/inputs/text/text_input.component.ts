@@ -1,7 +1,7 @@
 import {
   Component,Input,forwardRef,Directive,ViewEncapsulation
 } from '@angular/core';
-import { ControlValueAccessor,NG_VALUE_ACCESSOR,FormControl,NG_VALIDATORS } from '@angular/forms';
+import { ControlValueAccessor,NG_VALUE_ACCESSOR,FormControl,NG_VALIDATORS,Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 function validateDate (c:FormControl){
@@ -16,16 +16,23 @@ function validateDate (c:FormControl){
     return null;
 }
 
+function createValidationFunction(validator:string){
+    if(validator.indexOf("validateDate")>-1){
+        return validateDate;
+    }else{
+        let regExp:RegExp=<RegExp>validators[validator];
+        return function validationFunction(value){
+            return regExp.test(value) ?  null : {valid:false};
+        }
+    }
+}
+
 export let validators= {
     stringValidator:<RegExp>/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/,
     telephoneValidator:<RegExp>/^([0-9]*)*$/,
-    mailValidator:<RegExp>/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    mailValidator:<RegExp>/(^$|^.*@.*\..*$)/,
     numberValidator:<RegExp>/^[0-9]+[.]{0,1}[0-9]*$/,
     urlValidator:<RegExp>/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
-}
-
-function testValid(value,regExp){
-    return regExp.test(value);
 }
 
 @Directive({
@@ -66,7 +73,7 @@ export class BcTextInput implements ControlValueAccessor {
     _displayError:boolean=false;
     @Input() set displayError(enable:boolean){
         this._displayError=enable;
-        if(!testValid(this.value,this._validator)||(this.required&&this.value=="")){
+        if(this._validator(this.value)!=null||(this.required&&this.value=="")){
             if(enable){
                 this.invalid=true;
             }
@@ -81,9 +88,9 @@ export class BcTextInput implements ControlValueAccessor {
 
     @Input() title = "";
 
-    _validator:RegExp=<RegExp>validators.stringValidator;
+    _validator:Function=createValidationFunction("stringValidator");
     @Input() set validator(validator){
-        this._validator=validators[validator];
+        this._validator=createValidationFunction(validator);
     }
     
     writeValue(value: any): void {
@@ -102,7 +109,7 @@ export class BcTextInput implements ControlValueAccessor {
     
     onKey(event:any){
         this.value=event.target.value;
-        if(testValid(this.value,this._validator)&&!(this.required&&this.value=="")){
+        if(this._validator(this.value)==null&&!(this.required&&this.value=="")){
             this.invalid=false;
         }else{
             if(this.displayError){

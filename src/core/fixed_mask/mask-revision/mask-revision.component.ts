@@ -29,6 +29,7 @@ export class BcMaskRevision {
   formValiditySub:Subscription;
   displayErrorSub:Subscription;
   displayError:boolean=false;
+  newShelter:boolean=false;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
     this.maskForm = fb.group({
         name:["",[Validators.required,Validators.pattern(stringValidator)]],
@@ -52,6 +53,8 @@ export class BcMaskRevision {
     this.displayErrorSub = this.shared.displayError$.subscribe(()=>{
       this.displayError=true;
     });
+
+    this.newShelter=shared.newShelter;
   }
 
   toggleMenu(){
@@ -139,7 +142,26 @@ export class BcMaskRevision {
   }
 
   return(){
-    this.router.navigateByUrl("list");
+    let cancelSub=this.shared.maskCancelConfirm$.subscribe(()=>{
+      let shelSub=this.shelterService.confirmShelter(this.shelter._id,false).subscribe(value=>{
+        if(!value){
+          console.log("Error in Cancel"); 
+          if(shelSub!=undefined)
+            shelSub.unsubscribe();
+          if(cancelSub!=undefined)
+            cancelSub.unsubscribe();
+        }else{
+          this.router.navigateByUrl("list");
+          if(shelSub!=undefined)
+            shelSub.unsubscribe();
+          if(cancelSub!=undefined)
+            cancelSub.unsubscribe();
+        }
+        
+      });
+    });
+    this.shared.onMaskCancel();
+    
   }
 
   initForm(){
