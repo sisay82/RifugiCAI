@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ShelterService } from '../shelter.service'
-import { BcSharedService } from '../shared.service'
+import { BcSharedService } from '../../shared/shared.service'
 import { IShelter,IMenu } from '../../shared/types/interfaces';
 
 @Component({
