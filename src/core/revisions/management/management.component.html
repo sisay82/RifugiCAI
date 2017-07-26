@@ -22,22 +22,8 @@
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
-            <div class="bc-management-check">
-                <div class="bc-body" style="white-space: nowrap">Ritiro Chiavi</div>
-                <div class="bc-management-check-content">
-                    <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                        class="form-control bc-management-check-content"  formControlName="pickupKey">
-                    <br>
-                </div>
-            </div>
-            <div class="bc-management-check">
-                <div class="bc-body" style="white-space: nowrap">Autogestione</div>
-                <div class="bc-management-check-content">
-                    <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                        class="form-control bc-management-check-content"  formControlName="self_management">
-                    <br>
-                </div>
-            </div>
+            <bc-checkbox-input formControlName="pickupKey" title="Ritiro Chiavi"></bc-checkbox-input>
+            <bc-checkbox-input formControlName="self_management" title="Autogestione"></bc-checkbox-input>
         </div>
         <bc-divider></bc-divider>
         <div style="display: flex;flex-direction:row">
