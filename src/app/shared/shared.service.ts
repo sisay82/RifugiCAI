@@ -7,6 +7,12 @@ export class BcSharedService{
     activeOutlet:string;
     activeComponent:string;
 
+    private displayErrorSource = new Subject<void>();
+    displayError$ = this.displayErrorSource.asObservable();
+    onDisplayError(){
+        this.displayErrorSource.next();
+    }
+
     private maskSaveSource = new Subject<any>();
     maskSave$ = this.maskSaveSource.asObservable();
     onMaskSave(shelter:any){

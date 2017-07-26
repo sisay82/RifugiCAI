@@ -8,6 +8,7 @@ import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angu
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+import {validators} from '../../inputs/text/text_input.component';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
@@ -26,7 +27,9 @@ export class BcMaskRevision {
   @Input() shelter:IShelter;
   maskForm: FormGroup; 
   formValiditySub:Subscription;
-  activeOutltRequest:Subscription;
+  displayErrorSub:Subscription;
+  displayError:boolean=false;
+  newShelter:boolean=false;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
     this.maskForm = fb.group({
         name:["",[Validators.required,Validators.pattern(stringValidator)]],
@@ -45,6 +48,10 @@ export class BcMaskRevision {
       }else if(value=="INVALID"){
         shared.onMaskInvalid();
       }
+    });
+
+    this.displayErrorSub = this.shared.displayError$.subscribe(()=>{
+      this.displayError=true;
     });
   }
 
@@ -127,66 +134,32 @@ export class BcMaskRevision {
         this.shared.onMaskSave(shelter);
       }
     }else{
+      this.displayError=true;
       this.shared.onMaskSave(null);
     }
   }
 
-  getEnumCategoryNames(){
-    let names:any[]=[];
-    const objValues = Object.keys(Enums.Shelter_Category).map(k => Enums.Shelter_Category[k]);
-    objValues.filter(v => typeof v === "string").forEach((val)=>{
-        names.push(val);
-    });
-    return names;
-  }
-
-  getEnumTypeNames(){
-    let names:any[]=[];
-    const objValues = Object.keys(Enums.Shelter_Type).map(k => Enums.Shelter_Type[k]);
-    objValues.filter(v => typeof v === "string").forEach((val)=>{
-        names.push(val);
-    });
-    return names;
-  }
-
-  getEnumRegionalTypeNames(){
-    let names:any[]=[];
-    const objValues = Object.keys(Enums.Regional_Type).map(k => Enums.Regional_Type[k]);
-    objValues.filter(v => typeof v === "string").forEach((val)=>{
-        names.push(val);
-    });
-    return names;
-  }
-
-  checkRegionalTypeEnum(value){
-    if(this.maskForm.controls['regional_type'].value!=undefined){
-        if(this.maskForm.controls['regional_type'].value!=''&&this.maskForm.controls['regional_type'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-            return true;
-        }
-    }
-    return false;
-  }
-
-  checkCategoryEnum(value){
-    if(this.maskForm.controls['category'].value!=undefined){
-        if(this.maskForm.controls['category'].value!=''&&this.maskForm.controls['category'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-            return true;
-        }
-    }
-    return false;
-  }
-
-  checkTypeEnum(value){
-    if(this.maskForm.controls['type'].value!=undefined){
-        if(this.maskForm.controls['type'].value!=''&&this.maskForm.controls['type'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-            return true;
-        }
-    }
-    return false;
-  }
-
   return(){
-    this.router.navigateByUrl("list");
+    let cancelSub=this.shared.maskCancelConfirm$.subscribe(()=>{
+      let shelSub=this.shelterService.confirmShelter(this.shelter._id,false).subscribe(value=>{
+        if(!value){
+          console.log("Error in Cancel"); 
+          if(shelSub!=undefined)
+            shelSub.unsubscribe();
+          if(cancelSub!=undefined)
+            cancelSub.unsubscribe();
+        }else{
+          this.router.navigateByUrl("list");
+          if(shelSub!=undefined)
+            shelSub.unsubscribe();
+          if(cancelSub!=undefined)
+            cancelSub.unsubscribe();
+        }
+        
+      });
+    });
+    this.shared.onMaskCancel();
+    
   }
 
   initForm(){
@@ -207,11 +180,23 @@ export class BcMaskRevision {
     if(this.formValiditySub!=undefined){
       this.formValiditySub.unsubscribe();
     }
+    if(this.displayErrorSub!=undefined){
+      this.displayErrorSub.unsubscribe();
+    }
   }
 
   ngOnInit(){
     if(this.shelter==undefined){
       let routeSub=this._route.params.subscribe(params=>{
+        if(params["name"]!=undefined){
+          if(params["name"]=="newShelter"){
+            this.newShelter=true;
+          }else{
+           this.router.navigateByUrl("list");
+          }
+        }else{
+          this.newShelter=false;
+        }
         let shelSub=this.shelterService.getShelter(params['id']).subscribe(shelter=>{
             this.shelter=shelter;
             this.initForm();
@@ -236,9 +221,13 @@ export class BcMaskRevision {
           if(cancelSub!=undefined)
             cancelSub.unsubscribe();
         }else{
-          let component = this.shared.activeComponent;
-          this.shared.onActiveOutletChange("content");
-          this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
+          if(this.newShelter){
+            this.router.navigateByUrl("list");
+          }else{
+            let component = this.shared.activeComponent;
+            this.shared.onActiveOutletChange("content");
+            this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
+          }
           if(shelSub!=undefined)
             shelSub.unsubscribe();
           if(cancelSub!=undefined)
@@ -248,8 +237,7 @@ export class BcMaskRevision {
       });
     });
     this.shared.onMaskCancel();
-
-    
   }
+
 
 }

@@ -2,81 +2,51 @@
     <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
     <div class="bc-h6 bc-geographic-title">Posizione</div>
     <div style="display:flex;flex-direction:row">
-        <div style="position:relative;width:20%">
-            <div class="bc-body" style="white-space: nowrap">Località</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="locality">
-            <br>
+        <div class="bc-geographic-input">
+            <bc-text-input formControlName="locality" title="Località" [displayError]="displayError"></bc-text-input>
         </div>
-        <div style="position:relative;width:20%;margin-left:1%">
-            <div class="bc-body" style="white-space: nowrap">Ente Sovracomunale di Competenza</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="authorityJurisdiction">
-            <br>
+        <div class="bc-geographic-input">
+            <bc-text-input formControlName="authorityJurisdiction" title="Ente Sovracomunale di Competenza" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
-        <div style="position:relative;width:20%">
-            <div class="bc-body" style="white-space: nowrap">Comune</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="municipality">
-            <br>
+        <div class="bc-geographic-input">
+            <bc-text-input formControlName="municipality" title="Comune" [displayError]="displayError"></bc-text-input>
         </div>
-        <div style="position:relative;width:20%;margin-left:1%">
-            <div class="bc-body" style="white-space: nowrap">Gruppo Montuoso</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="massif">
-            <br>
+        <div class="bc-geographic-input">
+            <bc-text-input formControlName="massif" title="Gruppo Montuoso" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
-        <div style="position:relative;width:20%">
-            <div class="bc-body" style="white-space: nowrap">Provincia</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="province">
-            <br>
+        <div class="bc-geographic-input">
+            <bc-text-input formControlName="province" title="Provincia" [displayError]="displayError"></bc-text-input>
         </div>
         
-        <div style="position:relative;width:20%;margin-left:1%">
-            <div class="bc-body" style="white-space: nowrap">Valle</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="valley">
-            <br>
+        <div class="bc-geographic-input">
+            <bc-text-input formControlName="valley" title="Valle" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
-        <div style="position:relative;width:20%">
-            <div class="bc-body" style="white-space: nowrap">Regione</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="region">
-            <br>
+        <div class="bc-geographic-input">
+            <bc-text-input formControlName="region" title="Regione" [displayError]="displayError"></bc-text-input>
         </div>   
-        <div style="position:relative;width:20%;margin-left:1%">
-            <div class="bc-body" style="white-space: nowrap">Quota</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="altitude">
-            <br>    
+        <div class="bc-geographic-input">
+            <bc-text-input formControlName="altitude" title="Quota" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
-        <div style="position:relative;width:20%">        
-            <div class="bc-body" style="white-space: nowrap">Regione loc. Proprietà</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="ownerRegion">
+        <div class="bc-geographic-input">     
+            <bc-text-input formControlName="ownerRegion" title="Regione loc. Proprietà" [displayError]="displayError"></bc-text-input>   
             <br>
         </div>
-        <div style="position:relative;width:20%;margin-left:1%">
+        <div class="bc-geographic-input">
             <div class="bc-body" style="white-space: nowrap">UTM WGS84</div>
             <div style="display:flex;flex-direction:row">
                 <div>
-                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                        class="form-control"  formControlName="latitude">
-                    <br>
+                    <bc-text-input formControlName="latitude" validator="numberValidator" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div>
-                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                        class="form-control"  formControlName="longitude">
-                    <br>
+                    <bc-text-input formControlName="longitude" validator="numberValidator" [displayError]="displayError"></bc-text-input>
                 </div>
             </div>
         </div>  
@@ -87,13 +57,11 @@
         <div *ngIf="data!=undefined&&data.tags!=undefined" formArrayName="tags">
             <div *ngFor="let tag of geoForm.controls.tags.controls;let i = index">
                 <div [formGroupName]="i" style="display:flex;flex-direction:row;align-items:center">
-                    <div style="width:20%">
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            required class="form-control"  formControlName="key">
+                    <div class="bc-geographic-input">
+                        <bc-text-input formControlName="key" [displayError]="displayError"></bc-text-input>
                     </div>
-                    <div style="width:20%;margin-left:1%">
-                        <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                            class="form-control"  formControlName="value">
+                    <div class="bc-geographic-input">
+                        <bc-text-input formControlName="value" [displayError]="displayError"></bc-text-input>
                     </div>
                     <bc-icon (click)="removeTag(i)" class="bc-add-tag" name="times" size=s></bc-icon>
                     <br>
@@ -110,13 +78,11 @@
 <div *ngIf="!isHiddenTag()">
     <form [formGroup]="newTagForm">
         <div style="display:flex;flex-direction:row;align-items:center">
-            <div style="width:20%">
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    required class="form-control"  formControlName="newKey">
+            <div class="bc-geographic-input">
+                <bc-text-input formControlName="newKey" [displayError]="displayError"></bc-text-input>
             </div>
-            <div style="width:20%;margin-left:1%">
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="newValue">
+            <div class="bc-geographic-input">
+                <bc-text-input formControlName="newValue" [displayError]="displayError"></bc-text-input>
             </div>
             <bc-icon (click)="addNewTag()" class="bc-add-tag" name="check" size=s></bc-icon>
         </div>

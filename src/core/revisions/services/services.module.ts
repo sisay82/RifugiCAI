@@ -8,10 +8,11 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {BcButtonModule} from '../../button/button.module'
 import {BrowserAnimationsModule}from '@angular/platform-browser/animations';
 import {BcIconModule} from '../../icon/icon.module';
+import {BcTextInputModule} from '../../inputs/text/text_input.module';
 
 @NgModule({
     declarations: [BcServRevision],
     exports: [BcServRevision,BrowserAnimationsModule],
-    imports:[BcIconModule,BrowserAnimationsModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
+    imports:[BcTextInputModule,BcIconModule,BrowserAnimationsModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
 })
 export class BcServRevisionModule { }

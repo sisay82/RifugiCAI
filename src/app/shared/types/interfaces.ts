@@ -9,9 +9,9 @@ export interface IPagedResults<T> {
 }
 
 export interface IMarker{
-    latLng:L.LatLng,
-    popup:string,
-    optional?:any
+    latLng:L.LatLng;
+    popup:string;
+    optional?:any;
 }
 
 export interface IButton {

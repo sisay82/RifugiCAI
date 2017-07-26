@@ -9,12 +9,7 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-
-let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
-let telephoneValidator=/^([0-9]*)*$/;
-let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
-let urlValidator=/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+import {validators} from '../../inputs/text/text_input.component';
 
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
@@ -54,19 +49,19 @@ export class BcContactsRevision {
     hiddenOpening:boolean=true;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.contactForm = fb.group({
-            fixedPhone:["",Validators.pattern(telephoneValidator)],
-            mobilePhone:["",Validators.pattern(telephoneValidator)],
-            role:["",Validators.pattern(stringValidator)],
-            emailAddress:["",Validators.pattern(mailValidator)],
-            mailPec:["",Validators.pattern(mailValidator)],
-            webAddress:["",Validators.pattern(urlValidator)],
+            fixedPhone:["",Validators.pattern(validators.telephoneValidator)],
+            mobilePhone:["",Validators.pattern(validators.telephoneValidator)],
+            role:["",Validators.pattern(validators.stringValidator)],
+            emailAddress:["",Validators.pattern(validators.mailValidator)],
+            mailPec:["",Validators.pattern(validators.mailValidator)],
+            webAddress:["",Validators.pattern(validators.urlValidator)],
             openings:fb.array([])
         }); 
         
         this.newOpeningForm = fb.group({
             newOpeningStartDate:["Inizio",validateDate],
             newOpeningEndDate:["Fine",validateDate],
-            newOpeningType:["Tipo",[Validators.pattern(stringValidator),Validators.required]]
+            newOpeningType:["Tipo",[Validators.pattern(validators.stringValidator),Validators.required]]
         });
 
         this.formValidSub = this.contactForm.statusChanges.subscribe((value)=>{
@@ -107,6 +102,7 @@ export class BcContactsRevision {
                     this.shared.onMaskConfirmSave("contacts");
                 }
             }else{
+                shared.onDisplayError();
                 this.displayError=true;
             }
         });
@@ -120,25 +116,6 @@ export class BcContactsRevision {
 
     isHiddenOpenings(){
         return this.hiddenOpening;
-    }
-
-    getEnumOwnerNames():any[]{
-        let names:any[]=[];
-        const objValues = Object.keys(Enums.Owner_Type).map(k => Enums.Owner_Type[k]);
-        objValues.filter(v => typeof v === "string").forEach((val)=>{
-            names.push(val);
-        });
-        return names;
-    }
-
-    checkEnum(value){
-        if(this.contactForm.controls['role'].value!=undefined){
-            if(this.contactForm.controls['role'].value!=''&&this.contactForm.controls['role'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                return true;
-            }
-        }
-        return false;
-        
     }
 
     removeOpening(index){
@@ -179,7 +156,7 @@ export class BcContactsRevision {
         return this.fb.group({
             startDate:[opening.startDate?(new Date(opening.startDate).toUTCString()):null,validateDate],
             endDate:[opening.startDate?(new Date(opening.endDate).toUTCString()):null,validateDate],
-            type:[opening.type,[Validators.pattern(stringValidator),Validators.required]]
+            type:[opening.type,[Validators.pattern(validators.stringValidator),Validators.required]]
         });
     }
 
@@ -187,7 +164,7 @@ export class BcContactsRevision {
         if(this.contactForm.valid){
             let shelter:any={_id:this._id,name:this.name};
             let wSite=null;
-            if(this.contactForm.controls.webAddress.value!=null){
+            if(this.contactForm.controls.webAddress.value!=null&&this.contactForm.controls.webAddress.value!=""){
                 wSite="http";
                 if(this.contactForm.controls.webAddress.value.indexOf(wSite)==-1){
                     wSite+="://"+this.contactForm.controls.webAddress.value;

@@ -3,100 +3,41 @@
 <form style="position:relative" [formGroup]="catastalForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Anno di Costruzione</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="buildYear">
-            <br>
+            <bc-text-input formControlName="buildYear" title="Anno di Costruzione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Anno di Ristrutturazione</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="rebuildYear">
-            <br>
+            <bc-text-input formControlName="rebuildYear" title="Anno di Ristrutturazione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Codice Catastale</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="code">
-            <br>
+            <bc-text-input formControlName="code" title="Codice Catastale" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Classe Catastale</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="class">
-            <br>
+            <bc-text-input formControlName="class" title="Classe Catastale" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Consistenza Corpo Principale</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="mainBody">
-            <br>
+            <bc-text-input formControlName="mainBody" title="Consistenza Corpo Principale" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Consistenza Corpi Secondari</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="secondaryBody">
-            <br>
+            <bc-text-input formControlName="secondaryBody" title="Consistenza Corpi Secondari" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Consistenza Tipologica</div>
-            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="typologicalCoherence">
-                <option [selected]="catastalForm.controls['typologicalCoherence'].value==undefined" value="">-- Consistenza Tipologica --</option>
-                <option *ngFor="let name of getEnumTypoNames()" [selected]="checkTypoEnum(name)" [value]="name">{{name}}</option>
-            </select>
-        </div>
-    </div>
-    <br>
-    <div style="display: flex;flex-direction:row">
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="display:inline;white-space: nowrap">ISO14001</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="ISO14001">
-                <br>
-            </div>
-        </div>
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Regolarità Edilizia</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="buildingRegulation">
-                <br>
-            </div>
-        </div>
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Coerenza Materica</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="matericalCoherence">
-                <br>
-            </div>
+            <bc-select-input enumName="Typo_consistency" formControlName="typologicalCoherence" [displayError]="displayError" title="Consistenza Tipologica"></bc-select-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Regolarità Urbana</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="cityPlanRegulation">
-                <br>
-            </div>
-        </div>
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Regolarità Antincendio</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="fireRegulation">
-                <br>
-            </div>
-        </div>
+        <bc-checkbox-input formControlName="ISO14001" title="ISO14001"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="buildingRegulation" title="Regolarità edilizia"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="matericalCoherence" title="Coerenza materica"></bc-checkbox-input>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <bc-checkbox-input formControlName="cityPlanRegulation" title="Regolarità Urbana"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="fireRegulation" title="Regolarità antincendio"></bc-checkbox-input>
     </div>
 </form>
 <bc-divider></bc-divider>
@@ -104,69 +45,28 @@
 <form style="position:relative" [formGroup]="energyForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Classe Energetica</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="class">
-            <br>
+            <bc-text-input formControlName="class" title="Classe Energetica" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Quantità</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="energy">
-            <br>
+            <bc-text-input formControlName="energy" title="Quantità" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Tipo Fonte Energetica</div>
-            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="sourceType">
-                <option [selected]="energyForm.controls['sourceType'].value==undefined" value="">-- Tipo Fonte --</option>
-                <option *ngFor="let name of getEnumSourceTypeNames()" [selected]="checkSourceTypeEnum(name)" [value]="name">{{name}}</option>
-            </select>
+            <bc-select-input enumName="Source_Type" formControlName="sourceType" [displayError]="displayError" title="Tipo fonte energetica"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Nome Fonte Energetica</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="sourceName">
-            <br>
+            <bc-text-input formControlName="sourceName" title="Nome Fonte Energetica" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Total Green</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="greenCertification">
-                <br>
-            </div>
-        </div>
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Generatore</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="powerGenerator">
-                <br>
-            </div>
-        </div>
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Fotovoltaico</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="photovoltaic">
-                <br>
-            </div>
-        </div>
+        <bc-checkbox-input formControlName="greenCertification" title="Green"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="powerGenerator" title="Generatore"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="photovoltaic" title="Fotovoltaico"></bc-checkbox-input>
     </div>
-    <br>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Tipo riscaldamento</div>
-            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="heating_type">
-                <option [selected]="energyForm.controls['heating_type'].value==undefined" value="">-- Tipo riscaldamento --</option>
-                <option *ngFor="let name of getEnumHeatNames()" [selected]="checkHeatEnum(name)" [value]="name">{{name}}</option>
-            </select>
+            <bc-select-input enumName="Heating_Type" formControlName="heating_type" [displayError]="displayError" title="Tipo riscaldamento"></bc-select-input>
         </div>
     </div>
 </form>
@@ -175,60 +75,23 @@
 <form style="position:relative" [formGroup]="drainForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Tipo</div>
-            <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control"  formControlName="type">
-            <br>
+            <bc-text-input formControlName="type" title="Tipo" [displayError]="displayError"></bc-text-input>
         </div>
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Scarico a Norma</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="regulation">
-                <br>
-            </div>
-        </div>
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Separatore</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="oilSeparator">
-                <br>
-            </div>
-        </div>
-        <div class="bc-catastal-check">
-            <div class="bc-body" style="white-space: nowrap">Riciclaggio</div>
-            <div class="bc-catastal-check-content">
-                <input type="checkbox" style="margin-top: 0; text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control bc-catastal-check-content"  formControlName="recycling">
-                <br>
-            </div>
+        <div style="display: flex;flex-direction:row">
+            <bc-checkbox-input formControlName="regulation" title="Scarico a Norma"></bc-checkbox-input>
+            <bc-checkbox-input formControlName="oilSeparator" title="Disoleatore"></bc-checkbox-input>
+            <bc-checkbox-input formControlName="recycling" title="Riciclaggio"></bc-checkbox-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Acqua</div>
-            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="water_type">
-                <option [selected]="drainForm.controls['water_type'].value==undefined" value="">-- Acqua --</option>
-                <option *ngFor="let name of getEnumWaterTypeNames()" [selected]="checkWaterTypeEnum(name)" [value]="name">{{name}}</option>
-            </select>
+            <bc-select-input enumName="Water_Type" formControlName="water_type" [displayError]="displayError" title="Acqua"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Disponibilità acqua</div>
-            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="water_availability">
-                <option [selected]="drainForm.controls['water_availability'].value==undefined" value="">-- Tipo disponibilità --</option>
-                <option *ngFor="let name of getEnumWaterAvailNames()" [selected]="checkWaterAvailEnum(name)" [value]="name">{{name}}</option>
-            </select>
+            <bc-select-input enumName="Water_Availability" formControlName="water_availability" [displayError]="displayError" title="Disponibilità acqua"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <div class="bc-body" style="white-space: nowrap">Periodi di siccità</div>
-            <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                class="form-control" formControlName="droughts">
-                <option [selected]="drainForm.controls['droughts'].value==undefined" value="">-- Stagione --</option>
-                <option *ngFor="let name of getEnumSeasonNames()" [selected]="checkSeasonEnum(name)" [value]="name">{{name}}</option>
-            </select>
+            <bc-select-input enumName="Seasons" formControlName="droughts" [displayError]="displayError" title="Periodi di siccità"></bc-select-input>
         </div>
     </div>
 </form>

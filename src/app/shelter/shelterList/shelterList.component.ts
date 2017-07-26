@@ -38,7 +38,7 @@ export class BcShelterList {
             if(newShelSub!=undefined){
                 newShelSub.unsubscribe();
             }
-            location.href="shelter/"+obj.id+"/(revision:geographic)";
+            location.href="newShelter/"+obj.id+"/(revision:geographic)";
         });
     }
 

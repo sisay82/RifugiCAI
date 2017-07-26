@@ -10,17 +10,12 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+import {validators} from '../../inputs/text/text_input.component';
 import 'rxjs/add/observable/throw';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/of';
-
-let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
-let telephoneValidator=/^([0-9]*)*$/;
-let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
-let urlValidator=/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
 
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
@@ -63,38 +58,38 @@ export class BcCatastalRevision {
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.catastalForm = fb.group({
             buildingRegulation:[""],
-            buildYear:["",Validators.pattern(numberValidator)],
-            rebuildYear:["",Validators.pattern(numberValidator)],
-            class:["",Validators.pattern(stringValidator)],
-            code:["",Validators.pattern(stringValidator)],
-            typologicalCoherence:["",Validators.pattern(stringValidator)],
+            buildYear:["",Validators.pattern(validators.numberValidator)],
+            rebuildYear:["",Validators.pattern(validators.numberValidator)],
+            class:["",Validators.pattern(validators.stringValidator)],
+            code:["",Validators.pattern(validators.stringValidator)],
+            typologicalCoherence:["",Validators.pattern(validators.stringValidator)],
             matericalCoherence:[""],
             cityPlanRegulation:[""],
-            mainBody:["",Validators.pattern(stringValidator)],
-            secondaryBody:["",Validators.pattern(stringValidator)],
+            mainBody:["",Validators.pattern(validators.stringValidator)],
+            secondaryBody:["",Validators.pattern(validators.stringValidator)],
             fireRegulation:[""],
             ISO14001:[""]
         }); 
 
         this.energyForm = fb.group({
-            class:["",Validators.pattern(stringValidator)],
-            energy:["",Validators.pattern(numberValidator)],
+            class:["",Validators.pattern(validators.stringValidator)],
+            energy:["",Validators.pattern(validators.numberValidator)],
             greenCertification:[""],
             powerGenerator:[""],
             photovoltaic:[""],
-            heating_type:["",Validators.pattern(stringValidator)],
-            sourceType:["",Validators.pattern(stringValidator)],
-            sourceName:["",Validators.pattern(stringValidator)]
+            heating_type:["",Validators.pattern(validators.stringValidator)],
+            sourceType:["",Validators.pattern(validators.stringValidator)],
+            sourceName:["",Validators.pattern(validators.stringValidator)]
         });
 
         this.drainForm = fb.group({
-            type:["",Validators.pattern(stringValidator)],
+            type:["",Validators.pattern(validators.stringValidator)],
             regulation:[""],
             oilSeparator:[""],
             recycling:[""],
-            water_type:["",Validators.pattern(stringValidator)],
-            water_availability:["",Validators.pattern(stringValidator)],
-            droughts:["",Validators.pattern(stringValidator)]
+            water_type:["",Validators.pattern(validators.stringValidator)],
+            water_availability:["",Validators.pattern(validators.stringValidator)],
+            droughts:["",Validators.pattern(validators.stringValidator)]
         });
 
         this.formCatValidSub = this.catastalForm.statusChanges.subscribe((value)=>{
@@ -149,120 +144,12 @@ export class BcCatastalRevision {
                     this.shared.onMaskConfirmSave("catastal");
                 }
             }else{
+                shared.onDisplayError();
                 this.displayError=true;
             }
         });
 
         shared.activeComponent="catastal";
-    }
-
-    getEnumWaterTypeNames():any[]{
-        let names:any[]=[];
-        const objValues = Object.keys(Enums.Water_Type).map(k => Enums.Water_Type[k]);
-        objValues.filter(v => typeof v === "string").forEach((val)=>{
-            names.push(val);
-        });
-        return names;
-    }
-
-    getEnumWaterAvailNames():any[]{
-        let names:any[]=[];
-        const objValues = Object.keys(Enums.Water_Availability).map(k => Enums.Water_Availability[k]);
-        objValues.filter(v => typeof v === "string").forEach((val)=>{
-            names.push(val);
-        });
-        return names;
-    }
-
-    getEnumSeasonNames():any[]{
-        let names:any[]=[];
-        const objValues = Object.keys(Enums.Seasons).map(k => Enums.Seasons[k]);
-        objValues.filter(v => typeof v === "string").forEach((val)=>{
-            names.push(val);
-        });
-        return names;
-    }
-
-    getEnumTypoNames():any[]{
-        let names:any[]=[];
-        const objValues = Object.keys(Enums.Typo_consistency).map(k => Enums.Typo_consistency[k]);
-        objValues.filter(v => typeof v === "string").forEach((val)=>{
-            names.push(val);
-        });
-        return names;
-    }
-
-    getEnumHeatNames():any[]{
-        let names:any[]=[];
-        const objValues = Object.keys(Enums.Heating_Type).map(k => Enums.Heating_Type[k]);
-        objValues.filter(v => typeof v === "string").forEach((val)=>{
-            names.push(val);
-        });
-        return names;
-    }
-
-    checkWaterTypeEnum(value){
-        if(this.drainForm.controls['water_type'].value!=undefined){
-            if(this.drainForm.controls['water_type'].value!=''&&this.drainForm.controls['water_type'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    checkWaterAvailEnum(value){
-        if(this.drainForm.controls['water_availability'].value!=undefined){
-            if(this.drainForm.controls['water_availability'].value!=''&&this.drainForm.controls['water_availability'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    checkSeasonEnum(value){
-        if(this.drainForm.controls['droughts'].value!=undefined){
-            if(this.drainForm.controls['droughts'].value!=''&&this.drainForm.controls['droughts'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    checkHeatEnum(value){
-        if(this.energyForm.controls['heating_type'].value!=undefined){
-            if(this.energyForm.controls['heating_type'].value!=''&&this.energyForm.controls['heating_type'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    checkTypoEnum(value){
-        if(this.catastalForm.controls['typologicalCoherence'].value!=undefined){
-            if(this.catastalForm.controls['typologicalCoherence'].value!=''&&this.catastalForm.controls['typologicalCoherence'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    getEnumSourceTypeNames():any[]{
-        let names:any[]=[];
-        const objValues = Object.keys(Enums.Source_Type).map(k => Enums.Source_Type[k]);
-        objValues.filter(v => typeof v === "string").forEach((val)=>{
-            names.push(val);
-        });
-        return names;
-    }
-
-    checkSourceTypeEnum(value){
-        if(this.energyForm.controls['sourceType'].value!=undefined){
-            if(this.energyForm.controls['sourceType'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                return true;
-            }
-        }
-        return null;
-        
     }
 
     save(confirm){

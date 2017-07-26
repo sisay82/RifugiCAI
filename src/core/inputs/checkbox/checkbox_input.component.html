@@ -1,0 +1,5 @@
+<div class="bc-body" style="white-space: nowrap;margin-right:1%">{{title}}
+    <div *ngIf="required" class="bc-h6" style="display:inline;color:red;margin-right:1%">*</div>
+</div>
+<input (change)="onChange($event)" type="checkbox" style="margin-top:0;text-overflow: ellipsis; font-weight: normal; text-decoration: inherit;"
+    class="form-control bc-check-content" [checked]="value">
