@@ -110,6 +110,7 @@ export class BcManagementRevision {
                     this.shared.onMaskConfirmSave("management");
                 }
             }else{
+                shared.onDisplayError();
                 this.displayError=true;
             }
         });

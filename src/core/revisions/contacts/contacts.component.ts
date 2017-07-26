@@ -102,6 +102,7 @@ export class BcContactsRevision {
                     this.shared.onMaskConfirmSave("contacts");
                 }
             }else{
+                shared.onDisplayError();
                 this.displayError=true;
             }
         });

@@ -93,6 +93,7 @@ export class BcGeoRevision {
                     this.shared.onMaskConfirmSave("geographic");
                 }
             }else{
+                shared.onDisplayError();
                 this.displayError=true;
             }
         });

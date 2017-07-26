@@ -5,14 +5,10 @@
                 <bc-icon (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:1%" name="arrow-left" size=s></bc-icon>
                 <bc-icon *ngIf="checkWinPlatform()" (click)="toggleMenu()" class="bc-mask-icon" name="bars" size=s></bc-icon>
                 <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
-                    <div class="bc-body" style="white-space: nowrap;margin-right:1%">Nome:</div>
-                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                        required class="form-control"  formControlName="name">
+                    <bc-text-input one-line formControlName="name" required="true" title="Nome" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
-                    <div class="bc-body" style="white-space: nowrap;margin-right:1%">Nome Comune:</div>
-                    <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                        required class="form-control"  formControlName="alias">
+                    <bc-text-input one-line formControlName="alias" required="true" title="Nome Comune" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div style="display: inline;margin-left:auto;margin-right:1%;white-space:nowrap">
                     <bc-icon (click)="cancel()" class="bc-mask-icon" name="times" size=s></bc-icon>
@@ -23,46 +19,25 @@
         </div>
         <div class="bc-mask-line" style="margin-left:10px">
             <div class="bc-mask-revision-control">
-                <div class="bc-body" style="white-space: nowrap;margin-right:1%">ID:</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control"  formControlName="idCai">
+                <bc-text-input one-line formControlName="idCai" title="ID" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-mask-revision-control">
-                <div class="bc-body" style="white-space: nowrap;margin-right:1%">Tipo:</div>
-                <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    required class="form-control" formControlName="type">
-                    <option [selected]="maskForm.controls['type'].value==undefined" value="">-- Tipo --</option>
-                    <option *ngFor="let name of getEnumTypeNames()" [selected]="checkTypeEnum(name)" [value]="name">{{name}}</option>
-                </select>
+                <bc-select-input one-line enumName="Shelter_Type" formControlName="type" title="Tipo"></bc-select-input>
             </div>
             <div class="bc-mask-revision-control">
-                <div class="bc-body" style="white-space: nowrap;margin-right:1%">Sezione:</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    required class="form-control"  formControlName="branch">
+                <bc-text-input one-line formControlName="branch" required="true" title="Sezione" [displayError]="displayError"></bc-text-input>
             </div>
 
             <div class="bc-mask-revision-control">
-                <div class="bc-body" style="white-space: nowrap;margin-right:1%">Proprietà:</div>
-                <input type="text" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    required class="form-control"  formControlName="owner">
+                <bc-text-input one-line formControlName="owner" required="true" title="Proprietà" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div class="bc-mask-line" style="margin-left:15px">
             <div class="bc-mask-revision-control">
-                <div class="bc-body" style="white-space: nowrap;margin-right:1%">Categoria:</div>
-                <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="category">
-                    <option [selected]="maskForm.controls['category'].value==undefined" value="">-- Category --</option>
-                    <option *ngFor="let name of getEnumCategoryNames()" [selected]="checkCategoryEnum(name)" [value]="name">{{name}}</option>
-                </select>
+                <bc-select-input one-line enumName="Shelter_Category" formControlName="category" title="Categoria"></bc-select-input>
             </div>
             <div class="bc-mask-revision-control">
-                <div class="bc-body" style="white-space: nowrap;margin-right:1%">Per la regione:</div>
-                <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="regional_type">
-                    <option [selected]="maskForm.controls['regional_type'].value==undefined" value="">-- Tipo Regionale --</option>
-                    <option *ngFor="let name of getEnumRegionalTypeNames()" [selected]="checkRegionalTypeEnum(name)" [value]="name">{{name}}</option>
-                </select>
+                <bc-select-input one-line enumName="Regional_Type" formControlName="regional_type" title="Per la regione"></bc-select-input>
             </div>
             <div class="bc-mask-revision-control">
                 <div class="bc-mask-title bc-body-strong" style="white-space: nowrap;margin-right:1%">Inserito il:</div>

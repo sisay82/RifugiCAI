@@ -144,6 +144,7 @@ export class BcCatastalRevision {
                     this.shared.onMaskConfirmSave("catastal");
                 }
             }else{
+                shared.onDisplayError();
                 this.displayError=true;
             }
         });

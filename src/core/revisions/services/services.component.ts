@@ -99,6 +99,7 @@ export class BcServRevision {
                     this.shared.onMaskConfirmSave("services");
                 }
             }else{
+                shared.onDisplayError();
                 this.displayError=true;
             }
         });

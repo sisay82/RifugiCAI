@@ -1,7 +1,7 @@
 import {
-  Component,Input,forwardRef,Directive
+  Component,Input,forwardRef,Directive,ViewEncapsulation
 } from '@angular/core';
-import { ControlValueAccessor,NG_VALUE_ACCESSOR,FormControl } from '@angular/forms';
+import { ControlValueAccessor,NG_VALUE_ACCESSOR,FormControl,NG_VALIDATORS } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 
 function validateDate (c:FormControl){
@@ -43,15 +43,20 @@ export class BcTextInputErrorStyler {
     selector: 'bc-text-input',
     templateUrl: 'text_input.component.html',
     styleUrls: ['text_input.component.scss'],
+    host:{
+        'role':'textinput',
+        '[class.bc-text-input]':'true'
+    },
     providers: [
         { 
         provide: NG_VALUE_ACCESSOR,
         useExisting: forwardRef(() => BcTextInput),
         multi: true
         }
-    ]
+    ],
+    encapsulation: ViewEncapsulation.None
 })
-export class BcTextInput implements ControlValueAccessor{
+export class BcTextInput implements ControlValueAccessor {
     propagateChange = (_: any) => {};
     invalid:boolean=false;
     @Input() value = "";
@@ -61,13 +66,17 @@ export class BcTextInput implements ControlValueAccessor{
     _displayError:boolean=false;
     @Input() set displayError(enable:boolean){
         this._displayError=enable;
-        if(!testValid(this.value,this._validator)&&enable){
-            if(this.value!=""){
+        if(!testValid(this.value,this._validator)||(this.required&&this.value=="")){
+            if(enable){
                 this.invalid=true;
             }
         }else{
             this.invalid=false;
         }
+    }
+
+    get displayError(){
+        return this._displayError;
     }
 
     @Input() title = "";
@@ -90,13 +99,13 @@ export class BcTextInput implements ControlValueAccessor{
     registerOnTouched(fn: any): void {}
 
     setDisabledState?(isDisabled: boolean): void {}
-
+    
     onKey(event:any){
         this.value=event.target.value;
-        if(testValid(this.value,this._validator)||this.value==""){
+        if(testValid(this.value,this._validator)&&!(this.required&&this.value=="")){
             this.invalid=false;
         }else{
-            if(this._displayError){
+            if(this.displayError){
                 this.invalid=true;
             }
         }

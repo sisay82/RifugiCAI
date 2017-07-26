@@ -8,6 +8,7 @@ import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angu
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+import {validators} from '../../inputs/text/text_input.component';
 
 let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
 let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
@@ -26,6 +27,8 @@ export class BcMaskRevision {
   @Input() shelter:IShelter;
   maskForm: FormGroup; 
   formValiditySub:Subscription;
+  displayErrorSub:Subscription;
+  displayError:boolean=false;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
     this.maskForm = fb.group({
         name:["",[Validators.required,Validators.pattern(stringValidator)]],
@@ -44,6 +47,10 @@ export class BcMaskRevision {
       }else if(value=="INVALID"){
         shared.onMaskInvalid();
       }
+    });
+
+    this.displayErrorSub = this.shared.displayError$.subscribe(()=>{
+      this.displayError=true;
     });
   }
 
@@ -126,62 +133,9 @@ export class BcMaskRevision {
         this.shared.onMaskSave(shelter);
       }
     }else{
+      this.displayError=true;
       this.shared.onMaskSave(null);
     }
-  }
-
-  getEnumCategoryNames(){
-    let names:any[]=[];
-    const objValues = Object.keys(Enums.Shelter_Category).map(k => Enums.Shelter_Category[k]);
-    objValues.filter(v => typeof v === "string").forEach((val)=>{
-        names.push(val);
-    });
-    return names;
-  }
-
-  getEnumTypeNames(){
-    let names:any[]=[];
-    const objValues = Object.keys(Enums.Shelter_Type).map(k => Enums.Shelter_Type[k]);
-    objValues.filter(v => typeof v === "string").forEach((val)=>{
-        names.push(val);
-    });
-    return names;
-  }
-
-  getEnumRegionalTypeNames(){
-    let names:any[]=[];
-    const objValues = Object.keys(Enums.Regional_Type).map(k => Enums.Regional_Type[k]);
-    objValues.filter(v => typeof v === "string").forEach((val)=>{
-        names.push(val);
-    });
-    return names;
-  }
-
-  checkRegionalTypeEnum(value){
-    if(this.maskForm.controls['regional_type'].value!=undefined){
-        if(this.maskForm.controls['regional_type'].value!=''&&this.maskForm.controls['regional_type'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-            return true;
-        }
-    }
-    return false;
-  }
-
-  checkCategoryEnum(value){
-    if(this.maskForm.controls['category'].value!=undefined){
-        if(this.maskForm.controls['category'].value!=''&&this.maskForm.controls['category'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-            return true;
-        }
-    }
-    return false;
-  }
-
-  checkTypeEnum(value){
-    if(this.maskForm.controls['type'].value!=undefined){
-        if(this.maskForm.controls['type'].value!=''&&this.maskForm.controls['type'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-            return true;
-        }
-    }
-    return false;
   }
 
   return(){
@@ -205,6 +159,9 @@ export class BcMaskRevision {
   ngOnDestroy(){
     if(this.formValiditySub!=undefined){
       this.formValiditySub.unsubscribe();
+    }
+    if(this.displayErrorSub!=undefined){
+      this.displayErrorSub.unsubscribe();
     }
   }
 
