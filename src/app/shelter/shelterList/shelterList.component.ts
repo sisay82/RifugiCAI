@@ -33,8 +33,7 @@ export class BcShelterList {
             if(newShelSub!=undefined){
                 newShelSub.unsubscribe();
             }
-            this.shared.newShelter=true;
-            location.href="shelter/"+obj.id+"/(revision:geographic)";
+            location.href="newShelter/"+obj.id+"/(revision:geographic)";
         });
     }
 

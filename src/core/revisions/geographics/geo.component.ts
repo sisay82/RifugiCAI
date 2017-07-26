@@ -212,7 +212,6 @@ export class BcGeoRevision {
     ngOnDestroy(){
         if(this.tagChange||this.geoForm.dirty){
             if(!this.disableSave){
-                console.log("A");
                 this.save(false);
             }
                 

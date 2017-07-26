@@ -22,7 +22,7 @@
                 <bc-text-input one-line formControlName="idCai" title="ID" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-mask-revision-control">
-                <bc-select-input one-line enumName="Shelter_Type" formControlName="type" title="Tipo"></bc-select-input>
+                <bc-select-input one-line required="true" [displayError]="displayError" enumName="Shelter_Type" formControlName="type" title="Tipo"></bc-select-input>
             </div>
             <div class="bc-mask-revision-control">
                 <bc-text-input one-line formControlName="branch" required="true" title="Sezione" [displayError]="displayError"></bc-text-input>
@@ -34,10 +34,10 @@
         </div>
         <div class="bc-mask-line" style="margin-left:15px">
             <div class="bc-mask-revision-control">
-                <bc-select-input one-line enumName="Shelter_Category" formControlName="category" title="Categoria"></bc-select-input>
+                <bc-select-input one-line enumName="Shelter_Category" [displayError]="displayError" formControlName="category" title="Categoria"></bc-select-input>
             </div>
             <div class="bc-mask-revision-control">
-                <bc-select-input one-line enumName="Regional_Type" formControlName="regional_type" title="Per la regione"></bc-select-input>
+                <bc-select-input one-line enumName="Regional_Type" [displayError]="displayError" formControlName="regional_type" title="Per la regione"></bc-select-input>
             </div>
             <div class="bc-mask-revision-control">
                 <div class="bc-mask-title bc-body-strong" style="white-space: nowrap;margin-right:1%">Inserito il:</div>

@@ -28,7 +28,7 @@ export class BcCheckboxInput implements ControlValueAccessor {
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
     @Input() title = "";
-    
+
     writeValue(value: any): void {
         if(value!=undefined){
             this.value=value;

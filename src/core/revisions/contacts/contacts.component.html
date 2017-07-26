@@ -10,7 +10,7 @@
                 <bc-text-input formControlName="mobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <bc-select-input enumName="Owner_Type" formControlName="role" title="Ruolo"></bc-select-input>
+                <bc-select-input enumName="Owner_Type" [displayError]="displayError" formControlName="role" title="Ruolo"></bc-select-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">

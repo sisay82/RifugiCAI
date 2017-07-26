@@ -204,7 +204,7 @@ export class BcManagementRevision {
             subjects.push(prop);
             for(let c of control.controls){
                 let wSite=null;
-                if(c.value.webSite!=""){
+                if(c.value.webSite!=""&&c.value.webSite!=null){
                     wSite="http";
                     if(c.value.webSite.indexOf(wSite)==-1){
                         wSite+="://"+c.value.webSite

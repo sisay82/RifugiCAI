@@ -1,9 +1,20 @@
 import {
-  Component,Input,forwardRef,ViewEncapsulation
+  Component,Input,forwardRef,ViewEncapsulation,Directive
 } from '@angular/core';
 import { ControlValueAccessor,NG_VALUE_ACCESSOR,FormControl,NG_VALIDATORS } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { Enums } from '../../../app/shared/types/enums';
+
+@Directive({
+    selector: 'select[bc-enable-error]',
+    host: {
+        '[class.invalid]': 'invalid'
+    }
+})
+export class BcSelectInputErrorStyler {
+    @Input('bc-enable-error') invalid: boolean;
+}
+
 
 @Component({
     moduleId: module.id,
@@ -31,6 +42,22 @@ export class BcSelectInput implements ControlValueAccessor {
     @Input() title = "";
     @Input() defaultContent="";
     @Input() enumName:any;
+
+    _displayError:boolean=false;
+    @Input() set displayError(enable:boolean){
+        this._displayError=enable;
+        if(this.required&&this.value==""){
+            if(enable){
+                this.invalid=true;
+            }
+        }else{
+            this.invalid=false;
+        }
+    }
+
+    get displayError(){
+        return this._displayError;
+    }
 
     getEnumNames(){
         if(this.enumName!=undefined){
@@ -68,7 +95,13 @@ export class BcSelectInput implements ControlValueAccessor {
 
     onChange(event:any) {
         this.value=event.target.value;
-
+        if(this.value==""&&this.required){
+            if(this.displayError){
+                this.invalid=true;
+            }
+        }else{
+            this.invalid=false;
+        }
         this.propagateChange(this.value);
     }
 

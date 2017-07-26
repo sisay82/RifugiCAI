@@ -8,6 +8,9 @@ const sheltersRoutes: Routes = [
     { path: 'shelter/:id', component: BcShelter,children:[
         ...DetailsRoutingModule.appRoutes,
         ...RevisionsRoutingModule.appRoutes
+    ]},
+    { path: ':name/:id', component: BcShelter,children:[
+        ...RevisionsRoutingModule.appRoutes
     ]}
 ];
 @NgModule({

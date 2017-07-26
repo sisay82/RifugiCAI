@@ -27,7 +27,7 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input enumName="Typo_consistency" formControlName="typologicalCoherence" title="Consistenza Tipologica"></bc-select-input>
+            <bc-select-input enumName="Typo_consistency" formControlName="typologicalCoherence" [displayError]="displayError" title="Consistenza Tipologica"></bc-select-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -53,7 +53,7 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input enumName="Source_Type" formControlName="sourceType" title="Tipo fonte energetica"></bc-select-input>
+            <bc-select-input enumName="Source_Type" formControlName="sourceType" [displayError]="displayError" title="Tipo fonte energetica"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
             <bc-text-input formControlName="sourceName" title="Nome Fonte Energetica" [displayError]="displayError"></bc-text-input>
@@ -66,7 +66,7 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input enumName="Heating_Type" formControlName="heating_type" title="Tipo riscaldamento"></bc-select-input>
+            <bc-select-input enumName="Heating_Type" formControlName="heating_type" [displayError]="displayError" title="Tipo riscaldamento"></bc-select-input>
         </div>
     </div>
 </form>
@@ -85,13 +85,13 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input enumName="Water_Type" formControlName="water_type" title="Acqua"></bc-select-input>
+            <bc-select-input enumName="Water_Type" formControlName="water_type" [displayError]="displayError" title="Acqua"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-select-input enumName="Water_Availability" formControlName="water_availability" title="Disponibilità acqua"></bc-select-input>
+            <bc-select-input enumName="Water_Availability" formControlName="water_availability" [displayError]="displayError" title="Disponibilità acqua"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-select-input enumName="Seasons" formControlName="droughts" title="Periodi di siccità"></bc-select-input>
+            <bc-select-input enumName="Seasons" formControlName="droughts" [displayError]="displayError" title="Periodi di siccità"></bc-select-input>
         </div>
     </div>
 </form>

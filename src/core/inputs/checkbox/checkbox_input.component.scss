@@ -3,6 +3,10 @@
 
 @include bc-typography();
 
+.invalid{
+  border-left: 5px solid #a94442;
+}
+
 .bc-checkbox-input{
   position: relative;
   width: 100%;

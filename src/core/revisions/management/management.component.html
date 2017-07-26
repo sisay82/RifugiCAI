@@ -53,7 +53,7 @@
                 <bc-text-input formControlName="contract_fee" title="Canone Contratto" validator="numberValidator" [displayError]="displayError"></bc-text-input>
             </div>            
             <div class="bc-revision-management">
-                <bc-select-input enumName="Custody_Type" formControlName="rentType" title="Tipo di affitto"></bc-select-input>
+                <bc-select-input enumName="Custody_Type" [displayError]="displayError" formControlName="rentType" title="Tipo di affitto"></bc-select-input>
             </div>
         </div>
         <bc-divider></bc-divider>

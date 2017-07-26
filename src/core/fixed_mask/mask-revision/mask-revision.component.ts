@@ -53,8 +53,6 @@ export class BcMaskRevision {
     this.displayErrorSub = this.shared.displayError$.subscribe(()=>{
       this.displayError=true;
     });
-
-    this.newShelter=shared.newShelter;
   }
 
   toggleMenu(){
@@ -190,6 +188,15 @@ export class BcMaskRevision {
   ngOnInit(){
     if(this.shelter==undefined){
       let routeSub=this._route.params.subscribe(params=>{
+        if(params["name"]!=undefined){
+          if(params["name"]=="newShelter"){
+            this.newShelter=true;
+          }else{
+           this.router.navigateByUrl("list");
+          }
+        }else{
+          this.newShelter=false;
+        }
         let shelSub=this.shelterService.getShelter(params['id']).subscribe(shelter=>{
             this.shelter=shelter;
             this.initForm();
@@ -214,9 +221,13 @@ export class BcMaskRevision {
           if(cancelSub!=undefined)
             cancelSub.unsubscribe();
         }else{
-          let component = this.shared.activeComponent;
-          this.shared.onActiveOutletChange("content");
-          this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
+          if(this.newShelter){
+            this.router.navigateByUrl("list");
+          }else{
+            let component = this.shared.activeComponent;
+            this.shared.onActiveOutletChange("content");
+            this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
+          }
           if(shelSub!=undefined)
             shelSub.unsubscribe();
           if(cancelSub!=undefined)
@@ -226,8 +237,7 @@ export class BcMaskRevision {
       });
     });
     this.shared.onMaskCancel();
-
-    
   }
+
 
 }
