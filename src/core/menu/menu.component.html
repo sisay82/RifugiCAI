@@ -1,6 +1,6 @@
 <div [@slideLeftRight]="menuState" style="width:282px;position:relative">
     <bc-list dense>
-        <a bc-list-item *ngFor="let item of menuElements.elements" [routerLink]="getLink(item.link)" routerLinkActive="active">
+        <a [bc-menu-element]="isActiveLink(item.link)" bc-list-item *ngFor="let item of menuElements.elements" [routerLink]="getLink(item.link)">
             <div style="display:flex;flex-direction:row;align-items:center">
                 <bc-icon [name]="item.icon" size=xs></bc-icon>
                 <div>{{item.name}}</div>
