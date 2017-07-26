@@ -7,10 +7,11 @@ import { FormsModule } from '@angular/forms';
 import {ReactiveFormsModule} from "@angular/forms"; 
 import {BcButtonModule} from '../../button/button.module';
 import {BcTextInputModule} from '../../inputs/text/text_input.module';
+import {BcSelectInputModule} from '../../inputs/select/select_input.module';
 
 @NgModule({
     declarations: [BcCatastalRevision],
     exports: [BcCatastalRevision],
-    imports:[BcTextInputModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
+    imports:[BcSelectInputModule,BcTextInputModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
 })
 export class BcCatastalRevisionModule { }

@@ -160,24 +160,6 @@ export class BcManagementRevision {
         }
     }
 
-    getEnumCustodyNames():any[]{
-        let names:any[]=[];
-        const objValues = Object.keys(Enums.Custody_Type).map(k => Enums.Custody_Type[k]);
-        objValues.filter(v => typeof v === "string").forEach((val)=>{
-            names.push(val);
-        });
-        return names;
-    }
-
-    checkEnum(value){
-        if(this.managForm.controls['rentType'].value!=undefined){
-            if(this.managForm.controls['rentType'].value!=''&&this.managForm.controls['rentType'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                return true;
-            }
-        }
-        return false;
-    }
-
     initSubject(subject:ISubject){
         return this.fb.group({
             name:[subject.name,Validators.pattern(validators.stringValidator)],

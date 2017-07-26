@@ -5,9 +5,4 @@
     class="form-control" >
     <option [selected]="value==undefined" value="">-- {{defaultContent || title}} --</option>
     <option *ngFor="let name of getEnumNames()" [selected]="checkEnumValue(name)" [value]="name">{{name}}</option>
-
-    <!--
-    <option [selected]="maskForm.controls['type'].value==undefined" value="">-- Tipo --</option>
-    <option *ngFor="let name of getEnumTypeNames()" [selected]="checkTypeEnum(name)" [value]="name">{{name}}</option>
-    -->
 </select>

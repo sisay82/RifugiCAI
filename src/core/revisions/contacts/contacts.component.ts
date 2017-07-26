@@ -118,25 +118,6 @@ export class BcContactsRevision {
         return this.hiddenOpening;
     }
 
-    getEnumOwnerNames():any[]{
-        let names:any[]=[];
-        const objValues = Object.keys(Enums.Owner_Type).map(k => Enums.Owner_Type[k]);
-        objValues.filter(v => typeof v === "string").forEach((val)=>{
-            names.push(val);
-        });
-        return names;
-    }
-
-    checkEnum(value){
-        if(this.contactForm.controls['role'].value!=undefined){
-            if(this.contactForm.controls['role'].value!=''&&this.contactForm.controls['role'].value.toLowerCase().indexOf(value.toLowerCase())>-1){
-                return true;
-            }
-        }
-        return false;
-        
-    }
-
     removeOpening(index){
         this.openingChange=true;
         const control = <FormArray>this.contactForm.controls['openings'];

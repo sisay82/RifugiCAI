@@ -67,12 +67,7 @@
                 <bc-text-input formControlName="contract_fee" title="Canone Contratto" validator="numberValidator" [displayError]="displayError"></bc-text-input>
             </div>            
             <div class="bc-revision-management">
-                <div class="bc-body" style="white-space: nowrap">Tipo di Affitto</div>
-                <select style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-                    class="form-control" formControlName="rentType">
-                    <option [selected]="managForm.controls['rentType'].value==undefined" value="">-- Tipo Affitto --</option>
-                    <option *ngFor="let name of getEnumCustodyNames()" [selected]="checkEnum(name)" [value]="name">{{name}}</option>
-                </select>
+                <bc-select-input enumName="Custody_Type" formControlName="rentType" title="Tipo di affitto"></bc-select-input>
             </div>
         </div>
         <bc-divider></bc-divider>
