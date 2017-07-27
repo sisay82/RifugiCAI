@@ -10,13 +10,11 @@
         </div>
     </div>
 
-    <div>
-        <div *ngFor="let check of checks" class="bc-body bc-content-service" style="margin-bottom:4px;display: flex;flex-direction:row;align-items:center">
-            <div style="display:flex;flex-direction:row;align-items:center" *ngIf="check.value=='true'">
-                <bc-icon name="check-square-o" size=s></bc-icon>
-                <div style="margin-left:2px">{{check.key}}</div>
-            </div>
+    <div *ngFor="let check of checks" class="bc-body bc-content-service" style="margin-bottom:4px;display: flex;flex-direction:row;align-items:center">
+        <div style="display:flex;flex-direction:row;align-items:center">
+            <bc-icon *ngIf="check.value=='true'" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="check.value=='false'" name="square-o" size=s></bc-icon>
+            <div style="margin-left:2px">{{check.key}}</div>
         </div>
     </div>
-
 </div>

@@ -2,7 +2,20 @@ import {
   Component,Input,OnInit
 } from '@angular/core';
 import { IService,ITag } from '../../../app/shared/types/interfaces'
+import {Pipe, PipeTransform} from '@angular/core';
 
+@Pipe({name: 'titleCase'})
+export class TitleCasePipe implements PipeTransform {
+    public transform(input:string): string{
+        if (!input) {
+            return '';
+        } else {
+            return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1).toLowerCase() ));
+        }
+    }
+    
+}
+  
 @Component({
   moduleId: module.id,
   selector: 'bc-serv-item',
@@ -17,6 +30,7 @@ export class BcServItem {
 
   ngOnInit(){
     if(this.item!=undefined&&this.item.tags){
+      this.item.tags.push({key:"A",value:"true"},{key:"B",value:"true"},{key:"C",value:"false"})
       for(let it of this.item.tags){
         if(it.value=="true"||it.value=="false"){
           this.checks.push(it);

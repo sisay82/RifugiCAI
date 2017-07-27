@@ -12,15 +12,12 @@
     <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">UTM WGS84:</div> ({{data?(data.location?(data.location.latitude?(data.location.latitude | number : '1.2-3'): '----' ):'----'):'----'}},{{data?(data.location?(data.location.longitude?(data.location.longitude | number : '1.2-3'): '----' ):'----'):'----'}})</div>
     <bc-divider style="padding-bottom:4px;margin-top:8px"></bc-divider>
     <div class="bc-detail-title bc-h6">Informazioni Aggiuntive:</div>
-    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Zona Tutelata:</div> {{getTag("zona tutelata")||'----'}}</div>
-    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Comprensorio Sciistico:</div> {{getTag("comprensorio sciistico")||'----'}}</div>
-    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Commissione Regionale:</div> {{getTag("commissione regionale")||'----'}}</div>
-    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Sito:</div> {{getTag("sito")||'----'}}</div>
-    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Richiesta di rifornire il rifugio</div>
-            <bc-icon *ngIf="getTag('supply_request')&&getTag('supply_request')!=null" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="!getTag('supply_request')||getTag('supply_request')==null" name="square-o" size=s></bc-icon>
+    <div *ngFor="let tag of data.tags">
+        <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px">
+            <div style="margin-right:4px" class="bc-body-strong">{{tag.key | titleCase}}:</div>
+            <div *ngIf="tag.value==''||(tag.value!=false&&tag.value!=true)">{{tag.value||'----'}}</div>
+            <bc-icon *ngIf="tag.value!=''&&tag.value==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="tag.value!=''&&tag.value==false" name="square-o" size=s></bc-icon>
         </div>
     </div>
     <div style="width: 100%;height:256px;position:absolute;z-index:1">
