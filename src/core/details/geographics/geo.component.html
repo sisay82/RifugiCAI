@@ -15,9 +15,9 @@
     <div *ngFor="let tag of data.tags">
         <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px">
             <div style="margin-right:4px" class="bc-body-strong">{{tag.key | titleCase}}:</div>
-            <div *ngIf="tag.value==''||(tag.value!=false&&tag.value!=true)">{{tag.value||'----'}}</div>
-            <bc-icon *ngIf="tag.value!=''&&tag.value==true" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="tag.value!=''&&tag.value==false" name="square-o" size=s></bc-icon>
+            <div *ngIf="tag.value==''||(tag.value!='false'&&tag.value!='true')">{{tag.value||'----'}}</div>
+            <bc-icon *ngIf="tag.value!=''&&tag.value=='true'" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="tag.value!=''&&tag.value=='false'" name="square-o" size=s></bc-icon>
         </div>
     </div>
     <div style="width: 100%;height:256px;position:absolute;z-index:1">
