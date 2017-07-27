@@ -52,7 +52,8 @@ export class BcGeoRevision {
 
         this.newTagForm = fb.group({
             newKey:["Informazione",[Validators.pattern(validators.stringValidator),Validators.required]],
-            newValue:["Valore",Validators.pattern(validators.stringValidator)]
+            newValue:["Valore",Validators.pattern(validators.stringValidator)],
+            newBooleanValue:[false]
         });
 
         this.formValidSub = this.geoForm.statusChanges.subscribe((value)=>{
@@ -133,6 +134,30 @@ export class BcGeoRevision {
             this.invalid=false;
             control.push(this.initTag(this.newTagForm.controls["newKey"].value,this.newTagForm.controls["newValue"].value));
             this.toggleTag();
+        }
+    }
+
+    addNewBooleanTag(){
+        this.tagChange=true;
+        if(this.newTagForm.controls['newKey'].valid){
+            const control = <FormArray>this.geoForm.controls['tags'];
+            for(let c of control.controls){
+                if(c.value.key==this.newTagForm.controls["newKey"].value){
+                    this.invalid=true;
+                    return;
+                }
+            }
+            this.invalid=false;
+            control.push(this.initTag(this.newTagForm.controls["newKey"].value,this.newTagForm.controls["newBooleanValue"].value));
+            this.toggleTag();
+        }
+    }
+
+    isBooleanValue(value):boolean{
+        if(value==null||(value!==true&&value!==false)){
+            return true;
+        }else{
+            return false;
         }
     }
 
