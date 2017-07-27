@@ -100,7 +100,7 @@ export class BcList extends BcStyler implements OnDestroy {
     this.updateClass("_thumbnail", newClassName);
   }
 
-  @ContentChildren(BcListItem) _listItems: QueryList<BcListItem>;
+  @ContentChildren(BcListItem, {descendants: true}) _listItems: QueryList<BcListItem>;
 
   ngAfterContentInit(): void {
     this._listItems.forEach((item: BcListItem) => {
