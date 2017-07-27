@@ -14,7 +14,7 @@ export class BcShelter {
             {name:"Dati geografici",icon:"map-signs",link:"geographic"},
             {name:"Servizi",icon:"home",link:"services"},
             {name:"Contatti e apertura",icon:"phone",link:"contacts"},
-            {name:"Proprietá e gestione",icon:"user",link:"management"},
+            {name:"Proprietá e custodia",icon:"user",link:"management"},
             {name:"Dati catastali",icon:"book",link:"catastal"},
             {name:"Documenti",icon:"file-pdf-o",link:"documents"},
             {name:"Immagini",icon:"picture-o",link:"images"},
@@ -31,7 +31,7 @@ export class BcShelter {
                 {name:"Dati geografici",icon:"map-signs",link:"geographics"},
                 {name:"Servizi",icon:"home",link:"#"},
                 {name:"Contatti e apertura",icon:"phone",link:"#"},
-                {name:"Proprietá e gestione",icon:"user",link:"#"},
+                {name:"Proprietá e custodia",icon:"user",link:"#"},
                 {name:"Dati catastali",icon:"book",link:"#"}
             ]},{
             layerName:"",

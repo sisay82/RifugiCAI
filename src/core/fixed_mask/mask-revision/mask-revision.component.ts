@@ -8,13 +8,7 @@ import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angu
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import {validators} from '../../inputs/text/text_input.component';
-
-let stringValidator=/^([A-Za-z0-99À-ÿ� ,.:/';!?|)(_-]*)*$/;
-let telephoneValidator=/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
-let mailValidator=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-let numberValidator=/^[0-9]+[.]{0,1}[0-9]*$/;
-let urlValidator=/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+import {createValidationFunction} from '../../inputs/text/text_input.component';
 
 @Component({
     moduleId: module.id,
@@ -32,14 +26,14 @@ export class BcMaskRevision {
   newShelter:boolean=false;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
     this.maskForm = fb.group({
-        name:["",[Validators.required,Validators.pattern(stringValidator)]],
-        alias:["",[Validators.required,Validators.pattern(stringValidator)]],
-        idCai:["",Validators.pattern(stringValidator)],
-        type:["",[Validators.required,Validators.pattern(stringValidator)]],
-        branch:["",[Validators.required,Validators.pattern(stringValidator)]],
-        owner:["",[Validators.required,Validators.pattern(stringValidator)]],
-        category:["",Validators.pattern(stringValidator)],
-        regional_type:["",Validators.pattern(stringValidator)],
+        name:[""],
+        alias:[""],
+        idCai:[""],
+        type:[""],
+        branch:[""],
+        owner:[""],
+        category:[""],
+        regional_type:[""],
     }); 
 
     this.formValiditySub = this.maskForm.statusChanges.subscribe((value)=>{

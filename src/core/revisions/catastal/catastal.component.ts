@@ -4,13 +4,12 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { IDrain,IEnergy,ICatastal, IButton, IShelter } from '../../../app/shared/types/interfaces'
 import {Enums} from '../../../app/shared/types/enums'
-import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
-import {validators} from '../../inputs/text/text_input.component';
 import 'rxjs/add/observable/throw';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
@@ -58,38 +57,38 @@ export class BcCatastalRevision {
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.catastalForm = fb.group({
             buildingRegulation:[""],
-            buildYear:["",Validators.pattern(validators.numberValidator)],
-            rebuildYear:["",Validators.pattern(validators.numberValidator)],
-            class:["",Validators.pattern(validators.stringValidator)],
-            code:["",Validators.pattern(validators.stringValidator)],
-            typologicalCoherence:["",Validators.pattern(validators.stringValidator)],
+            buildYear:[""],
+            rebuildYear:[""],
+            class:[""],
+            code:[""],
+            typologicalCoherence:[""],
             matericalCoherence:[""],
             cityPlanRegulation:[""],
-            mainBody:["",Validators.pattern(validators.stringValidator)],
-            secondaryBody:["",Validators.pattern(validators.stringValidator)],
+            mainBody:[""],
+            secondaryBody:[""],
             fireRegulation:[""],
             ISO14001:[""]
         }); 
 
         this.energyForm = fb.group({
-            class:["",Validators.pattern(validators.stringValidator)],
-            energy:["",Validators.pattern(validators.numberValidator)],
+            class:[""],
+            energy:[""],
             greenCertification:[""],
             powerGenerator:[""],
             photovoltaic:[""],
-            heating_type:["",Validators.pattern(validators.stringValidator)],
-            sourceType:["",Validators.pattern(validators.stringValidator)],
-            sourceName:["",Validators.pattern(validators.stringValidator)]
+            heating_type:[""],
+            sourceType:[""],
+            sourceName:[""]
         });
 
         this.drainForm = fb.group({
-            type:["",Validators.pattern(validators.stringValidator)],
+            type:[""],
             regulation:[""],
             oilSeparator:[""],
             recycling:[""],
-            water_type:["",Validators.pattern(validators.stringValidator)],
-            water_availability:["",Validators.pattern(validators.stringValidator)],
-            droughts:["",Validators.pattern(validators.stringValidator)]
+            water_type:[""],
+            water_availability:[""],
+            droughts:[""]
         });
 
         this.formCatValidSub = this.catastalForm.statusChanges.subscribe((value)=>{

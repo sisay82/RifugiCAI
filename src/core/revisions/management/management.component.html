@@ -39,10 +39,10 @@
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_start_date" title="Data di Inizio Contratto" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="contract_start_date" validator="validateDate" title="Data di Inizio Contratto" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_end_date" title="Data di Fine Contratto" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="contract_end_date" validator="validateDate" title="Data di Fine Contratto" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input formControlName="contract_duration" validator="numberValidator" title="Durata Contratto" [displayError]="displayError"></bc-text-input>

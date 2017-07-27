@@ -4,12 +4,11 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { Enums } from '../../../app/shared/types/enums';
 import { ISubject, IManagement, IButton, IShelter } from '../../../app/shared/types/interfaces'
-import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import {validators} from '../../inputs/text/text_input.component';
 
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
@@ -50,34 +49,34 @@ export class BcManagementRevision {
     formValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.managForm = fb.group({
-            rent:["",Validators.pattern(validators.numberValidator)],
-            period:["",Validators.pattern(validators.stringValidator)],//string with some character
-            contract_start_date:["",validateDate],
-            contract_end_date:["",validateDate],
-            contract_duration:["",Validators.pattern(validators.numberValidator)],
-            contract_fee:["",Validators.pattern(validators.numberValidator)],
-            valuta:["",Validators.pattern(validators.stringValidator)],
-            rentType:["",Validators.pattern(validators.stringValidator)],
+            rent:[""],
+            period:[""],
+            contract_start_date:[""],
+            contract_end_date:[""],
+            contract_duration:[""],
+            contract_fee:[""],
+            valuta:[""],
+            rentType:[""],
             pickupKey:[""],
             self_management:[""],
             subjects:fb.array([]),
-            propName:["",Validators.pattern(validators.stringValidator)],
-            propTaxCode:["",Validators.pattern(validators.stringValidator)],
-            propFixedPhone:["",Validators.pattern(validators.telephoneValidator)],
-            propPec:["",Validators.pattern(validators.mailValidator)],
-            propEmail:["",Validators.pattern(validators.mailValidator)],
+            propName:[""],
+            propTaxCode:[""],
+            propFixedPhone:[""],
+            propPec:[""],
+            propEmail:[""],
         }); 
 
         this.newSubjectForm = fb.group({
-            newName:["",Validators.pattern(validators.stringValidator)],
-            newSurname:["",Validators.pattern(validators.stringValidator)],
-            newTaxCode:["",Validators.pattern(validators.stringValidator)],
-            newFixedPhone:["",Validators.pattern(validators.telephoneValidator)],
-            newMobilePhone:["",Validators.pattern(validators.telephoneValidator)],
-            newPec:["",Validators.pattern(validators.stringValidator)],
-            newMail:["",Validators.pattern(validators.stringValidator)],
-            newWebSite:["",Validators.pattern(validators.urlValidator)],
-            newType:["",Validators.pattern(validators.stringValidator)]
+            newName:[""],
+            newSurname:[""],
+            newTaxCode:[""],
+            newFixedPhone:[""],
+            newMobilePhone:[""],
+            newPec:[""],
+            newMail:[""],
+            newWebSite:[""],
+            newType:[""],
         });
 
         shared.onActiveOutletChange("revision");
@@ -162,15 +161,15 @@ export class BcManagementRevision {
 
     initSubject(subject:ISubject){
         return this.fb.group({
-            name:[subject.name,Validators.pattern(validators.stringValidator)],
-            surname:[subject.surname,Validators.pattern(validators.stringValidator)],
-            taxCode:[subject.taxCode,Validators.pattern(validators.stringValidator)],
-            fixedPhone:[subject.fixedPhone,Validators.pattern(validators.telephoneValidator)],
-            mobilePhone:[subject.mobilePhone,Validators.pattern(validators.telephoneValidator)],
-            pec:[subject.pec,Validators.pattern(validators.mailValidator)],
-            email:[subject.email,Validators.pattern(validators.mailValidator)],
-            webSite:[subject.webSite,Validators.pattern(validators.urlValidator)],
-            type:[subject.type,Validators.pattern(validators.stringValidator)]
+            name:[subject.name],
+            surname:[subject.surname],
+            taxCode:[subject.taxCode],
+            fixedPhone:[subject.fixedPhone],
+            mobilePhone:[subject.mobilePhone],
+            pec:[subject.pec],
+            email:[subject.email],
+            webSite:[subject.webSite],
+            type:[subject.type]
         });
     }
 

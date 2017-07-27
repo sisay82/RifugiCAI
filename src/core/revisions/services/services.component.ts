@@ -3,13 +3,12 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IButton, IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
-import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import {validators} from '../../inputs/text/text_input.component';
 
 @Component({
   moduleId: module.id,
@@ -34,6 +33,7 @@ export class BcServRevision {
     maskSaveSub:Subscription;
     disableSave=false;
     newServiceAdded=false;
+    newTagHidden:boolean=true;
     serviceListChange:boolean=false;
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
@@ -46,17 +46,19 @@ export class BcServRevision {
         }); 
 
         this.newServiceForm = fb.group({
-            newServiceName:["Nome Nuovo Servizio",[Validators.pattern(validators.stringValidator),Validators.required]],
-            newServiceDescription:["Descrizione Nuovo Servizio",Validators.pattern(validators.stringValidator)],
-            newServiceCategory:["Categoria Nuovo Servizio",Validators.pattern(validators.stringValidator)],
-            newServiceTags:this.fb.array([]),
-            newServiceTagKey:["Informazione",Validators.pattern(validators.stringValidator)],
-            newServiceTagValue:["Valore",Validators.pattern(validators.stringValidator)]
+            newServiceName:["Nome Nuovo Servizio"],
+            newServiceDescription:["Descrizione Nuovo Servizio"],
+            newServiceCategory:["Categoria Nuovo Servizio"],
+            newServiceTags:fb.array([]),
+            newServiceTagKey:["Informazione"],
+            newServiceTagValue:["Valore"],
+            newServiceBooleanTagValue:[false]
         });
 
         this.newTagForm = fb.group({
-            newTagKey:["Informazione",[Validators.pattern(validators.stringValidator),Validators.required]],
-            newTagValue:["Valore",Validators.pattern(validators.stringValidator)]
+            newTagKey:["Informazione"],
+            newTagValue:["Valore"],
+            newBooleanTagValue:[false]
         });
 
         shared.onActiveOutletChange("revision");
@@ -105,6 +107,14 @@ export class BcServRevision {
         });
     } 
 
+    toggleNewTag(){
+        this.newTagHidden=!this.newTagHidden;
+    }
+
+    isNewTagHidden(){
+        return this.newTagHidden;
+    }
+
     toggleTag(categoryIndex:number,serviceIndex:number): void {
         if(this.currentCategoryTag==categoryIndex){
             this.currentCategoryTag=categoryIndex;
@@ -146,6 +156,9 @@ export class BcServRevision {
             }
         }
         services.removeAt(serviceIndex);
+        if(services.length==0){
+            (<FormArray>this.servForm.controls['categories']).removeAt(categoryIndex);
+        }
     }
 
     addNewService(){
@@ -163,7 +176,8 @@ export class BcServRevision {
             let tags:any=[];
 
             for(let tag of (<FormArray>this.newServiceForm.controls.newServiceTags).controls){
-                tags.push(tag.value.key,tag.value.value);
+                const t=<FormGroup>tag
+                tags.push({key:t.controls.key.value,value:t.controls.value.value});
             }
             service.tags=tags;
             const category:FormGroup=<FormGroup>control.controls.find(cat=>
@@ -194,12 +208,11 @@ export class BcServRevision {
     initService(service:IService){
         let group:FormGroup = this.fb.group({
             id:[service._id],
-            name:[service.name,[Validators.pattern(validators.stringValidator),Validators.required]],
-            category: [service.category,Validators.pattern(validators.stringValidator)],
-            description: [service.description,Validators.pattern(validators.stringValidator)],
+            name:[service.name],
+            category: [service.category],
+            description: [service.description],
             tags:this.fb.array([])
         });
-
         for(let tag of service.tags){
             (<FormArray>group.controls["tags"]).push(this.initTag(tag.key,tag.value));
         }
@@ -212,6 +225,11 @@ export class BcServRevision {
         const control = <FormGroup>(<FormArray>(<FormGroup>(<FormArray>this.servForm.controls['categories']).at(categoryIndex)).controls.services).at(serviceIndex);
         const tag=<FormArray>control.controls.tags;
         tag.removeAt(tagIndex);
+    }
+
+    removeNewTag(tagIndex:number){
+        const control = <FormArray>this.newServiceForm.controls['newServiceTags'];
+        control.removeAt(tagIndex);
     }
 
     addNewTag(categoryIndex:number,serviceIndex:number){
@@ -229,10 +247,23 @@ export class BcServRevision {
         this.toggleTag(categoryIndex,serviceIndex);
     }
 
-    addNewServiceTag(){
+    addNewBooleanTag(categoryIndex,serviceIndex){
         this.serviceListChange=true;
+        const service = <FormGroup>(<FormArray>(<FormGroup>(<FormArray>this.servForm.controls['categories']).at(categoryIndex)).controls.services).at(serviceIndex);
+        if(this.newTagForm.valid){
+            const control = <FormArray>service.controls['tags'];
+            for(let c of control.controls){
+                if(c.value.key==this.newTagForm.controls["newTagKey"].value){
+                    return;
+                }
+            }
+            control.push(this.initTag(this.newTagForm.controls["newTagKey"].value,this.newTagForm.controls["newBooleanTagValue"].value));
+        }
+    }
+
+    addNewServiceTag(){
         if(this.newServiceForm.controls['newServiceTagKey'].valid&&this.newServiceForm.controls['newServiceTagValue'].valid){
-            const control = <FormArray>this.servForm.controls['newServiceTags'];
+            const control = <FormArray>this.newServiceForm.controls['newServiceTags'];
             for(let c of control.controls){
                 if(c.value.key==this.newServiceForm.controls["newServiceTagKey"].value){
                     return;
@@ -242,37 +273,30 @@ export class BcServRevision {
         }
     }
 
-    addNewServiceBoolTag(){
-        this.serviceListChange=true;
-        if(this.newServiceForm.controls['newServiceTagKey'].valid&&this.newServiceForm.controls['newServiceTagValue'].valid){
-            const control = <FormArray>this.servForm.controls['newServiceTags'];
+    addNewServiceBooleanTag(){
+        if(this.newServiceForm.controls['newServiceTagKey'].valid){
+            const control = <FormArray>this.newServiceForm.controls['newServiceTags'];
             for(let c of control.controls){
                 if(c.value.key==this.newServiceForm.controls["newServiceTagKey"].value){
                     return;
                 }
             }
-            control.push(this.initTag(this.newServiceForm.controls["newServiceTagKey"].value,"true"));
+            control.push(this.initTag(this.newServiceForm.controls["newServiceTagKey"].value,this.newServiceForm.controls["newServiceBooleanTagValue"].value));
         }
     }
 
-    addNewBoolTag(categoryIndex,serviceIndex,key:String){
-        this.serviceListChange=true;
-        const service = (<FormArray>this.servForm.controls['categories']).at(categoryIndex).value.services.at(serviceIndex);
-        if(service.controls['newTagKey'].valid){
-            const control = <FormArray>service.controls['tags'];
-            for(let c of control.controls){
-                if(c.value.key==service.controls["newKey"].value){
-                    return;
-                }
-            }
-            control.push(this.initTag(service.controls["newKey"].value,"true"));
+    isBooleanValue(value):boolean{
+        if(value==null||(value!==true&&value!==false)){
+            return true;
+        }else{
+            return false;
         }
     }
 
     initTag(key:String,value:String){
         return this.fb.group({
-            key:[key,Validators.pattern(validators.stringValidator)],
-            value: [value,Validators.pattern(validators.stringValidator)]
+            key:[key],
+            value: [value]
         });
     }
 
