@@ -4,24 +4,11 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { IOpening, IContacts, IButton, IShelter } from '../../../app/shared/types/interfaces'
 import {Enums} from '../../../app/shared/types/enums'
-import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import {validators} from '../../inputs/text/text_input.component';
-
-function validateDate(c:FormControl){
-    if(c.value!=''&&c.value!=null){
-        let date = Date.parse(c.value);
-        if(!isNaN(date)){
-            return null;
-        }else{
-            return {valid:false};
-        }
-    }
-    return null;
-}
 
 @Component({
   moduleId: module.id,
@@ -49,19 +36,19 @@ export class BcContactsRevision {
     hiddenOpening:boolean=true;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.contactForm = fb.group({
-            fixedPhone:["",Validators.pattern(validators.telephoneValidator)],
-            mobilePhone:["",Validators.pattern(validators.telephoneValidator)],
-            role:["",Validators.pattern(validators.stringValidator)],
-            emailAddress:["",Validators.pattern(validators.mailValidator)],
-            mailPec:["",Validators.pattern(validators.mailValidator)],
-            webAddress:["",Validators.pattern(validators.urlValidator)],
+            fixedPhone:[""],
+            mobilePhone:[""],
+            role:[""],
+            emailAddress:[""],
+            mailPec:[""],
+            webAddress:[""],
             openings:fb.array([])
         }); 
         
         this.newOpeningForm = fb.group({
-            newOpeningStartDate:["Inizio",validateDate],
-            newOpeningEndDate:["Fine",validateDate],
-            newOpeningType:["Tipo",[Validators.pattern(validators.stringValidator),Validators.required]]
+            newOpeningStartDate:["Inizio"],
+            newOpeningEndDate:["Fine"],
+            newOpeningType:["Tipo"]
         });
 
         this.formValidSub = this.contactForm.statusChanges.subscribe((value)=>{
@@ -154,9 +141,9 @@ export class BcContactsRevision {
 
     initOpening(opening:IOpening){
         return this.fb.group({
-            startDate:[opening.startDate?(new Date(opening.startDate).toUTCString()):null,validateDate],
-            endDate:[opening.startDate?(new Date(opening.endDate).toUTCString()):null,validateDate],
-            type:[opening.type,[Validators.pattern(validators.stringValidator),Validators.required]]
+            startDate:[opening.startDate?(new Date(opening.startDate).toUTCString()):null],
+            endDate:[opening.startDate?(new Date(opening.endDate).toUTCString()):null],
+            type:[opening.type]
         });
     }
 

@@ -3,11 +3,10 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ITag,ILocation,IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
-import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
-import {validators} from '../../inputs/text/text_input.component';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -36,23 +35,23 @@ export class BcGeoRevision {
 
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.geoForm = fb.group({
-            region:["",Validators.pattern(validators.stringValidator)],//required and string
-            province:["",Validators.pattern(validators.stringValidator)],//string with some character
-            municipality:["",Validators.pattern(validators.stringValidator)],
-            locality:["",Validators.pattern(validators.stringValidator)],
-            ownerRegion:["",Validators.pattern(validators.stringValidator)],
-            authorityJurisdiction:["",Validators.pattern(validators.stringValidator)],
-            altitude:["",Validators.pattern(validators.numberValidator)],//number
-            latitude:["",Validators.pattern(validators.numberValidator)],
-            longitude:["",Validators.pattern(validators.numberValidator)],
-            massif:["",Validators.pattern(validators.stringValidator)],
-            valley:["",Validators.pattern(validators.stringValidator)],
+            region:[""],
+            province:[""],
+            municipality:[""],
+            locality:[""],
+            ownerRegion:[""],
+            authorityJurisdiction:[""],
+            altitude:[""],//number
+            latitude:[""],
+            longitude:[""],
+            massif:[""],
+            valley:[""],
             tags:fb.array([])
         }); 
 
         this.newTagForm = fb.group({
-            newKey:["Informazione",[Validators.pattern(validators.stringValidator),Validators.required]],
-            newValue:["Valore",Validators.pattern(validators.stringValidator)],
+            newKey:["Informazione"],
+            newValue:["Valore"],
             newBooleanValue:[false]
         });
 
@@ -163,8 +162,8 @@ export class BcGeoRevision {
 
     initTag(key:String,value:String){
         return this.fb.group({
-            key:[key,[Validators.pattern(validators.stringValidator),Validators.required]],
-            value: [value,Validators.pattern(validators.stringValidator)]
+            key:[key],
+            value: [value]
         });
     }
 

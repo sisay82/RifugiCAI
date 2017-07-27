@@ -3,13 +3,12 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IButton, IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
-import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import {validators} from '../../inputs/text/text_input.component';
 
 @Component({
   moduleId: module.id,
@@ -47,18 +46,18 @@ export class BcServRevision {
         }); 
 
         this.newServiceForm = fb.group({
-            newServiceName:["Nome Nuovo Servizio",[Validators.pattern(validators.stringValidator),Validators.required]],
-            newServiceDescription:["Descrizione Nuovo Servizio",Validators.pattern(validators.stringValidator)],
-            newServiceCategory:["Categoria Nuovo Servizio",Validators.pattern(validators.stringValidator)],
+            newServiceName:["Nome Nuovo Servizio"],
+            newServiceDescription:["Descrizione Nuovo Servizio"],
+            newServiceCategory:["Categoria Nuovo Servizio"],
             newServiceTags:fb.array([]),
-            newServiceTagKey:["Informazione",Validators.pattern(validators.stringValidator)],
-            newServiceTagValue:["Valore",Validators.pattern(validators.stringValidator)],
+            newServiceTagKey:["Informazione"],
+            newServiceTagValue:["Valore"],
             newServiceBooleanTagValue:[false]
         });
 
         this.newTagForm = fb.group({
-            newTagKey:["Informazione",[Validators.pattern(validators.stringValidator),Validators.required]],
-            newTagValue:["Valore",Validators.pattern(validators.stringValidator)],
+            newTagKey:["Informazione"],
+            newTagValue:["Valore"],
             newBooleanTagValue:[false]
         });
 
@@ -209,9 +208,9 @@ export class BcServRevision {
     initService(service:IService){
         let group:FormGroup = this.fb.group({
             id:[service._id],
-            name:[service.name,[Validators.pattern(validators.stringValidator),Validators.required]],
-            category: [service.category,Validators.pattern(validators.stringValidator)],
-            description: [service.description,Validators.pattern(validators.stringValidator)],
+            name:[service.name],
+            category: [service.category],
+            description: [service.description],
             tags:this.fb.array([])
         });
         for(let tag of service.tags){
@@ -296,8 +295,8 @@ export class BcServRevision {
 
     initTag(key:String,value:String){
         return this.fb.group({
-            key:[key,Validators.pattern(validators.stringValidator)],
-            value: [value,Validators.pattern(validators.stringValidator)]
+            key:[key],
+            value: [value]
         });
     }
 
