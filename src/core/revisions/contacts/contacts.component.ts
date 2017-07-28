@@ -9,6 +9,7 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+import { parseDate } from '../../inputs/text/text_input.component';
 
 @Component({
   moduleId: module.id,
@@ -141,8 +142,8 @@ export class BcContactsRevision {
 
     initOpening(opening:IOpening){
         return this.fb.group({
-            startDate:[opening.startDate?(new Date(opening.startDate).toUTCString()):null],
-            endDate:[opening.startDate?(new Date(opening.endDate).toUTCString()):null],
+            startDate:[opening.startDate?(new Date(opening.startDate).toLocaleDateString()||null):null],
+            endDate:[opening.endDate?(new Date(opening.endDate).toLocaleDateString()||null):null],
             type:[opening.type]
         });
     }
@@ -155,6 +156,8 @@ export class BcContactsRevision {
                 wSite="http";
                 if(this.contactForm.controls.webAddress.value.indexOf(wSite)==-1){
                     wSite+="://"+this.contactForm.controls.webAddress.value;
+                }else{
+                    wSite=this.contactForm.controls.webAddress.value;
                 }
             }
 
@@ -171,8 +174,8 @@ export class BcContactsRevision {
             let openings:IOpening[]=[];
             for(let c of control.controls){
                 openings.push({
-                    startDate:c.value.startDate?(new Date(c.value.startDate)):null,
-                    endDate:c.value.endDate?(new Date(c.value.endDate)):null,
+                    startDate:c.value.startDate?(parseDate(c.value.startDate)||null):null,
+                    endDate:c.value.endDate?(parseDate(c.value.endDate)||null):null,
                     type:c.value.type||null
                 });
             }
