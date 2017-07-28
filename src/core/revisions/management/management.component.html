@@ -108,36 +108,36 @@
     <form [formGroup]="newSubjectForm">
         <div style="display: flex;flex-direction:row;align-items:center">
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newName" title="Nome" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newName" title="Nome" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newSurname" title="Cognome" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newSurname" title="Cognome" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newType" title="Tipo" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newType" title="Tipo" [displayError]="invalid"></bc-text-input>
             </div>
             <bc-icon (click)="addNewSubject()" class="bc-add-tag" name="check" size=s></bc-icon>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newFixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newFixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newMobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newMobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newTaxCode" title="P.IVA" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newTaxCode" title="P.IVA" [displayError]="invalid"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newMail" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newMail" title="Mail" validator="mailValidator" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newPec" title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newPec" title="PEC" validator="mailValidator" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newWebSite" title="Sito Web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newWebSite" title="Sito Web" validator="urlValidator" [displayError]="invalid"></bc-text-input>
             </div>
         </div>
     </form>

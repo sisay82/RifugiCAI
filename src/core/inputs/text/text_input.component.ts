@@ -176,6 +176,16 @@ export class BcTextInput implements ControlValueAccessor {
         this.propagateChange(this.value);
     }
 
+    getValue(){
+        if(this.value===true||this.value=="true") {
+            return 'si';
+        }
+        else if(this.value=="false"||(this.value===false&&this.value!=="")) {
+            return 'no'; 
+        }
+        else return this.value;
+    }
+
     validate(c:FormControl){
         if(c.value!=null){
             this.value=c.value;

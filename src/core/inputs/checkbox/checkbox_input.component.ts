@@ -35,6 +35,17 @@ export class BcCheckboxInput implements ControlValueAccessor {
         }
     }
 
+    isChecked(){
+        if(this.value!==""&&this.value!==null){
+            if(this.value=="true"||this.value===true){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
+    }
+
     registerOnChange(fn: any): void {
         this.propagateChange = fn;
     }

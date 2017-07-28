@@ -144,7 +144,25 @@ export class BcManagementRevision {
                 type:this.newSubjectForm.controls['newType'].value||null
             }
             control.push(this.initSubject(subject));
+            this.resetSubjectForm();
+        }else{
+            this.invalid=true;
         }
+    }
+
+    resetSubjectForm(){
+        this.newSubjectForm = this.fb.group({
+            newName:[""],
+            newSurname:[""],
+            newTaxCode:[""],
+            newFixedPhone:[""],
+            newMobilePhone:[""],
+            newPec:[""],
+            newMail:[""],
+            newWebSite:[""],
+            newType:[""],
+        });
+        this.toggleSubject();
     }
 
     initSubject(subject:ISubject){
