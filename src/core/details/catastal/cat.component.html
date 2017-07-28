@@ -21,10 +21,9 @@
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
-        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <bc-icon *ngIf="catastal.fireRegulation!=null&&catastal.fireRegulation==true" name="check-square-o" size=s></bc-icon>
-            <bc-icon *ngIf="catastal.fireRegulation==null||catastal.fireRegulation==false" name="square-o" size=s></bc-icon>
-            <div class="bc-body-strong" style="margin-right:4px">Regolarità Antincendio</div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Regolarità Antincendio:</div>
+            <div class="bc-body">{{catastal?(catastal.fireRegulation||'----'):'----'}}</div>
         </div>
         <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
             <bc-icon *ngIf="catastal.buildingRegulation!=null&&catastal.buildingRegulation==true" name="check-square-o" size=s></bc-icon>
@@ -46,7 +45,7 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">Consistenza Tipologica:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Coerenza Tipologica:</div>
             <div class="bc-body">{{catastal?(catastal.typologicalCoherence||'----'):'----'}}</div>
         </div>
         <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">

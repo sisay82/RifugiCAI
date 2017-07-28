@@ -124,12 +124,12 @@ export interface ICatastal{
     cityPlanRegulation?:Boolean;
     mainBody?:String;
     secondaryBody?:String;
-    fireRegulation?:Boolean;
+    fireRegulation?:Enums.Fire_Regulation_Type;
     ISO14001?:Boolean;
 }
 
 export interface IEnergy{
-    class?:String;
+    class?:Enums.Energy_Class_Type;
     energy?:Number;
     greenCertification?:Boolean;
     powerGenerator?:Boolean;
