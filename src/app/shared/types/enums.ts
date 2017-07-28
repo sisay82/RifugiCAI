@@ -17,6 +17,20 @@ export namespace Enums {
         "Assente"
     }
 
+    //tipo di possesso
+    export enum Possession_Type {
+        "Affitto ramo d'impresa", 
+        "Affitto immobile", 
+        "Affitto a gestore", 
+        "Diretto", 
+        "Capanna sociale", 
+        "Custodia", 
+        "Proprietà", 
+        "Usufrutto", 
+        "Concessione", 
+        "Comodato"
+    }
+
     //stagioni
     export enum Seasons {
         "Primavera",

@@ -100,10 +100,10 @@ export interface ISubject{
 
 export interface IManagement{
     rent?:Number;
-    period?:String;
+    period?:Enums.Possession_Type;
     contract_start_date?:Date;
     contract_end_date?:Date;
-    contract_duration?:Number;
+    contract_duration?:String;
     contract_fee?:Number;
     webSite?:String;
     self_management?:Boolean;

@@ -31,13 +31,13 @@
         <bc-divider></bc-divider>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <bc-text-input formControlName="rent" title="Canone Affitto" validator="numberValidator" [displayError]="displayError"></bc-text-input>
-            </div>
-            <div class="bc-revision-management">
-                <bc-text-input formControlName="period" title="Tipo Canone" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="rent" title="Canone annuale" validator="numberValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input formControlName="valuta" title="Valuta" [displayError]="displayError"></bc-text-input>
+            </div>
+            <div class="bc-revision-management">
+                <bc-select-input enumName="Possession_Type" formControlName="period" title="Tipo possesso" [displayError]="displayError"></bc-select-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
@@ -48,15 +48,7 @@
                 <bc-text-input formControlName="contract_end_date" validator="validateDate" title="Data di Fine Contratto" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_duration" validator="numberValidator" title="Durata Contratto" [displayError]="displayError"></bc-text-input>
-            </div>
-        </div>
-        <div style="display: flex;flex-direction:row">
-            <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_fee" title="Canone Contratto" validator="numberValidator" [displayError]="displayError"></bc-text-input>
-            </div>            
-            <div class="bc-revision-management">
-                <bc-select-input enumName="Custody_Type" [displayError]="displayError" formControlName="rentType" title="Tipo di affitto"></bc-select-input>
+                <bc-text-input formControlName="contract_duration" title="Durata Contratto" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <bc-divider></bc-divider>
