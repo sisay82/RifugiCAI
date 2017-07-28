@@ -1,9 +1,7 @@
 <div class="bc-h6" style="display:block;margin-left:4px;background:white">
-    <div *ngFor="let cat of categories">
-        <div class="bc-h6 bc-category-title">{{cat.name}}</div>
-        <div *ngFor="let serv of cat.services">
-            <bc-serv-item [item]="serv"></bc-serv-item>
-            <bc-divider></bc-divider>
-        </div>
+    <div *ngFor="let service of services">
+        <div class="bc-h6 bc-category-title">{{service.category}}</div>
+        <bc-serv-item [item]="service"></bc-serv-item>
+        <bc-divider></bc-divider>
     </div>
 </div>

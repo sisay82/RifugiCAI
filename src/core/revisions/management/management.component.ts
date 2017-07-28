@@ -9,19 +9,7 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-
-function validateDate(c:FormControl){
-    if(c.value!=''&&c.value!=null){
-        let date = Date.parse(c.value);
-        if(!isNaN(date)){
-            return null;
-        }else{
-            return {valid:false};
-        }
-    }
-    return null;
-}
-
+import { parseDate } from '../../inputs/text/text_input.component';
 
 @Component({
   moduleId: module.id,
@@ -179,8 +167,8 @@ export class BcManagementRevision {
             let management:IManagement={
                 rent:this.managForm.controls["rent"].value||null,
                 period:this.managForm.controls["period"].value||null,
-                contract_start_date:this.managForm.controls["contract_start_date"].value||null,
-                contract_end_date:this.managForm.controls["contract_end_date"].value||null,
+                contract_start_date:this.managForm.controls["contract_start_date"].value?(parseDate(this.managForm.controls["contract_start_date"].value)||null):null,
+                contract_end_date: this.managForm.controls["contract_end_date"].value?(parseDate(this.managForm.controls["contract_end_date"].value)||null):null,
                 contract_duration:this.managForm.controls["contract_duration"].value||null,
                 contract_fee:this.managForm.controls["contract_fee"].value||null,
                 valuta:this.managForm.controls["valuta"].value||null,
@@ -253,7 +241,11 @@ export class BcManagementRevision {
             for(let prop in this.data){
                 if(this.data.hasOwnProperty(prop)){
                     if(this.managForm.contains(prop)){
-                        this.managForm.controls[prop].setValue(this.data[prop]);
+                        if(prop.indexOf("date")==-1){
+                            this.managForm.controls[prop].setValue(this.data[prop]);
+                        }else{
+                            this.managForm.controls[prop].setValue(this.data[prop]?(new Date(this.data[prop]).toLocaleDateString()||null):null);
+                        }
                     }
                 }
             }

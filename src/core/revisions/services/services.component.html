@@ -1,84 +1,72 @@
 <form style="position:relative" [formGroup]="servForm">
-    <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
-    <div formArrayName="categories">
-        <div *ngFor="let category of servForm.controls.categories.controls;let t = index">
-            <div [formGroupName]="t">
-                <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{category.controls.name.value}}</div>
-                <div formArrayName="services">
-                    <div *ngFor="let service of category.controls.services.controls;let i = index">
-                        <div [formGroupName]="i">
-                            <div style="display: flex;flex-direction:row;align-items:center">
-                                <div class="bc-revision-services">
-                                    <bc-text-input formControlName="name" required=true title="Servizio" [displayError]="displayError"></bc-text-input>
-                                </div>
-                                <div class="bc-revision-services">
-                                    <bc-text-input formControlName="category" title="Categoria" [displayError]="displayError"></bc-text-input>
-                                </div>
-                                <bc-icon (click)="removeService(t,i)" class="bc-add-tag" name="times" size=s></bc-icon>
-                            </div>
-                            <div formArrayName="tags">
-                                <div *ngFor="let tag of service.controls.tags.controls;let j = index">
-                                    <div style="position:relative;height:inherit" [formGroupName]="j">
-                                        <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                                            <div class="bc-revision-services-tags">
-                                                <bc-text-input formControlName="key" required="true" title="Informazione" [displayError]="displayError"></bc-text-input>
-                                            </div>
-                                            <div class="bc-revision-services-tags">
-                                                <bc-text-input *ngIf="isBooleanValue(tag.controls.value.value)" formControlName="value" title="Valore" [displayError]="displayError"></bc-text-input>
-                                                <bc-checkbox-input *ngIf="!isBooleanValue(tag.controls.value.value)" formControlName="value"></bc-checkbox-input>
-                                            </div>
-                                            <bc-icon (click)="removeTag(t,i,j)" class="bc-add-tag" name="times" size=s></bc-icon>
-                                        </div>
+    <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
+    <div formArrayName="services">
+        <div *ngFor="let service of servForm.controls.services.controls;let i = index">
+            <div [formGroupName]="i">
+                <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{service.controls.category.value}}</div>
+                    <div style="display: flex;flex-direction:row;align-items:center">
+                        <div class="bc-revision-services">
+                            <bc-text-input formControlName="category" required=true title="Categoria" [displayError]="displayError"></bc-text-input>
+                        </div>
+                        <bc-icon (click)="removeService(i)" class="bc-add-tag" name="times" size=s></bc-icon>
+                    </div>
+                    <div formArrayName="tags">
+                        <div *ngFor="let tag of service.controls.tags.controls;let j = index">
+                            <div style="position:relative;height:inherit" [formGroupName]="j">
+                                <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
+                                    <div class="bc-revision-services-tags">
+                                        <bc-text-input formControlName="key" required="true" title="Informazione" [displayError]="displayError"></bc-text-input>
                                     </div>
+                                    <div class="bc-revision-services-tags">
+                                        <bc-text-input *ngIf="isBooleanValue(tag.controls.value.value)" formControlName="value" title="Valore" [displayError]="displayError"></bc-text-input>
+                                        <bc-checkbox-input *ngIf="!isBooleanValue(tag.controls.value.value)" formControlName="value"></bc-checkbox-input>
+                                    </div>
+                                    <bc-icon (click)="removeTag(i,j)" class="bc-add-tag" name="times" size=s></bc-icon>
                                 </div>
-                            </div>
-                            <br>
-                            <div (click)="toggleTag(t,i)" class="bc-body bc-revision-services-tags bc-add-tag" style="white-space:nowrap;flex:1">
-                                <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
-                                Aggiungi Attributo
-                            </div>
-                            <div *ngIf="!isHiddenTag(t,i)">
-                                <form [formGroup]="newTagForm">
-                                    <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                                        <div class="bc-revision-services-tags">
-                                            <bc-text-input formControlName="newTagKey" [displayError]="displayError"></bc-text-input>
-                                        </div>
-                                        <div class="bc-revision-services-tags">
-                                            <bc-text-input formControlName="newTagValue" [displayError]="displayError"></bc-text-input>
-                                        </div>
-                                        <bc-icon (click)="addNewTag(t,i)" class="bc-add-tag" name="check" size=s></bc-icon>
-                                    </div>
-                                    <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                                        <div class="bc-revision-services-tags">
-                                            <bc-text-input formControlName="newTagKey" [displayError]="displayError"></bc-text-input>
-                                        </div>
-                                        <div class="bc-revision-services-tags">
-                                            <bc-checkbox-input formControlName="newBooleanTagValue"></bc-checkbox-input>
-                                        </div>
-                                        <bc-icon (click)="addNewBooleanTag(t,i)" class="bc-add-tag" name="check" size=s></bc-icon>
-                                    </div>
-                                </form>
                             </div>
                         </div>
-                        <br>
-                        <bc-divider></bc-divider>
                     </div>
-                </div>
+                    <br>
+                    <div (click)="toggleTag(i)" class="bc-body bc-revision-services-tags bc-add-tag" style="white-space:nowrap;flex:1">
+                        <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
+                        Aggiungi Attributo
+                    </div>
+                    <div *ngIf="!isHiddenTag(i)">
+                        <form [formGroup]="newTagForm">
+                            <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
+                                <div class="bc-revision-services-tags">
+                                    <bc-text-input formControlName="newTagKey" [displayError]="displayError"></bc-text-input>
+                                </div>
+                                <div class="bc-revision-services-tags">
+                                    <bc-text-input formControlName="newTagValue" [displayError]="displayError"></bc-text-input>
+                                </div>
+                                <bc-icon (click)="addNewTag(i)" class="bc-add-tag" name="check" size=s></bc-icon>
+                            </div>
+                            <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
+                                <div class="bc-revision-services-tags">
+                                    <bc-text-input formControlName="newTagKey" [displayError]="displayError"></bc-text-input>
+                                </div>
+                                <div class="bc-revision-services-tags">
+                                    <bc-checkbox-input formControlName="newBooleanTagValue"></bc-checkbox-input>
+                                </div>
+                                <bc-icon (click)="addNewBooleanTag(i)" class="bc-add-tag" name="check" size=s></bc-icon>
+                            </div>
+                        </form>
+                    </div>
+                <br>
+                <bc-divider></bc-divider>
             </div>
             <br>
         </div>
     </div>
 </form>
-<div (click)="toggleService()" class="bc-body bc-add-tag" style="display:inline;white-space:nowrap;flex:1">
+<div (click)="toggleNewService()" class="bc-body bc-add-tag" style="display:inline;white-space:nowrap;flex:1">
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
-    Aggiungi Servizio
+    Aggiungi Categoria
 </div>
-<div *ngIf="!isHiddenService()">
+<div *ngIf="!isHiddenNewService()">
     <form [formGroup]="newServiceForm">
         <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
-            <div class="bc-revision-services">
-                <bc-text-input formControlName="newServiceName" title="Servizio" [displayError]="displayError"></bc-text-input>
-            </div>
             <div class="bc-revision-services">
                 <bc-text-input formControlName="newServiceCategory" title="Categoria" [displayError]="displayError"></bc-text-input>
             </div>

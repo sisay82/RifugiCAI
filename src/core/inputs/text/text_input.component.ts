@@ -17,30 +17,51 @@ function validateDate(value){
     return null;
 }
 
-function parseDate(input:String):Date{// dd-mm-yy | yy/mm/dd
-    if(input.indexOf("-")>-1){
-        if(input.indexOf("/")>-1){
-            return null;
-        }else{
-            var parts = input.split('-');// yy-mm-dd
-            if(parts.length==3){
-                return (new Date(Number.parseInt(parts[2]), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
-            }else{
-                return null;
-            }
-        }
-    }else if(input.indexOf("/")>-1){
+export function parseDate(input:String):Date{// dd-mm-yy | yy/mm/dd
+    if(input!=null&&input!=""){
         if(input.indexOf("-")>-1){
-            return null;
-        }else{
-            var parts = input.split('/');// yy/mm/dd
-            if(parts.length==3){
-                return (new Date(Number.parseInt(parts[2]), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
-            }else{
+            if(input.indexOf("/")>-1){
                 return null;
+            }else{
+                var parts = input.split('-');// yy-mm-dd
+                if(parts.length==3){
+                    let year:string="";
+                    if(parts[2].length==1){
+                        year="200"+parts[2];
+                    }else if(parts[2].length==2){
+                        year="20"+parts[2];
+                    }else{
+                        year=parts[2];
+                    }
+                    return (new Date(Number.parseInt(year), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
+                }else{
+                    return null;
+                }
+            }
+        }else if(input.indexOf("/")>-1){
+            if(input.indexOf("-")>-1){
+                return null;
+            }else{
+                var parts = input.split('/');// yy/mm/dd
+                if(parts.length==3){
+                    let year:string="";
+                    if(parts[2].length==1){
+                        year="200"+parts[2];
+                    }else if(parts[2].length==2){
+                        year="20"+parts[2];
+                    }else{
+                        year=parts[2];
+                    }
+                    return (new Date(Number.parseInt(year), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
+                }else{
+                    return null;
+                }
             }
         }
+    }else{
+        return null;
     }
+    
 }
 
 export function createValidationFunction(validator:string){

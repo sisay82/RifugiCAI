@@ -66,7 +66,6 @@ export class BcGeo {
         if(this.data!=undefined&&this.data.location!=undefined){
           this.center.next([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number]);
         }
-        this.data.tags
         if(shelSub!=undefined){
           shelSub.unsubscribe();
         }
