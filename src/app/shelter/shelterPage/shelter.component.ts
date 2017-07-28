@@ -14,7 +14,7 @@ export class BcShelter {
             {name:"Dati geografici",icon:"map-signs",link:"geographic"},
             {name:"Servizi",icon:"home",link:"services"},
             {name:"Contatti e apertura",icon:"phone",link:"contacts"},
-            {name:"Proprietá e custodia",icon:"user",link:"management"},
+            {name:"Proprietà e custodia",icon:"user",link:"management"},
             {name:"Dati catastali",icon:"book",link:"catastal"},
             {name:"Documenti",icon:"file-pdf-o",link:"documents"},
             {name:"Immagini",icon:"picture-o",link:"images"},
