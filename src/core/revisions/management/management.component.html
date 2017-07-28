@@ -20,6 +20,9 @@
             <div class="bc-revision-management">
                 <bc-text-input formControlName="propPec" title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
+            <div class="bc-revision-management">
+                <bc-text-input formControlName="propWebSite" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
+            </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <bc-checkbox-input formControlName="pickupKey" title="Ritiro Chiavi"></bc-checkbox-input>
