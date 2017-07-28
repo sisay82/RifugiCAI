@@ -18,8 +18,10 @@
                                         <bc-text-input formControlName="key" required="true" title="Informazione" [displayError]="displayError"></bc-text-input>
                                     </div>
                                     <div class="bc-revision-services-tags">
-                                        <bc-text-input *ngIf="isBooleanValue(tag.controls.value.value)" formControlName="value" title="Valore" [displayError]="displayError"></bc-text-input>
-                                        <bc-checkbox-input *ngIf="!isBooleanValue(tag.controls.value.value)" formControlName="value"></bc-checkbox-input>
+                                        <bc-text-input formControlName="value" title="Valore" [displayError]="displayError"></bc-text-input>
+                                    </div>
+                                    <div style="margin-left:1%">
+                                        <bc-checkbox-input formControlName="value"></bc-checkbox-input>
                                     </div>
                                     <bc-icon (click)="removeTag(i,j)" class="bc-add-tag" name="times" size=s></bc-icon>
                                 </div>
@@ -35,21 +37,15 @@
                         <form [formGroup]="newTagForm">
                             <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
                                 <div class="bc-revision-services-tags">
-                                    <bc-text-input formControlName="newTagKey" [displayError]="displayError"></bc-text-input>
+                                    <bc-text-input formControlName="newTagKey" [displayError]="invalidTag"></bc-text-input>
                                 </div>
                                 <div class="bc-revision-services-tags">
-                                    <bc-text-input formControlName="newTagValue" [displayError]="displayError"></bc-text-input>
+                                    <bc-text-input formControlName="newTagValue" [displayError]="invalidTag"></bc-text-input>
+                                </div>
+                                <div style="margin-left:1%">
+                                    <bc-checkbox-input formControlName="newTagValue"></bc-checkbox-input>
                                 </div>
                                 <bc-icon (click)="addNewTag(i)" class="bc-add-tag" name="check" size=s></bc-icon>
-                            </div>
-                            <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                                <div class="bc-revision-services-tags">
-                                    <bc-text-input formControlName="newTagKey" [displayError]="displayError"></bc-text-input>
-                                </div>
-                                <div class="bc-revision-services-tags">
-                                    <bc-checkbox-input formControlName="newBooleanTagValue"></bc-checkbox-input>
-                                </div>
-                                <bc-icon (click)="addNewBooleanTag(i)" class="bc-add-tag" name="check" size=s></bc-icon>
                             </div>
                         </form>
                     </div>
@@ -68,7 +64,7 @@
     <form [formGroup]="newServiceForm">
         <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
             <div class="bc-revision-services">
-                <bc-text-input formControlName="newServiceCategory" title="Categoria" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newServiceCategory" title="Categoria" [displayError]="invalidService"></bc-text-input>
             </div>
             <bc-icon (click)="addNewService()" class="bc-add-tag" name="check" size=s></bc-icon>
         </div>
@@ -77,11 +73,13 @@
                 <div style="position:relative;height:inherit" [formGroupName]="j">
                     <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
                         <div class="bc-revision-services-tags">
-                            <bc-text-input formControlName="key" required="true" title="Informazione" [displayError]="displayError"></bc-text-input>
+                            <bc-text-input formControlName="key" required="true" title="Informazione" [displayError]="invalidService"></bc-text-input>
                         </div>
                         <div class="bc-revision-services-tags">
-                            <bc-text-input *ngIf="isBooleanValue(tag.controls.value.value)" formControlName="value" title="Valore" [displayError]="displayError"></bc-text-input>
-                            <bc-checkbox-input *ngIf="!isBooleanValue(tag.controls.value.value)" formControlName="value"></bc-checkbox-input>
+                            <bc-text-input formControlName="value" title="Valore" [displayError]="invalidService"></bc-text-input>
+                        </div>
+                        <div style="margin-left:1%">
+                            <bc-checkbox-input  formControlName="value"></bc-checkbox-input>
                         </div>
                         <bc-icon (click)="removeNewTag(j)" class="bc-add-tag" name="times" size=s></bc-icon>
                     </div>
@@ -95,21 +93,15 @@
         <div *ngIf="!isNewTagHidden()">
             <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
                 <div class="bc-revision-services-tags">
-                    <bc-text-input formControlName="newServiceTagKey" [displayError]="displayError"></bc-text-input>
+                    <bc-text-input formControlName="newServiceTagKey" [displayError]="invalidService"></bc-text-input>
                 </div>
                 <div class="bc-revision-services-tags">
-                    <bc-text-input formControlName="newServiceTagValue" [displayError]="displayError"></bc-text-input>
+                    <bc-text-input formControlName="newServiceTagValue" [displayError]="invalidService"></bc-text-input>
+                </div>
+                <div style="margin-left:1%">
+                    <bc-checkbox-input formControlName="newServiceTagValue"></bc-checkbox-input>
                 </div>
                 <bc-icon (click)="addNewServiceTag()" class="bc-add-tag" name="check" size=s></bc-icon>
-            </div>
-            <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                <div class="bc-revision-services-tags">
-                    <bc-text-input formControlName="newServiceTagKey" [displayError]="displayError"></bc-text-input>
-                </div>
-                <div class="bc-revision-services-tags">
-                    <bc-checkbox-input formControlName="newServiceBooleanTagValue"></bc-checkbox-input>
-                </div>
-                <bc-icon (click)="addNewServiceBooleanTag()" class="bc-add-tag" name="check" size=s></bc-icon>
             </div>
         </div>
     </form>

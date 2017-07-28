@@ -31,6 +31,8 @@ export class BcServRevision {
     displayError:boolean=false;
     maskSaveSub:Subscription;
     disableSave=false;
+    invalidTag:boolean=false;
+    invalidService:boolean=false;
     newServiceAdded=false;
     newTagHidden:boolean=true;
     serviceListChange:boolean=false;
@@ -50,14 +52,12 @@ export class BcServRevision {
             newServiceCategory:["Nuova categoria"],
             newServiceTags:fb.array([]),
             newServiceTagKey:["Informazione"],
-            newServiceTagValue:["Valore"],
-            newServiceBooleanTagValue:[false]
+            newServiceTagValue:["Valore"]
         });
 
         this.newTagForm = fb.group({
             newTagKey:["Informazione"],
             newTagValue:["Valore"],
-            newBooleanTagValue:[false]
         });
 
         shared.onActiveOutletChange("revision");
@@ -179,9 +179,11 @@ export class BcServRevision {
             }else{
                 control.push(this.initService({category:service.category,tags:tags}));
             }
-            
+            this.toggleNewService();
+        }else{
+            this.invalidService=true;
         }
-        this.toggleNewService();
+        
     }
 
     initService(service:IService){
@@ -219,26 +221,15 @@ export class BcServRevision {
         if(this.newTagForm.valid){
             const control = <FormArray>service.controls['tags'];
             for(let c of control.controls){
-                if(c.value.key==this.newTagForm.controls["newTagKey"].value){
+                if(c.value.key.toLowerCase().indexOf(this.newTagForm.controls["newTagKey"].value.toLowerCase())>-1){
+                    this.invalidTag=true;
                     return;
                 }
             }
             control.push(this.initTag(this.newTagForm.controls["newTagKey"].value,this.newTagForm.controls["newTagValue"].value));
-        }
-        this.toggleTag(serviceIndex);
-    }
-
-    addNewBooleanTag(serviceIndex){
-        this.serviceListChange=true;
-        const service = <FormGroup>(<FormArray>this.servForm.controls.services).at(serviceIndex);
-        if(this.newTagForm.valid){
-            const control = <FormArray>service.controls['tags'];
-            for(let c of control.controls){
-                if(c.value.key==this.newTagForm.controls["newTagKey"].value){
-                    return;
-                }
-            }
-            control.push(this.initTag(this.newTagForm.controls["newTagKey"].value,this.newTagForm.controls["newBooleanTagValue"].value));
+            this.toggleTag(serviceIndex);
+        }else{
+            this.invalidTag=true;
         }
     }
 
@@ -246,31 +237,15 @@ export class BcServRevision {
         if(this.newServiceForm.controls['newServiceTagKey'].valid&&this.newServiceForm.controls['newServiceTagValue'].valid){
             const control = <FormArray>this.newServiceForm.controls['newServiceTags'];
             for(let c of control.controls){
-                if(c.value.key==this.newServiceForm.controls["newServiceTagKey"].value){
+                if(c.value.key.toLowerCase().indexOf(this.newTagForm.controls["newServiceTagKey"].value.toLowerCase())>-1){
+                    this.invalidService=true;
                     return;
                 }
             }
             control.push(this.initTag(this.newServiceForm.controls["newServiceTagKey"].value,this.newServiceForm.controls["newServiceTagValue"].value));
-        }
-    }
-
-    addNewServiceBooleanTag(){
-        if(this.newServiceForm.controls['newServiceTagKey'].valid){
-            const control = <FormArray>this.newServiceForm.controls['newServiceTags'];
-            for(let c of control.controls){
-                if(c.value.key==this.newServiceForm.controls["newServiceTagKey"].value){
-                    return;
-                }
-            }
-            control.push(this.initTag(this.newServiceForm.controls["newServiceTagKey"].value,this.newServiceForm.controls["newServiceBooleanTagValue"].value));
-        }
-    }
-
-    isBooleanValue(value):boolean{
-        if(value==null||(value!==true&&value!==false)){
-            return true;
+            this.toggleNewTag();
         }else{
-            return false;
+            this.invalidService=true;
         }
     }
 

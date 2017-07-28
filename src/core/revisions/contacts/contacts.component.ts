@@ -137,6 +137,8 @@ export class BcContactsRevision {
                 type:this.newOpeningForm.controls['newOpeningType'].value
             }
             control.push(this.initOpening(opening));
+        }else{
+            this.invalid=true;
         }
     }
 

@@ -22,6 +22,7 @@ export class BcGeoRevision {
     geoForm: FormGroup; 
     newTagForm: FormGroup;
     data:IGeographic;
+    displayTagError:boolean=false;
     invalid:boolean=false;
     disableSave=false;
     maskSaveSub:Subscription;
@@ -51,8 +52,7 @@ export class BcGeoRevision {
 
         this.newTagForm = fb.group({
             newKey:["Informazione"],
-            newValue:["Valore"],
-            newBooleanValue:[false]
+            newValue:["Valore"]
         });
 
         this.formValidSub = this.geoForm.statusChanges.subscribe((value)=>{
@@ -125,39 +125,25 @@ export class BcGeoRevision {
         if(this.newTagForm.controls['newKey'].valid&&this.newTagForm.controls['newValue'].valid){
             const control = <FormArray>this.geoForm.controls['tags'];
             for(let c of control.controls){
-                if(c.value.key==this.newTagForm.controls["newKey"].value){
+                if(c.value.key.toLowerCase().indexOf(this.newTagForm.controls["newKey"].value.toLowerCase())>-1){
                     this.invalid=true;
                     return;
                 }
             }
             this.invalid=false;
             control.push(this.initTag(this.newTagForm.controls["newKey"].value,this.newTagForm.controls["newValue"].value));
-            this.toggleTag();
-        }
-    }
-
-    addNewBooleanTag(){
-        this.tagChange=true;
-        if(this.newTagForm.controls['newKey'].valid){
-            const control = <FormArray>this.geoForm.controls['tags'];
-            for(let c of control.controls){
-                if(c.value.key==this.newTagForm.controls["newKey"].value){
-                    this.invalid=true;
-                    return;
-                }
-            }
-            this.invalid=false;
-            control.push(this.initTag(this.newTagForm.controls["newKey"].value,this.newTagForm.controls["newBooleanValue"].value));
-            this.toggleTag();
-        }
-    }
-
-    isBooleanValue(value):boolean{
-        if(value==null||(value!==true&&value!==false)){
-            return true;
+            this.resetTagForm();
         }else{
-            return false;
+            this.invalid=true;
         }
+    }
+
+    resetTagForm(){
+        this.newTagForm = this.fb.group({
+            newKey:["Informazione"],
+            newValue:["Valore"]
+        });
+        this.toggleTag();
     }
 
     initTag(key:String,value:String){

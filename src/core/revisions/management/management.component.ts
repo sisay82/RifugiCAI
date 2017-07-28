@@ -144,6 +144,8 @@ export class BcManagementRevision {
                 type:this.newSubjectForm.controls['newType'].value||null
             }
             control.push(this.initSubject(subject));
+        }else{
+            this.invalid=true;
         }
     }
 

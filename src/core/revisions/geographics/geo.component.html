@@ -61,8 +61,10 @@
                         <bc-text-input formControlName="key" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-geographic-input">
-                        <bc-text-input *ngIf="isBooleanValue(tag.controls.value.value)" formControlName="value" [displayError]="displayError"></bc-text-input>
-                        <bc-checkbox-input *ngIf="!isBooleanValue(tag.controls.value.value)" formControlName="value"></bc-checkbox-input>
+                        <bc-text-input formControlName="value" [displayError]="displayError"></bc-text-input>
+                    </div>
+                    <div style="margin-left:1%">
+                        <bc-checkbox-input formControlName="value"></bc-checkbox-input>
                     </div>
                     <bc-icon (click)="removeTag(i)" class="bc-add-tag" name="times" size=s></bc-icon>
                     <br>
@@ -80,21 +82,15 @@
     <form [formGroup]="newTagForm">
         <div style="display:flex;flex-direction:row;align-items:center">
             <div class="bc-geographic-input">
-                <bc-text-input formControlName="newKey" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newKey" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-geographic-input">
-                <bc-text-input formControlName="newValue" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="newValue" [displayError]="invalid"></bc-text-input>
+            </div>
+            <div style="margin-left:1%">
+                <bc-checkbox-input formControlName="newValue"></bc-checkbox-input>
             </div>
             <bc-icon (click)="addNewTag()" class="bc-add-tag" name="check" size=s></bc-icon>
-        </div>
-        <div style="display:flex;flex-direction:row;align-items:center">
-            <div class="bc-geographic-input">
-                <bc-text-input formControlName="newKey" [displayError]="displayError"></bc-text-input>
-            </div>
-            <div class="bc-geographic-input">
-                <bc-checkbox-input formControlName="newBooleanValue"></bc-checkbox-input>
-            </div>
-            <bc-icon (click)="addNewBooleanTag()" class="bc-add-tag" name="check" size=s></bc-icon>
         </div>
     </form>
 </div>
