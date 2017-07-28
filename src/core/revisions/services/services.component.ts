@@ -186,6 +186,7 @@ export class BcServRevision {
 
     initService(service:IService){
         let group:FormGroup = this.fb.group({
+            id:[service._id],
             category:[service.category],
             tags:this.fb.array([])
         });
@@ -200,10 +201,11 @@ export class BcServRevision {
         this.serviceListChange=true;
         const control = <FormGroup>(<FormArray>this.servForm.controls.services).at(serviceIndex);
         const tags=<FormArray>control.controls.tags;
-        tags.removeAt(tagIndex);
-        if(tags.length==0){
+        if(tags.length==1){
             this.removeService(serviceIndex);
-        }
+        }else{
+            tags.removeAt(tagIndex);
+        }   
     }
 
     removeNewTag(tagIndex:number){
@@ -304,7 +306,6 @@ export class BcServRevision {
             this.serviceToRemove.forEach(service=>{
                 services.push({_id:service});
             });
-            
             delete(this.serviceToRemove);
     
             shelter.services=services;
@@ -336,8 +337,23 @@ export class BcServRevision {
     initForm(shelter:IShelter){
         this.name=shelter.name;
         for(let service of shelter.services){
-            this.serviceList.push({_id:service._id,category:service.category,tags:service.tags});
-            (<FormArray>this.servForm.controls.services).push(this.initService(service));
+            const currentService:FormGroup=<FormGroup>(<FormArray>this.servForm.controls.services).controls.find(serv=>serv.value.category.toLowerCase().indexOf(service.category.toLowerCase())>-1);
+            if(currentService==undefined){
+                this.serviceList.push({_id:service._id,category:service.category,tags:service.tags});
+                (<FormArray>this.servForm.controls.services).push(this.initService(service));
+            }else{
+                this.serviceListChange=true;
+                this.newServiceAdded=true;
+                for(let tag of service.tags){
+                    let currentTag:FormGroup=<FormGroup>(<FormArray>currentService.controls.tags).controls.find(t=>
+                        t.value.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
+                    if(currentTag==undefined){
+                        (<FormArray>currentService.controls.tags).push(this.initTag(tag.key,tag.value));
+                    }
+                }
+                this.serviceToRemove.push(service._id);
+            }
+            
         }
 
     }  
