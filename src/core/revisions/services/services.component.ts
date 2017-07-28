@@ -179,11 +179,23 @@ export class BcServRevision {
             }else{
                 control.push(this.initService({category:service.category,tags:tags}));
             }
-            this.toggleNewService();
+            this.resetServiceForm();
         }else{
             this.invalidService=true;
         }
         
+    }
+
+    resetServiceForm(){
+        this.newServiceForm = this.fb.group({
+            newServiceName:["Nome Nuovo Servizio"],
+            newServiceDescription:["Descrizione Nuovo Servizio"],
+            newServiceCategory:["Nuova categoria"],
+            newServiceTags:this.fb.array([]),
+            newServiceTagKey:["Informazione"],
+            newServiceTagValue:["Valore"]
+        });
+        this.toggleNewService();
     }
 
     initService(service:IService){
@@ -210,6 +222,22 @@ export class BcServRevision {
         }   
     }
 
+    resetTagForm(serviceIndex){
+        if(serviceIndex>-1){ 
+            this.newTagForm = this.fb.group({
+                newTagKey:["Informazione"],
+                newTagValue:["Valore"],
+            });
+            this.toggleTag(serviceIndex);
+        }
+        else{
+            this.newServiceForm.controls.newServiceTagKey.setValue("Informazione");
+            this.newServiceForm.controls.newServiceTagValue.setValue("Valore");
+
+            this.toggleNewTag();
+        }
+    }
+
     removeNewTag(tagIndex:number){
         const control = <FormArray>this.newServiceForm.controls['newServiceTags'];
         control.removeAt(tagIndex);
@@ -227,7 +255,7 @@ export class BcServRevision {
                 }
             }
             control.push(this.initTag(this.newTagForm.controls["newTagKey"].value,this.newTagForm.controls["newTagValue"].value));
-            this.toggleTag(serviceIndex);
+            this.resetTagForm(serviceIndex);
         }else{
             this.invalidTag=true;
         }
@@ -237,13 +265,13 @@ export class BcServRevision {
         if(this.newServiceForm.controls['newServiceTagKey'].valid&&this.newServiceForm.controls['newServiceTagValue'].valid){
             const control = <FormArray>this.newServiceForm.controls['newServiceTags'];
             for(let c of control.controls){
-                if(c.value.key.toLowerCase().indexOf(this.newTagForm.controls["newServiceTagKey"].value.toLowerCase())>-1){
+                if(c.value.key.toLowerCase().indexOf(this.newServiceForm.controls["newServiceTagKey"].value.toLowerCase())>-1){
                     this.invalidService=true;
                     return;
                 }
             }
             control.push(this.initTag(this.newServiceForm.controls["newServiceTagKey"].value,this.newServiceForm.controls["newServiceTagValue"].value));
-            this.toggleNewTag();
+            this.resetTagForm(-1);
         }else{
             this.invalidService=true;
         }

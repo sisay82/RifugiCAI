@@ -121,7 +121,7 @@ export class BcContactsRevision {
                 this.newOpeningForm.controls['newOpeningEndDate'].value!=null&&this.newOpeningForm.controls['newOpeningEndDate'].value!=""){
                 startDate=Date.parse(this.newOpeningForm.controls['newOpeningStartDate'].value);
                 endDate=Date.parse(this.newOpeningForm.controls['newOpeningEndDate'].value);
-                if(startDate<endDate){
+                if(startDate>endDate){
                     this.invalid=true;
                     return;
                 }
@@ -137,9 +137,19 @@ export class BcContactsRevision {
                 type:this.newOpeningForm.controls['newOpeningType'].value
             }
             control.push(this.initOpening(opening));
+            this.resetOpeningForm();
         }else{
             this.invalid=true;
         }
+    }
+
+    resetOpeningForm(){
+        this.newOpeningForm = this.fb.group({
+            newOpeningStartDate:["Inizio"],
+            newOpeningEndDate:["Fine"],
+            newOpeningType:["Tipo"]
+        });
+        this.toggleOpenings();
     }
 
     initOpening(opening:IOpening){
