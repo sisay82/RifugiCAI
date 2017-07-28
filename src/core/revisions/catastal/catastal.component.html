@@ -1,5 +1,5 @@
 <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
-<div class="bc-h6 bc-catastal-title">Dati Catastali</div>
+<div class="bc-h6 bc-catastal-title">Dati catastali e certificazioni</div>
 <form style="position:relative" [formGroup]="catastalForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
@@ -27,36 +27,28 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input enumName="Typo_consistency" formControlName="typologicalCoherence" [displayError]="displayError" title="Consistenza Tipologica"></bc-select-input>
+            <bc-select-input enumName="Typo_consistency" formControlName="typologicalCoherence" [displayError]="displayError" title="Coerenza Tipologica"></bc-select-input>
+        </div>
+        <div class="bc-revision-catastal">
+            <bc-select-input enumName="Fire_Regulation_Type" formControlName="fireRegulation" title="Regolarità antincendio"></bc-select-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <bc-checkbox-input formControlName="ISO14001" title="ISO14001"></bc-checkbox-input>
         <bc-checkbox-input formControlName="buildingRegulation" title="Regolarità edilizia"></bc-checkbox-input>
         <bc-checkbox-input formControlName="matericalCoherence" title="Coerenza materica"></bc-checkbox-input>
-    </div>
-    <div style="display: flex;flex-direction:row">
-        <bc-checkbox-input formControlName="cityPlanRegulation" title="Regolarità Urbana"></bc-checkbox-input>
-        <bc-checkbox-input formControlName="fireRegulation" title="Regolarità antincendio"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="cityPlanRegulation" title="Regolarità urbanistica"></bc-checkbox-input>
     </div>
 </form>
 <bc-divider></bc-divider>
-<div class="bc-h6 bc-catastal-title">Energia</div>
+<div class="bc-h6 bc-catastal-title">Energia e riscaldamento</div>
 <form style="position:relative" [formGroup]="energyForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-text-input formControlName="class" title="Classe Energetica" [displayError]="displayError"></bc-text-input>
+            <bc-select-input enumName="Energy_Class_Type" formControlName="class" title="Classe Energetica" [displayError]="displayError"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-text-input formControlName="energy" title="Quantità" [displayError]="displayError"></bc-text-input>
-        </div>
-    </div>
-    <div style="display: flex;flex-direction:row">
-        <div class="bc-revision-catastal">
-            <bc-select-input enumName="Source_Type" formControlName="sourceType" [displayError]="displayError" title="Tipo fonte energetica"></bc-select-input>
-        </div>
-        <div class="bc-revision-catastal">
-            <bc-text-input formControlName="sourceName" title="Nome Fonte Energetica" [displayError]="displayError"></bc-text-input>
+            <bc-text-input formControlName="energy" title="Quantità (KW)" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -71,7 +63,7 @@
     </div>
 </form>
 <bc-divider></bc-divider>
-<div class="bc-h6 bc-catastal-title">Rifiuti</div>
+<div class="bc-h6 bc-catastal-title">Scarico e acqua</div>
 <form style="position:relative" [formGroup]="drainForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">

@@ -17,6 +17,32 @@ export namespace Enums {
         "Assente"
     }
 
+    //tipo classe energetica
+    export enum Energy_Class_Type {
+        "A+", "A", "B", "C", "D", "E", "F", "G"
+    }
+
+    //tipo di regolamentazione antincendio
+    export enum Fire_Regulation_Type {
+        "Sì", 
+        "No", 
+        "In fase di adeguamento"
+    }
+
+    //tipo di possesso
+    export enum Possession_Type {
+        "Affitto ramo d'impresa", 
+        "Affitto immobile", 
+        "Affitto a gestore", 
+        "Diretto", 
+        "Capanna sociale", 
+        "Custodia", 
+        "Proprietà", 
+        "Usufrutto", 
+        "Concessione", 
+        "Comodato"
+    }
+
     //stagioni
     export enum Seasons {
         "Primavera",
@@ -42,7 +68,6 @@ export namespace Enums {
 
     //tipo rifugio
     export enum Shelter_Type {
-        "Rifugio",
         "Bivacco",
         "Rifugio custodito",
         "Rifugio incustodito",

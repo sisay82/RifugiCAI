@@ -53,6 +53,7 @@ export class BcManagementRevision {
             propFixedPhone:[""],
             propPec:[""],
             propEmail:[""],
+            propWebSite:[""]
         }); 
 
         this.newSubjectForm = fb.group({
@@ -182,6 +183,7 @@ export class BcManagementRevision {
     save(confirm){
         if(this.managForm.valid){
             let shelter:IShelter={_id:this._id,name:this.name};
+
             let management:IManagement={
                 rent:this.managForm.controls["rent"].value||null,
                 period:this.managForm.controls["period"].value||null,
@@ -195,12 +197,24 @@ export class BcManagementRevision {
                 pickupKey:this.managForm.controls["pickupKey"].value||null
             };
 
+            let wSite=null;
+            if(this.managForm.controls.propWebSite.value!=null&&this.managForm.controls.propWebSite.value!=""){
+                wSite="http";
+                if(this.managForm.controls.propWebSite.value.indexOf(wSite)==-1){
+                    wSite+="://"+this.managForm.controls.propWebSite.value;
+                }else{
+                    wSite=this.managForm.controls.propWebSite.value;
+                }
+            }
+
+
             let prop:ISubject={
                 name:this.managForm.controls["propName"].value||null,
                 taxCode:this.managForm.controls["propTaxCode"].value||null,
                 fixedPhone:this.managForm.controls["propFixedPhone"].value||null,
                 pec:this.managForm.controls["propPec"].value||null,
                 email:this.managForm.controls["propEmail"].value||null,
+                webSite:wSite||null,
                 type:"Proprietario"
             }
 

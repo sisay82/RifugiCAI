@@ -96,11 +96,12 @@ export interface ISubject{
 
 export interface IManagement{
     rent?:Number;
-    period?:String;
+    period?:Enums.Possession_Type;
     contract_start_date?:Date;
     contract_end_date?:Date;
-    contract_duration?:Number;
+    contract_duration?:String;
     contract_fee?:Number;
+    webSite?:String;
     self_management?:Boolean;
     valuta?:String;
     rentType?:Enums.Custody_Type;
@@ -119,12 +120,12 @@ export interface ICatastal{
     cityPlanRegulation?:Boolean;
     mainBody?:String;
     secondaryBody?:String;
-    fireRegulation?:Boolean;
+    fireRegulation?:Enums.Fire_Regulation_Type;
     ISO14001?:Boolean;
 }
 
 export interface IEnergy{
-    class?:String;
+    class?:Enums.Energy_Class_Type;
     energy?:Number;
     greenCertification?:Boolean;
     powerGenerator?:Boolean;

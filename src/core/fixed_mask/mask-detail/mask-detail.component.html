@@ -5,7 +5,7 @@
             <bc-icon *ngIf="checkWinPlatform()" (click)="toggleMenu()" class="bc-mask-icon" name="bars" size=s></bc-icon>
             <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
                 <div style="white-space: nowrap;margin-right:1%">{{shelter?.name || 'Nome Rifugio'}},</div>
-                <div style="white-space: nowrap;margin-right:1%">{{shelter?.alias||'Nome Comune'}}</div>
+                <div style="white-space: nowrap;margin-right:1%">{{shelter?.alias||'Nome comune'}}</div>
             </div>
             <div style="display: inline;margin-left:auto;margin-right:1%">
                 <bc-icon (click)="revision()" class="bc-mask-icon" name="edit" size=s></bc-icon>
