@@ -1,18 +1,24 @@
+import { ModuleWithProviders } from '@angular/core';
+import { Routes } from '@angular/router';
+import { Enums } from './enums'
 import * as L from 'leaflet';
-import { Enums } from './enums';
+
+export interface IPagedResults<T> {
+    totalRecords: number;
+    results: T;
+}
 
 export interface IMarker{
-    latLng:L.LatLng,
-    popup:string,
-    optional?:any
+    latLng:L.LatLng;
+    popup:string;
+    optional?:any;
 }
 
 export interface IButton {
-    ref:string;
+    ref?:any;
     icon?:string;
     dark_theme?:Boolean;
     text?:string;
-    enabled?:Boolean;
     action?:Function;
 }
 
@@ -29,7 +35,7 @@ export interface IMenuLayer{
 }
 
 export interface IMenu{
-    layers:[IMenuLayer];
+    elements:[IMenuElement];
 }
 
 export interface ILocation{
@@ -57,7 +63,7 @@ export interface IGeographic{
 }
 
 export interface IService{
-    _id:String;
+    _id?:String;
     name?:String;
     category?:String;
     description?:String;
@@ -72,7 +78,7 @@ export interface IOpening{
 
 export interface IContacts{
     name?:String;
-    role?:String;
+    role?:Enums.Owner_Type;
     fixedPhone?:String;
     mobilePhone?:String;
     mailPec?:String;
@@ -94,13 +100,13 @@ export interface ISubject{
 
 export interface IManagement{
     rent?:Number;
-    period?:String;
+    period?:Enums.Possession_Type;
     contract_start_date?:Date;
     contract_end_date?:Date;
-    contract_duration?:Number;
+    contract_duration?:String;
     contract_fee?:Number;
-    self_management?:Boolean;
     webSite?:String;
+    self_management?:Boolean;
     valuta?:String;
     rentType?:Enums.Custody_Type;
     pickupKey?:Boolean;
@@ -118,12 +124,12 @@ export interface ICatastal{
     cityPlanRegulation?:Boolean;
     mainBody?:String;
     secondaryBody?:String;
-    fireRegulation?:Boolean;
+    fireRegulation?:Enums.Fire_Regulation_Type;
     ISO14001?:Boolean;
 }
 
 export interface IEnergy{
-    class?:String;
+    class?:Enums.Energy_Class_Type;
     energy?:Number;
     greenCertification?:Boolean;
     powerGenerator?:Boolean;
@@ -144,8 +150,9 @@ export interface IDrain{
 }
 
 export interface IShelter{
+    _id:String;
     name:String;
-    alias:String;
+    alias?:String;
     idCai?:String;
     type?:Enums.Shelter_Type;
     branch?:String;
