@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 })
 export class BcServ {
-  categories:{name:String,services:IService[]}[]=[];
+  services:IService[]=[];
   activeComponentSub:Subscription;
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
     this.activeComponentSub=this.shared.activeComponentRequest$.subscribe(()=>{
@@ -36,17 +36,8 @@ export class BcServ {
   ngOnInit(){
     let routeSub=this._route.parent.params.subscribe(params=>{
       let shelSub=this.shelterService.getShelterSection(params['id'],"services").subscribe(shelter=>{
-        for(let service of shelter.services){
-          let category=this.categories.find(cat=>cat.name==service.category);
-          if(category!=undefined){
-            category.services.push(service);
-          }else{
-            category={
-              name:service.category,
-              services:[service]
-            }
-            this.categories.push(category);
-          }
+        if(shelter.services!=undefined){
+          this.services=shelter.services;
         }
         if(shelSub!=undefined){
           shelSub.unsubscribe();
