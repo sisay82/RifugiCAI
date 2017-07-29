@@ -40,7 +40,6 @@ export class BcShelterList {
     filterChanged(event: any) {
         var data = this.filterText;
         if (data && this.rifugiSample) {
-
             const props = ['name'];
             this.filteredShelter = this.rifugiSample.filter((item: any) => {
                 let match = false;
@@ -52,6 +51,7 @@ export class BcShelterList {
                 };
                 return match;
             });
+            console.log(this.filteredShelter);
         }
         else {
             this.filteredShelter = this.rifugiSample;

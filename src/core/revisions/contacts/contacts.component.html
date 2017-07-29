@@ -21,7 +21,7 @@
                 <bc-text-input formControlName="mailPec" title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <bc-text-input formControlName="webAddress" title="Sito Web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="webAddress" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <br>
@@ -46,7 +46,7 @@
 </form>
 <div (click)="toggleOpenings()" class="bc-body bc-add-tag" style="display:inline;white-space:nowrap;flex:1">
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
-    Aggiungi Apertura
+    Aggiungi apertura
 </div>
 <div *ngIf="!isHiddenOpenings()">
     <form [formGroup]="newOpeningForm">

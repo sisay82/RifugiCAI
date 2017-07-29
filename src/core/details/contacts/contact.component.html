@@ -26,7 +26,7 @@
             <div class="bc-body">{{contacts?(contacts.mailPec || '------------'):'------------'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Sito Web:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Sito web:</div>
             <div *ngIf="contacts.webAddress!=null" (click)="gotoSite(contacts.webAddress)" class="bc-body bc-link">{{contacts.webAddress}}</div>
             <div class="bc-body" *ngIf="contacts.webAddress==null">------------</div>
         </div>

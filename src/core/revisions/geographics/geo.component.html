@@ -6,7 +6,7 @@
             <bc-text-input formControlName="locality" title="Località" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-geographic-input">
-            <bc-text-input formControlName="authorityJurisdiction" title="Ente Sovracomunale di Competenza" [displayError]="displayError"></bc-text-input>
+            <bc-text-input formControlName="authorityJurisdiction" title="Ente sovracomunale di competenza" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
@@ -14,7 +14,7 @@
             <bc-text-input formControlName="municipality" title="Comune" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-geographic-input">
-            <bc-text-input formControlName="massif" title="Gruppo Montuoso" [displayError]="displayError"></bc-text-input>
+            <bc-text-input formControlName="massif" title="Gruppo montuoso" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
@@ -36,7 +36,7 @@
     </div>
     <div style="display:flex;flex-direction:row">
         <div class="bc-geographic-input">     
-            <bc-text-input formControlName="ownerRegion" title="Regione loc. Proprietà" [displayError]="displayError"></bc-text-input>   
+            <bc-text-input formControlName="ownerRegion" title="Regione loc. proprietà" [displayError]="displayError"></bc-text-input>   
             <br>
         </div>
         <div class="bc-geographic-input">
@@ -52,7 +52,7 @@
         </div>  
     </div>
     <bc-divider></bc-divider>
-    <div class="bc-geographic-title bc-h6">Informazioni Aggiuntive</div>
+    <div class="bc-geographic-title bc-h6">Informazioni aggiuntive</div>
     <div style="position:relative">
         <div *ngIf="data!=undefined&&data.tags!=undefined" formArrayName="tags">
             <div *ngFor="let tag of geoForm.controls.tags.controls;let i = index">
@@ -76,7 +76,7 @@
 </form>
 <div (click)="toggleTag()" class="bc-body bc-add-tag" style="display:inline;white-space:nowrap;flex:1">
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
-    Aggiungi Attributo
+    Aggiungi attributo
 </div>
 <div *ngIf="!isHiddenTag()">
     <form [formGroup]="newTagForm">

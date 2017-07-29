@@ -26,14 +26,14 @@
             <div class="bc-body">{{owner?(owner.pec || '----'):'----'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Sito Web:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Sito web:</div>
             <div *ngIf="owner!=undefined&&owner.webSite!=undefined" (click)="gotoSite(owner.webSite)" class="bc-body bc-link">{{owner.webSite}}</div>
             <div class="bc-body" *ngIf="owner==undefined||owner.webSite==undefined">----</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Canone Annuale:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Canone annuale:</div>
             <div class="bc-body">{{data?(data.rent || '----'):'----'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
@@ -47,17 +47,17 @@
             <div class="bc-body">{{data?(data.period || '----'):'----'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Data di Inizio Contratto:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Data di inizio contratto:</div>
             <div class="bc-body">{{data?((data.contract_start_date | date:"dd/MM/yy") || '----'):'----'}}</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Data di Fine Contratto:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Data di fine contratto:</div>
             <div class="bc-body">{{data?((data.contract_end_date | date:"dd/MM/yy") || '----'):'----'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Durata Contratto:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Durata contratto:</div>
             <div class="bc-body">{{data?(data.contract_duration || '----'):'----'}}</div>
         </div>
     </div>
@@ -65,7 +65,7 @@
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <bc-icon *ngIf="data.pickupKey!=null&&data.pickupKey==true" name="check-square-o" size=s></bc-icon>
             <bc-icon *ngIf="data.pickupKey==null||data.pickupKey==false" name="square-o" size=s></bc-icon>
-            <div class="bc-body-strong" style="margin-right:4px">Ritiro Chiavi</div>
+            <div class="bc-body-strong" style="margin-right:4px">Ritiro chiavi</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <bc-icon *ngIf="data.self_management!=null&&data.self_management==true" name="check-square-o" size=s></bc-icon>
@@ -82,7 +82,7 @@
                 <div class="bc-body">{{manager?(manager.name || '----'):'----'}} {{manager?(manager.surname):''}}</div>
             </div>
             <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-                <div class="bc-body-strong" style="margin-right:4px">Telefono Fisso:</div>
+                <div class="bc-body-strong" style="margin-right:4px">Telefono:</div>
                 <div class="bc-body">{{manager?(manager.fixedPhone || '----'):'----'}}</div>
             </div>
         </div>
@@ -102,7 +102,7 @@
                 <div class="bc-body">{{manager?(manager.pec || '----'):'----'}}</div>
             </div>
             <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-                <div class="bc-body-strong" style="margin-right:4px">Sito Web:</div>
+                <div class="bc-body-strong" style="margin-right:4px">Sito web:</div>
                 <div *ngIf="manager!=null&&manager.webSite!=undefined" (click)="gotoSite(manager.webSite)" class="bc-body bc-link">{{manager.webSite}}</div>
                 <div class="bc-body" *ngIf="manager==null||manager.webSite==undefined">----</div>
             </div>

@@ -1,6 +1,6 @@
 <form [formGroup]="managForm">
     <div style="display:block;margin-left:4px;background:white">
-        <div [hidden]="!displayError" class="alert alert-danger">Error Occurred!</div>
+        <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
         <div class="bc-management-title bc-h6">Proprietà:</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
-            <bc-checkbox-input formControlName="pickupKey" title="Ritiro Chiavi"></bc-checkbox-input>
+            <bc-checkbox-input formControlName="pickupKey" title="Ritiro chiavi"></bc-checkbox-input>
             <bc-checkbox-input formControlName="self_management" title="Autogestione"></bc-checkbox-input>
         </div>
         <bc-divider></bc-divider>
@@ -42,13 +42,13 @@
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_start_date" validator="validateDate" title="Data di Inizio Contratto" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="contract_start_date" validator="validateDate" title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_end_date" validator="validateDate" title="Data di Fine Contratto" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="contract_end_date" validator="validateDate" title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_duration" title="Durata Contratto" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="contract_duration" title="Durata contratto" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <bc-divider></bc-divider>
@@ -86,7 +86,7 @@
                         <bc-text-input formControlName="pec" title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
-                        <bc-text-input formControlName="webSite" title="Sito Web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
+                        <bc-text-input formControlName="webSite" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                 </div>
             </div>
@@ -97,7 +97,7 @@
  </form>
 <div (click)="toggleSubject()" class="bc-body bc-add-tag" style="white-space:nowrap;flex:1">
     <bc-icon name="plus" size=s></bc-icon>
-    Aggiungi Custode
+    Aggiungi custode
 </div>
 <div *ngIf="!isHiddenSubject()">
     <form [formGroup]="newSubjectForm">
@@ -132,7 +132,7 @@
                 <bc-text-input formControlName="newPec" title="PEC" validator="mailValidator" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="newWebSite" title="Sito Web" validator="urlValidator" [displayError]="invalid"></bc-text-input>
+                <bc-text-input formControlName="newWebSite" title="Sito web" validator="urlValidator" [displayError]="invalid"></bc-text-input>
             </div>
         </div>
     </form>
