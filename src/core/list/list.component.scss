@@ -8,7 +8,7 @@
 
 // Normal list variables
 $bc-list-padding-start: 16px;
-$bc-list-padding-end: 0px;
+$bc-list-padding-end: 16px;
 
 $bc-list-no-border: 0px;
 
@@ -37,8 +37,9 @@ $bc-list-no-border: 0px;
 
   &[no-border], &[data-no-border] {
     @include bc-list-item-no-border();
-    & bc-divider {
-      display:none;
+    
+    & > bc-divider {
+       display:none;
     }
   }
 

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { BcContentModule } from './content/content.module';
+import { BcBackdropModule } from './backdrop/backdrop.module';
 import { BcIconModule } from './icon/icon.module';
 import { BcAvatarModule } from './avatar/avatar.module';
 import { BcDividerModule } from './divider/divider.module';
@@ -22,6 +23,7 @@ import { TrimPipe } from './pipes/trim.pipe';
 
 const COMPONENTS_MODULES = [
     BcContentModule,
+    BcBackdropModule,
     BcIconModule,
     BcAvatarModule,
     BcDividerModule,

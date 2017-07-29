@@ -23,6 +23,8 @@ export class BcShelterList {
         this.filterText = "";
         this.shelterService.getShelters().subscribe(shelters => {
             this.rifugiSample = shelters;
+            this.filteredShelter = shelters;
+            this.filterChanged("");
         });
     }
 
@@ -51,10 +53,12 @@ export class BcShelterList {
                 };
                 return match;
             });
-            console.log(this.filteredShelter);
         }
         else {
             this.filteredShelter = this.rifugiSample;
         }
+        this.filteredShelter=this.filteredShelter.sort((a:IShelter,b:IShelter)=>{
+            return a.name.localeCompare(<string>b.name);
+        });
     }
 }

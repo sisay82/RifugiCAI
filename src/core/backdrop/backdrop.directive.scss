@@ -1,0 +1,23 @@
+@import '../style/elevation';
+
+/// @prop - Color of the backdrop
+$backdrop-color: rgba(0, 0, 0, 0.6) !default;
+
+.bc-backdrop {
+    // Disable events from being captured on the overlay container.
+    pointer-events: auto;
+
+    top: 0;
+    left: 0;
+    // The container should be the size of the viewport.
+    // viewport units are better, because they aren't being offset by the global scrollbar.
+    height: 100vh;
+    width: 100vw;
+
+    position: absolute;
+
+    background: $backdrop-color;
+
+    z-index: $z-index-backdrop;
+    
+}
