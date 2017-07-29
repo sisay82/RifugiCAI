@@ -24,14 +24,19 @@ export interface IButton {
 }
 
 export interface IMenuElement{
-    name:String,
-    icon:String,
-    link:any,
-    default?:boolean
+    name:String;
+    icon:String;
+    link:any;
+    default?:boolean;
+}
+
+export interface IMenuLayer {
+    layerName?:String;
+    elements:[IMenuElement];
 }
 
 export interface IMenu{
-    elements:[IMenuElement];
+    layers:[IMenuLayer];
 }
 
 export interface ILocation{

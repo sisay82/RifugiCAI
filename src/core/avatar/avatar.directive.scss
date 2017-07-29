@@ -1,12 +1,16 @@
 $bc-avatar-container-height: 56px;
 $bc-dense-avatar-container-height: 48px;
 
-$bc-avatar-margin: 5px;
+$bc-avatar-margin: 8px;
 $bc-avatar-size: 40px;
 
-.bc-avatar {
-    flex-shrink: 0;
-    margin: $bc-avatar-margin;
-    width: $bc-avatar-size;
-    height: $bc-avatar-size;
+@mixin bc-avatar-base($dense:null) {
+    .bc-avatar {
+        flex-shrink: 0;
+        margin: if($dense == null, $bc-avatar-margin,  $bc-avatar-margin/2) $bc-avatar-margin;
+        width: $bc-avatar-size;
+        height: $bc-avatar-size;
+    }
 }
+
+@include bc-avatar-base();
