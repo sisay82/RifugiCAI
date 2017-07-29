@@ -4,8 +4,6 @@
 @import './listItem/list-item.component';
 @import './listHeader/list-header.directive';
 
-@import '../icon/icon.component';
-
 // Normal list variables
 $bc-list-padding-start: 16px;
 $bc-list-padding-end: 16px;
@@ -30,10 +28,7 @@ $bc-list-no-border: 0px;
   @include bc-list-header-base($bc-list-padding-start, $bc-list-padding-end);
 
   // bc-list-item style
-  @include bc-list-item-base(
-    $bc-icon-size,
-    $bc-list-padding-start, $bc-list-padding-end
-  );
+  @include bc-list-item-base($bc-list-padding-start, $bc-list-padding-end);
 
   &[no-border], &[data-no-border] {
     @include bc-list-item-no-border();
@@ -44,11 +39,7 @@ $bc-list-no-border: 0px;
   }
 
   &[dense], &[data-dense] {
-    @include bc-list-item-base(
-      $bc-dense-icon-size,
-      $bc-list-padding-start, $bc-list-padding-end,
-      dense
-    );
+    @include bc-list-item-base($bc-list-padding-start, $bc-list-padding-end, dense);
   }
 }
 

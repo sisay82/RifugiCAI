@@ -16,7 +16,7 @@
     secondary: $list-item-secondary-line
   );
 }
-
+$bc-list-icon-size: 16px;
 // Represents list item heights definition.
 $bc-list-item-heights: (
     base: 48px,
@@ -30,6 +30,7 @@ $bc-list-item-heights: (
         thumbnail: 72px
     )
 );
+
 // Represents the desired item height.
 @function bc-item-height($heightDef, $type: base, $dense: null) {
 
@@ -85,7 +86,7 @@ $bc-list-item-heights: (
     }
 }
 
-@mixin bc-list-item-base($icon-size, $bc-list-item-padding-start: 16px, $bc-list-item-padding-end: 0px, $dense:null) {
+@mixin bc-list-item-base($bc-list-item-padding-start: 16px, $bc-list-item-padding-end: 0px, $dense:null) {
 
     & a.bc-list-item, & button.bc-list-item {
         text-decoration: none;
@@ -125,6 +126,7 @@ $bc-list-item-heights: (
             // Container dimension style
             // --------------------------------------------------
             height: bc-item-height($bc-list-item-heights, base, $dense);
+            
             // Content position style
             // --------------------------------------------------
             align-items: center;
@@ -158,7 +160,6 @@ $bc-list-item-heights: (
 
             // margin and padding
             // --------------------------------------------------
-            margin: 0px 0px 0px $bc-list-item-padding-start;
             padding: 8px 0px;
 
             & > *:not([item-end]):not([data-item-end]) {
@@ -175,7 +176,7 @@ $bc-list-item-heights: (
             border-bottom: 0px;
         }
         
-        .bc-list-text {
+        & .bc-list-text {
             @include flex-box;
             @include flex-flow;
 
@@ -206,15 +207,21 @@ $bc-list-item-heights: (
             @include bc-line-base();
         }
 
-        .bc-icon {
-                height: $bc-icon-size;
-                width: $bc-icon-size;
-                font-size: $bc-icon-size;
+        & .bc-icon {
+            font-size: $bc-list-icon-size;
+        }
+        & .bc-icon + .bc-list-item-inner {
+            padding-left: $bc-list-item-padding-start + $bc-list-item-padding-start /2;
+        }
+        & .bc-avatar + .bc-list-item-inner {
+            padding-left: $bc-list-item-padding-start /2;
         }
     }
 
     &.bc-list-avatar .bc-list-item .bc-list-item-content {
         min-height: bc-item-height($bc-list-item-heights, 'avatar', $dense);
+
+        @include bc-avatar-base($dense);
     }
 
     &.bc-list-thumbnail .bc-list-item .bc-list-item-content {
