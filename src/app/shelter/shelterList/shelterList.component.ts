@@ -28,6 +28,8 @@ export class BcShelterList {
         this.filterText = "";
         this.shelterService.getShelters().subscribe(shelters => {
             this.rifugiSample = shelters;
+            this.filteredShelter = shelters;
+            this.filterChanged("");
         });
     }
 
@@ -45,7 +47,6 @@ export class BcShelterList {
     filterChanged(event: any) {
         var data = this.filterText;
         if (data && this.rifugiSample) {
-
             const props = ['name'];
             this.filteredShelter = this.rifugiSample.filter((item: any) => {
                 let match = false;
@@ -61,5 +62,8 @@ export class BcShelterList {
         else {
             this.filteredShelter = this.rifugiSample;
         }
+        this.filteredShelter=this.filteredShelter.sort((a:IShelter,b:IShelter)=>{
+            return a.name.localeCompare(<string>b.name);
+        });
     }
 }
