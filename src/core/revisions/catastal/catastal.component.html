@@ -3,31 +3,31 @@
 <form style="position:relative" [formGroup]="catastalForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-text-input formControlName="buildYear" title="Anno di Costruzione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+            <bc-text-input formControlName="buildYear" title="Anno di costruzione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-text-input formControlName="rebuildYear" title="Anno di Ristrutturazione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
-        </div>
-    </div>
-    <div style="display: flex;flex-direction:row">
-        <div class="bc-revision-catastal">
-            <bc-text-input formControlName="code" title="Codice Catastale" [displayError]="displayError"></bc-text-input>
-        </div>
-        <div class="bc-revision-catastal">
-            <bc-text-input formControlName="class" title="Classe Catastale" [displayError]="displayError"></bc-text-input>
+            <bc-text-input formControlName="rebuildYear" title="Anno di ristrutturazione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-text-input formControlName="mainBody" title="Consistenza Corpo Principale" [displayError]="displayError"></bc-text-input>
+            <bc-text-input formControlName="code" title="Codice catastale" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-text-input formControlName="secondaryBody" title="Consistenza Corpi Secondari" [displayError]="displayError"></bc-text-input>
+            <bc-text-input formControlName="class" title="Classe catastale" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input enumName="Typo_consistency" formControlName="typologicalCoherence" [displayError]="displayError" title="Coerenza Tipologica"></bc-select-input>
+            <bc-text-input formControlName="mainBody" title="Consistenza corpo principale" [displayError]="displayError"></bc-text-input>
+        </div>
+        <div class="bc-revision-catastal">
+            <bc-text-input formControlName="secondaryBody" title="Consistenza corpi secondari" [displayError]="displayError"></bc-text-input>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div class="bc-revision-catastal">
+            <bc-select-input enumName="Typo_consistency" formControlName="typologicalCoherence" [displayError]="displayError" title="Coerenza tipologica"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
             <bc-select-input enumName="Fire_Regulation_Type" formControlName="fireRegulation" title="Regolarità antincendio"></bc-select-input>
@@ -45,7 +45,7 @@
 <form style="position:relative" [formGroup]="energyForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input enumName="Energy_Class_Type" formControlName="class" title="Classe Energetica" [displayError]="displayError"></bc-select-input>
+            <bc-select-input enumName="Energy_Class_Type" formControlName="class" title="Classe energetica" [displayError]="displayError"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
             <bc-text-input formControlName="energy" title="Quantità (KW)" [displayError]="displayError"></bc-text-input>
@@ -53,7 +53,7 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <bc-checkbox-input formControlName="greenCertification" title="Green"></bc-checkbox-input>
-        <bc-checkbox-input formControlName="powerGenerator" title="Generatore"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="powerGenerator" title="Generatore diesel"></bc-checkbox-input>
         <bc-checkbox-input formControlName="photovoltaic" title="Fotovoltaico"></bc-checkbox-input>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -67,10 +67,10 @@
 <form style="position:relative" [formGroup]="drainForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-text-input formControlName="type" title="Tipo" [displayError]="displayError"></bc-text-input>
+            <bc-select-input enumName="Drain_Type" formControlName="type" title="Tipo di scarico" [displayError]="displayError"></bc-select-input>
         </div>
         <div style="display: flex;flex-direction:row">
-            <bc-checkbox-input formControlName="regulation" title="Scarico a Norma"></bc-checkbox-input>
+            <bc-checkbox-input formControlName="regulation" title="Scarico a norma"></bc-checkbox-input>
             <bc-checkbox-input formControlName="oilSeparator" title="Disoleatore"></bc-checkbox-input>
             <bc-checkbox-input formControlName="recycling" title="Riciclaggio"></bc-checkbox-input>
         </div>
