@@ -35,7 +35,7 @@ export interface IMenuLayer{
 }
 
 export interface IMenu{
-    elements:[IMenuElement];
+    layers:[IMenuLayer];
 }
 
 export interface ILocation{

@@ -61,8 +61,8 @@ export class BcMenu {
   constructor(private route:ActivatedRoute,private router:Router,private shared:BcSharedService){
     if(this.menuElements==undefined){
       this.menuElements={
-        elements:[
-          {name:"No Menu Provided",icon:"",link:"#"}
+        layers:[
+          {elements:[{name:"No Menu Provided",icon:"",link:"#"}]}
         ]
       };
     }
