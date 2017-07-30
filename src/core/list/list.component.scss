@@ -1,8 +1,9 @@
 @import '../style/vendor-prefixes';
 @import '../style/typography';
 
-@import './listItem/list-item.component';
 @import './listHeader/list-header.directive';
+@import './listItemGroup/list-item-group.component';
+@import './listItem/list-item.component';
 
 // Normal list variables
 $bc-list-padding-start: 16px;
@@ -15,6 +16,8 @@ $bc-list-no-border: 0px;
   .bc-list {
     // bc-list-header theme
     @include bc-list-header-theme($theme);
+    // bc-list-item-group theme
+    @include bc-list-item-group-theme($theme);
     // bc-list-item theme
     @include bc-list-item-theme($theme);
   }
@@ -26,6 +29,9 @@ $bc-list-no-border: 0px;
 
   // bc-list-header style
   @include bc-list-header-base($bc-list-padding-start, $bc-list-padding-end);
+  
+  // bc-list-item-group style
+  @include bc-list-item-group-base($bc-list-padding-start, $bc-list-padding-end);
 
   // bc-list-item style
   @include bc-list-item-base($bc-list-padding-start, $bc-list-padding-end);

@@ -16,7 +16,7 @@
     secondary: $list-item-secondary-line
   );
 }
-$bc-list-icon-size: 16px;
+$bc-list-icon-size: $bc-font-size-base+4px;
 // Represents list item heights definition.
 $bc-list-item-heights: (
     base: 48px,
@@ -211,10 +211,7 @@ $bc-list-item-heights: (
             font-size: $bc-list-icon-size;
         }
         & .bc-icon + .bc-list-item-inner {
-            padding-left: $bc-list-item-padding-start + $bc-list-item-padding-start /2;
-        }
-        & .bc-avatar + .bc-list-item-inner {
-            padding-left: $bc-list-item-padding-start /2;
+            padding-left: $bc-list-item-padding-start/2;
         }
     }
 
