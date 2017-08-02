@@ -1,0 +1,21 @@
+<form [formGroup]="newDocForm">
+    <div class="bc-h6 bc-doc-title">Nuovo Documento</div>
+    <bc-file-input formControlName="file"></bc-file-input>
+</form>
+<bc-button [button]="sendButton"></bc-button>
+<bc-divider></bc-divider>
+<div class="bc-h6 bc-doc-title">File</div>
+<div *ngFor="let file of data" >
+    <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+        <bc-icon (click)="removeFile(file._id)" class="bc-add-file" name="times" size=s></bc-icon>
+        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+            <div class="bc-body-strong">Nome:</div>
+            <div style="margin-left:1%" class="bc-body"> {{file.name}}</div>
+        </div>
+        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+            <div class="bc-body-strong">Dimensione:</div>
+            <div style="margin-left:1%" class="bc-body"> {{file.size | formatsize}}</div>
+        </div>
+        <div class="bc-body" (click)="downloadFile(file._id)">Downlaod</div>
+    </div>
+</div>

@@ -6,7 +6,7 @@ import 'rxjs/add/observable/throw';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { IPagedResults, IShelter, IMarker } from '../shared/types/interfaces';
+import { IPagedResults, IShelter, IMarker, IFile } from '../shared/types/interfaces';
 import { Enums  } from '../shared/types/enums';
 
 @Injectable()
@@ -79,6 +79,36 @@ export class ShelterService {
                 let shelter = res.json();
                 return shelter;
             })
+            .catch(this.handleError);
+    }
+
+    getFile(id):Observable<IFile>{
+        return this.http.get(this.sheletersBaseUrl+"/file/"+id)
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    getAllFiles():Observable<IFile[]>{
+        return this.http.get(this.sheletersBaseUrl+"/file/all")
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    getFilesByShelterId(id):Observable<IFile[]>{
+        return this.http.get(this.sheletersBaseUrl+"/file/byshel/"+id)
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    insertFile(file:IFile):Observable<boolean>{
+        return this.http.post(this.sheletersBaseUrl+"/file", file)
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    removeFile(id):Observable<boolean>{
+        return this.http.delete(this.sheletersBaseUrl+"/file/"+id)
+            .map((res:Response)=>res.json())
             .catch(this.handleError);
     }
 

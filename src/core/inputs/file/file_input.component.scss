@@ -1,0 +1,8 @@
+@import '../../style/typography';
+@import '../../style/palette';
+
+@include bc-typography();
+
+.invalid{
+  border-left: 5px solid #a94442;
+}
