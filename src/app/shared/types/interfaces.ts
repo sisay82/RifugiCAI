@@ -45,6 +45,7 @@ export interface ILocation{
     municipality?:String;
     locality?:String;
     ownerRegion?:String;
+    regional_commission?:String;
     authorityJurisdiction?:String;
     altitude?:Number;
     latitude?:Number;
