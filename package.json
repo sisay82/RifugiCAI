@@ -45,6 +45,7 @@
   "scss": "./dist/rifugi-cai.scss",
   "dependencies": {
     "@angular/cli": "^1.0.0",
+    "@types/node": "^7.0.13",
     "@angular/compiler-cli": "^4.0.2",
     "@angular/animations": "^4.0.2",
     "@angular/common": "^4.0.2",
