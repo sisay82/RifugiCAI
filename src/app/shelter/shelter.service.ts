@@ -100,6 +100,18 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
+    getAllImages():Observable<IFile[]>{
+        return this.http.get(this.sheletersBaseUrl+"/image/all")
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    getImagesByShelterId(id):Observable<IFile[]>{
+        return this.http.get(this.sheletersBaseUrl+"/image/byshel/"+id)
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
     insertFile(file:IFile):Observable<boolean>{
         return this.http.post(this.sheletersBaseUrl+"/file", file)
             .map((res:Response)=>res.json())

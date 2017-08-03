@@ -33,12 +33,12 @@ export class FormatSizePipe implements PipeTransform {
 
 @Component({
   moduleId: module.id,
-  selector: 'bc-doc-revision',
-  templateUrl: 'document.component.html',
-  styleUrls: ['document.component.scss'],
+  selector: 'bc-img-revision',
+  templateUrl: 'images.component.html',
+  styleUrls: ['images.component.scss'],
   providers:[ShelterService]
 })
-export class BcDocRevision {
+export class BcImgRevision {
   newDocForm: FormGroup;
   _id:String;
   name:String;
@@ -94,7 +94,7 @@ export class BcDocRevision {
                 this.disableSave=true;
                 this.save(true);
             }else{
-                this.shared.onMaskConfirmSave("documents");
+                this.shared.onMaskConfirmSave("images");
             }
         }else{
             shared.onDisplayError();
@@ -102,7 +102,7 @@ export class BcDocRevision {
         }
     });
 
-    shared.activeComponent="documents";
+    shared.activeComponent="images";
   }
 
   toBuffer(ab) {
@@ -129,31 +129,31 @@ export class BcDocRevision {
 
   addDoc(ref){
     if(ref.newDocForm.valid){
-      ref.displayError=false;
-      let f=<File>(<FormGroup>(ref.newDocForm.controls.file)).value;
-      let file:IFile={
-        name:f.name,
-        size:f.size,
-        uploadDate:new Date(Date.now()),
-        contentType:f.type,
-        shelterId:ref._id
-      }
-      let fileReader = new FileReader();
-      fileReader.onloadend=(e:any)=>{
-        file.data=ref.toBuffer(fileReader.result);
-        let shelServiceSub = ref.shelterService.insertFile(file).subscribe(file => {
-          if(file){
-            ref.data.push(file)
-          }
-          if(confirm){
-              ref.shared.onMaskConfirmSave("documents");
-          }
-          if(shelServiceSub!=undefined){
-            shelServiceSub.unsubscribe();
-          }
-        });
-      }
-      fileReader.readAsArrayBuffer(f);
+        ref.displayError=false;
+        let f=<File>(<FormGroup>(ref.newDocForm.controls.file)).value;
+        let file:IFile={
+            name:f.name,
+            size:f.size,
+            uploadDate:new Date(Date.now()),
+            contentType:f.type,
+            shelterId:ref._id
+        }
+        let fileReader = new FileReader();
+        fileReader.onloadend=(e:any)=>{
+            file.data=ref.toBuffer(fileReader.result);
+            let shelServiceSub = ref.shelterService.insertFile(file).subscribe(file => {
+            if(file){
+                ref.data.push(file)
+            }
+            if(confirm){
+                ref.shared.onMaskConfirmSave("images");
+            }
+            if(shelServiceSub!=undefined){
+                shelServiceSub.unsubscribe();
+            }
+            });
+        }
+        fileReader.readAsArrayBuffer(f);
     }else{
       ref.displayError=true;
     }
@@ -162,7 +162,7 @@ export class BcDocRevision {
   save(confirm){
     this.displayError=false;
     if(confirm){
-        this.shared.onMaskConfirmSave("documents");
+        this.shared.onMaskConfirmSave("images");
     }
   }
 
@@ -189,7 +189,7 @@ export class BcDocRevision {
   ngOnInit() {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
-      let queryFileSub=this.shelterService.getFilesByShelterId(this._id).subscribe(files=>{
+      let queryFileSub=this.shelterService.getImagesByShelterId(this._id).subscribe(files=>{
         this.data=files;
         if(queryFileSub!=undefined){
           queryFileSub.unsubscribe();

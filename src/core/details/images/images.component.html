@@ -1,0 +1,14 @@
+<div class="bc-h6 bc-img-title">Immagini</div>
+<div *ngFor="let img of data" >
+    <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+            <div class="bc-body-strong">Nome:</div>
+            <div style="margin-left:1%" class="bc-body">{{img.file.name}}</div>
+        </div>
+        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+            <div class="bc-body-strong">Size:</div>
+            <div style="margin-left:1%" class="bc-body">{{img.file.size}}</div>
+        </div>
+    </div>
+    <img style="width:480px" [src]="img.url" />
+</div>
