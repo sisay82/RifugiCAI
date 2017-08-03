@@ -7,8 +7,8 @@
         </div>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Size:</div>
-            <div style="margin-left:1%" class="bc-body">{{img.file.size}}</div>
+            <div style="margin-left:1%" class="bc-body">{{img.file.size | formatsize}}</div>
         </div>
     </div>
-    <img style="width:480px" [src]="img.url" />
+    <img (click)="downloadFile(img.file._id)" class="bc-img" style="width:480px" [src]="img.url" />
 </div>
