@@ -1,4 +1,3 @@
-
 <button (click)="btnClick()" [class]="local_style"  [disabled]="!enabled">
     <bc-icon *ngIf="button.icon!=undefined" [name]="button.icon" size=s></bc-icon>
     <span *ngIf="checkPlatform()"> {{button.text}} </span>

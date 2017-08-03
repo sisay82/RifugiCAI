@@ -172,3 +172,14 @@ export interface IShelter{
     energy?:IEnergy;
     drain?:IDrain;
 }
+
+export interface IFile{
+    _id?:String;
+    size?:Number;
+    shelterId?:String;
+    uploadDate?:Date;
+    md5?:String;
+    name?:String;
+    data?:Buffer;
+    contentType?:String;
+}

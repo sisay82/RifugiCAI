@@ -1,0 +1,13 @@
+@import '../../style/typography';
+@import '../../style/palette';
+
+@include bc-typography();
+
+.bc-file:hover{
+  color:map-get($bc-teal,400);
+  cursor: pointer;
+}
+
+.bc-doc-title{
+    color:map-get($bc-teal,400);
+}

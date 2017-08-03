@@ -6,7 +6,8 @@ import { BcServRevision } from "./services/services.component";
 import { BcContactsRevision } from "./contacts/contacts.component";
 import { BcManagementRevision } from "./management/management.component";
 import { BcCatastalRevision } from "./catastal/catastal.component";
-
+import { BcDocRevision } from "./documents/document.component";
+import { BcImgRevision } from "./images/images.component";
 
 @NgModule({
   imports: [RouterModule],
@@ -23,8 +24,8 @@ export class RevisionsRoutingModule {
     { path: 'contacts', component: BcContactsRevision,outlet:'revision' },
     { path: 'management', component: BcManagementRevision,outlet:'revision' },
     { path: 'catastal', component: BcCatastalRevision,outlet:'revision' },
-    { path: 'documents', component: BcGeoRevision,outlet:'revision' },
-    { path: 'images', component: BcGeoRevision,outlet:'revision' },
+    { path: 'documents', component: BcDocRevision,outlet:'revision' },
+    { path: 'images', component: BcImgRevision,outlet:'revision' },
     { path: 'economy', component: BcGeoRevision,outlet:'revision' },
     { path: 'contribution', component: BcGeoRevision,outlet:'revision' },
     { path: 'use', component: BcGeoRevision,outlet:'revision' }

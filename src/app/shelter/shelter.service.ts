@@ -8,15 +8,15 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import * as L from 'leaflet';
 import { Map } from 'leaflet';
-import { IPagedResults, IShelter, IMarker } from '../shared/types/interfaces';
+import { IPagedResults, IShelter, IMarker, IFile } from '../shared/types/interfaces';
 import { Enums  } from '../shared/types/enums';
 
 @Injectable()
 export class ShelterService {
 
     //sheletersBaseUrl: string = '/api/shelters';
-    //sheletersBaseUrl: string = 'http://localhost:8080/api/shelters';
-    sheletersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
+    sheletersBaseUrl: string = 'http://localhost:8080/api/shelters';
+    //sheletersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 
@@ -81,6 +81,48 @@ export class ShelterService {
                 let shelter = res.json();
                 return shelter;
             })
+            .catch(this.handleError);
+    }
+
+    getFile(id):Observable<IFile>{
+        return this.http.get(this.sheletersBaseUrl+"/file/"+id)
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    getAllFiles():Observable<IFile[]>{
+        return this.http.get(this.sheletersBaseUrl+"/file/all")
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    getFilesByShelterId(id):Observable<IFile[]>{
+        return this.http.get(this.sheletersBaseUrl+"/file/byshel/"+id)
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    getAllImages():Observable<IFile[]>{
+        return this.http.get(this.sheletersBaseUrl+"/image/all")
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    getImagesByShelterId(id):Observable<IFile[]>{
+        return this.http.get(this.sheletersBaseUrl+"/image/byshel/"+id)
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    insertFile(file:IFile):Observable<boolean>{
+        return this.http.post(this.sheletersBaseUrl+"/file", file)
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
+    removeFile(id):Observable<boolean>{
+        return this.http.delete(this.sheletersBaseUrl+"/file/"+id)
+            .map((res:Response)=>res.json())
             .catch(this.handleError);
     }
 
