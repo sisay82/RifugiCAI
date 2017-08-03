@@ -46,6 +46,7 @@ export class BcFileInput implements ControlValueAccessor {
     @Input() required:boolean=false;
     @Input() title = "";
     @Input() sizeLimit:number=1024*1024*16;
+    @Input() contentType:string[];
 
     writeValue(value: any): void {
         if(value!=undefined){
@@ -75,8 +76,18 @@ export class BcFileInput implements ControlValueAccessor {
                 this.invalid=true;
                 return {err:"Size over limit"};
             }else{
-                this.invalid=false;
-                return null;
+                if(this.contentType!=undefined){
+                    if(this.contentType.includes(this.value.type)){
+                        this.invalid=false;
+                        return null;
+                    }else{
+                        this.invalid=true;
+                        return {err:"Invalid content type"};
+                    }
+                }else{
+                    this.invalid=false;
+                    return null;
+                }
             }
         }
     }

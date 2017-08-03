@@ -1,7 +1,7 @@
 <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
 <form [formGroup]="newDocForm">
     <div class="bc-h6 bc-img-title">Nuova Immagine</div>
-    <bc-file-input formControlName="file"></bc-file-input>
+    <bc-file-input [contentType]="['image/png','image/jpeg']" formControlName="file"></bc-file-input>
 </form>
 <bc-button [button]="sendButton"></bc-button>
 <bc-divider></bc-divider>
