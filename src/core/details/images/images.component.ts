@@ -46,6 +46,20 @@ export class BcImg {
         this.shared.onActiveOutletChange("content");
     }
 
+    downloadFile(id){
+        let queryFileSub=this.shelterService.getFile(id).subscribe(file=>{
+            var e = document.createEvent('MouseEvents');
+            let data=Buffer.from(file.data);
+            let blob=new Blob([data],{type:<string>file.contentType});
+            let a = document.createElement('a');
+            a.download = <string>file.name;
+            a.href = window.URL.createObjectURL(blob);
+            a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
+            e.initEvent('click', true, false);
+            a.dispatchEvent(e);
+        });
+    }
+
     ngOnInit() {
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
