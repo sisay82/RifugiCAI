@@ -31,13 +31,12 @@
             <bc-text-input formControlName="region" title="Regione" [displayError]="displayError"></bc-text-input>
         </div>   
         <div class="bc-geographic-input">
-            <bc-text-input formControlName="altitude" title="Quota" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+            <bc-text-input formControlName="altitude" title="Quota (m slm)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
         <div class="bc-geographic-input">     
-            <bc-text-input formControlName="ownerRegion" title="Regione loc. proprietà" [displayError]="displayError"></bc-text-input>   
-            <br>
+            <bc-text-input formControlName="ownerRegion" title="GR gruppo regionale" [displayError]="displayError"></bc-text-input>   
         </div>
         <div class="bc-geographic-input">
             <div class="bc-body" style="white-space: nowrap">UTM WGS84</div>
@@ -50,6 +49,12 @@
                 </div>
             </div>
         </div>  
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div class="bc-geographic-input">     
+            <bc-text-input formControlName="regional_commission" title="Commissione regionale" [displayError]="displayError"></bc-text-input>   
+            <br>
+        </div>
     </div>
     <bc-divider></bc-divider>
     <div class="bc-geographic-title bc-h6">Informazioni aggiuntive</div>
