@@ -1,14 +1,6 @@
-<div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
-<form [formGroup]="newDocForm">
-    <div class="bc-h6 bc-doc-title">Nuovo Documento</div>
-    <bc-file-input formControlName="file"></bc-file-input>
-</form>
-<bc-button [button]="sendButton"></bc-button>
-<bc-divider></bc-divider>
 <div class="bc-h6 bc-doc-title">File</div>
 <div *ngFor="let file of data" >
     <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-        <bc-icon (click)="removeFile(file._id)" class="bc-file" name="times" size=s></bc-icon>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Nome:</div>
             <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>

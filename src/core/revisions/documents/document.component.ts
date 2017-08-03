@@ -53,7 +53,7 @@ export class BcDocRevision {
   maskValidSub:Subscription;
   formValidSub:Subscription;
   hiddenTag:boolean=true;
-  sendButton:IButton={action:this.save,ref:this,text:"Invia"}
+  sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
     this.newDocForm = fb.group({
       file:[]
@@ -89,7 +89,7 @@ export class BcDocRevision {
     shared.onActiveOutletChange("revision");
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-        if(!this.maskError&&this.newDocForm.valid){
+        if(!this.maskError){
             if(this.newDocForm.dirty){
                 this.disableSave=true;
                 this.save(true);
@@ -127,7 +127,7 @@ export class BcDocRevision {
     })
   }
 
-  save(ref){
+  addDoc(ref){
     if(ref.newDocForm.valid){
       ref.displayError=false;
       let f=<File>(<FormGroup>(ref.newDocForm.controls.file)).value;
@@ -141,16 +141,16 @@ export class BcDocRevision {
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
         file.data=ref.toBuffer(fileReader.result);
-        let shelServiceSub = ref.shelterService.insertFile(file).subscribe(res => {
-            if(res){
-              ref.data.push(file)
-            }
-            if(confirm){
-                ref.shared.onMaskConfirmSave("geographic");
-            }
-            if(shelServiceSub!=undefined){
-              shelServiceSub.unsubscribe();
-            }
+        let shelServiceSub = ref.shelterService.insertFile(file).subscribe(file => {
+          if(file){
+            ref.data.push(file)
+          }
+          if(confirm){
+              ref.shared.onMaskConfirmSave("geographic");
+          }
+          if(shelServiceSub!=undefined){
+            shelServiceSub.unsubscribe();
+          }
         });
       }
       fileReader.readAsArrayBuffer(f);
@@ -159,14 +159,31 @@ export class BcDocRevision {
     }
   }
 
+  save(confirm){
+    this.displayError=false;
+    if(confirm){
+        this.shared.onMaskConfirmSave("contacts");
+    }
+  }
+
   downloadFile(id){
     let queryFileSub=this.shelterService.getFile(id).subscribe(file=>{
+      var e = document.createEvent('MouseEvents');
       let data=Buffer.from(file.data);
       let blob=new Blob([data],{type:<string>file.contentType});
-      let url = window.URL.createObjectURL(blob);
-      window.open(url);
-      console.log(url);
+      let a = document.createElement('a');
+      a.download = <string>file.name;
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
+      e.initEvent('click', true, false);
+      a.dispatchEvent(e);
     });
+  }
+
+  ngOnDestroy() {
+    if(!this.disableSave){
+        this.save(false);
+    }
   }
 
   ngOnInit() {
