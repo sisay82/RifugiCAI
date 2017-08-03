@@ -3,7 +3,7 @@
     <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Nome:</div>
-            <div style="margin-left:1%" class="bc-body">{{img.file.name}}</div>
+            <div style="margin-left:1%" (click)="downloadFile(img.file._id)" class="bc-body bc-img">{{img.file.name}}</div>
         </div>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Size:</div>
