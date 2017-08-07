@@ -1,14 +1,8 @@
 <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
-<form [formGroup]="newDocForm">
-    <div class="bc-h6 bc-doc-title">Nuovo Documento</div>
-    <bc-file-input formControlName="file"></bc-file-input>
-</form>
-<bc-button [button]="sendButton"></bc-button>
-<bc-divider></bc-divider>
-<div class="bc-h6 bc-doc-title">File</div>
-<div *ngFor="let file of data" >
+<div class="bc-h6 bc-doc-title">Documenti</div>
+<div *ngFor="let file of docs" >
     <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-        <bc-icon (click)="removeFile(file._id)" class="bc-file" name="times" size=s></bc-icon>
+        <bc-icon (click)="removeDoc(file._id)" class="bc-file" name="times" size=s></bc-icon>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Nome:</div>
             <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>
@@ -18,4 +12,64 @@
             <div style="margin-left:1%" class="bc-body"> {{file.size | formatsize}}</div>
         </div>
     </div>
+</div>
+<div class="bc-body bc-file" (click)="toggleFile(0)" style="display:inline;white-space:nowrap;flex:1">
+    <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
+    Aggiungi Documento
+</div>
+<div *ngIf="!isHiddenFile(0)">
+    <form [formGroup]="newDocForm">
+        <bc-file-input [contentType]="getKeys('Docs_Type')" formControlName="file"></bc-file-input>
+    </form>
+    <bc-button [button]="sendDocButton"></bc-button>
+</div>
+<bc-divider></bc-divider>
+<div class="bc-h6 bc-doc-title">Mappe e piante</div>
+<div *ngFor="let file of maps" >
+    <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+        <bc-icon (click)="removeDoc(file._id)" class="bc-file" name="times" size=s></bc-icon>
+        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+            <div class="bc-body-strong">Nome:</div>
+            <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>
+        </div>
+        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+            <div class="bc-body-strong">Dimensione:</div>
+            <div style="margin-left:1%" class="bc-body"> {{file.size | formatsize}}</div>
+        </div>
+    </div>
+</div>
+<div class="bc-body bc-file" (click)="toggleFile(1)" style="display:inline;white-space:nowrap;flex:1">
+    <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
+    Aggiungi Mappa
+</div>
+<div *ngIf="!isHiddenFile(1)">
+    <form [formGroup]="newMapForm">
+        <bc-file-input [contentType]="getKeys('Maps_Type')" formControlName="file"></bc-file-input>
+    </form>
+    <bc-button [button]="sendMapButton"></bc-button>
+</div>
+<bc-divider></bc-divider>
+<div class="bc-h6 bc-doc-title">Fatture</div>
+<div *ngFor="let file of invoices" >
+    <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+        <bc-icon (click)="removeDoc(file._id)" class="bc-file" name="times" size=s></bc-icon>
+        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+            <div class="bc-body-strong">Nome:</div>
+            <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>
+        </div>
+        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+            <div class="bc-body-strong">Dimensione:</div>
+            <div style="margin-left:1%" class="bc-body"> {{file.size | formatsize}}</div>
+        </div>
+    </div>
+</div>
+<div class="bc-body bc-file" (click)="toggleFile(2)" style="display:inline;white-space:nowrap;flex:1">
+    <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
+    Aggiungi Fattura
+</div>
+<div *ngIf="!isHiddenFile(2)">
+    <form [formGroup]="newInvoiceForm">
+        <bc-file-input [contentType]="getKeys('Invoices_Type')" formControlName="file"></bc-file-input>
+    </form>
+    <bc-button [button]="sendInvoiceButton"></bc-button>
 </div>

@@ -2,9 +2,10 @@ import {
   Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces'
+import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
-import {ShelterService} from '../../../app/shelter/shelter.service'
+import {ShelterService} from '../../../app/shelter/shelter.service';
+import { Enums } from '../../../app/shared/types/enums';
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
@@ -125,6 +126,10 @@ export class BcImgRevision {
         removeFileSub.unsubscribe();
       }
     })
+  }
+
+  getContentType(){
+    return Object.keys(Enums.Image_Type);
   }
 
   addDoc(ref){
