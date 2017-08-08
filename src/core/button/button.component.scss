@@ -33,6 +33,7 @@ $button_margin: 1px 1px;
     border: none;
     margin: $button_margin;
     button{
+        outline: none;
         border: none;
         @include BcButtonLight();
     }   
@@ -42,7 +43,9 @@ $button_margin: 1px 1px;
         }   
     }
     button:hover:enabled{
+        color:map-get($bc-teal,400);
         border-width: 1px;
         border-style:solid;
+        border-color:map-get($bc-teal,400);
     }
 }

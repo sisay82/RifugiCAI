@@ -40,8 +40,8 @@ export class BcButton{
     constructor(private router:Router,@Optional() private _button_service: BcButtonService){}
 
     btnClick(){
-        this.selected=!this.selected;
         if(this._button_service!=undefined){
+            this.selected=true
             this._button_service.onChildSelect();
         }
         if(this.button.action==undefined){
