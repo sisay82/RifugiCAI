@@ -13,7 +13,7 @@ export class BcShelterList {
     filterText: string = "";
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
-    listButton:IButton={text:"text",ref:this}
+    listButton:IButton={text:"text",ref:this,action:this.buttonAction}
     constructor(private shelterService: ShelterService) { }
 
     ngOnInit() {
