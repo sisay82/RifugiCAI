@@ -112,14 +112,14 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
-    insertFile(file:IFile):Observable<boolean>{
-        return this.http.post(this.sheletersBaseUrl+"/file", file)
+    insertFile(file:IFile):Observable<string>{
+        return this.http.post(this.sheletersBaseUrl+"/file/confirm", file)
             .map((res:Response)=>res.json())
             .catch(this.handleError);
     }
 
-    removeFile(id):Observable<boolean>{
-        return this.http.delete(this.sheletersBaseUrl+"/file/"+id)
+    removeFile(id,shelId):Observable<boolean>{
+        return this.http.delete(this.sheletersBaseUrl+"/file/confirm/"+id+"/"+shelId)
             .map((res:Response)=>res.json())
             .catch(this.handleError);
     }

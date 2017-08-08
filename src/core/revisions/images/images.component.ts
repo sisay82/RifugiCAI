@@ -116,7 +116,7 @@ export class BcImgRevision {
   }
 
   removeFile(id){
-    let removeFileSub=this.shelterService.removeFile(id).subscribe(value=>{
+    let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
       }else{
@@ -146,16 +146,18 @@ export class BcImgRevision {
         let fileReader = new FileReader();
         fileReader.onloadend=(e:any)=>{
             file.data=this.toBuffer(fileReader.result);
-            let shelServiceSub = this.shelterService.insertFile(file).subscribe(valid => {
-            if(valid){
-                this.data.push(file)
-            }
-            if(confirm){
-                this.shared.onMaskConfirmSave("images");
-            }
-            if(shelServiceSub!=undefined){
-                shelServiceSub.unsubscribe();
-            }
+            let shelServiceSub = this.shelterService.insertFile(file).subscribe(id => {
+              if(id){
+                let f=file;
+                f._id=id;
+                this.data.push(f)
+              }
+              if(confirm){
+                  this.shared.onMaskConfirmSave("images");
+              }
+              if(shelServiceSub!=undefined){
+                  shelServiceSub.unsubscribe();
+              }
             });
         }
         fileReader.readAsArrayBuffer(f);
@@ -186,8 +188,17 @@ export class BcImgRevision {
   }
 
   ngOnDestroy() {
-    if(!this.disableSave){
-        this.save(false);
+    if(this.maskSaveSub!=undefined){
+      this.maskSaveSub.unsubscribe();
+    }
+    if(this.formValidSub!=undefined){
+      this.formValidSub.unsubscribe();
+    }
+    if(this.maskInvalidSub!=undefined){
+        this.maskInvalidSub.unsubscribe();
+    }
+    if(this.maskValidSub!=undefined){
+        this.maskValidSub.unsubscribe();
     }
   }
 
