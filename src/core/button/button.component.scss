@@ -34,13 +34,20 @@ $button_margin: 1px 1px;
     margin: $button_margin;
     button{
         outline: none;
-        border: none;
+        border-width: 1px;
+        border-color: map-get($bc-light-theme-background,status-bar);
+        border-style:solid;
         @include BcButtonLight();
     }   
     &[dark]{
         button{
             @include BcButtonDark();
         }   
+    }
+    &[no-border]{
+        button{
+            border: none;
+        }
     }
     button:hover:enabled{
         color:map-get($bc-teal,400);
