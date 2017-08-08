@@ -15,11 +15,13 @@ export interface IMarker{
 }
 
 export interface IButton {
-    ref?:any;
-    icon?:string;
-    dark_theme?:Boolean;
-    text?:string;
-    action?:Function;
+    ref: any;
+    icon?: string;
+    icon_size?:string;
+    dark_theme?: Boolean;
+    text?: string;
+    enabled?: Boolean;
+    action?: Function;
 }
 
 export interface IMenuElement{

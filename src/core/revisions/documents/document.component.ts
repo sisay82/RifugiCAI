@@ -203,26 +203,23 @@ export class BcDocRevision {
     })
   }
 
-  addDoc(ref){
-    if(ref.newDocForm.valid){
-      ref.displayError=false;
-      let f=<File>(<FormGroup>(ref.newDocForm.controls.file)).value;
+  addDoc(){
+    if(this.newDocForm.valid){
+      this.displayError=false;
+      let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
       let file:IFile={
         name:f.name,
         size:f.size,
         uploadDate:new Date(Date.now()),
         contentType:f.type,
-        shelterId:ref._id
+        shelterId:this._id
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
-        file.data=ref.toBuffer(fileReader.result);
-        let shelServiceSub = ref.shelterService.insertFile(file).subscribe(file => {
-          if(file){
-            ref.data.push(file)
-          }
-          if(confirm){
-              ref.shared.onMaskConfirmSave("documents");
+        file.data=this.toBuffer(fileReader.result);
+        let shelServiceSub = this.shelterService.insertFile(file).subscribe(valid => {
+          if(valid){
+            this.docs.push(file)
           }
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
@@ -231,30 +228,27 @@ export class BcDocRevision {
       }
       fileReader.readAsArrayBuffer(f);
     }else{
-      ref.displayError=true;
+      this.displayError=true;
     }
   }
 
-  addMap(ref){
-    if(ref.newMapForm.valid){
-      ref.displayError=false;
-      let f=<File>(<FormGroup>(ref.newMapForm.controls.file)).value;
+  addMap(){
+    if(this.newMapForm.valid){
+      this.displayError=false;
+      let f=<File>(<FormGroup>(this.newMapForm.controls.file)).value;
       let file:IFile={
         name:f.name,
         size:f.size,
         uploadDate:new Date(Date.now()),
         contentType:f.type,
-        shelterId:ref._id
+        shelterId:this._id
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
-        file.data=ref.toBuffer(fileReader.result);
-        let shelServiceSub = ref.shelterService.insertFile(file).subscribe(file => {
-          if(file){
-            ref.data.push(file)
-          }
-          if(confirm){
-              ref.shared.onMaskConfirmSave("documents");
+        file.data=this.toBuffer(fileReader.result);
+        let shelServiceSub = this.shelterService.insertFile(file).subscribe(valid => {
+          if(valid){
+            this.maps.push(file)
           }
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
@@ -263,30 +257,27 @@ export class BcDocRevision {
       }
       fileReader.readAsArrayBuffer(f);
     }else{
-      ref.displayError=true;
+      this.displayError=true;
     }
   }
 
-  addInvoice(ref){
-    if(ref.newInvoiceForm.valid){
-      ref.displayError=false;
-      let f=<File>(<FormGroup>(ref.newInvoiceForm.controls.file)).value;
+  addInvoice(){
+    if(this.newInvoiceForm.valid){
+      this.displayError=false;
+      let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
       let file:IFile={
         name:f.name,
         size:f.size,
         uploadDate:new Date(Date.now()),
         contentType:f.type,
-        shelterId:ref._id
+        shelterId:this._id
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
-        file.data=ref.toBuffer(fileReader.result);
-        let shelServiceSub = ref.shelterService.insertFile(file).subscribe(file => {
-          if(file){
-            ref.data.push(file)
-          }
-          if(confirm){
-              ref.shared.onMaskConfirmSave("documents");
+        file.data=this.toBuffer(fileReader.result);
+        let shelServiceSub = this.shelterService.insertFile(file).subscribe(valid => {
+          if(valid){
+            this.invoices.push(file)
           }
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
@@ -295,7 +286,7 @@ export class BcDocRevision {
       }
       fileReader.readAsArrayBuffer(f);
     }else{
-      ref.displayError=true;
+      this.displayError=true;
     }
   }
 

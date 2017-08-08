@@ -132,26 +132,26 @@ export class BcImgRevision {
     return Object.keys(Enums.Image_Type);
   }
 
-  addDoc(ref){
-    if(ref.newDocForm.valid){
-        ref.displayError=false;
-        let f=<File>(<FormGroup>(ref.newDocForm.controls.file)).value;
+  addDoc(){
+    if(this.newDocForm.valid){
+        this.displayError=false;
+        let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
         let file:IFile={
             name:f.name,
             size:f.size,
             uploadDate:new Date(Date.now()),
             contentType:f.type,
-            shelterId:ref._id
+            shelterId:this._id
         }
         let fileReader = new FileReader();
         fileReader.onloadend=(e:any)=>{
-            file.data=ref.toBuffer(fileReader.result);
-            let shelServiceSub = ref.shelterService.insertFile(file).subscribe(file => {
-            if(file){
-                ref.data.push(file)
+            file.data=this.toBuffer(fileReader.result);
+            let shelServiceSub = this.shelterService.insertFile(file).subscribe(valid => {
+            if(valid){
+                this.data.push(file)
             }
             if(confirm){
-                ref.shared.onMaskConfirmSave("images");
+                this.shared.onMaskConfirmSave("images");
             }
             if(shelServiceSub!=undefined){
                 shelServiceSub.unsubscribe();
@@ -160,7 +160,7 @@ export class BcImgRevision {
         }
         fileReader.readAsArrayBuffer(f);
     }else{
-      ref.displayError=true;
+      this.displayError=true;
     }
   }
 

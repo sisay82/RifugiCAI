@@ -39,6 +39,10 @@ export class BcShelterList {
         });
     }
 
+    buttonAction(){
+        console.log("Button Click");
+    }
+
     filterChanged(event: any) {
         var data = this.filterText;
         if (data && this.rifugiSample) {
