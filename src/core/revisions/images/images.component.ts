@@ -58,7 +58,8 @@ export class BcImgRevision {
   sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
     this.newDocForm = fb.group({
-      file:[]
+      file:[],
+      description:[""]
     });
 
     this.formValidSub = this.newDocForm.statusChanges.subscribe(value=>{
@@ -146,7 +147,7 @@ export class BcImgRevision {
   }
 
   addDoc(){
-    if(this.newDocForm.valid){
+    if(this.newDocForm.valid&&this.data.length<10){
       this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
@@ -155,7 +156,8 @@ export class BcImgRevision {
           size:f.size,
           uploadDate:new Date(Date.now()),
           contentType:f.type,
-          shelterId:this._id
+          shelterId:this._id,
+          description:this.newDocForm.controls.description.value||null
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{

@@ -183,4 +183,5 @@ export interface IFile{
     name?:String;
     data?:Buffer;
     contentType?:String;
+    description?:String;
 }

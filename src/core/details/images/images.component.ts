@@ -1,5 +1,5 @@
 import {
-  Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
+  Component,Input,OnInit,OnDestroy,Pipe,PipeTransform,Directive,ViewEncapsulation
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
@@ -10,6 +10,16 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {DomSanitizer} from '@angular/platform-browser';
 import 'rxjs/Rx';
+
+@Directive({
+    selector:"[full-screen]",
+    host:{
+        "[class.bc-image-full]":"enabled"
+    }
+})
+export class BcResizeImgStyler{
+    @Input("full-screen") enabled=false;
+}
 
 @Pipe({name: 'formatsize'})
 export class FormatSizePipe implements PipeTransform {
@@ -37,10 +47,12 @@ export class FormatSizePipe implements PipeTransform {
   selector: 'bc-img-detail',
   templateUrl: 'images.component.html',
   styleUrls: ['images.component.scss'],
-  providers:[ShelterService]
+  providers:[ShelterService],
+  encapsulation:ViewEncapsulation.None
 })
 export class BcImg {
     _id:String;
+    fullScreenImgId="";
     data:{file:IFile,url:any}[]=[];
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private sanitizer:DomSanitizer) {
         shared.activeComponent="images";
@@ -59,6 +71,18 @@ export class BcImg {
             e.initEvent('click', true, false);
             a.dispatchEvent(e);
         });
+    }
+
+    isFullScreen(id){
+        return this.fullScreenImgId==id;
+    }
+
+    enlargeImage(id){
+        if(this.fullScreenImgId==id){
+            this.fullScreenImgId="";
+        }else{
+            this.fullScreenImgId=id;
+        }
     }
 
     getContentType():any[]{
