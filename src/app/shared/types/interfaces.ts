@@ -139,8 +139,9 @@ export interface IUser {
 }
 
 export interface IButton {
-    ref: string;
+    ref: any;
     icon?: string;
+    icon_size?:string;
     dark_theme?: Boolean;
     text?: string;
     enabled?: Boolean;

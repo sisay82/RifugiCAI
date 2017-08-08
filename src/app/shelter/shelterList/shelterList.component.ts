@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ShelterService } from '../shelter.service'
-import { IShelter } from '../../shared/types/interfaces';
+import { IShelter, IButton } from '../../shared/types/interfaces';
 
 @Component({
     moduleId: module.id,
@@ -13,7 +13,7 @@ export class BcShelterList {
     filterText: string = "";
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
-
+    listButton:IButton={text:"text",ref:this}
     constructor(private shelterService: ShelterService) { }
 
     ngOnInit() {
@@ -21,6 +21,10 @@ export class BcShelterList {
         this.shelterService.getShelters().subscribe(shelters => {
             this.rifugiSample = shelters;
         });
+    }
+
+    buttonAction(){
+        console.log("Button Click");
     }
 
     filterChanged(event: any) {

@@ -13,8 +13,9 @@ import { Enums  } from '../shared/types/enums';
 @Injectable()
 export class ShelterService {
 
-    sheletersBaseUrl: string = 'http://test-mongo-cai.herokuapp.com/api/shelters';
-
+    //sheletersBaseUrl: string = 'http://test-mongo-cai.herokuapp.com/api/shelters';
+    sheletersBaseUrl: string = 'http://localhost:8080/api/shelters/'
+    
     constructor(private http: Http) { }
 
     getShelters(): Observable<IShelter[]> {
