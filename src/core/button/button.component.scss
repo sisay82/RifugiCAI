@@ -33,6 +33,7 @@ $button_margin: 1px 1px;
     border: none;
     margin: $button_margin;
     button{
+        outline: none;
         border: none;
         @include BcButtonLight();
     }   
