@@ -60,6 +60,7 @@ export class BcDocRevision {
   mapFormValidSub:Subscription;
   invoiceFormValidSub:Subscription;
   hiddenTag:boolean=true;
+  uploading:boolean=false;
   currentFileToggle:number=-1;
   sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
@@ -176,6 +177,10 @@ export class BcDocRevision {
     });
   }
 
+  isUploading(){
+    return this.uploading;
+  }
+
   removeMap(id){
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
@@ -204,6 +209,7 @@ export class BcDocRevision {
 
   addDoc(){
     if(this.newDocForm.valid){
+      this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
       let file:IFile={
@@ -222,6 +228,7 @@ export class BcDocRevision {
             f._id=id;
             this.docs.push(f)
           }
+          this.uploading=false;
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
           }
@@ -235,6 +242,7 @@ export class BcDocRevision {
 
   addMap(){
     if(this.newMapForm.valid){
+      this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newMapForm.controls.file)).value;
       let file:IFile={
@@ -253,6 +261,7 @@ export class BcDocRevision {
             f._id=id;
             this.docs.push(f)
           }
+          this.uploading=false;
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
           }
@@ -266,6 +275,7 @@ export class BcDocRevision {
 
   addInvoice(){
     if(this.newInvoiceForm.valid){
+      this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
       let file:IFile={
@@ -284,6 +294,7 @@ export class BcDocRevision {
             f._id=id;
             this.docs.push(f)
           }
+          this.uploading=false;
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
           }

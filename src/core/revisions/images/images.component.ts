@@ -47,13 +47,14 @@ export class BcImgRevision {
   displayTagError:boolean=false;
   invalid:boolean=false;
   disableSave=false;
+  uploading:boolean=false;
   maskSaveSub:Subscription;
   displayError:boolean=false;
   maskError:boolean=false;
   maskInvalidSub:Subscription;
   maskValidSub:Subscription;
   formValidSub:Subscription;
-  hiddenTag:boolean=true;
+  hiddenImage:boolean=true;
   sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
     this.newDocForm = fb.group({
@@ -106,6 +107,10 @@ export class BcImgRevision {
     shared.activeComponent="images";
   }
 
+  isUploading(){
+    return this.uploading;
+  }
+
   toBuffer(ab) {
     var buf = new Buffer(ab.byteLength);
     var view = new Uint8Array(ab);
@@ -113,6 +118,14 @@ export class BcImgRevision {
         buf[i] = view[i];
     }
     return buf;
+  }
+
+  toggle(){
+    this.hiddenImage=!this.hiddenImage;
+  }
+
+  isHidden(){
+    return this.hiddenImage;
   }
 
   removeFile(id){
@@ -134,33 +147,35 @@ export class BcImgRevision {
 
   addDoc(){
     if(this.newDocForm.valid){
-        this.displayError=false;
-        let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
-        let file:IFile={
-            name:f.name,
-            size:f.size,
-            uploadDate:new Date(Date.now()),
-            contentType:f.type,
-            shelterId:this._id
-        }
-        let fileReader = new FileReader();
-        fileReader.onloadend=(e:any)=>{
-            file.data=this.toBuffer(fileReader.result);
-            let shelServiceSub = this.shelterService.insertFile(file).subscribe(id => {
-              if(id){
-                let f=file;
-                f._id=id;
-                this.data.push(f)
-              }
-              if(confirm){
-                  this.shared.onMaskConfirmSave("images");
-              }
-              if(shelServiceSub!=undefined){
-                  shelServiceSub.unsubscribe();
-              }
-            });
-        }
-        fileReader.readAsArrayBuffer(f);
+      this.uploading=true;
+      this.displayError=false;
+      let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
+      let file:IFile={
+          name:f.name,
+          size:f.size,
+          uploadDate:new Date(Date.now()),
+          contentType:f.type,
+          shelterId:this._id
+      }
+      let fileReader = new FileReader();
+      fileReader.onloadend=(e:any)=>{
+          file.data=this.toBuffer(fileReader.result);
+          let shelServiceSub = this.shelterService.insertFile(file).subscribe(id => {
+            if(id){
+              let f=file;
+              f._id=id;
+              this.data.push(f)
+            }
+            this.uploading=false;
+            if(confirm){
+                this.shared.onMaskConfirmSave("images");
+            }
+            if(shelServiceSub!=undefined){
+                shelServiceSub.unsubscribe();
+            }
+          });
+      }
+      fileReader.readAsArrayBuffer(f);
     }else{
       this.displayError=true;
     }
