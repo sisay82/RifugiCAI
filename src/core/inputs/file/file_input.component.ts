@@ -86,6 +86,8 @@ export class BcFileInput implements ControlValueAccessor {
                 this.invalid=false;
                 return null;
             }
+        }else{
+            return {err:"Value is null"};
         }
     }
 
