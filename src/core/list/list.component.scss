@@ -13,13 +13,28 @@ $bc-list-no-border: 0px;
 
 
 @mixin bc-list-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
   .bc-list {
     // bc-list-header theme
     @include bc-list-header-theme($theme);
     // bc-list-item-group theme
     @include bc-list-item-group-theme($theme);
     // bc-list-item theme
-    @include bc-list-item-theme($theme);
+    @include bc-list-item-theme($theme, $primary);
+    
+    &.bc-primary {
+      @include bc-list-item-theme($theme, $primary);
+    }
+
+    &.bc-accent {
+      @include bc-list-item-theme($theme, $accent);
+    }
+
+    &.bc-warn {
+      @include bc-list-item-theme($theme, $warn);
+    }
   }
 }
 
