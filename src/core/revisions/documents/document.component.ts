@@ -60,6 +60,7 @@ export class BcDocRevision {
   mapFormValidSub:Subscription;
   invoiceFormValidSub:Subscription;
   hiddenTag:boolean=true;
+  uploading:boolean=false;
   currentFileToggle:number=-1;
   sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
@@ -124,8 +125,7 @@ export class BcDocRevision {
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
         if(!this.maskError){
-            if(this.newDocForm.dirty&&this.newInvoiceForm.dirty&&this.newMapForm.dirty){
-                this.disableSave=true;
+            if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty){
                 this.save(true);
             }else{
                 this.shared.onMaskConfirmSave("documents");
@@ -165,7 +165,7 @@ export class BcDocRevision {
   }
 
   removeDoc(id){
-    let removeFileSub=this.shelterService.removeFile(id).subscribe(value=>{
+    let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
       }else{
@@ -174,11 +174,15 @@ export class BcDocRevision {
       if(removeFileSub!=undefined){
         removeFileSub.unsubscribe();
       }
-    })
+    });
+  }
+
+  isUploading(){
+    return this.uploading;
   }
 
   removeMap(id){
-    let removeFileSub=this.shelterService.removeFile(id).subscribe(value=>{
+    let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
       }else{
@@ -191,7 +195,7 @@ export class BcDocRevision {
   }
 
   removeInvoice(id){
-    let removeFileSub=this.shelterService.removeFile(id).subscribe(value=>{
+    let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
       }else{
@@ -205,6 +209,7 @@ export class BcDocRevision {
 
   addDoc(){
     if(this.newDocForm.valid){
+      this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
       let file:IFile={
@@ -217,10 +222,13 @@ export class BcDocRevision {
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
         file.data=this.toBuffer(fileReader.result);
-        let shelServiceSub = this.shelterService.insertFile(file).subscribe(valid => {
-          if(valid){
-            this.docs.push(file)
+        let shelServiceSub = this.shelterService.insertFile(file).subscribe(id => {
+          if(id){
+            let f=file;
+            f._id=id;
+            this.docs.push(f)
           }
+          this.uploading=false;
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
           }
@@ -234,6 +242,7 @@ export class BcDocRevision {
 
   addMap(){
     if(this.newMapForm.valid){
+      this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newMapForm.controls.file)).value;
       let file:IFile={
@@ -246,10 +255,13 @@ export class BcDocRevision {
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
         file.data=this.toBuffer(fileReader.result);
-        let shelServiceSub = this.shelterService.insertFile(file).subscribe(valid => {
-          if(valid){
-            this.maps.push(file)
+        let shelServiceSub = this.shelterService.insertFile(file).subscribe(id => {
+          if(id){
+            let f=file;
+            f._id=id;
+            this.docs.push(f)
           }
+          this.uploading=false;
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
           }
@@ -263,6 +275,7 @@ export class BcDocRevision {
 
   addInvoice(){
     if(this.newInvoiceForm.valid){
+      this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
       let file:IFile={
@@ -275,10 +288,13 @@ export class BcDocRevision {
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
         file.data=this.toBuffer(fileReader.result);
-        let shelServiceSub = this.shelterService.insertFile(file).subscribe(valid => {
-          if(valid){
-            this.invoices.push(file)
+        let shelServiceSub = this.shelterService.insertFile(file).subscribe(id => {
+          if(id){
+            let f=file;
+            f._id=id;
+            this.docs.push(f)
           }
+          this.uploading=false;
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
           }
@@ -312,8 +328,23 @@ export class BcDocRevision {
   }
 
   ngOnDestroy() {
-    if(!this.disableSave){
-        this.save(false);
+    if(this.maskSaveSub!=undefined){
+      this.maskSaveSub.unsubscribe();
+    }
+    if(this.docFormValidSub!=undefined){
+      this.docFormValidSub.unsubscribe();
+    }
+    if(this.mapFormValidSub!=undefined){
+      this.mapFormValidSub.unsubscribe();
+    }
+    if(this.invoiceFormValidSub!=undefined){
+      this.invoiceFormValidSub.unsubscribe();
+    }
+    if(this.maskInvalidSub!=undefined){
+        this.maskInvalidSub.unsubscribe();
+    }
+    if(this.maskValidSub!=undefined){
+        this.maskValidSub.unsubscribe();
     }
     if(this.docFormValidSub!=undefined){
       this.docFormValidSub.unsubscribe();

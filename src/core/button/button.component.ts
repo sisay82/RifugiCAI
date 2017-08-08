@@ -35,7 +35,7 @@ export class BcSelectButtonStyler{
 export class BcButton{
     @Input() button:IButton;
     @Input() disabled:boolean=false;
-    @Input() pre_selected:Boolean=false;
+    @Input() pre_selected:boolean=false;
     private selected:Boolean=false;
 
     constructor(private router:Router,@Optional() private _button_service: BcButtonService){}

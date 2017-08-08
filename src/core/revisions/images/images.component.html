@@ -1,9 +1,4 @@
 <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
-<form [formGroup]="newDocForm">
-    <div class="bc-h6 bc-img-title">Nuova Immagine</div>
-    <bc-file-input [contentType]="getContentType()" formControlName="file"></bc-file-input>
-</form>
-<bc-button [button]="sendButton"></bc-button>
 <bc-divider></bc-divider>
 <div class="bc-h6 bc-doc-title">Immagini</div>
 <div *ngFor="let file of data" >
@@ -19,3 +14,21 @@
         </div>
     </div>
 </div>
+<div class="bc-body bc-img" (click)="toggle()" style="display:inline;white-space:nowrap;flex:1">
+    <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
+    Aggiungi Immagine
+</div>
+<div *ngIf="!isHidden()">
+    <form [formGroup]="newDocForm">
+        <div style="display: flex;flex-direction:row;align-items:center">
+            <div style="display: inline-block">
+                <div style="display:flex;flex-direction:row;align-items:center">
+                    <bc-file-input [contentType]="getContentType()" formControlName="file"></bc-file-input>
+                    <bc-button style="margin-left:1%" [button]="sendButton"></bc-button>
+                </div>
+                <bc-text-input [displayError]=true formControlName="description"></bc-text-input>
+            </div>
+            <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
+        </div>
+    </form>
+</div>  

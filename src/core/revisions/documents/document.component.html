@@ -17,11 +17,14 @@
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
     Aggiungi Documento
 </div>
-<div *ngIf="!isHiddenFile(0)">
+<div style="margin-left:1%;display:flex;flex-direction:row;align-items:center" *ngIf="!isHiddenFile(0)">
     <form [formGroup]="newDocForm">
-        <bc-file-input [contentType]="getKeys('Docs_Type')" formControlName="file"></bc-file-input>
+        <div style="display:inline-block">
+            <bc-file-input [contentType]="getKeys('Docs_Type')" formControlName="file"></bc-file-input>
+        </div>
     </form>
-    <bc-button [button]="sendDocButton"></bc-button>
+    <bc-button style="margin-left:1%" [button]="sendDocButton"></bc-button>
+    <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
 <bc-divider></bc-divider>
 <div class="bc-h6 bc-doc-title">Mappe e piante</div>
@@ -42,11 +45,14 @@
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
     Aggiungi Mappa
 </div>
-<div *ngIf="!isHiddenFile(1)">
+<div style="margin-left:1%;display:flex;flex-direction:row;align-items:center" *ngIf="!isHiddenFile(1)">
     <form [formGroup]="newMapForm">
-        <bc-file-input [contentType]="getKeys('Maps_Type')" formControlName="file"></bc-file-input>
+        <div style="display:inline-block">
+            <bc-file-input [contentType]="getKeys('Maps_Type')" formControlName="file"></bc-file-input>
+        </div>
     </form>
-    <bc-button [button]="sendMapButton"></bc-button>
+    <bc-button style="margin-left:1%" [button]="sendMapButton"></bc-button>
+    <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
 <bc-divider></bc-divider>
 <div class="bc-h6 bc-doc-title">Fatture</div>
@@ -67,9 +73,12 @@
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
     Aggiungi Fattura
 </div>
-<div *ngIf="!isHiddenFile(2)">
+<div style="margin-left:1%;display:flex;flex-direction:row;align-items:center" *ngIf="!isHiddenFile(2)">
     <form [formGroup]="newInvoiceForm">
-        <bc-file-input [contentType]="getKeys('Invoices_Type')" formControlName="file"></bc-file-input>
+        <div style="display:inline-block">
+            <bc-file-input [contentType]="getKeys('Invoices_Type')" formControlName="file"></bc-file-input>
+        </div>
     </form>
-    <bc-button [button]="sendInvoiceButton"></bc-button>
+    <bc-button style="margin-left:1%" [button]="sendInvoiceButton"></bc-button>
+    <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>

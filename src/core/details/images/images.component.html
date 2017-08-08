@@ -1,14 +1,11 @@
 <div class="bc-h6 bc-img-title">Immagini</div>
-<div *ngFor="let img of data" >
-    <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-            <div class="bc-body-strong">Nome:</div>
-            <div (click)="downloadFile(img.file._id)" style="margin-left:1%" class="bc-body bc-img">{{img.file.name}}</div>
+<div style="display:flex;flex-direction:row;flex-wrap:wrap">
+    <div *ngFor="let img of data" style="margin-left:1%;display:block;width:17.5%">
+        <div (click)="downloadFile(img.file._id)" style="margin-left:1%" class="bc-body-strong bc-img-name">{{img.file.name}}</div>
+        <div [full-screen]="isFullScreen(img.file._id)" class="bc-img" (click)="enlargeImage(img.file._id)">
+            <img class="img-rounded bc-img" [src]="img.url">
+            <div *ngIf="img.file.description" class="bc-body bc-description-img">{{img.file.description}}</div>
         </div>
-        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-            <div class="bc-body-strong">Size:</div>
-            <div style="margin-left:1%" class="bc-body">{{img.file.size | formatsize}}</div>
-        </div>
+        
     </div>
-    <img (click)="downloadFile(img.file._id)" class="bc-img" style="width:480px" [src]="img.url" />
 </div>
