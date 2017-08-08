@@ -2,9 +2,10 @@ import {
   Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces'
+import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
-import {ShelterService} from '../../../app/shelter/shelter.service'
+import {ShelterService} from '../../../app/shelter/shelter.service';
+import { Enums } from '../../../app/shared/types/enums';
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
@@ -127,26 +128,30 @@ export class BcImgRevision {
     })
   }
 
-  addDoc(ref){
-    if(ref.newDocForm.valid){
-        ref.displayError=false;
-        let f=<File>(<FormGroup>(ref.newDocForm.controls.file)).value;
+  getContentType(){
+    return Object.keys(Enums.Image_Type);
+  }
+
+  addDoc(){
+    if(this.newDocForm.valid){
+        this.displayError=false;
+        let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
         let file:IFile={
             name:f.name,
             size:f.size,
             uploadDate:new Date(Date.now()),
             contentType:f.type,
-            shelterId:ref._id
+            shelterId:this._id
         }
         let fileReader = new FileReader();
         fileReader.onloadend=(e:any)=>{
-            file.data=ref.toBuffer(fileReader.result);
-            let shelServiceSub = ref.shelterService.insertFile(file).subscribe(file => {
-            if(file){
-                ref.data.push(file)
+            file.data=this.toBuffer(fileReader.result);
+            let shelServiceSub = this.shelterService.insertFile(file).subscribe(valid => {
+            if(valid){
+                this.data.push(file)
             }
             if(confirm){
-                ref.shared.onMaskConfirmSave("images");
+                this.shared.onMaskConfirmSave("images");
             }
             if(shelServiceSub!=undefined){
                 shelServiceSub.unsubscribe();
@@ -155,7 +160,7 @@ export class BcImgRevision {
         }
         fileReader.readAsArrayBuffer(f);
     }else{
-      ref.displayError=true;
+      this.displayError=true;
     }
   }
 

@@ -1,4 +1,6 @@
-<button (click)="btnClick()" [class]="local_style"  [disabled]="!enabled">
-    <bc-icon *ngIf="button.icon!=undefined" [name]="button.icon" size=s></bc-icon>
+<button (click)="btnClick()" class="btn btn-default" [selected]="selected" [disabled]="disabled">
+    <ng-content select="bc-icon"></ng-content>
+    <bc-icon *ngIf="button.icon!=undefined" [name]="button.icon" size="button.icon-size"></bc-icon>
+    <ng-content select="span"></ng-content>
     <span *ngIf="checkPlatform()"> {{button.text}} </span>
 </button>

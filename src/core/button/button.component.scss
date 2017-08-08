@@ -2,38 +2,50 @@
 
 $button_margin: 1px 1px;
 
-.bc-button{
-    border: none;
-    margin: $button_margin;
+@mixin BcButtonDark(){
+    &:enabled{
+        background:map-get($bc-dark-theme-background,raised-button);
+    }
+
+    &:disabled{
+        background:map-get($bc-dark-theme-background,disabled-button);
+    }
 }
 
-.bc-selected-button-light{
+@mixin BcButtonLight(){
+    &:enabled{
+        background:map-get($bc-light-theme-background,raised-button);
+    }
+
+    &:disabled{
+        background:map-get($bc-light-theme-background,disabled-button);
+    }
+}
+
+.bc-button-select{
     color:map-get($bc-teal,400);
-    border-width: 1px;
-    border-color: map-get($bc-teal,400);
-    border-style:solid;
-}
-
-.dark-theme-button:enabled{
-    background:map-get($bc-light-theme-background,raised-button);
-}
-
-.dark-theme-button:disabled{
-    background:map-get($bc-light-theme-background,disabled-button);
-}
-
-.light-theme-button:enabled{
-    background:map-get($bc-light-theme-background,raised-button);
-}
-
-.light-theme-button:disabled{
-    background:map-get($bc-light-theme-background,disabled-button);
-}
-
-.bc-button:hover:enabled{
- //   color:map-get($bc-light-theme-background,focused-button);
-    background:map-get($bc-light-theme-background,background);
     border-width: 1px;
     border-color: map-get($bc-light-theme-background,selected-button);
     border-style:solid;
+}
+
+.bc-button{
+    border: none;
+    margin: $button_margin;
+    button{
+        outline: none;
+        border: none;
+        @include BcButtonLight();
+    }   
+    &[dark]{
+        button{
+            @include BcButtonDark();
+        }   
+    }
+    button:hover:enabled{
+        color:map-get($bc-teal,400);
+        border-width: 1px;
+        border-style:solid;
+        border-color:map-get($bc-teal,400);
+    }
 }

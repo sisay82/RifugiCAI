@@ -1,4 +1,4 @@
-import { Component, Input, ContentChildren, QueryList, OnInit } from '@angular/core';
+import { Component, Input, ContentChildren, QueryList } from '@angular/core';
 import {IButton} from '../../app/shared/types/interfaces';
 import {BcButton,BcButtonService} from './button.component';
 @Component({
@@ -9,7 +9,6 @@ import {BcButton,BcButtonService} from './button.component';
     providers:[BcButtonService]
 })
 export class BcSelectGroup{
-   // parentSubject:Subject<BcButton>=new Subject();
     current_check:BcButton;
     @ContentChildren(BcButton) _listItems: QueryList<BcButton>;
 
@@ -25,10 +24,6 @@ export class BcSelectGroup{
         if(this.current_check!=null&&this.current_check!=undefined)
             this.current_check.btnUncheck();
         this.current_check=child;
-    }
-
-    ngOnInit(){
-        
     }
 
 }

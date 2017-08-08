@@ -1,57 +1,60 @@
-import { Component, Input, Injectable, OnInit,Optional } from '@angular/core';
+import { Component, Input, Injectable, OnInit,Optional, Directive,ViewEncapsulation } from '@angular/core';
 import {IButton} from '../../app/shared/types/interfaces';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class BcButtonService{
-
-
     private selectSource = new Subject<string>();
     select$ = this.selectSource.asObservable();
-
     onChildSelect(){
         this.selectSource.next();
     }
+}
+
+@Directive({
+  selector: 'button[selected]',
+  host: {
+    '[class.bc-button-select]': 'selected'
+  }
+})
+export class BcSelectButtonStyler{
+    @Input("selected") selected:boolean=false;
 }
 
 @Component({
     moduleId:module.id,
     selector:'bc-button',
     templateUrl: 'button.component.html',
-    styleUrls: ['button.component.scss']    
+    styleUrls: ['button.component.scss'],
+    host:{
+        'class':'bc-button'
+    },
+    encapsulation:ViewEncapsulation.None
 })
 export class BcButton{
     @Input() button:IButton;
-    @Input() pre_selected:Boolean;
-    @Input() enabled:boolean=true;
-    local_style:string;
-    private _selected:Boolean;
+    @Input() disabled:boolean=false;
+    @Input() pre_selected:Boolean=false;
+    private selected:Boolean=false;
 
-    constructor(private router:Router,@Optional() private _button_service: BcButtonService){
-        this.local_style=this.getClass();
-    }
+    constructor(private router:Router,@Optional() private _button_service: BcButtonService){}
 
     btnClick(){
         if(this._button_service!=undefined){
-            this._selected=true;
+            this.selected=true
             this._button_service.onChildSelect();
-            let style=this.getClass();
-            this.local_style=style.concat(" bc-selected-button-light");
         }
-        console.log(this.button.ref);
         if(this.button.action==undefined){
             this.router.navigateByUrl(this.button.ref);
         }else{
-            this.button.action(this.button.ref);
+            this.button.action.call(this.button.ref);
         }
         
     }
 
     btnUncheck(){
-        if(!this._selected)
-            this.local_style=this.getClass();
-        else this._selected=false;
+        this.selected=false;
     }
 
     checkPlatform(){
@@ -62,31 +65,9 @@ export class BcButton{
         }
     }
 
-    ngOnInit(){
-        this.local_style=this.getClass();
-        if(this.pre_selected!=undefined&&this.pre_selected){
-            let style=this.getClass();
-            this.local_style=style.concat(" bc-selected-button-light");
-        }
-    }
-
-    getClass(){
-        if(this.button!=undefined){
-            let ret_class="btn btn-default bc-button";
-            if(this.enabled===undefined){
-                this.enabled=true;
-            }
-            if(this.button.dark_theme===undefined){
-                this.button.dark_theme=false;
-            }
-
-            if(this.button.dark_theme){
-                ret_class=ret_class.concat(" dark-theme-button");
-            }else{
-                ret_class=ret_class.concat(" light-theme-button");
-            }
-
-            return ret_class;
+    ngOnInit() {
+        if(this.pre_selected){
+            this.selected=true;
         }
     }
 }

@@ -91,6 +91,29 @@ export namespace Enums {
         "D"
     }
 
+    //tipi di documento
+    export enum Docs_Type {
+        txt=<any>"text/plain",
+        pdf=<any>"application/pdf",
+        doc=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        xls=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    }
+
+    //tipi di mappa
+    export enum Maps_Type {
+
+    }
+
+    //tipi di ricevuta
+    export enum Invoices_Type {
+
+    }
+
+    export enum Image_Type {
+        png=<any>"image/png",
+        jpeg=<any>"image/jpeg"
+    }
+
     //tipologia scarico
     export enum Drain_Type {
         "IMOF fognatura",

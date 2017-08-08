@@ -33,15 +33,19 @@ export class BcShelterList {
         });
     }
 
-    createShel(ref){
-        let newShelSub=ref.shelterService.getNewId().subscribe((obj)=>{
-            ref.shared.activeOutlet="revision";
-            ref.shared.activeComponent="geographic";
+    createShel(){
+        let newShelSub=this.shelterService.getNewId().subscribe((obj)=>{
+            this.shared.activeOutlet="revision";
+            this.shared.activeComponent="geographic";
             if(newShelSub!=undefined){
                 newShelSub.unsubscribe();
             }
             location.href="newShelter/"+obj.id+"/(revision:geographic)";
         });
+    }
+
+    buttonAction(){
+        console.log("Button Click");
     }
 
     filterChanged(event: any) {
