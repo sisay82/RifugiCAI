@@ -126,6 +126,12 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
+    updateFile(id,description):Observable<boolean>{
+        return this.http.put(this.sheltersBaseUrl+"/file/"+id,{description:description})
+            .map((res:Response)=>res.json())
+            .catch(this.handleError);
+    }
+
     insertShelter(shelter: IShelter): Observable<IShelter> {
         return this.http.post(this.sheltersBaseUrl, shelter)
             .map((res: Response) => res.json())

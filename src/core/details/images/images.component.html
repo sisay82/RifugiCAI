@@ -1,7 +1,6 @@
 <div class="bc-h6 bc-img-title">Immagini</div>
 <div style="display:flex;flex-direction:row;flex-wrap:wrap">
     <div *ngFor="let img of data" style="margin-left:1%;display:block;width:17.5%">
-        <div (click)="downloadFile(img.file._id)" style="margin-left:1%" class="bc-body-strong bc-img-name">{{img.file.name}}</div>
         <div [full-screen]="isFullScreen(img.file._id)" class="bc-img" (click)="enlargeImage(img.file._id)">
             <img class="img-rounded bc-img" [src]="img.url">
             <div *ngIf="img.file.description" class="bc-body bc-description-img">{{img.file.description}}</div>
