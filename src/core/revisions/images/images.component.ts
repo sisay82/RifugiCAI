@@ -44,7 +44,6 @@ export class BcImgRevision {
   docsForm: FormGroup;
   _id:String;
   name:String;
-  data:IFile[]=[];
   displayTagError:boolean=false;
   invalid:boolean=false;
   disableSave=false;
@@ -157,7 +156,7 @@ export class BcImgRevision {
       if(!value){
         console.log(value);
       }else{
-        this.data.splice(this.data.findIndex(file=>file._id==id),1);
+        (<FormArray>this.docsForm.controls.files).controls.splice((<FormArray>this.docsForm.controls.files).controls.findIndex(f=>f.value.id==id),1);
       }
       if(removeFileSub!=undefined){
         removeFileSub.unsubscribe();
@@ -170,7 +169,7 @@ export class BcImgRevision {
   }
 
   addDoc(){
-    if(this.newDocForm.valid&&this.data.length<10){
+    if(this.newDocForm.valid&&(<FormArray>this.docsForm.controls.files).controls.length<10){
       this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
@@ -267,7 +266,6 @@ export class BcImgRevision {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
       let queryFileSub=this.shelterService.getImagesByShelterId(this._id).subscribe(files=>{
-        this.data=files;
         this.initForm(files);
         if(queryFileSub!=undefined){
           queryFileSub.unsubscribe();
