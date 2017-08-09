@@ -11,7 +11,7 @@ $backdrop-color: rgba(0, 0, 0, 0.6) !default;
     left: 0;
     // The container should be the size of the viewport.
     // viewport units are better, because they aren't being offset by the global scrollbar.
-    height: 100vh;
+    height: 100%;
     width: 100vw;
 
     position: absolute;
