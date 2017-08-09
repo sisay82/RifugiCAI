@@ -41,6 +41,7 @@ export class FormatSizePipe implements PipeTransform {
 })
 export class BcImgRevision {
   newDocForm: FormGroup;
+  docsForm: FormGroup;
   _id:String;
   name:String;
   data:IFile[]=[];
@@ -53,7 +54,8 @@ export class BcImgRevision {
   maskError:boolean=false;
   maskInvalidSub:Subscription;
   maskValidSub:Subscription;
-  formValidSub:Subscription;
+  newDocFormValidSub:Subscription;
+  docsFormValidSub:Subscription;
   hiddenImage:boolean=true;
   sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
@@ -62,50 +64,71 @@ export class BcImgRevision {
       description:[""]
     });
 
-    this.formValidSub = this.newDocForm.statusChanges.subscribe(value=>{
+    this.docsForm = fb.group({
+      files:fb.array([])
+    });
+
+    this.newDocFormValidSub = this.newDocForm.statusChanges.subscribe(value=>{
       if(value=="VALID"){
-          if(!this.maskError){
-              this.displayError=false;
+          if(!this.maskError&&this.docsForm.valid){
+            this.displayError=false;
           }
       }
     });
+
+    this.docsFormValidSub = this.docsForm.statusChanges.subscribe(value=>{
+      if(value=="VALID"){
+        if(!this.maskError&&this.newDocForm.valid){
+          this.displayError=false;
+        }
+      }
+    });
     
-     this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-        this.maskError=true;
+    this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
+      this.maskError=true;
     });
 
     this.maskValidSub = shared.maskValid$.subscribe(()=>{
-        this.maskError=false;
-        if(this.newDocForm.valid){
-            this.displayError=false;
-        }
+      this.maskError=false;
+      if(this.newDocForm.valid){
+          this.displayError=false;
+      }
     });
 
     let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-        this.disableSave=true;
-        this.revisionService.onChildDisableSaveAnswer();
-        if(disableSaveSub!=undefined){
-            disableSaveSub.unsubscribe();
-        }
+      this.disableSave=true;
+      this.revisionService.onChildDisableSaveAnswer();
+      if(disableSaveSub!=undefined){
+          disableSaveSub.unsubscribe();
+      }
     });
 
     shared.onActiveOutletChange("revision");
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-        if(!this.maskError){
-            if(this.newDocForm.dirty){
-                this.disableSave=true;
-                this.save(true);
-            }else{
-                this.shared.onMaskConfirmSave("images");
-            }
-        }else{
-            shared.onDisplayError();
-            this.displayError=true;
-        }
+      if(!this.maskError){
+          if(this.newDocForm.dirty||this.docsForm.dirty){
+              this.disableSave=true;
+              this.save(true);
+          }else{
+              this.shared.onMaskConfirmSave("images");
+          }
+      }else{
+          shared.onDisplayError();
+          this.displayError=true;
+      }
     });
 
     shared.activeComponent="images";
+  }
+
+  initFile(file:IFile){
+    return this.fb.group({
+      id:[file._id],
+      name:[file.name],
+      size:[file.size],
+      description:[file.description]
+    });
   }
 
   isUploading(){
@@ -166,7 +189,7 @@ export class BcImgRevision {
             if(id){
               let f=file;
               f._id=id;
-              this.data.push(f)
+              (<FormArray>this.docsForm.controls.files).push(this.initFile(f));
             }
             this.uploading=false;
             if(confirm){
@@ -184,9 +207,21 @@ export class BcImgRevision {
   }
 
   save(confirm){
-    this.displayError=false;
-    if(confirm){
-        this.shared.onMaskConfirmSave("images");
+    if(this.docsForm.valid){
+      this.displayError=false;
+      let i=0;
+      for(let file of (<FormArray>this.docsForm.controls.files).controls){
+        this.shelterService.updateFile(file.value.id,file.value.description).subscribe((val)=>{
+          if(val){
+            i++;
+            if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
+              this.shared.onMaskConfirmSave("images");
+            }
+          }
+        });
+      }
+    }else{
+      this.displayError=true;
     }
   }
 
@@ -208,8 +243,11 @@ export class BcImgRevision {
     if(this.maskSaveSub!=undefined){
       this.maskSaveSub.unsubscribe();
     }
-    if(this.formValidSub!=undefined){
-      this.formValidSub.unsubscribe();
+    if(this.newDocFormValidSub!=undefined){
+      this.newDocFormValidSub.unsubscribe();
+    }
+    if(this.docsFormValidSub!=undefined){
+      this.docsFormValidSub.unsubscribe();
     }
     if(this.maskInvalidSub!=undefined){
         this.maskInvalidSub.unsubscribe();
@@ -219,11 +257,18 @@ export class BcImgRevision {
     }
   }
 
+  initForm(files:IFile[]){
+    for(let file of files){
+      (<FormArray>this.docsForm.controls.files).push(this.initFile(file));
+    }
+  }
+
   ngOnInit() {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
       let queryFileSub=this.shelterService.getImagesByShelterId(this._id).subscribe(files=>{
         this.data=files;
+        this.initForm(files);
         if(queryFileSub!=undefined){
           queryFileSub.unsubscribe();
         }

@@ -1,19 +1,22 @@
 <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
 <bc-divider></bc-divider>
-<div class="bc-h6 bc-doc-title">Immagini</div>
-<div *ngFor="let file of data" >
-    <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-        <bc-icon (click)="removeFile(file._id)" class="bc-img" name="times" size=s></bc-icon>
-        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-            <div class="bc-body-strong">Nome:</div>
-            <div style="margin-left:1%" class="bc-body bc-img" (click)="downloadFile(file._id)"> {{file.name}}</div>
-        </div>
-        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-            <div class="bc-body-strong">Dimensione:</div>
-            <div style="margin-left:1%" class="bc-body"> {{file.size | formatsize}}</div>
+<div class="bc-h6 bc-img-title">Immagini</div>
+<form [formGroup]="docsForm">
+    <div formArrayName="files">
+        <div *ngFor="let file of docsForm.controls.files.controls;let i = index" >
+            <div [formGroupName]="i" style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+                <bc-icon (click)="removeFile(file._id)" class="bc-img" name="times" size=s></bc-icon>
+                <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+                    <div style="margin-left:1%" class="bc-body bc-img" (click)="downloadFile(file._id)">{{file.value.name}}</div>
+                    <div style="margin-left:1%" class="bc-body"> ({{file.value.size | formatsize}})</div>
+                </div>
+                <div style="flex:1;margin-right:1%">
+                    <bc-text-input [displayError]=true title="Didascalia" formControlName="description"></bc-text-input>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</form>
 <div class="bc-body bc-img" (click)="toggle()" style="display:inline;white-space:nowrap;flex:1">
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
     Aggiungi Immagine
@@ -21,12 +24,12 @@
 <div *ngIf="!isHidden()">
     <form [formGroup]="newDocForm">
         <div style="display: flex;flex-direction:row;align-items:center">
-            <div style="display: inline-block">
+            <div style="display: inline-block;margin-left:1%">
                 <div style="display:flex;flex-direction:row;align-items:center">
                     <bc-file-input [contentType]="getContentType()" formControlName="file"></bc-file-input>
                     <bc-button style="margin-left:1%" [button]="sendButton"></bc-button>
                 </div>
-                <bc-text-input [displayError]=true formControlName="description"></bc-text-input>
+                <bc-text-input [displayError]=true title="Didascalia" formControlName="description"></bc-text-input>
             </div>
             <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
         </div>
