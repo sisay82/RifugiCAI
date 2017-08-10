@@ -55,7 +55,7 @@ export class BcManage {
     let d1=new Date(date1);
     let d2=new Date(date2);
     if(d1!=undefined&&d2!=undefined){
-      return Math.abs(d2.getMonth() - d1.getMonth());
+      return Math.abs(d2.getMonth() - d1.getMonth())+Math.abs(d2.getFullYear() - d1.getFullYear())*12;
     }else{
       return null;
     }
