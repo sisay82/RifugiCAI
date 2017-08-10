@@ -46,11 +46,15 @@ export class BcFileInput implements ControlValueAccessor {
     @Input() required:boolean=false;
     @Input() title = "";
     @Input() sizeLimit:number=1024*1024*16;
-    _contentType:String="";
+    _contentType:String;
     @Input() set contentType(value:String[]){
-        this._contentType=value.join(",");
+        if(value.length>0){
+            this._contentType=value.join(",");
+        }else{
+            this._contentType=null;
+        }
     }
-
+    
     getAcceptables(){
         return this._contentType;
     }

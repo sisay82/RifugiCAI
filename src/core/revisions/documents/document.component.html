@@ -23,7 +23,7 @@
             <bc-file-input [contentType]="getKeys('Docs_Type')" formControlName="file"></bc-file-input>
         </div>
     </form>
-    <bc-button style="margin-left:1%" [button]="sendDocButton"></bc-button>
+    <bc-button style="margin-left:1%" [disabled]="getKeys('Docs_Type').length==0" [button]="sendDocButton"></bc-button>
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
 <bc-divider></bc-divider>
@@ -51,7 +51,7 @@
             <bc-file-input [contentType]="getKeys('Maps_Type')" formControlName="file"></bc-file-input>
         </div>
     </form>
-    <bc-button style="margin-left:1%" [button]="sendMapButton"></bc-button>
+    <bc-button style="margin-left:1%" [disabled]="getKeys('Maps_Type').length==0" [button]="sendMapButton"></bc-button>
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
 <bc-divider></bc-divider>
@@ -79,6 +79,6 @@
             <bc-file-input [contentType]="getKeys('Invoices_Type')" formControlName="file"></bc-file-input>
         </div>
     </form>
-    <bc-button style="margin-left:1%" [button]="sendInvoiceButton"></bc-button>
+    <bc-button style="margin-left:1%" [disabled]="getKeys('Invoices_Type').length==0" [button]="sendInvoiceButton"></bc-button>
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>

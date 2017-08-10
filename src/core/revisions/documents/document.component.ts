@@ -125,14 +125,14 @@ export class BcDocRevision {
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
         if(!this.maskError){
-            if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty){
-                this.save(true);
-            }else{
-                this.shared.onMaskConfirmSave("documents");
-            }
+          if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty){
+            this.save(true);
+          }else{
+            this.shared.onMaskConfirmSave("documents");
+          }
         }else{
-            shared.onDisplayError();
-            this.displayError=true;
+          shared.onDisplayError();
+          this.displayError=true;
         }
     });
 
@@ -165,6 +165,7 @@ export class BcDocRevision {
   }
 
   removeDoc(id){
+    this.commitToFather({_id:id},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -182,6 +183,7 @@ export class BcDocRevision {
   }
 
   removeMap(id){
+    this.commitToFather({_id:id},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -195,6 +197,7 @@ export class BcDocRevision {
   }
 
   removeInvoice(id){
+    this.commitToFather({_id:id},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -204,7 +207,7 @@ export class BcDocRevision {
       if(removeFileSub!=undefined){
         removeFileSub.unsubscribe();
       }
-    })
+    });
   }
 
   addDoc(){
@@ -226,12 +229,14 @@ export class BcDocRevision {
           if(id){
             let f=file;
             f._id=id;
-            this.docs.push(f)
+            this.docs.push(f);
+            this.commitToFather(f);
           }
           this.uploading=false;
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
           }
+          this.cleanForms();
         });
       }
       fileReader.readAsArrayBuffer(f);
@@ -259,18 +264,27 @@ export class BcDocRevision {
           if(id){
             let f=file;
             f._id=id;
-            this.docs.push(f)
+            this.docs.push(f);
+            this.commitToFather(f);
           }
           this.uploading=false;
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
           }
+          this.cleanForms();
         });
       }
       fileReader.readAsArrayBuffer(f);
     }else{
       this.displayError=true;
     }
+  }
+
+  cleanForms(){
+    this.newDocForm.reset();
+    this.newMapForm.reset();
+    this.newInvoiceForm.reset();
+    this.currentFileToggle=-1;
   }
 
   addInvoice(){
@@ -292,18 +306,24 @@ export class BcDocRevision {
           if(id){
             let f=file;
             f._id=id;
-            this.docs.push(f)
+            this.docs.push(f);
+            this.commitToFather(f);
           }
           this.uploading=false;
           if(shelServiceSub!=undefined){
             shelServiceSub.unsubscribe();
           }
+          this.cleanForms();
         });
       }
       fileReader.readAsArrayBuffer(f);
     }else{
       this.displayError=true;
     }
+  }
+
+  commitToFather(file:IFile,remove?:Boolean){
+    this.revisionService.onChildSaveFile({name:file.name,size:file.size,_id:file._id,contentType:file.contentType,description:file.description},remove)
   }
 
   save(confirm){
@@ -357,30 +377,44 @@ export class BcDocRevision {
     }
   }
 
+  initData(files){
+    for(let file of files){
+      if(file.contentType!=undefined){
+        if(Object.keys(Enums.Docs_Type).find(f=>f==file.contentType)){
+          this.docs.push(file);       
+        }else if(Object.keys(Enums.Maps_Type)){
+          this.maps.push(file);
+        }else if(Object.keys(Enums.Invoices_Type)){
+          this.invoices.push(file);
+        }
+      }
+    }
+  }
+
   ngOnInit() {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
-      let queryFileSub=this.shelterService.getFilesByShelterId(this._id).subscribe(files=>{
-        for(let file of files){
-          if(file.contentType!=undefined){
-            if(Object.keys(Enums.Docs_Type).find(f=>f==file.contentType)){
-              this.docs.push(file);       
-            }else if(Object.keys(Enums.Maps_Type)){
-              this.maps.push(file);
-            }else if(Object.keys(Enums.Invoices_Type)){
-              this.invoices.push(file);
+      let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
+        if(!files||files.length==0){
+          let queryFileSub=this.shelterService.getFilesByShelterId(this._id).subscribe(files=>{
+            this.initData(files);
+            this.revisionService.onChildSaveFiles(files);
+            if(queryFileSub!=undefined){
+              queryFileSub.unsubscribe();
             }
-          }
+            if(routeSub!=undefined){
+              routeSub.unsubscribe();
+            }
+          });
+        }else{
+          this.initData(files);
         }
-        if(queryFileSub!=undefined){
-          queryFileSub.unsubscribe();
-        }
-        if(routeSub!=undefined){
-          routeSub.unsubscribe();
+        if(loadServiceSub!=undefined){
+          loadServiceSub.unsubscribe();
         }
       });
+      this.revisionService.onChildLoadFilesRequest(this.getKeys("Docs_Type").concat(this.getKeys("Maps_Type").concat(this.getKeys("Invoices_Type"))));
     });
-    
   }
 
 }

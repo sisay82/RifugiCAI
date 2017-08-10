@@ -1,6 +1,6 @@
 import {Injectable } from '@angular/core'
 import { Subject } from 'rxjs/Subject';
-import { IShelter } from '../../app/shared/types/interfaces';
+import { IShelter,IFile } from '../../app/shared/types/interfaces';
 
 @Injectable()
 export class BcRevisionsService{
@@ -21,6 +21,34 @@ export class BcRevisionsService{
 
     private childDisableSaveAnswerSource = new Subject<void>();
     childDisableSaveAnswer$ = this.childDisableSaveAnswerSource.asObservable();
+
+    private childSaveFileSource = new Subject<{file:IFile,remove?:Boolean}>();
+    saveFile$ = this.childSaveFileSource.asObservable();
+
+    private childSaveFilesSource = new Subject<IFile[]>();
+    saveFiles$ = this.childSaveFilesSource.asObservable();
+
+    private childLoadFilesSource = new Subject<IFile[]>();
+    loadFiles$ = this.childLoadFilesSource.asObservable();
+
+    private childLoadFilesSourceRequest = new Subject<String[]>();
+    loadFilesRequest$ = this.childLoadFilesSourceRequest.asObservable();
+
+    onChildSaveFile(file:IFile,remove?:Boolean){
+        this.childSaveFileSource.next({file:file,remove:remove});
+    }
+
+    onChildSaveFiles(files:IFile[]){
+        this.childSaveFilesSource.next(files);
+    }
+
+    onChildLoadFiles(files:IFile[]){
+        this.childLoadFilesSource.next(files);
+    }
+
+    onChildLoadFilesRequest(types:String[]){
+        this.childLoadFilesSourceRequest.next(types);
+    }
 
     onChildDisableSaveRequest(){
         this.childDisableSaveRequestSource.next();

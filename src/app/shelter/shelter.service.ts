@@ -126,8 +126,8 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
-    updateFile(id,description):Observable<boolean>{
-        return this.http.put(this.sheltersBaseUrl+"/file/"+id,{description:description})
+    updateFile(id,shelId,description):Observable<boolean>{
+        return this.http.put(this.sheltersBaseUrl+"/file/"+id,{description:description,shelId:shelId})
             .map((res:Response)=>res.json())
             .catch(this.handleError);
     }
