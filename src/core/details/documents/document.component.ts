@@ -62,31 +62,40 @@ export class BcDoc {
         });
     }
 
-    getIcon(type,contentType){
+    getExtension(filename:String){
+        var parts = filename.split('.');
+        return parts[parts.length - 1];
+    }
+
+    checkExtension(value:String,types:String[]){
+        return types.includes(value)
+    }
+
+    getIcon(type,name){
         if(type==Enums.File_Type.doc){
-            if(contentType==Enums.Docs_Type.doc){
+            if(this.checkExtension(this.getExtension(name),["doc","docx"])){
                 return "file-word-o"
-            }else if(contentType==Enums.Docs_Type.xls){
+            }else if(this.checkExtension(this.getExtension(name),["xls","xlsx"])){
                 return "file-excel-o"
-            }else if(contentType==Enums.Docs_Type.txt){
+            }else if(this.checkExtension(this.getExtension(name),["txt"])){
                 return "file-text-o"
-            }else if(contentType==Enums.Docs_Type.pdf){
+            }else if(this.checkExtension(this.getExtension(name),["pdf"])){
                 return "file-pdf-o"
             }else return "file-text-o";
         }else if(type==Enums.File_Type.map){
-            if(contentType==Enums.Maps_Type.dwg){
-                return "fa-map-o"
+            if(this.checkExtension(this.getExtension(name),["dwg"])){
+                return "map-o"
             }else{
                 return "file-text-o";
             }
         }else if(type==Enums.File_Type.invoice){
-            if(contentType==Enums.Docs_Type.doc){
+            if(this.checkExtension(this.getExtension(name),["doc","docx"])){
                 return "file-word-o"
-            }else if(contentType==Enums.Docs_Type.xls){
+            }else if(this.checkExtension(this.getExtension(name),["xls","xlsx"])){
                 return "file-excel-o"
-            }else if(contentType==Enums.Docs_Type.txt){
+            }else if(this.checkExtension(this.getExtension(name),["txt"])){
                 return "file-text-o"
-            }else if(contentType==Enums.Docs_Type.pdf){
+            }else if(this.checkExtension(this.getExtension(name),["pdf"])){
                 return "file-pdf-o"
             }else return "file-text-o";
         }else{
