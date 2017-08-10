@@ -1,5 +1,6 @@
-<div class="bc-body" style="white-space: nowrap;margin-right:1%">{{title}}
-    <div *ngIf="required" class="bc-h6" style="display:inline;color:red;margin-right:1%">*</div>
+<div class="bc-body" style="display: flex;flex-direction:row;align-items:center">
+<div  style="white-space: nowrap;margin-right:1%">{{title}}</div>
+<div *ngIf="required" style="display:inline;color:red;margin-right:1%">*</div>
 </div>
 <input [bc-enable-error]="invalid" type="text" style="text-overflow: ellipsis; font-style: normal; font-weight: normal; text-decoration: inherit;"
     class="form-control" (keyup)="onKey($event)" [value]="getValue()">

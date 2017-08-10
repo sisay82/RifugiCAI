@@ -124,6 +124,7 @@ export class BcImgRevision {
   initFile(file:IFile){
     return this.fb.group({
       id:[file._id],
+      contentType:[file.contentType],
       name:[file.name],
       size:[file.size],
       description:[file.description]
@@ -152,6 +153,7 @@ export class BcImgRevision {
   }
 
   removeFile(id){
+    this.commitToFather({_id:id},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -161,7 +163,7 @@ export class BcImgRevision {
       if(removeFileSub!=undefined){
         removeFileSub.unsubscribe();
       }
-    })
+    });
   }
 
   getContentType(){
@@ -189,8 +191,10 @@ export class BcImgRevision {
               let f=file;
               f._id=id;
               (<FormArray>this.docsForm.controls.files).push(this.initFile(f));
+              this.commitToFather(f);
             }
             this.uploading=false;
+            this.cleanForm();
             if(confirm){
                 this.shared.onMaskConfirmSave("images");
             }
@@ -205,23 +209,41 @@ export class BcImgRevision {
     }
   }
 
+  cleanForm(){
+    this.newDocForm.reset();
+    this.toggle();
+  }
+
   save(confirm){
     if(this.docsForm.valid){
       this.displayError=false;
       let i=0;
       for(let file of (<FormArray>this.docsForm.controls.files).controls){
-        this.shelterService.updateFile(file.value.id,file.value.description).subscribe((val)=>{
-          if(val){
-            i++;
-            if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
-              this.shared.onMaskConfirmSave("images");
+        if(file.dirty){
+          this.shelterService.updateFile(file.value.id,this._id,file.value.description).subscribe((val)=>{
+            if(val){
+              i++;
+              if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
+                this.shared.onMaskConfirmSave("images");
+              }
             }
+          });
+          let f:IFile={name:file.value.name,size:file.value.size,_id:file.value.id,contentType:file.value.contentType,description:file.value.description};
+          this.revisionService.onChildSaveFile(f);
+        }else{
+          i++;
+          if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
+            this.shared.onMaskConfirmSave("images");
           }
-        });
+        }
       }
     }else{
       this.displayError=true;
     }
+  }
+
+  commitToFather(file:IFile,remove?:Boolean){
+    this.revisionService.onChildSaveFile({name:file.name,size:file.size,_id:file._id,contentType:file.contentType,description:file.description},remove)
   }
 
   downloadFile(id){
@@ -239,6 +261,9 @@ export class BcImgRevision {
   }
 
   ngOnDestroy() {
+    if(this.docsForm.valid&&this.docsForm.dirty){
+      this.save(false);
+    }
     if(this.maskSaveSub!=undefined){
       this.maskSaveSub.unsubscribe();
     }
@@ -265,15 +290,26 @@ export class BcImgRevision {
   ngOnInit() {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
-      let queryFileSub=this.shelterService.getImagesByShelterId(this._id).subscribe(files=>{
-        this.initForm(files);
-        if(queryFileSub!=undefined){
-          queryFileSub.unsubscribe();
+      let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
+        if(!files||files.length==0){
+          let queryFileSub=this.shelterService.getImagesByShelterId(this._id).subscribe(files=>{
+            this.initForm(files);
+            this.revisionService.onChildSaveFiles(files);
+            if(queryFileSub!=undefined){
+              queryFileSub.unsubscribe();
+            }
+            if(routeSub!=undefined){
+              routeSub.unsubscribe();
+            }
+          });
+        }else{
+          this.initForm(files);
         }
-        if(routeSub!=undefined){
-          routeSub.unsubscribe();
+        if(loadServiceSub!=undefined){
+          loadServiceSub.unsubscribe();
         }
       });
+      this.revisionService.onChildLoadFilesRequest(this.getContentType());
     });
     
   }
