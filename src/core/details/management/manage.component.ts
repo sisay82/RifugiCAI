@@ -51,6 +51,17 @@ export class BcManage {
     });
   }
 
+  getDifferenceDates(date1:Date,date2:Date){
+    let d1=new Date(date1);
+    let d2=new Date(date2);
+    if(d1!=undefined&&d2!=undefined){
+      return Math.abs(d2.getMonth() - d1.getMonth());
+    }else{
+      return null;
+    }
+    
+  }
+
   gotoSite(webSite:string){
     if(webSite!=undefined){
       location.href=webSite;

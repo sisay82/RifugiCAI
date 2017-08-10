@@ -33,12 +33,8 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Canone annuale:</div>
+            <div class="bc-body-strong" style="margin-right:4px">Canone annuale (€):</div>
             <div class="bc-body">{{data?(data.rent || '----'):'----'}}</div>
-        </div>
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Valuta:</div>
-            <div class="bc-body">{{data?(data.valuta || '----'):'----'}}</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -57,8 +53,8 @@
             <div class="bc-body">{{data?((data.contract_end_date | date:"dd/MM/yy") || '----'):'----'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Durata contratto:</div>
-            <div class="bc-body">{{data?(data.contract_duration || '----'):'----'}}</div>
+            <div class="bc-body-strong" style="margin-right:4px">Durata contratto (mesi):</div>
+            <div class="bc-body">{{data?(getDifferenceDates(data.contract_start_date,data.contract_end_date) || '----'):'----'}}</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -74,7 +70,7 @@
         </div>  
     </div>
     <bc-divider></bc-divider>
-    <div class="bc-detail-title bc-h6">Custodia:</div>
+    <div class="bc-detail-title bc-h6">Custodia e/o gestione:</div>
     <div *ngFor="let manager of managers">
         <div style="display: flex;flex-direction:row">
             <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">

@@ -42,6 +42,7 @@ export class BcSelectInput implements ControlValueAccessor {
     @Input() title = "";
     @Input() defaultContent="";
     @Input() enumName:any;
+    @Input() noName:boolean=false;
 
     _displayError:boolean=false;
     @Input() set displayError(enable:boolean){
