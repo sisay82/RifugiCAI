@@ -183,5 +183,7 @@ export interface IFile{
     name?:String;
     data?:Buffer;
     contentType?:String;
+    type?:Enums.File_Type;
     description?:String;
+    value?:Number;
 }

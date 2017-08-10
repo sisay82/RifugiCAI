@@ -181,7 +181,8 @@ export class BcImgRevision {
           uploadDate:new Date(Date.now()),
           contentType:f.type,
           shelterId:this._id,
-          description:this.newDocForm.controls.description.value||null
+          description:this.newDocForm.controls.description.value||null,
+          type:Enums.File_Type.image
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
@@ -228,7 +229,7 @@ export class BcImgRevision {
               }
             }
           });
-          let f:IFile={name:file.value.name,size:file.value.size,_id:file.value.id,contentType:file.value.contentType,description:file.value.description};
+          let f:IFile={name:file.value.name,size:file.value.size,_id:file.value.id,type:file.value.type,value:file.value.value,contentType:file.value.contentType,description:file.value.description};
           this.revisionService.onChildSaveFile(f);
         }else{
           i++;
@@ -243,7 +244,7 @@ export class BcImgRevision {
   }
 
   commitToFather(file:IFile,remove?:Boolean){
-    this.revisionService.onChildSaveFile({name:file.name,size:file.size,_id:file._id,contentType:file.contentType,description:file.description},remove)
+    this.revisionService.onChildSaveFile({name:file.name,size:file.size,_id:file._id,type:file.type,value:file.value,contentType:file.contentType,description:file.description},remove)
   }
 
   downloadFile(id){
@@ -309,7 +310,7 @@ export class BcImgRevision {
           loadServiceSub.unsubscribe();
         }
       });
-      this.revisionService.onChildLoadFilesRequest(this.getContentType());
+      this.revisionService.onChildLoadFilesRequest([Enums.File_Type.image]);
     });
     
   }

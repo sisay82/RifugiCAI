@@ -3,7 +3,7 @@
     <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
         <div style="flex:1">
             <div (click)="downloadFile(file._id)" class="bc-file" style="display: inline-block">
-                <bc-icon [name]="getIcon(file.contentType)" size=s></bc-icon>
+                <bc-icon [name]="getIcon(file.type,file.contentType)" size=s></bc-icon>
                 <div style="display:inline" class="bc-body"> {{file.name}}</div>
             </div>
         </div>
@@ -18,7 +18,7 @@
 <div *ngFor="let file of maps" >
     <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-            <div class="bc-body-strong">Nome:</div>
+            <bc-icon [name]="getIcon(file.type,file.contentType)" size=s></bc-icon>
             <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>
         </div>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
@@ -32,7 +32,7 @@
 <div *ngFor="let file of invoices" >
     <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-            <div class="bc-body-strong">Nome:</div>
+            <bc-icon [name]="getIcon(file.type,file.contentType)" size=s></bc-icon>
             <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>
         </div>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
