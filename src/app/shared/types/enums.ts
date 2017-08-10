@@ -14,7 +14,8 @@ export namespace Enums {
         "Gas",
         "Solare",
         "Legna",
-        "Assente"
+        "Assente",
+        "Combinato"
     }
 
     //tipo classe energetica
@@ -88,7 +89,8 @@ export namespace Enums {
         "A",
         "B",
         "C",
-        "D"
+        "D",
+        "E"
     }
 
     //tipo di file
@@ -133,7 +135,8 @@ export namespace Enums {
     export enum Drain_Type {
         "IMOF fognatura",
         "IMOF pozzo perdente",
-        "IMOF dispersore sottosuolo"
+        "IMOF dispersore sottosuolo",
+        "IMOF trasporto a valle"
     }
 
     //coerenza tipologica
@@ -154,7 +157,8 @@ export namespace Enums {
     export enum Owner_Type
     {
         Custode,
-        Proprietario
+        Proprietario,
+        Gestore
     }
 
     //tipo custodia

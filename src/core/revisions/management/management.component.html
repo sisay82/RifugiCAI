@@ -31,10 +31,7 @@
         <bc-divider></bc-divider>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <bc-text-input formControlName="rent" title="Canone annuale" validator="numberValidator" [displayError]="displayError"></bc-text-input>
-            </div>
-            <div class="bc-revision-management">
-                <bc-text-input formControlName="valuta" title="Valuta" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="rent" title="Canone annuale (€)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-select-input enumName="Possession_Type" formControlName="period" title="Tipo possesso" [displayError]="displayError"></bc-select-input>
@@ -47,12 +44,9 @@
             <div class="bc-revision-management">
                 <bc-text-input formControlName="contract_end_date" validator="validateDate" title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
             </div>
-            <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_duration" title="Durata contratto" [displayError]="displayError"></bc-text-input>
-            </div>
         </div>
         <bc-divider></bc-divider>
-        <div class="bc-management-title bc-h6">Custodia</div>
+        <div class="bc-management-title bc-h6">Custodia e/o gestione</div>
         <div *ngFor="let open of managForm.controls['subjects'].controls;let i = index" formArrayName="subjects">
             <div [formGroupName]="i">
                 <div style="display: flex;flex-direction:row;align-items:center">
