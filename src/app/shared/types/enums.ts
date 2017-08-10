@@ -104,12 +104,14 @@ export namespace Enums {
         txt=<any>"text/plain",
         pdf=<any>"application/pdf",
         doc=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        docx=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         xls=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        xlsx=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     }
 
     //tipi di mappa
     export enum Maps_Type {
-        dwg=<any>"application/acad"
+        dwg=<any>"application/acad, application/x-acad, application/autocad_dwg, image/x-dwg, application/dwg, application/x-dwg, application/x-autocad, image/vnd.dwg, drawing/dwg"
     }
 
     //tipi di ricevuta
@@ -117,7 +119,9 @@ export namespace Enums {
         txt=<any>"text/plain",
         pdf=<any>"application/pdf",
         doc=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        docx=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         xls=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        xlsx=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     }
 
     export enum Image_Type {

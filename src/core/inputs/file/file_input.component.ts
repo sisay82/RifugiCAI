@@ -47,10 +47,13 @@ export class BcFileInput implements ControlValueAccessor {
     @Input() title = "";
     @Input() sizeLimit:number=1024*1024*16;
     _contentType:String;
+    types:String[];
     @Input() set contentType(value:String[]){
         if(value.length>0){
+            this.types=value;
             this._contentType=value.join(",");
         }else{
+            this.types=null;
             this._contentType=null;
         }
     }
@@ -80,16 +83,29 @@ export class BcFileInput implements ControlValueAccessor {
         this.propagateChange(this.value);
     }
 
+    getExtension(filename:String){
+        var parts = filename.split('.');
+        return parts[parts.length - 1];
+    }
+
+    checkExtension(value:String){
+        return this.types.includes(value);
+    }
+
     validate(c:FormControl){
         if(c.value!=undefined){
-            if(c.value.type&&c.value.size>0){
-                this.value = c.value;
-                if(this.value.size>this.sizeLimit){
-                    this.invalid=true;
-                    return {err:"Size over limit"};
+            if(c.value.size>0){
+                if(this.checkExtension(this.getExtension(c.value.name))){
+                    this.value = c.value;
+                    if(this.value.size>this.sizeLimit){
+                        this.invalid=true;
+                        return {err:"Size over limit"};
+                    }else{
+                        this.invalid=false;
+                        return null;
+                    }
                 }else{
-                    this.invalid=false;
-                    return null;
+                    return {err:"Invalid content type"};
                 }
             }else{
                 return {err:"Content Type or Size is null"};
