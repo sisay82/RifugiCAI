@@ -220,7 +220,8 @@ export class BcDocRevision {
         size:f.size,
         uploadDate:new Date(Date.now()),
         contentType:f.type,
-        shelterId:this._id
+        shelterId:this._id,
+        type:Enums.File_Type.doc
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
@@ -255,7 +256,8 @@ export class BcDocRevision {
         size:f.size,
         uploadDate:new Date(Date.now()),
         contentType:f.type,
-        shelterId:this._id
+        shelterId:this._id,
+        type:Enums.File_Type.map
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
@@ -264,7 +266,7 @@ export class BcDocRevision {
           if(id){
             let f=file;
             f._id=id;
-            this.docs.push(f);
+            this.maps.push(f);
             this.commitToFather(f);
           }
           this.uploading=false;
@@ -297,7 +299,8 @@ export class BcDocRevision {
         size:f.size,
         uploadDate:new Date(Date.now()),
         contentType:f.type,
-        shelterId:this._id
+        shelterId:this._id,
+        type:Enums.File_Type.invoice
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
@@ -306,7 +309,7 @@ export class BcDocRevision {
           if(id){
             let f=file;
             f._id=id;
-            this.docs.push(f);
+            this.invoices.push(f);
             this.commitToFather(f);
           }
           this.uploading=false;
@@ -323,7 +326,7 @@ export class BcDocRevision {
   }
 
   commitToFather(file:IFile,remove?:Boolean){
-    this.revisionService.onChildSaveFile({name:file.name,size:file.size,_id:file._id,contentType:file.contentType,description:file.description},remove)
+    this.revisionService.onChildSaveFile({name:file.name,size:file.size,_id:file._id,type:file.type,value:file.value,contentType:file.contentType,description:file.description},remove)
   }
 
   save(confirm){
@@ -379,13 +382,13 @@ export class BcDocRevision {
 
   initData(files){
     for(let file of files){
-      if(file.contentType!=undefined){
-        if(Object.keys(Enums.Docs_Type).find(f=>f==file.contentType)){
-          this.docs.push(file);       
-        }else if(Object.keys(Enums.Maps_Type)){
-          this.maps.push(file);
-        }else if(Object.keys(Enums.Invoices_Type)){
-          this.invoices.push(file);
+      if(file.type!=undefined){
+        if(file.type==Enums.File_Type.doc){
+            this.docs.push(file);       
+        }else if(file.type==Enums.File_Type.map){
+            this.maps.push(file);
+        }else if(file.type==Enums.File_Type.invoice){
+            this.invoices.push(file);
         }
       }
     }
@@ -413,7 +416,7 @@ export class BcDocRevision {
           loadServiceSub.unsubscribe();
         }
       });
-      this.revisionService.onChildLoadFilesRequest(this.getKeys("Docs_Type").concat(this.getKeys("Maps_Type").concat(this.getKeys("Invoices_Type"))));
+      this.revisionService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice]);
     });
   }
 

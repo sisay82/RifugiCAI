@@ -53,6 +53,7 @@ export class FormatSizePipe implements PipeTransform {
 export class BcImg {
     _id:String;
     fullScreenImgId="";
+    downloading:boolean=false;
     data:{file:IFile,url:any}[]=[];
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private sanitizer:DomSanitizer) {
         shared.activeComponent="images";
@@ -90,20 +91,31 @@ export class BcImg {
     }
 
     ngOnInit() {
+        this.downloading=true;
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
+            let i=0;
             let queryFileSub=this.shelterService.getImagesByShelterId(this._id).subscribe(files=>{
-                for(let file of files){
-                    let queryFileSub=this.shelterService.getFile(file._id).subscribe(file=>{
-                        let data=Buffer.from(file.data);
-                        let blob=new Blob([data],{type:<string>file.contentType});                        
-                        var reader = new FileReader();
-                        reader.onload = (e) => {
-                            var src = reader.result;
-                            this.data.push({file:file,url:src});
-                        };
-                        reader.readAsDataURL(blob);
-                    });
+                let j=files.length;
+                if(j>0){
+                    for(let file of files){
+                        let queryFileSub=this.shelterService.getFile(file._id).subscribe(file=>{
+                            let data=Buffer.from(file.data);
+                            let blob=new Blob([data],{type:<string>file.contentType});                        
+                            var reader = new FileReader();
+                            reader.onload = (e) => {
+                                var src = reader.result;
+                                this.data.push({file:file,url:src});
+                                i++;
+                                if(i==j){
+                                    this.downloading=false;
+                                }
+                            };
+                            reader.readAsDataURL(blob);
+                        });
+                    }
+                }else{
+                    this.downloading=false;
                 }
                 if(queryFileSub!=undefined){
                 queryFileSub.unsubscribe();

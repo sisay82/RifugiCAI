@@ -77,7 +77,7 @@ export class BcRevisions{
 
         this.loadFilesSub=revisionService.loadFilesRequest$.subscribe(types=>{
             if(this.Files!=undefined){
-                let files = this.Files.filter(f=>types.includes(f.contentType));
+                let files = this.Files.filter(f=>types.includes(f.type));
                 this.revisionService.onChildLoadFiles(files);
             }else{
                 this.revisionService.onChildLoadFiles(null);

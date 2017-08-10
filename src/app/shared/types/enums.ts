@@ -91,6 +91,14 @@ export namespace Enums {
         "D"
     }
 
+    //tipo di file
+    export enum File_Type {
+        doc,
+        map,
+        invoice,
+        image
+    }
+
     //tipi di documento
     export enum Docs_Type {
         txt=<any>"text/plain",
@@ -101,12 +109,15 @@ export namespace Enums {
 
     //tipi di mappa
     export enum Maps_Type {
-
+        dwg=<any>"application/acad"
     }
 
     //tipi di ricevuta
     export enum Invoices_Type {
-
+        txt=<any>"text/plain",
+        pdf=<any>"application/pdf",
+        doc=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        xls=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     }
 
     export enum Image_Type {

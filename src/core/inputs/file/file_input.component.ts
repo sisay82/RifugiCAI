@@ -82,13 +82,17 @@ export class BcFileInput implements ControlValueAccessor {
 
     validate(c:FormControl){
         if(c.value!=undefined){
-            this.value = c.value;
-            if(this.value.size>this.sizeLimit){
-                this.invalid=true;
-                return {err:"Size over limit"};
+            if(c.value.type&&c.value.size>0){
+                this.value = c.value;
+                if(this.value.size>this.sizeLimit){
+                    this.invalid=true;
+                    return {err:"Size over limit"};
+                }else{
+                    this.invalid=false;
+                    return null;
+                }
             }else{
-                this.invalid=false;
-                return null;
+                return {err:"Content Type or Size is null"};
             }
         }else{
             return {err:"Value is null"};

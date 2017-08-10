@@ -62,16 +62,37 @@ export class BcDoc {
         });
     }
 
-    getIcon(contentType){
-        if(contentType==Enums.Docs_Type.doc){
-            return "file-word-o"
-        }else if(contentType==Enums.Docs_Type.xls){
-            return "file-excel-o"
-        }else if(contentType==Enums.Docs_Type.txt){
+    getIcon(type,contentType){
+        if(type==Enums.File_Type.doc){
+            if(contentType==Enums.Docs_Type.doc){
+                return "file-word-o"
+            }else if(contentType==Enums.Docs_Type.xls){
+                return "file-excel-o"
+            }else if(contentType==Enums.Docs_Type.txt){
+                return "file-text-o"
+            }else if(contentType==Enums.Docs_Type.pdf){
+                return "file-pdf-o"
+            }else return "file-text-o";
+        }else if(type==Enums.File_Type.map){
+            if(contentType==Enums.Maps_Type.dwg){
+                return "fa-map-o"
+            }else{
+                return "file-text-o";
+            }
+        }else if(type==Enums.File_Type.invoice){
+            if(contentType==Enums.Docs_Type.doc){
+                return "file-word-o"
+            }else if(contentType==Enums.Docs_Type.xls){
+                return "file-excel-o"
+            }else if(contentType==Enums.Docs_Type.txt){
+                return "file-text-o"
+            }else if(contentType==Enums.Docs_Type.pdf){
+                return "file-pdf-o"
+            }else return "file-text-o";
+        }else{
             return "file-text-o"
-        }else if(contentType==Enums.Docs_Type.pdf){
-            return "file-pdf-o"
-        }else return "";
+        }
+        
     }
 
     ngOnInit() {
@@ -79,14 +100,14 @@ export class BcDoc {
             this._id=params["id"];
             let queryFileSub=this.shelterService.getFilesByShelterId(this._id).subscribe(files=>{
                 for(let file of files){
-                    if(file.contentType!=undefined){
-                        if(Object.keys(Enums.Docs_Type).find(f=>f==file.contentType)){
+                    if(file.type!=undefined){
+                        if(file.type==Enums.File_Type.doc){
                             this.docs.push(file);       
-                        }else if(Object.keys(Enums.Maps_Type)){
-
-                        }else if(Object.keys(Enums.Invoices_Type)){
-                            
-                        }
+                        }else if(file.type==Enums.File_Type.map){
+                            this.maps.push(file);
+                        }else if(file.type==Enums.File_Type.invoice){
+                            this.invoices.push(file);
+                        }   
                     }
                 }
                 if(queryFileSub!=undefined){

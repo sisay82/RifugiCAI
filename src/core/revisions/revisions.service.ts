@@ -31,7 +31,7 @@ export class BcRevisionsService{
     private childLoadFilesSource = new Subject<IFile[]>();
     loadFiles$ = this.childLoadFilesSource.asObservable();
 
-    private childLoadFilesSourceRequest = new Subject<String[]>();
+    private childLoadFilesSourceRequest = new Subject<any[]>();
     loadFilesRequest$ = this.childLoadFilesSourceRequest.asObservable();
 
     onChildSaveFile(file:IFile,remove?:Boolean){
@@ -46,7 +46,7 @@ export class BcRevisionsService{
         this.childLoadFilesSource.next(files);
     }
 
-    onChildLoadFilesRequest(types:String[]){
+    onChildLoadFilesRequest(types:any[]){
         this.childLoadFilesSourceRequest.next(types);
     }
 

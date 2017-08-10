@@ -1,4 +1,5 @@
 <div class="bc-h6 bc-img-title">Immagini</div>
+<div class="bc-body-strong" *ngIf="downloading">(Caricamento...)</div>
 <div style="display:flex;flex-direction:row;flex-wrap:wrap">
     <div *ngFor="let img of data" style="margin-left:1%;display:block;width:17.5%">
         <div [full-screen]="isFullScreen(img.file._id)" class="bc-img" (click)="enlargeImage(img.file._id)">
