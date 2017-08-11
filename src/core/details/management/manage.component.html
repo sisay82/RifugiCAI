@@ -53,8 +53,8 @@
             <div class="bc-body">{{data?((data.contract_end_date | date:"dd/MM/yy") || '----'):'----'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Durata contratto (mesi):</div>
-            <div class="bc-body">{{data?(getDifferenceDates(data.contract_start_date,data.contract_end_date) || '----'):'----'}}</div>
+            <div class="bc-body-strong" style="margin-right:4px">Durata contratto:</div>
+            <div class="bc-body">{{data?(getDifferenceDates(data.contract_start_date,data.contract_end_date) | formatdate):'----'}}</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
