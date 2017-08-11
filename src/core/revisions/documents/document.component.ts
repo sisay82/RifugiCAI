@@ -165,7 +165,7 @@ export class BcDocRevision {
   }
 
   removeDoc(id){
-    this.commitToFather({_id:id},true);
+    this.commitToFather({_id:id,type:Enums.File_Type.doc},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -183,7 +183,7 @@ export class BcDocRevision {
   }
 
   removeMap(id){
-    this.commitToFather({_id:id},true);
+    this.commitToFather({_id:id,type:Enums.File_Type.map},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -197,7 +197,7 @@ export class BcDocRevision {
   }
 
   removeInvoice(id){
-    this.commitToFather({_id:id},true);
+    this.commitToFather({_id:id,type:Enums.File_Type.invoice},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -398,7 +398,7 @@ export class BcDocRevision {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
       let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
-        if(!files||files.length==0){
+        if(!files){
           let queryFileSub=this.shelterService.getFilesByShelterId(this._id).subscribe(files=>{
             this.initData(files);
             this.revisionService.onChildSaveFiles(files);
