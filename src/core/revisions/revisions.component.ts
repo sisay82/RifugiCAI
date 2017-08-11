@@ -1,5 +1,6 @@
 import { Component,OnDestroy } from '@angular/core';
 import { IShelter,IFile } from '../../app/shared/types/interfaces';
+import { Enums } from '../../app/shared/types/enums';
 import { BcRevisionsService } from './revisions.service';
 import {BcSharedService} from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
@@ -13,12 +14,14 @@ import {Router,RoutesRecognized} from '@angular/router';
 })
 export class BcRevisions{
     ShelterToUpdate:IShelter;
-    Files:IFile[]=[];
+    Docs:IFile[];
+    Images:IFile[];
     saveSub:Subscription;
     loadSub:Subscription;
     saveFilesSub:Subscription;
     saveFileSub:Subscription;
     loadFilesSub:Subscription;
+    maskSaveSub:Subscription;
     maskCancelSub:Subscription;
     childDeleteSub:Subscription;
     constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService){
@@ -39,54 +42,110 @@ export class BcRevisions{
         });
 
         this.saveFileSub=revisionService.saveFile$.subscribe(obj=>{
-            if(this.Files!=undefined){
-                if(obj.remove){
-                    let f=this.Files.find(f=>f._id==obj.file._id);
-                    if(f!=undefined){
-                        this.Files.splice(this.Files.indexOf(f),1);
+            if(obj.file.type==Enums.File_Type.image){
+                if(this.Images!=undefined){
+                    if(obj.remove){
+                        let f=this.Images.find(f=>f._id==obj.file._id);
+                        if(f!=undefined){
+                            this.Images.splice(this.Images.indexOf(f),1);
+                        }
+                    }else{
+                        let fIndex=this.Images.findIndex(f=>f._id==obj.file._id);
+                        if(fIndex>-1){
+                            this.Images[fIndex]=obj.file;
+                        }else{
+                            this.Images.push(obj.file);
+                        }
                     }
                 }else{
-                    let fIndex=this.Files.findIndex(f=>f._id==obj.file._id);
-                    if(fIndex>-1){
-                        this.Files[fIndex]=obj.file;
-                    }else{
-                        this.Files.push(obj.file);
+                    if(!obj.remove){
+                        this.Images=[obj.file];
                     }
                 }
             }else{
-                if(!obj.remove){
-                    this.Files=[obj.file];
+                if(this.Docs!=undefined){
+                    if(obj.remove){
+                        let f=this.Docs.find(f=>f._id==obj.file._id);
+                        if(f!=undefined){
+                            this.Docs.splice(this.Docs.indexOf(f),1);
+                        }
+                    }else{
+                        let fIndex=this.Docs.findIndex(f=>f._id==obj.file._id);
+                        if(fIndex>-1){
+                            this.Docs[fIndex]=obj.file;
+                        }else{
+                            this.Docs.push(obj.file);
+                        }
+                    }
+                }else{
+                    if(!obj.remove){
+                        this.Docs=[obj.file];
+                    }
                 }
             }
+            
         });
 
         this.saveFilesSub=revisionService.saveFiles$.subscribe(files=>{
-            if(this.Files!=undefined){
-                for(let file of files){
-                    let fIndex=this.Files.findIndex(f=>f._id==file._id);
-                    if(fIndex>-1){
-                        this.Files[fIndex]=file;
+            for(let file of files){
+                if(file.type==Enums.File_Type.image){
+                    if(this.Images!=undefined){
+                        let fIndex=this.Images.findIndex(f=>f._id==file._id);
+                        if(fIndex>-1){
+                            this.Images[fIndex]=file;
+                        }else{
+                            this.Images.push(file);
+                        }
                     }else{
-                        this.Files.push(file);
+                        this.Images=[file]
+                    }
+                }else{
+                    if(this.Docs!=undefined){
+                        let fIndex=this.Docs.findIndex(f=>f._id==file._id);
+                        if(fIndex>-1){
+                            this.Docs[fIndex]=file;
+                        }else{
+                            this.Docs.push(file);
+                        }
+                    }else{
+                        this.Docs=[file]
                     }
                 }
-            }else{
-                this.Files=files;
             }
         });
 
         this.loadFilesSub=revisionService.loadFilesRequest$.subscribe(types=>{
-            if(this.Files!=undefined){
-                let files = this.Files.filter(f=>types.includes(f.type));
-                this.revisionService.onChildLoadFiles(files);
+            let files:IFile[]=[];
+            let retNull=false;
+            if(this.Docs!=undefined&&types.includes([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice])){
+                files=files.concat(this.Docs.filter(f=>types.includes(f.type)));
             }else{
-                this.revisionService.onChildLoadFiles(null);
+                retNull=true;
             }
+            if(this.Images!=undefined&&types.includes(Enums.File_Type.image)){
+                retNull=false;
+                files=files.concat(this.Images.filter(f=>types.includes(f.type)));
+            }else{
+                retNull=true;
+            }
+
+            if(retNull){
+                this.revisionService.onChildLoadFiles(null);
+            }else{
+                this.revisionService.onChildLoadFiles(files);
+            }
+        });
+
+        this.maskSaveSub=shared.maskSave$.subscribe(()=>{
+            delete(this.ShelterToUpdate);
+            delete(this.Docs);
+            delete(this.Images);
         });
         
         this.maskCancelSub=shared.maskCancel$.subscribe(()=>{
             delete(this.ShelterToUpdate);
-            delete(this.Files);
+            delete(this.Docs);
+            delete(this.Images);
             let disableSaveSub = this.revisionService.childDisableSaveAnswer$.subscribe(()=>{
                 shared.onMaskConfirmCancel();
                 if(disableSaveSub!=undefined){
@@ -103,7 +162,8 @@ export class BcRevisions{
     }
 
     ngOnDestroy(){
-        delete(this.Files);
+        delete(this.Docs);
+        delete(this.Images);
         delete(this.ShelterToUpdate);
         if(this.saveSub!=undefined){
             this.saveSub.unsubscribe();
@@ -122,6 +182,9 @@ export class BcRevisions{
         }
         if(this.loadFilesSub!=undefined){
             this.loadFilesSub.unsubscribe();
+        }
+        if(this.maskSaveSub!=undefined){
+            this.maskSaveSub.unsubscribe();
         }
     }
 }

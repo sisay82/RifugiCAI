@@ -125,6 +125,7 @@ export class BcImgRevision {
 
   initFile(file:IFile){
     return this.fb.group({
+      type:[file.type],
       id:[file._id],
       contentType:[file.contentType],
       name:[file.name],
@@ -155,7 +156,7 @@ export class BcImgRevision {
   }
 
   removeFile(id){
-    this.commitToFather({_id:id},true);
+    this.commitToFather({_id:id,type:Enums.File_Type.image},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -294,7 +295,7 @@ export class BcImgRevision {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
       let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
-        if(!files||files.length==0){
+        if(!files){
           let queryFileSub=this.shelterService.getImagesByShelterId(this._id).subscribe(files=>{
             this.initForm(files);
             this.revisionService.onChildSaveFiles(files);
