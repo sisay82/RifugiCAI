@@ -1,5 +1,5 @@
 import {
-  Component,Input,OnInit,OnDestroy
+  Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IManagement,ISubject } from '../../../app/shared/types/interfaces';
@@ -7,6 +7,24 @@ import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+
+@Pipe({name: 'formatdate'})
+export class FormatDate implements PipeTransform {
+    public transform(input:number): string{
+        if (!input) {
+          return '';
+        } else {
+          let year:any=0;
+          let month:any=(input%12).toFixed(0);
+          year=(input/12).toFixed(0);
+          if(year>0){
+            return year+" anni, "+month+" mesi";
+          }else{
+            return month+" mesi";
+          }
+        }
+    }
+}
 
 @Component({
   moduleId: module.id,
