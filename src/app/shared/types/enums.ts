@@ -113,7 +113,8 @@ export namespace Enums {
 
     //tipi di mappa
     export enum Maps_Type {
-        dwg=<any>"application/acad, application/x-acad, application/autocad_dwg, image/x-dwg, application/dwg, application/x-dwg, application/x-autocad, image/vnd.dwg, drawing/dwg"
+        dwg=<any>"application/acad, application/x-acad, application/autocad_dwg, image/x-dwg, application/dwg, application/x-dwg, application/x-autocad, image/vnd.dwg, drawing/dwg",
+        pdf=<any>"application/pdf"
     }
 
     //tipi di ricevuta
@@ -128,7 +129,8 @@ export namespace Enums {
 
     export enum Image_Type {
         png=<any>"image/png",
-        jpeg=<any>"image/jpeg"
+        jpeg=<any>"image/jpeg",
+        jpg=<any>"image/jpeg"
     }
 
     //tipologia scarico

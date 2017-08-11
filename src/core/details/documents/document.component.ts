@@ -85,6 +85,8 @@ export class BcDoc {
         }else if(type==Enums.File_Type.map){
             if(this.checkExtension(this.getExtension(name),["dwg"])){
                 return "map-o"
+            }else if(this.checkExtension(this.getExtension(name),["pdf"])){
+                return "file-pdf-o"
             }else{
                 return "file-text-o";
             }
