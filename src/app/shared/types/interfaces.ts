@@ -154,7 +154,7 @@ export interface IDrain{
 
 export interface IShelter{
     _id:String;
-    name:String;
+    name?:String;
     alias?:String;
     idCai?:String;
     type?:Enums.Shelter_Type;

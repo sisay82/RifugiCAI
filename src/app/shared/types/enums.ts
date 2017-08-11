@@ -132,7 +132,7 @@ export namespace Enums {
         jpeg=<any>"image/jpeg",
         jpg=<any>"image/jpeg"
     }
-
+    
     //tipologia scarico
     export enum Drain_Type {
         "IMOF fognatura",

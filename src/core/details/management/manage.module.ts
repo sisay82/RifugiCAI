@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BcDividerModule} from '../../divider/divider.module';
-import { BcManage, FormatDate } from './manage.component';
+import { BcManage,FormatDate } from './manage.component';
 import { CommonModule } from '@angular/common';
 import {BcIconModule} from '../../icon/icon.module';
 
