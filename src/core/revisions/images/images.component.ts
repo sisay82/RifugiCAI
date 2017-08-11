@@ -11,6 +11,8 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
 
+var maxImages:Number=10;
+
 @Pipe({name: 'formatsize'})
 export class FormatSizePipe implements PipeTransform {
     public transform(input:number): string{
@@ -171,7 +173,7 @@ export class BcImgRevision {
   }
 
   addDoc(){
-    if(this.newDocForm.valid&&(<FormArray>this.docsForm.controls.files).controls.length<10){
+    if(this.newDocForm.valid&&(<FormArray>this.docsForm.controls.files).controls.length<maxImages){
       this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
