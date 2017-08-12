@@ -2,8 +2,12 @@
 <div class="bc-body-strong" *ngIf="downloading">(Caricamento...)</div>
 <div style="display:flex;flex-direction:row;flex-wrap:wrap">
     <div *ngFor="let img of data" style="margin-left:1%;display:block;width:17.5%">
-        <div [full-screen]="isFullScreen(img.file._id)" class="bc-img" (click)="enlargeImage(img.file._id)">
-            <img class="img-rounded bc-img" [src]="img.url">
+        <div [full-screen]="isFullScreen(img.file._id)" class="bc-img" style="height: 100%" (click)="enlargeImage(img.file._id)">
+            <div class="img-rounded" style="height: 100%;display:table;background:black">
+                <div style="vertical-align: middle;display:table-cell">
+                    <img class="img-rounded bc-img" [src]="img.url">
+                </div>
+            </div>
             <div *ngIf="img.file.description" class="bc-body bc-description-img">{{img.file.description}}</div>
         </div>
         

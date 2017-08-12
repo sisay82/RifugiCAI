@@ -45,17 +45,22 @@
     border: 0;
     margin: auto;
     margin-top:1%;
-    max-height: 5%;
-    max-width: 75%;
     text-align: center;
     color: white;
   }
   
+  .bc-description-img{
+    position:absolute;
+    bottom:5%;
+    margin:auto;
+    width: 100%;
+  }
 }
 
 .bc-description-img{
   border-radius: 6px;
   display: block;
+  text-align: center;
   margin:1% 0;
   border-width: 1px;
   border-color: map-get($bc-light-theme-background,status-bar);
