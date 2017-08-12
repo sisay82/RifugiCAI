@@ -15,43 +15,52 @@
 
 .bc-img{
   outline: none;
-  max-width: 100%;
+  width: 100%;
+  object-fit:cover;
+  height:100%
 }
 
 .bc-img-title{
     color:map-get($bc-teal,400);
 }
 
+.bc-container-img{
+  width: 100%;
+  height:100%
+}
+
 .bc-image-full{
+  cursor: pointer;
   outline: none;
   position: fixed;
   z-index: 2000;
   left: 0;
   top: 0;
   background-color: black;
-  display: block;
-  width: 100%;
-  height: 100%;
-  img{
-    margin:auto;
-    margin-top:2%;
-    display: block;
-    max-width: 75%;
-    height: auto;
-    max-height: 90%;
+
+  .bc-container-img{
+    display: table;
+    position: absolute;
   }
 
-  div{
-    border: 0;
-    margin: auto;
-    margin-top:1%;
-    text-align: center;
-    color: white;
+  img{
+    margin:auto;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    max-width: 85%;
+    max-height: 85%;
+    object-fit:contain;
   }
   
   .bc-description-img{
+    border: 0;
+    text-align: center;
+    color: white;
     position:absolute;
-    bottom:5%;
+    bottom:4%;
     margin:auto;
     width: 100%;
   }
