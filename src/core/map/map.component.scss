@@ -1,0 +1,68 @@
+@import "../style/palette.scss";
+@import "../style/typography.scss";
+
+@include bc-typography();
+
+.bc-marker{
+    position:relative;
+
+    &:hover{
+        color:map-get($bc-teal,400);
+    }
+
+    &:hover .bc-marker-content{
+        color:black;
+    }
+
+    .bc-marker-content{
+        font-family:map-get(bc-typographic-scale(),font-family);
+        position:absolute;
+        z-index:-1;
+        background:white;
+        top:18%;
+        text-align:center;
+        left:20%;
+        width:60%;
+        height:35%;
+    } 
+}
+
+.bc-tiny-marker{
+    color:blue;
+}
+
+.bc-tooltip{
+    width:250px;
+    height:150px;
+    background:white;
+    border:0.1px;
+    border-color:black;
+    border-style:solid;
+    font-family:map-get(bc-typographic-scale(),font-family);
+    font-size:20px;
+
+    .bc-tooltip-head{
+        width:100%;
+        height:50px;
+        background:black;
+        font-family:inherit;
+        font-size:inherit;
+        text-align:center;
+        color:white;
+        position:relative;
+    }
+
+    .bc-tooltip-line{
+        width:100%;
+        height:100px;
+        top:50px;
+
+        .bc-tooltip-content-line{
+            text-align:center;
+            position:relative;
+            top:20%;
+        }
+    }
+}
+
+

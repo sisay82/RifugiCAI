@@ -181,7 +181,7 @@ export interface IFile{
     uploadDate?:Date;
     md5?:String;
     name?:String;
-    data?:Buffer;
+    data?:any;
     contentType?:String;
     type?:Enums.File_Type;
     description?:String;
