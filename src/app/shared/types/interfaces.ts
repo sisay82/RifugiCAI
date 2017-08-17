@@ -154,7 +154,7 @@ export interface IDrain{
 
 export interface IShelter{
     _id:String;
-    name:String;
+    name?:String;
     alias?:String;
     idCai?:String;
     type?:Enums.Shelter_Type;
@@ -173,4 +173,18 @@ export interface IShelter{
     catastal?:ICatastal;
     energy?:IEnergy;
     drain?:IDrain;
+}
+
+export interface IFile{
+    _id?:String;
+    size?:Number;
+    shelterId?:String;
+    uploadDate?:Date;
+    md5?:String;
+    name?:String;
+    data?:any;
+    contentType?:String;
+    type?:Enums.File_Type;
+    description?:String;
+    value?:Number;
 }

@@ -1,16 +1,41 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Router } from '@angular/router';
 import { ShelterService } from '../../app/shelter/shelter.service';
 import * as L from 'leaflet';
 import { Map } from 'leaflet';
 import { IMarker } from '../../app/shared/types/interfaces';
+
+function getRegionMarkerHtml(content,size){
+    return `<div style="font-size:`+size+`px" class="fa fa-map-marker bc-marker">
+                <div class="bc-marker-content">
+                    <div style="font-size:20%;transform: translateY(35%);">`+content+`</div>
+                </div>
+            </div>`;
+}
+
+function getNormalMarkerHtml(size){
+    return `<div style="font-size:`+size+`px" class="fa fa-map-marker bc-marker bc-tiny-marker"></div>`;
+}
+
+function getTooltip(name,municipality,province,region){
+    return `<div class="bc-tooltip">
+                <div class="bc-tooltip-head">
+                    <div style="top:20%;position:relative">`+name+`</div>
+                </div>
+                <div class="bc-tooltip-line">
+                    <div class="bc-tooltip-content-line">`+municipality||'---'+`, `+province||'---'+`</br>`+region||'---'+`</div>
+                </div>
+            </div>`;
+}
+
 @Component({
     moduleId:module.id,
     selector:'bc-map',
     templateUrl: 'map.component.html',
     styleUrls: ['map.component.scss'],
-    providers:[ShelterService]
+    providers:[ShelterService],
+    encapsulation:ViewEncapsulation.None
 })
 export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
@@ -62,7 +87,7 @@ export class BcMap implements OnInit{
             iconSize:null,
             iconAnchor:[this.normalIconSize/4,this.normalIconSize],
             popupAnchor:[0,0],
-            html:'<style>.bc-marker:hover{color:#26a69a;} .bc-marker{color:blue;font-size:'+this.normalIconSize+'px;} </style><div style="position:relative" class="fa fa-map-marker bc-marker"></div>'
+            html:getNormalMarkerHtml(this.normalIconSize)
         });
     }
 
@@ -122,14 +147,6 @@ export class BcMap implements OnInit{
         
     }
 
-    popolateMarkers(markers:IMarker[]){
-        for(let item of markers){
-            this.addMarker(
-                L.marker(item.latLng,{icon:this.normalIcon}).bindPopup(item.popup)
-                );
-        }
-    }
-
     markRegions(){
         for(let item of BcMap.latLngCountries){       
             let countryMarkerSub=this.shelterService.getConutryMarkersNumber(item.optional.id).subscribe(obj=>{
@@ -138,14 +155,7 @@ export class BcMap implements OnInit{
                         className:'',
                         iconSize:null,
                         iconAnchor:[this.regionIconSize/4,this.regionIconSize],
-                        popupAnchor:[0,0],
-                        html:  `<style>.bc-marker:hover{color:#26a69a;} .bc-marker{font-size:`+this.regionIconSize+`px;} .bc-marker-content{font-family:Roboto,Helvetica Neue, sans-serif;} .bc-marker:hover .bc-marker-content{color:black;}</style>
-                                <div style="position:relative" class="fa fa-map-marker bc-marker">
-                                    <div class="bc-marker-content" style="position:absolute;z-index:-1;background:white;top:18%;text-align:center;left:20%;width:60%;height:35%;">
-                                        <div style="font-size:20%;transform: translateY(35%);">`+obj.num+`
-                                        </div>
-                                    </div>
-                                </div>`
+                        html:  getRegionMarkerHtml(obj.num,this.regionIconSize)
                     });
                     this.addMarker(L.marker(item.latLng,{icon:regionIcon}).on("click",this.openPopupRegion,this));
                 }
@@ -165,6 +175,7 @@ export class BcMap implements OnInit{
     }
 
     moveEvent(event:L.Event){
+        console.log("B");
         if(event.target.getZoom()>7){
             this.removeMarkers();
             this.setMarkersAround(event.target.getCenter());
@@ -178,11 +189,9 @@ export class BcMap implements OnInit{
         let sheltersAroundSub = this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom()).subscribe(shelters=>{
             for(let shelter of shelters){
                 if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){
-                    let popup:string=`<div style="width:250px;height:150px;background:white;border:0.1px;border-color:black;border-style:solid;font-family:Roboto,Helvetica Neue, sans-serif;font-size:20px">
-                                    <div style="width:100%;height:50px;background:black;font-family:inherit;font-size:inherit;text-align:center;color:white;position:relative">
-                                    <div style="top:20%;position:relative">`+shelter.name+`</div></div><div style="width:100%;height:100px;top:50px;"><div style="text-align:center;position:relative;top:20%">`
-                                    +shelter.geoData.location.municipality||'---'+`, `+shelter.geoData.location.province||'---'+`</br>`+shelter.geoData.location.region||'---'+`</div></div></div>`;
-                    let tooltip:L.Tooltip=L.tooltip({permanent:true,direction:"right",offset:[50,-50],interactive:true}).setContent(popup);
+                    let popup:string=getTooltip(shelter.name,shelter.geoData.location.municipality,shelter.geoData.location.province,shelter.geoData.location.region);
+                    let tooltip:L.Tooltip=L.tooltip({permanent:true,direction:"right",offset:[25,-50],interactive:true}).setContent(popup);
+                    
                     tooltip.on("click",function(event:Event){
                         this.router.navigateByUrl("/shelter/"+shelter._id);
                     });
@@ -191,9 +200,18 @@ export class BcMap implements OnInit{
                         if(isOpen){
                             location.href="/shelter/"+shelter._id+"/(content:geographic)";
                         }
-                        this.map.eachLayer(function(layer){layer.closeTooltip()})               
-                        if(!isOpen)
-                            e.target.toggleTooltip();    
+                        this.map.eachLayer(function(layer){layer.closeTooltip()});               
+                        if(!isOpen){
+                            this.map.off('moveend');
+                            this.map.on('moveend',(ev)=>{
+                                ev.target.openTooltip(e.target._tooltip);
+                                this.map.off('moveend');
+                                this.map.on("moveend",this.moveEvent,this);
+                                
+                            });
+                            this.map.setView(e.target._latlng);
+                            e.target.toggleTooltip();
+                        }    
                     },this);
                     this.addMarker(mark);
                     this.map.closeTooltip(tooltip);
