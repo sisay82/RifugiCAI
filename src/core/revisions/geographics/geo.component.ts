@@ -41,6 +41,7 @@ export class BcGeoRevision {
             municipality:[""],
             locality:[""],
             ownerRegion:[""],
+            regional_commission:[""],
             authorityJurisdiction:[""],
             altitude:[""],//number
             latitude:[""],
@@ -162,6 +163,7 @@ export class BcGeoRevision {
                 municipality:this.geoForm.controls.municipality.value||null,
                 locality:this.geoForm.controls.locality.value||null,
                 ownerRegion:this.geoForm.controls.ownerRegion.value||null,
+                regional_commission:this.geoForm.controls.regional_commission.value||null,
                 authorityJurisdiction:this.geoForm.controls.authorityJurisdiction.value||null,
                 altitude:this.geoForm.controls.altitude.value||null,
                 latitude:this.geoForm.controls.latitude.value||null,
