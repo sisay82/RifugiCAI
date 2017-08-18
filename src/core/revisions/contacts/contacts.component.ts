@@ -232,7 +232,6 @@ export class BcContactsRevision {
     }
 
     initForm(shelter){
-        this.name=shelter.name;
         this.contacts=shelter.contacts;
         this.openings=shelter.openingTime;
         if(this.contacts!=undefined){
@@ -273,6 +272,7 @@ export class BcContactsRevision {
         return new Promise<IOpening[]>((resolve,reject)=>{
             let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.openingTime!=undefined){
+                    this.name=shelter.name;
                     if(revSub!=undefined){
                         revSub.unsubscribe();
                     }
@@ -280,6 +280,7 @@ export class BcContactsRevision {
                 }else{
                     let openSub=this.shelterService.getShelterSection(id,"openingTime").subscribe(shelter=>{
                         if(shelter.openingTime==undefined) shelter.openingTime=[] as [IOpening];
+                        this.name=shelter.name;
                         this.revisionService.onChildSave(shelter,"openingTime");
                         if(openSub!=undefined){
                             openSub.unsubscribe();
@@ -299,6 +300,7 @@ export class BcContactsRevision {
         return new Promise<IContacts>((resolve,reject)=>{
             let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.contacts!=undefined){
+                    this.name=shelter.name;
                     if(revSub!=undefined){
                         revSub.unsubscribe();
                     }
@@ -306,6 +308,7 @@ export class BcContactsRevision {
                 }else{
                     let contSub=this.shelterService.getShelterSection(id,"contacts").subscribe(shelter=>{
                         if(shelter.contacts==undefined) shelter.contacts={};
+                        this.name=shelter.name;
                         this.revisionService.onChildSave(shelter,"contacts");
                         if(contSub!=undefined){
                             contSub.unsubscribe();
