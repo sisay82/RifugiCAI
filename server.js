@@ -37,20 +37,20 @@ app.get('/*/j_spring_cas_security_check',function(req,res){
   console.log("Session ID: "+req.session.id);
   console.log(req.method+" REQUEST: "+JSON.stringify(req.query));
   console.log(req.path);
+  console.log("Check user ticket");
   let user=userList.find(obj=>obj.id==req.session.id);
   if(req.query.ticket!=undefined){
     if(user!=undefined){
       user.logged=true;
       user.ticket=req.query.ticket;
-      /*validationPromise(parsedUrl,user.ticket)
+      validationPromise(parsedUrl,user.ticket)
       .then(()=>{
-        res.status(200).location(appBaseUrl+user.resource);
+        res.redirect(appBaseUrl+user.resource);
       })
       .catch(()=>{
         user.logged=false;
-        res.status(302).location(casBaseUrl+"/login?service="+parsedUrl);
-      });*/
-      res.end();
+        res.redirect(casBaseUrl+"/login?service="+parsedUrl);
+      });
     }else{
       res.status(500).send({err:"No user info found"});
     }
@@ -63,13 +63,19 @@ app.get('/*', function(req, res) {
   console.log("Session ID: "+req.session.id);
   console.log(req.method+" REQUEST: "+JSON.stringify(req.query));
   console.log(req.path);
+   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+   res.setHeader('Access-Control-Allow-Methods', 'GET');
+   //res.header('Access-Control-Allow-Origin', '*');
+   res.setHeader('content-type', 'text/html; charset=utf-8');
   let user=userList.find(obj=>obj.id==req.session.id);
   if(user==undefined||!user.logged){
     console.log("User not logged");
     var parsedUrl=encodeURIComponent(appBaseUrl+req.path);
+    console.log(casBaseUrl+"/login?service="+parsedUrl);
     userList.push({id:req.session.id,resource:req.path,logged:false});
-    res.status(302).location(casBaseUrl+"/login?service="+parsedUrl);
+    res.redirect(casBaseUrl+"/login?service="+parsedUrl);
   }else{
+    console.log("Check user");
     var parsedUrl=encodeURIComponent(appBaseUrl+req.path);
     validationPromise(parsedUrl,user.ticket)
     .then(()=>{
@@ -77,14 +83,8 @@ app.get('/*', function(req, res) {
     })
     .catch(()=>{
       user.logged=false;
-      res.status(302).location(casBaseUrl+"/login?service="+parsedUrl);
+      res.redirect(casBaseUrl+"/login?service="+parsedUrl);
     });
-    
-  //  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  //  res.setHeader('Access-Control-Allow-Methods', 'GET');
-  // res.header('Access-Control-Allow-Origin', '*');
-  // res.setHeader('content-type', 'text/html; charset=utf-8');
-
   }
 });
 
