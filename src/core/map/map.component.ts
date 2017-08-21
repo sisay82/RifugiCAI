@@ -46,7 +46,7 @@ export class BcMap implements OnInit{
     @Input() openTooltipCenter:boolean=false;
     increaseRatio:number=1;
     private _toggle:boolean=false;
-
+    countrySheltersNumber:{region:String,marker:L.Marker}[]=[];
     public static defaultCenter:L.LatLng=L.latLng(41.9051,12.4879);
     public static latLngCountries: IMarker[]=[
         {latLng:new L.LatLng(45.7372,7.3206),popup:"",optional:{id:"Valle d'Aosta"}},
@@ -144,20 +144,30 @@ export class BcMap implements OnInit{
 
     markRegions(){
         for(let item of BcMap.latLngCountries){       
-            let countryMarkerSub=this.shelterService.getConutryMarkersNumber(item.optional.id).subscribe(obj=>{
-                if(obj!=undefined&&obj.num!=undefined&&obj.num>0){
-                    let regionIcon= L.divIcon({
-                        className:'',
-                        iconSize:null,
-                        iconAnchor:[this.regionIconSize/4,this.regionIconSize],
-                        html:  getRegionMarkerHtml(obj.num,this.regionIconSize)
-                    });
-                    this.addMarker(L.marker(item.latLng,{icon:regionIcon}).on("click",this.openPopupRegion,this));
-                }
-                if(countryMarkerSub!=undefined){
-                    countryMarkerSub.unsubscribe();
-                }
-            });
+            let m=this.countrySheltersNumber.find(obj=>obj.region.toLowerCase().indexOf(item.optional.id.toLowerCase())>-1);
+            if(m==undefined){
+                let countryMarkerSub=this.shelterService.getConutryMarkersNumber(item.optional.id).subscribe(obj=>{
+                    if(obj!=undefined&&obj.num!=undefined&&obj.num>0){
+                        let regionIcon= L.divIcon({
+                            className:'',
+                            iconSize:null,
+                            iconAnchor:[this.regionIconSize/4,this.regionIconSize],
+                            html:  getRegionMarkerHtml(obj.num,this.regionIconSize)
+                        });
+                        let mark:L.Marker=L.marker(item.latLng,{icon:regionIcon});
+                        this.countrySheltersNumber.push({marker:mark,region:item.optional.id})            
+                        this.addMarker(mark.on("click",this.openPopupRegion,this));
+                    }else{
+                        this.countrySheltersNumber.push({marker:null,region:item.optional.id})
+                    }
+                    if(countryMarkerSub!=undefined){
+                        countryMarkerSub.unsubscribe();
+                    }
+                });
+            }else{
+                if(m.marker!=null)
+                    this.addMarker(m.marker.on("click",this.openPopupRegion,this));
+            }
         }
     }
 
