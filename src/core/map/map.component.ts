@@ -42,7 +42,6 @@ export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
     @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
-    @Input() windowSize:{width:string,height:string};
     @Input() initialCenter:Subject<L.LatLng|L.LatLngExpression>;
     @Input() initialZoom:number=6;
     @Input() openTooltipCenter:boolean=false;
@@ -100,10 +99,7 @@ export class BcMap implements OnInit{
 
     ngOnInit(){
         this.getMapInit('map');
-        if(this.windowSize!=undefined){
-            document.getElementById("map").style.width=this.windowSize.width;
-            document.getElementById("map").style.height=this.windowSize.height;
-        }
+        this.map.invalidateSize();
         this.map.setView(BcMap.defaultCenter,this.initialZoom);
         if(this.initialCenter!=undefined){
             let initialCenterSub=this.initialCenter.subscribe(value=>{
@@ -115,6 +111,7 @@ export class BcMap implements OnInit{
                 }
             });
         }
+        
         if(this.initialZoom<=7){
             this.markRegions();
         }
@@ -132,7 +129,6 @@ export class BcMap implements OnInit{
     }
 
     addMarker(marker:L.Marker){
-        this.map.invalidateSize();
         this.markerPane.addLayer(marker);
     }
 
@@ -242,15 +238,4 @@ export class BcMap implements OnInit{
             }
         }
     }
-
-    clickCloseEvent(event:Event){    
-        if(this._toggle){
-            document.getElementById("map").style.width=this.windowSize.width;
-            document.getElementById("map").style.height=this.windowSize.height;
-            document.getElementById("map").style.position="relative";
-            this.map.invalidateSize();
-            this._toggle=false;
-        }
-    }
-
 }
