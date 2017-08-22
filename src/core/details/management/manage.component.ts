@@ -1,5 +1,5 @@
 import {
-  Component,Input,OnInit,OnDestroy
+  Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IManagement,ISubject } from '../../../app/shared/types/interfaces';
@@ -7,6 +7,24 @@ import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+
+@Pipe({name: 'formatdate'})
+export class FormatDate implements PipeTransform {
+    public transform(input:number): string{
+        if (!input) {
+          return '';
+        } else {
+          let year:any=0;
+          let month:any=Math.trunc(input%12);
+          year=Math.trunc(input/12);
+          if(year>0){
+            return year+" anni, "+month+" mesi";
+          }else{
+            return month+" mesi";
+          }
+        }
+    }
+}
 
 @Component({
   moduleId: module.id,
@@ -49,6 +67,17 @@ export class BcManage {
         }
       })
     });
+  }
+
+  getDifferenceDates(date1:Date,date2:Date){
+    let d1=new Date(date1);
+    let d2=new Date(date2);
+    if(d1!=undefined&&d2!=undefined){
+      return Math.abs((d2.getMonth() - d1.getMonth())+(d2.getFullYear() - d1.getFullYear())*12);
+    }else{
+      return null;
+    }
+    
   }
 
   gotoSite(webSite:string){
