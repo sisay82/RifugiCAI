@@ -15,8 +15,8 @@ export class FormatDate implements PipeTransform {
           return '';
         } else {
           let year:any=0;
-          let month:any=(input%12).toFixed(0);
-          year=(input/12).toFixed(0);
+          let month:any=Math.trunc(input%12);
+          year=Math.trunc(input/12);
           if(year>0){
             return year+" anni, "+month+" mesi";
           }else{
@@ -73,7 +73,7 @@ export class BcManage {
     let d1=new Date(date1);
     let d2=new Date(date2);
     if(d1!=undefined&&d2!=undefined){
-      return Math.abs(d2.getMonth() - d1.getMonth())+Math.abs(d2.getFullYear() - d1.getFullYear())*12;
+      return Math.abs((d2.getMonth() - d1.getMonth())+(d2.getFullYear() - d1.getFullYear())*12);
     }else{
       return null;
     }
