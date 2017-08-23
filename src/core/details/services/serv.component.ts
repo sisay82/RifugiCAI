@@ -33,14 +33,16 @@ export class BcServ {
       let shelSub=this.shelterService.getShelterSection(params['id'],"services").subscribe(shelter=>{
         if(shelter.services!=undefined){
           for(let service of shelter.services){
-            let s = this.services.find(ser=>ser.category.toLowerCase().indexOf(service.category.toLowerCase())>-1);
-            if(s==undefined){
-              this.services.push(service);
-            }else{
-              for(let tag of service.tags){
-                let t = s.tags.find(cTag=>cTag.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
-                if(t==undefined){
-                  s.tags.push(tag);
+            if(service.category!=undefined){
+              let s = this.services.find(ser=>ser.category.toLowerCase().indexOf(service.category.toLowerCase())>-1);
+              if(s==undefined){
+                this.services.push(service);
+              }else{
+                for(let tag of service.tags){
+                  let t = s.tags.find(cTag=>cTag.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
+                  if(t==undefined){
+                    s.tags.push(tag);
+                  }
                 }
               }
             }

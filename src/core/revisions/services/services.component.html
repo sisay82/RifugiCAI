@@ -4,106 +4,23 @@
         <div *ngFor="let service of servForm.controls.services.controls;let i = index">
             <div [formGroupName]="i">
                 <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{service.controls.category.value}}</div>
-                    <div style="display: flex;flex-direction:row;align-items:center">
-                        <div class="bc-revision-services">
-                            <bc-text-input formControlName="category" required=true title="Categoria" [displayError]="displayError"></bc-text-input>
-                        </div>
-                        <bc-icon (click)="removeService(i)" class="bc-add-tag" name="times" size=s></bc-icon>
-                    </div>
-                    <div formArrayName="tags">
-                        <div *ngFor="let tag of service.controls.tags.controls;let j = index">
-                            <div style="position:relative;height:inherit" [formGroupName]="j">
-                                <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                                    <div class="bc-revision-services-tags">
-                                        <bc-text-input formControlName="key" required="true" title="Informazione" [displayError]="displayError"></bc-text-input>
-                                    </div>
-                                    <div class="bc-revision-services-tags">
-                                        <bc-text-input formControlName="value" title="Valore" [displayError]="displayError"></bc-text-input>
-                                    </div>
-                                    <div style="margin-left:1%">
-                                        <bc-checkbox-input formControlName="value"></bc-checkbox-input>
-                                    </div>
-                                    <bc-icon (click)="removeTag(i,j)" class="bc-add-tag" name="times" size=s></bc-icon>
+                <div formArrayName="tags">
+                    <div *ngFor="let tag of service.controls.tags.controls;let j = index">
+                        <div style="position:relative;height:inherit" [formGroupName]="j">
+                            <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
+                                <div class="bc-revision-services-tags">
+                                    <div class="bc-body" style="white-space:nowrap;flex:1">{{tag.controls.key.value}}</div>
+                                </div>
+                                <div class="bc-revision-services-tags">
+                                    <bc-text-input formControlName="value" [validator]="getValidator(tag.value.type)" title="Valore" [displayError]="displayError"></bc-text-input>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <br>
-                    <div (click)="toggleTag(i)" class="bc-body bc-revision-services-tags bc-add-tag" style="white-space:nowrap;flex:1">
-                        <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
-                        Aggiungi attributo
-                    </div>
-                    <div *ngIf="!isHiddenTag(i)">
-                        <form [formGroup]="newTagForm">
-                            <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                                <div class="bc-revision-services-tags">
-                                    <bc-text-input formControlName="newTagKey" [displayError]="invalidTag"></bc-text-input>
-                                </div>
-                                <div class="bc-revision-services-tags">
-                                    <bc-text-input formControlName="newTagValue" [displayError]="invalidTag"></bc-text-input>
-                                </div>
-                                <div style="margin-left:1%">
-                                    <bc-checkbox-input formControlName="newTagValue"></bc-checkbox-input>
-                                </div>
-                                <bc-icon (click)="addNewTag(i)" class="bc-add-tag" name="check" size=s></bc-icon>
-                            </div>
-                        </form>
-                    </div>
-                <br>
+                </div>
                 <bc-divider></bc-divider>
             </div>
             <br>
         </div>
     </div>
 </form>
-<div (click)="toggleNewService()" class="bc-body bc-add-tag" style="display:inline;white-space:nowrap;flex:1">
-    <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
-    Aggiungi categoria
-</div>
-<div *ngIf="!isHiddenNewService()">
-    <form [formGroup]="newServiceForm">
-        <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
-            <div class="bc-revision-services">
-                <bc-text-input formControlName="newServiceCategory" title="Categoria" [displayError]="invalidService"></bc-text-input>
-            </div>
-            <bc-icon (click)="addNewService()" class="bc-add-tag" name="check" size=s></bc-icon>
-        </div>
-        <div formArrayName="newServiceTags">
-            <div *ngFor="let tag of newServiceForm.controls.newServiceTags.controls;let j = index">
-                <div style="position:relative;height:inherit" [formGroupName]="j">
-                    <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                        <div class="bc-revision-services-tags">
-                            <bc-text-input formControlName="key" required="true" title="Informazione" [displayError]="invalidService"></bc-text-input>
-                        </div>
-                        <div class="bc-revision-services-tags">
-                            <bc-text-input formControlName="value" title="Valore" [displayError]="invalidService"></bc-text-input>
-                        </div>
-                        <div style="margin-left:1%">
-                            <bc-checkbox-input  formControlName="value"></bc-checkbox-input>
-                        </div>
-                        <bc-icon (click)="removeNewTag(j)" class="bc-add-tag" name="times" size=s></bc-icon>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div (click)="toggleNewTag()" class="bc-body bc-revision-services-tags bc-add-tag" style="white-space:nowrap;flex:1">
-            <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
-            Aggiungi attributo
-        </div>
-        <div *ngIf="!isNewTagHidden()">
-            <div  style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                <div class="bc-revision-services-tags">
-                    <bc-text-input formControlName="newServiceTagKey" [displayError]="invalidService"></bc-text-input>
-                </div>
-                <div class="bc-revision-services-tags">
-                    <bc-text-input formControlName="newServiceTagValue" [displayError]="invalidService"></bc-text-input>
-                </div>
-                <div style="margin-left:1%">
-                    <bc-checkbox-input formControlName="newServiceTagValue"></bc-checkbox-input>
-                </div>
-                <bc-icon (click)="addNewServiceTag()" class="bc-add-tag" name="check" size=s></bc-icon>
-            </div>
-        </div>
-    </form>
-</div>
-

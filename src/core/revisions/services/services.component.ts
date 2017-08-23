@@ -10,6 +10,96 @@ import { Animations } from './serviceAnimation';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
+var IServiceList = class {
+    pernottamento:{
+        camerate:Number;
+        cuccette:Number;
+        cuccette_invernali:Number;
+        tavolato:Number;
+        posti_totali:Number;
+        vendita_sacco_lenzuolo:String;
+    };
+    ristorazione:{
+        ristorante:String;
+        accesso_alla_cucina:String;
+    };
+    acqua:{
+        acqua_in_rifugio:String;
+        acqua_calda:String;
+    };
+    servizi_igenici:{
+        docce:Number;
+        WC_in_camera:Number;
+        WC_uso_comune:Number;
+    };
+    elettricità:{
+        elettricità:String;
+        punti_ricarica_camere:Number;
+        punti_ricarica_spazi_comuni:Number;
+    };
+    WIFI_e_GSM:{
+        WIFI:String;
+        segnale_GSM:String;
+        gestore_telefonia_mobile:String;
+    };
+    accessibilità:{
+        accessibilità_ai_disabili:String;
+        accessibilità_macchina:String;
+        accessibilità_animali_domestici:String;
+        stanze_dedicate:Number;
+    };
+    servizi_aggiuntivi:{
+        pagamento_POS:String;
+        convenzioni:String;
+        richiesta_di_rifornire_il_rifugio:String;
+    };
+
+    constructor(){
+        this.pernottamento={
+            camerate:0,
+            cuccette:0,
+            cuccette_invernali:0,
+            tavolato:0,
+            posti_totali:0,
+            vendita_sacco_lenzuolo:""
+        };
+        this.ristorazione={
+            ristorante:"",
+            accesso_alla_cucina:""
+        };
+        this.acqua={
+            acqua_calda:"",
+            acqua_in_rifugio:""
+        }
+        this.servizi_igenici={
+            docce:0,
+            WC_in_camera:0,
+            WC_uso_comune:0
+        }
+        this.elettricità={
+            elettricità:"",
+            punti_ricarica_camere:0,
+            punti_ricarica_spazi_comuni:0
+        };
+        this.WIFI_e_GSM={
+            WIFI:"",
+            segnale_GSM:"",
+            gestore_telefonia_mobile:""
+        };
+        this.accessibilità={
+            accessibilità_ai_disabili:"",
+            accessibilità_macchina:"",
+            accessibilità_animali_domestici:"",
+            stanze_dedicate:0
+        };
+        this.servizi_aggiuntivi={
+            pagamento_POS:"",
+            convenzioni:"",
+            richiesta_di_rifornire_il_rifugio:""
+        };
+    }
+}
+
 @Component({
   moduleId: module.id,
   selector: 'bc-serv-revision',
@@ -43,7 +133,6 @@ export class BcServRevision {
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.servForm = fb.group({
             services:fb.array([])
-            
         }); 
 
         this.newServiceForm = fb.group({
@@ -205,7 +294,7 @@ export class BcServRevision {
             tags:this.fb.array([])
         });
         for(let tag of service.tags){
-            (<FormArray>group.controls.tags).push(this.initTag(tag.key,tag.value));
+            (<FormArray>group.controls.tags).push(this.initTag(tag.key,tag.value,tag.type));
         }
 
         return group;        
@@ -277,11 +366,19 @@ export class BcServRevision {
         }
     }
 
-    initTag(key:String,value:String){
-        return this.fb.group({
-            key:[key],
-            value: [value]
-        });
+    initTag(key:String,value:String,type?:String){
+        if(type){
+            return this.fb.group({
+                key:[key],
+                value: [value],
+                type:type
+            });
+        }else{
+            return this.fb.group({
+                key:[key],
+                value: [value]
+            });
+        }
     }
 
     save(confirm){
@@ -337,28 +434,68 @@ export class BcServRevision {
         }
     }
 
+    getValidator(value){
+        switch(value){
+            case("number"):{
+                return "numberValidator";
+            };
+            case("string"):{
+                return "stringValidator";
+            };
+            default:{
+                return "stringValidator"; 
+            }
+        }
+    }
+
+    toTitleCase(input:string): string{
+        if (!input) {
+            return '';
+        } else {
+            return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1) )).replace(/_/g," ");
+        }
+    }
+
     initForm(shelter:IShelter){
         this.name=shelter.name;
-        for(let service of shelter.services){
-            const currentService:FormGroup=<FormGroup>(<FormArray>this.servForm.controls.services).controls.find(serv=>serv.value.category.toLowerCase().indexOf(service.category.toLowerCase())>-1);
-            if(currentService==undefined){
-                this.serviceList.push({_id:service._id,category:service.category,tags:service.tags});
-                (<FormArray>this.servForm.controls.services).push(this.initService(service));
-            }else{
-                this.serviceListChange=true;
-                this.newServiceAdded=true;
-                for(let tag of service.tags){
-                    let currentTag:FormGroup=<FormGroup>(<FormArray>currentService.controls.tags).controls.find(t=>
-                        t.value.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
-                    if(currentTag==undefined){
-                        (<FormArray>currentService.controls.tags).push(this.initTag(tag.key,tag.value));
+        let serviceList=new IServiceList();
+        for(let category of Object.getOwnPropertyNames(serviceList)){
+            let s:IService={}
+            s.name=s.category=this.toTitleCase(category);
+            s.tags=[] as [ITag];
+            let serv=shelter.services.find(obj=>obj.category.toLowerCase().indexOf(s.category.toLowerCase())>-1);
+            for(let service of Object.getOwnPropertyNames(serviceList[category])){
+                let tag={key:this.toTitleCase(service),value:null,type:typeof(serviceList[category][service])};
+                if(serv!=undefined){
+                    s._id=serv._id;
+                    let t=serv.tags.find(obj=>obj.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
+                    if(t!=undefined){
+                        tag.value=t.value;
+                    }
+                }else{
+                    this.serviceListChange=true;
+                }
+                s.tags.push(tag);
+            }
+            this.serviceList.push(s);
+            (<FormArray>this.servForm.controls.services).push(this.initService(s));
+        }
+        let servRemove:IService[]=shelter.services.filter(obj=>{
+            if(obj._id){
+                for(let serv of this.serviceList){
+                    if(serv._id){
+                        if(serv._id.toLowerCase().indexOf(obj._id.toString())>-1){
+                            return false;
+                        }
                     }
                 }
-                this.serviceToRemove.push(service._id);
             }
             
-        }
-
+            return true;
+        });
+        servRemove.forEach(val=>{
+            this.serviceToRemove.push(val._id);
+        });
     }  
 
     ngOnDestroy(){

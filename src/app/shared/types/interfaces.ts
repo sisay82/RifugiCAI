@@ -53,11 +53,15 @@ export interface ILocation{
     longitude?:Number;
     massif?:String;
     valley?:String;
+    ski_area?:String;
+    protected_area?:String;
+    site?:String;
 }
 
 export interface ITag{
     key:String;
     value?:String;
+    type?:String;
 }
 
 export interface IGeographic{
