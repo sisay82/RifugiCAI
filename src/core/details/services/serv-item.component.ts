@@ -10,7 +10,7 @@ export class TitleCasePipe implements PipeTransform {
         if (!input) {
             return '';
         } else {
-            return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1).toLowerCase() ));
+            return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1) )).replace(/_/g," ");
         }
     }
     
@@ -26,18 +26,4 @@ export class TitleCasePipe implements PipeTransform {
 export class BcServItem {
   @Input() item:IService;
   options:ITag[]=[];
-  checks:ITag[]=[];
-
-  ngOnInit(){
-    if(this.item!=undefined&&this.item.tags){
-      for(let it of this.item.tags){
-        if(it.value=="true"||it.value=="false"){
-          this.checks.push(it);
-        }else{
-          this.options.push(it);
-        }
-      }
-    }
-    
-  }
 }

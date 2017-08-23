@@ -1,7 +1,7 @@
 <form style="position:relative" [formGroup]="contactForm">
     <div style="display:block;margin-left:4px;background:white">
         <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
-        <div class="bc-h6 bc-contact-title">Contatti</div>
+        <div class="bc-h6 bc-contact-title">Contatti del rifugio</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-contact">
                 <bc-text-input formControlName="fixedPhone" title="Telefono" validate="stringValidator" [displayError]="displayError"></bc-text-input>
