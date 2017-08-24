@@ -3,11 +3,11 @@
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Telefono:</div>
-            <div class="bc-body">{{contacts?((contacts.fixedPhone | prefixPipe) || '------------'):'------------'}}</div>
+            <div class="bc-body">{{contacts?(contacts.fixedPhone || '------------'):'------------'}}</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Cellulare:</div>
-            <div class="bc-body">{{contacts?((contacts.mobilePhone | prefixPipe) || '------------'):'------------'}}</div>
+            <div class="bc-body">{{contacts?(contacts.mobilePhone || '------------'):'------------'}}</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -21,9 +21,10 @@
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">PEC:</div>
-            <div class="bc-body">{{contacts?(contacts.mailPec || '------------'):'------------'}}</div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
+            <div class="bc-body-strong" style="margin-right:4px">Link prenotazione:</div>
+            <div *ngIf="contacts.prenotation_link!=null" (click)="gotoSite(contacts.prenotation_link)" class="bc-body bc-link">{{contacts.prenotation_link}}</div>
+            <div class="bc-body" *ngIf="contacts.prenotation_link==null">------------</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Sito web:</div>
