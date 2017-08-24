@@ -14,7 +14,8 @@ export namespace Enums {
         "Gas",
         "Solare",
         "Legna",
-        "Assente"
+        "Assente",
+        "Combinato"
     }
 
     //tipo classe energetica
@@ -88,14 +89,56 @@ export namespace Enums {
         "A",
         "B",
         "C",
-        "D"
+        "D",
+        "E"
     }
 
+    //tipo di file
+    export enum File_Type {
+        doc,
+        map,
+        invoice,
+        image
+    }
+
+    //tipi di documento
+    export enum Docs_Type {
+        txt=<any>"text/plain",
+        pdf=<any>"application/pdf",
+        doc=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        docx=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        xls=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        xlsx=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    }
+
+    //tipi di mappa
+    export enum Maps_Type {
+        dwg=<any>"application/acad, application/x-acad, application/autocad_dwg, image/x-dwg, application/dwg, application/x-dwg, application/x-autocad, image/vnd.dwg, drawing/dwg",
+        pdf=<any>"application/pdf"
+    }
+
+    //tipi di ricevuta
+    export enum Invoices_Type {
+        txt=<any>"text/plain",
+        pdf=<any>"application/pdf",
+        doc=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        docx=<any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        xls=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        xlsx=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    }
+
+    export enum Image_Type {
+        png=<any>"image/png",
+        jpeg=<any>"image/jpeg",
+        jpg=<any>"image/jpeg"
+    }
+    
     //tipologia scarico
     export enum Drain_Type {
         "IMOF fognatura",
         "IMOF pozzo perdente",
-        "IMOF dispersore sottosuolo"
+        "IMOF dispersore sottosuolo",
+        "IMOF trasporto a valle"
     }
 
     //coerenza tipologica
@@ -116,7 +159,8 @@ export namespace Enums {
     export enum Owner_Type
     {
         Custode,
-        Proprietario
+        Proprietario,
+        Gestore
     }
 
     //tipo custodia

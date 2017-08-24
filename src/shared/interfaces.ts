@@ -15,11 +15,13 @@ export interface IMarker{
 }
 
 export interface IButton {
-    ref?:any;
-    icon?:string;
-    dark_theme?:Boolean;
-    text?:string;
-    action?:Function;
+    ref: any;
+    icon?: string;
+    icon_size?:string;
+    dark_theme?: Boolean;
+    text?: string;
+    enabled?: Boolean;
+    action?: Function;
 }
 
 export interface IMenuElement{
@@ -35,7 +37,7 @@ export interface IMenuLayer{
 }
 
 export interface IMenu{
-    elements:[IMenuElement];
+    layers:[IMenuLayer];
 }
 
 export interface ILocation{
@@ -51,11 +53,15 @@ export interface ILocation{
     longitude?:Number;
     massif?:String;
     valley?:String;
+    ski_area?:String;
+    protected_area?:String;
+    site?:String;
 }
 
 export interface ITag{
     key:String;
     value?:String;
+    type?:String;
 }
 
 export interface IGeographic{
@@ -106,6 +112,7 @@ export interface IManagement{
     contract_end_date?:Date;
     contract_duration?:String;
     contract_fee?:Number;
+    reference?:String;
     webSite?:String;
     self_management?:Boolean;
     valuta?:String;
@@ -152,7 +159,7 @@ export interface IDrain{
 
 export interface IShelter{
     _id:String;
-    name:String;
+    name?:String;
     alias?:String;
     idCai?:String;
     type?:Enums.Shelter_Type;
@@ -171,4 +178,18 @@ export interface IShelter{
     catastal?:ICatastal;
     energy?:IEnergy;
     drain?:IDrain;
+}
+
+export interface IFile{
+    _id?:String;
+    size?:Number;
+    shelterId?:String;
+    uploadDate?:Date;
+    md5?:String;
+    name?:String;
+    data?:any;
+    contentType?:String;
+    type?:Enums.File_Type;
+    description?:String;
+    value?:Number;
 }
