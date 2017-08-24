@@ -6,21 +6,17 @@
                 <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{service.controls.category.value}}</div>
                 <div formArrayName="tags">
                     <div *ngFor="let tag of service.controls.tags.controls;let j = index">
-                        <div style="position:relative;height:inherit" [formGroupName]="j">
-                            <div style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                                <div class="bc-revision-services-tags">
-                                    <div class="bc-body" style="white-space:nowrap;flex:1">{{tag.controls.key.value}}</div>
-                                </div>
-                                <div class="bc-revision-services-tags">
-                                    <bc-text-input formControlName="value" [validator]="getValidator(tag.value.type)" title="Valore" [displayError]="displayError"></bc-text-input>
-                                </div>
+                        <div [formGroupName]="j" style="display: flex;flex-direction:row;height:inherit;align-items:center">
+                            <div class="bc-body" style="white-space:nowrap">{{tag.controls.key.value}}:</div>
+                            <div class="bc-revision-services-tags">
+                                <bc-text-input formControlName="value" [validator]="getValidator(tag.value.type)" [displayError]="displayError"></bc-text-input>
                             </div>
                         </div>
+                        <br>
                     </div>
                 </div>
                 <bc-divider></bc-divider>
             </div>
-            <br>
         </div>
     </div>
 </form>
