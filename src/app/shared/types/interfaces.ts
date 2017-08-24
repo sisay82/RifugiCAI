@@ -112,6 +112,7 @@ export interface IManagement{
     contract_end_date?:Date;
     contract_duration?:String;
     contract_fee?:Number;
+    reference?:String;
     webSite?:String;
     self_management?:Boolean;
     valuta?:String;

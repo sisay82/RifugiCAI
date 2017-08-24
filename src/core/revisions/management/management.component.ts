@@ -45,6 +45,7 @@ export class BcManagementRevision {
             contract_fee:[""],
             valuta:[""],
             rentType:[""],
+            reference:[""],
             pickupKey:[""],
             self_management:[""],
             subjects:fb.array([]),
@@ -194,7 +195,8 @@ export class BcManagementRevision {
                 valuta:this.managForm.controls["valuta"].value||null,
                 rentType:this.managForm.controls["rentType"].value||null,
                 self_management:this.managForm.controls["self_management"].value||null,
-                pickupKey:this.managForm.controls["pickupKey"].value||null
+                pickupKey:this.managForm.controls["pickupKey"].value||null,
+                reference:this.managForm.controls["reference"].value||null
             };
 
             let wSite=null;

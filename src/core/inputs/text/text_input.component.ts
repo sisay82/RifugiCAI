@@ -17,7 +17,7 @@ function validateDate(value){
     return null;
 }
 
-export function parseDate(input:String):Date{// dd-mm-yy | yy/mm/dd
+export function parseDate(input:String,removeYear?:boolean):Date{// dd-mm-yy | yy/mm/dd
     if(input!=null&&input!=""){
         if(input.indexOf("-")>-1){
             if(input.indexOf("/")>-1){
@@ -35,7 +35,11 @@ export function parseDate(input:String):Date{// dd-mm-yy | yy/mm/dd
                     }
                     return (new Date(Number.parseInt(year), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
                 }else{
-                    return null;
+                    if(parts.length==2){
+                        return (new Date((new Date(Date.now())).getFullYear(), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
+                    }else{
+                        return null;
+                    }
                 }
             }
         }else if(input.indexOf("/")>-1){
@@ -54,7 +58,11 @@ export function parseDate(input:String):Date{// dd-mm-yy | yy/mm/dd
                     }
                     return (new Date(Number.parseInt(year), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
                 }else{
-                    return null;
+                    if(parts.length==2){
+                        return (new Date((new Date(Date.now())).getFullYear(), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
+                    }else{
+                        return null;
+                    }
                 }
             }
         }
@@ -118,6 +126,7 @@ export class BcTextInputErrorStyler {
 export class BcTextInput implements ControlValueAccessor {
     propagateChange = (_: any) => {};
     invalid:boolean=false;
+    @Input() options:any;
     @Input() value=null;
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
@@ -176,14 +185,35 @@ export class BcTextInput implements ControlValueAccessor {
         this.propagateChange(this.value);
     }
 
-    getValue(){
+    getValue(){        
         if(this.value===true||this.value=="true") {
             return 'si';
         }
         else if(this.value=="false"||(this.value===false&&this.value!=="")) {
             return 'no'; 
         }
-        else return this.value;
+        else{
+            if(this.options){
+                if(this.options.removeYear){
+                    let date=parseDate(this.value);
+                    if(date){
+                        if(date.toString()!="Invalid Date"){
+                            console.log(parseDate(this.value));
+                            console.log(parseDate(this.value).toLocaleString("en-US",{month:'numeric',day:'numeric'}));
+                            return parseDate(this.value,true).toLocaleDateString("it-IT",{month:'numeric',day:'numeric'})
+                        }else{
+                            return this.value;
+                        }
+                    }else{
+                        return this.value;
+                    }
+                }else{
+                    return this.value;
+                }
+            }else{
+                return this.value;
+            }
+        } 
     }
 
     validate(c:FormControl){

@@ -8,11 +8,23 @@ import { Enums } from '../../../app/shared/types/enums';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 
+@Pipe({name: 'prefixPipe'})
+export class PrefixPipe implements PipeTransform {
+    public transform(input:string): string{
+        if (!input) {
+            return '----';
+        } else {
+            return "+39"+input;
+        }
+    }
+    
+}
+
 @Pipe({name: 'formatdate'})
 export class FormatDate implements PipeTransform {
     public transform(input:number): string{
         if (!input) {
-          return '';
+          return '----';
         } else {
           let year:any=0;
           let month:any=Math.trunc(input%12);
