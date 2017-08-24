@@ -29,18 +29,18 @@
                 <bc-text-input formControlName="propWebSite" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="rent" title="Canone annuale (€)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                <bc-select-input enumName="Possession_Type" formControlName="propPossessionType" title="Tipo possesso" [displayError]="displayError"></bc-select-input>
+            </div>
+            <div class="bc-revision-management">
+                <bc-text-input formControlName="propContract_fee" title="Canone annuale (€, anche stimato)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <bc-select-input enumName="Possession_Type" formControlName="period" title="Tipo possesso" [displayError]="displayError"></bc-select-input>
+                <bc-text-input formControlName="propContract_start_date" validator="validateDate" title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_start_date" validator="validateDate" title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
-            </div>
-            <div class="bc-revision-management">
-                <bc-text-input formControlName="contract_end_date" validator="validateDate" title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
+                <bc-text-input formControlName="propContract_end_date" validator="validateDate" title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <bc-divider></bc-divider>
@@ -79,6 +79,22 @@
                     </div>
                     <div class="bc-revision-management">
                         <bc-text-input formControlName="webSite" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
+                    </div>
+                </div>
+                <div style="display: flex;flex-direction:row">
+                    <div class="bc-revision-management">
+                        <bc-text-input formControlName="contract_start_date" validator="validateDate" title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
+                    </div>
+                    <div class="bc-revision-management">
+                        <bc-text-input formControlName="contract_end_date" validator="validateDate" title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
+                    </div>
+                    <div class="bc-revision-management">
+                        <bc-select-input enumName="Possession_Type" formControlName="possession_type" title="Tipo possesso" [displayError]="displayError"></bc-select-input>
+                    </div>
+                </div>
+                <div style="display: flex;flex-direction:row">
+                    <div class="bc-revision-management">
+                        <bc-text-input formControlName="contract_fee" title="Canone annuale (€, anche stimato)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                 </div>
             </div>
@@ -128,6 +144,22 @@
             </div>
             <div class="bc-revision-management">
                 <bc-text-input formControlName="newWebSite" title="Sito web" validator="urlValidator" [displayError]="invalid"></bc-text-input>
+            </div>
+        </div>
+        <div style="display: flex;flex-direction:row">
+            <div class="bc-revision-management">
+                <bc-text-input formControlName="newContract_start_date" validator="validateDate" title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
+            </div>
+            <div class="bc-revision-management">
+                <bc-text-input formControlName="newContract_end_date" validator="validateDate" title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
+            </div>
+            <div class="bc-revision-management">
+                <bc-select-input enumName="Possession_Type" formControlName="newPossessionType" title="Tipo possesso" [displayError]="displayError"></bc-select-input>
+            </div>
+        </div>
+        <div style="display: flex;flex-direction:row">
+            <div class="bc-revision-management">
+                <bc-text-input formControlName="newContract_fee" title="Canone annuale (€, anche stimato)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
     </form>

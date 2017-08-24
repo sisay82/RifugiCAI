@@ -88,6 +88,7 @@ export interface IContacts{
     role?:Enums.Owner_Type;
     fixedPhone?:String;
     mobilePhone?:String;
+    prenotation_link?:String;
     mailPec?:String;
     emailAddress?:String;
     webAddress?:String;
@@ -103,20 +104,19 @@ export interface ISubject{
     email?:String;
     webSite?:String;
     type?:String;
-}
-
-export interface IManagement{
-    rent?:Number;
-    period?:Enums.Possession_Type;
     contract_start_date?:Date;
     contract_end_date?:Date;
     contract_duration?:String;
     contract_fee?:Number;
+    possession_type?:Enums.Possession_Type;
+}
+
+export interface IManagement{
+    rentType?:Enums.Custody_Type;
     reference?:String;
     webSite?:String;
     self_management?:Boolean;
     valuta?:String;
-    rentType?:Enums.Custody_Type;
     pickupKey?:Boolean;
     subject?:[ISubject];
 }
@@ -151,6 +151,7 @@ export interface IDrain{
     type?:Enums.Drain_Type;
     regulation?:Boolean;
     oilSeparator?:Boolean;
+    water_certification?:Boolean;
     recycling?:Boolean;
     water_type?:Enums.Water_Type;
     water_availability?:Enums.Water_Availability;

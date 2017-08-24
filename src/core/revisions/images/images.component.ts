@@ -13,27 +13,6 @@ import 'rxjs/Rx';
 
 var maxImages:Number=10;
 
-@Pipe({name: 'formatsize'})
-export class FormatSizePipe implements PipeTransform {
-    public transform(input:number): string{
-        if (!input) {
-          return '';
-        } else {
-          let size="B";
-          let num=input;
-          if(num>1024){
-            size="KB";
-            num/=1024;
-            if(num>1024){
-              size="MB";
-              num/=1024;
-            }
-          }
-          return num.toFixed(2) + " " + size;
-        }
-    }
-}
-
 @Component({
   moduleId: module.id,
   selector: 'bc-img-revision',

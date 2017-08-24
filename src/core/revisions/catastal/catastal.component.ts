@@ -88,7 +88,8 @@ export class BcCatastalRevision {
             recycling:[""],
             water_type:[""],
             water_availability:[""],
-            droughts:[""]
+            droughts:[""],
+            water_certification:[""]
         });
 
         this.formCatValidSub = this.catastalForm.statusChanges.subscribe((value)=>{
@@ -206,7 +207,8 @@ export class BcCatastalRevision {
                         recycling:this.drainForm.controls["recycling"].value||null,
                         water_type:this.drainForm.controls["water_type"].value||null,
                         water_availability:this.drainForm.controls["water_availability"].value||null,
-                        droughts:this.drainForm.controls["droughts"].value||null
+                        droughts:this.drainForm.controls["droughts"].value||null,
+                        water_certification:this.drainForm.controls["water_certification"].value||null
                     }
                     shelter.drain=drain;
                     this.revisionService.onChildSave(shelter,"drain");

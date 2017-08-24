@@ -37,14 +37,8 @@ export class BcManagementRevision {
     formValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.managForm = fb.group({
-            rent:[""],
-            period:[""],
-            contract_start_date:[""],
-            contract_end_date:[""],
-            contract_duration:[""],
-            contract_fee:[""],
-            valuta:[""],
             rentType:[""],
+            valuta:[""],
             reference:[""],
             pickupKey:[""],
             self_management:[""],
@@ -54,7 +48,12 @@ export class BcManagementRevision {
             propFixedPhone:[""],
             propPec:[""],
             propEmail:[""],
-            propWebSite:[""]
+            propWebSite:[""],
+            propContract_start_date:[""],
+            propContract_end_date:[""],
+            propContract_duration:[""],
+            propContract_fee:[""],
+            propPossessionType:[""]
         }); 
 
         this.newSubjectForm = fb.group({
@@ -67,6 +66,11 @@ export class BcManagementRevision {
             newMail:[""],
             newWebSite:[""],
             newType:[""],
+            newContract_start_date:[""],
+            newContract_end_date:[""],
+            newContract_duration:[""],
+            newContract_fee:[""],
+            newPossessionType:[""]
         });
 
         shared.onActiveOutletChange("revision");
@@ -137,13 +141,18 @@ export class BcManagementRevision {
             let subject:ISubject={
                 name:this.newSubjectForm.controls['newName'].value||null,
                 surname:this.newSubjectForm.controls['newSurname'].value||null,
-                taxCode:this.newSubjectForm.controls['newFixedPhone'].value||null,
+                taxCode:this.newSubjectForm.controls['newTaxCode'].value||null,
                 fixedPhone:this.newSubjectForm.controls['newFixedPhone'].value||null,
                 mobilePhone:this.newSubjectForm.controls['newMobilePhone'].value||null,
                 pec:this.newSubjectForm.controls['newPec'].value||null,
                 email:this.newSubjectForm.controls['newMail'].value||null,
                 webSite:this.newSubjectForm.controls['newWebSite'].value||null,
-                type:this.newSubjectForm.controls['newType'].value||null
+                type:this.newSubjectForm.controls['newType'].value||null,
+                contract_start_date:this.newSubjectForm.controls["newContract_start_date"].value?(parseDate(this.newSubjectForm.controls["newContract_start_date"].value)||null):null,
+                contract_end_date: this.newSubjectForm.controls["newContract_end_date"].value?(parseDate(this.newSubjectForm.controls["newContract_end_date"].value)||null):null,
+                contract_duration:this.newSubjectForm.controls["newContract_duration"].value||null,
+                contract_fee:this.newSubjectForm.controls["newContract_fee"].value||null,
+                possession_type:this.newSubjectForm.controls["newPossessionType"].value||null,
             }
             control.push(this.initSubject(subject));
             this.resetSubjectForm();
@@ -163,6 +172,11 @@ export class BcManagementRevision {
             newMail:[""],
             newWebSite:[""],
             newType:[""],
+            newContract_start_date:[""],
+            newContract_end_date:[""],
+            newContract_duration:[""],
+            newContract_fee:[""],
+            newPossessionType:[""]
         });
         this.toggleSubject();
     }
@@ -177,8 +191,28 @@ export class BcManagementRevision {
             pec:[subject.pec],
             email:[subject.email],
             webSite:[subject.webSite],
-            type:[subject.type]
+            type:[subject.type],
+            contract_start_date:[(new Date(subject.contract_start_date).toLocaleDateString())],
+            contract_end_date:[(new Date(subject.contract_end_date).toLocaleDateString())],
+            contract_duration:[subject.contract_duration],
+            contract_fee:[subject.contract_fee],
+            possession_type:[subject.possession_type]
         });
+    }
+
+    processUrl(value){
+        if(value!=null&&value!=""){
+            let wSite="http";
+            if(value.toLowerCase().indexOf("://")==-1){
+                wSite+="://"+value;
+            }else{
+                wSite=value;
+            }
+            
+            return wSite;
+        }else{
+            return null;
+        }
     }
 
     save(confirm){
@@ -186,29 +220,12 @@ export class BcManagementRevision {
             let shelter:IShelter={_id:this._id,name:this.name};
 
             let management:IManagement={
-                rent:this.managForm.controls["rent"].value||null,
-                period:this.managForm.controls["period"].value||null,
-                contract_start_date:this.managForm.controls["contract_start_date"].value?(parseDate(this.managForm.controls["contract_start_date"].value)||null):null,
-                contract_end_date: this.managForm.controls["contract_end_date"].value?(parseDate(this.managForm.controls["contract_end_date"].value)||null):null,
-                contract_duration:this.managForm.controls["contract_duration"].value||null,
-                contract_fee:this.managForm.controls["contract_fee"].value||null,
-                valuta:this.managForm.controls["valuta"].value||null,
                 rentType:this.managForm.controls["rentType"].value||null,
+                valuta:this.managForm.controls["valuta"].value||null,
                 self_management:this.managForm.controls["self_management"].value||null,
                 pickupKey:this.managForm.controls["pickupKey"].value||null,
                 reference:this.managForm.controls["reference"].value||null
             };
-
-            let wSite=null;
-            if(this.managForm.controls.propWebSite.value!=null&&this.managForm.controls.propWebSite.value!=""){
-                wSite="http";
-                if(this.managForm.controls.propWebSite.value.indexOf(wSite)==-1){
-                    wSite+="://"+this.managForm.controls.propWebSite.value;
-                }else{
-                    wSite=this.managForm.controls.propWebSite.value;
-                }
-            }
-
 
             let prop:ISubject={
                 name:this.managForm.controls["propName"].value||null,
@@ -216,22 +233,19 @@ export class BcManagementRevision {
                 fixedPhone:this.managForm.controls["propFixedPhone"].value||null,
                 pec:this.managForm.controls["propPec"].value||null,
                 email:this.managForm.controls["propEmail"].value||null,
-                webSite:wSite||null,
+                contract_start_date:this.managForm.controls["propContract_start_date"].value?(parseDate(this.managForm.controls["propContract_start_date"].value)||null):null,
+                contract_end_date: this.managForm.controls["propContract_end_date"].value?(parseDate(this.managForm.controls["propContract_end_date"].value)||null):null,
+                contract_duration:this.managForm.controls["propContract_duration"].value||null,
+                contract_fee:this.managForm.controls["propContract_fee"].value||null,
+                possession_type:this.managForm.controls["propPossessionType"].value||null,
+                webSite:this.processUrl(this.managForm.controls.propWebSite.value),
                 type:"Proprietario"
             }
 
             const control = <FormArray>this.managForm.controls['subjects'];
             let subjects:ISubject[]=[];
             subjects.push(prop);
-            for(let c of control.controls){
-                let wSite=null;
-                if(c.value.webSite!=""&&c.value.webSite!=null){
-                    wSite="http";
-                    if(c.value.webSite.indexOf(wSite)==-1){
-                        wSite+="://"+c.value.webSite
-                    }
-                }
-                
+            for(let c of control.controls){         
                 subjects.push({
                     name:c.value.name||null,
                     surname:c.value.surname||null,
@@ -240,8 +254,13 @@ export class BcManagementRevision {
                     mobilePhone:c.value.mobilePhone||null,
                     pec:c.value.pec||null,
                     email:c.value.email||null,
-                    webSite:wSite,
-                    type:c.value.type||null
+                    webSite:this.processUrl(c.value.webSite),
+                    type:c.value.type||null,
+                    contract_start_date:c.value.contract_start_date,
+                    contract_end_date: c.value.contract_end_date,
+                    contract_duration:c.value.contract_duration,
+                    contract_fee:c.value.contract_fee,
+                    possession_type:c.value.possession_type
                 });
             }
             shelter.management=management
@@ -265,6 +284,10 @@ export class BcManagementRevision {
         }else{
             this.displayError=true;
         }
+    }
+
+    initDate(value){
+
     }
 
     initForm(shelter){
@@ -293,6 +316,12 @@ export class BcManagementRevision {
                         this.managForm.controls["propFixedPhone"].setValue(subj.fixedPhone);
                         this.managForm.controls["propPec"].setValue(subj.pec);
                         this.managForm.controls["propEmail"].setValue(subj.email);
+                        this.managForm.controls["propWebSite"].setValue(subj.webSite);
+                        this.managForm.controls["propContract_start_date"].setValue((new Date(subj.contract_start_date).toLocaleDateString()));
+                        this.managForm.controls["propContract_end_date"].setValue((new Date(subj.contract_end_date).toLocaleDateString()));
+                        this.managForm.controls["propContract_duration"].setValue(subj.contract_duration);
+                        this.managForm.controls["propContract_fee"].setValue(subj.contract_fee);
+                        this.managForm.controls["propPossessionType"].setValue(subj.possession_type);
                     }else{
                         control.push(this.initSubject(subj));
                     }
