@@ -34,7 +34,7 @@ export class FormatDate implements PipeTransform {
   providers:[ShelterService]
 })
 export class BcManage {
-  data:IManagement={rent:null,period:null,subject:[{name:null}]};
+  data:IManagement={subject:[{name:null}]};
   owner:ISubject;
   managers:ISubject[]=[];
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
@@ -84,10 +84,6 @@ export class BcManage {
     if(webSite!=undefined){
       location.href=webSite;
     }
-  }
-
-  getValue(){
-    return Object.keys(Enums.Custody_Type).find(k=>Enums.Custody_Type[k]===this.data.rentType)
   }
 
 }

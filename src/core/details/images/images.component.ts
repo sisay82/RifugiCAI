@@ -1,5 +1,5 @@
 import {
-  Component,Input,OnInit,OnDestroy,Pipe,PipeTransform,Directive,ViewEncapsulation
+  Component,Input,OnInit,OnDestroy,Directive,ViewEncapsulation
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
@@ -19,27 +19,6 @@ import 'rxjs/Rx';
 })
 export class BcResizeImgStyler{
     @Input("full-screen") enabled=false;
-}
-
-@Pipe({name: 'formatsize'})
-export class FormatSizePipe implements PipeTransform {
-    public transform(input:number): string{
-        if (!input) {
-          return '';
-        } else {
-          let size="B";
-          let num=input;
-          if(num>1024){
-            size="KB";
-            num/=1024;
-            if(num>1024){
-              size="MB";
-              num/=1024;
-            }
-          }
-          return num.toFixed(2) + " " + size;
-        }
-    }
 }
 
 @Component({

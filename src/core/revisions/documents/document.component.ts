@@ -11,27 +11,6 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
 
-@Pipe({name: 'formatsize'})
-export class FormatSizePipe implements PipeTransform {
-    public transform(input:number): string{
-        if (!input) {
-          return '';
-        } else {
-          let size="B";
-          let num=input;
-          if(num>1024){
-            size="KB";
-            num/=1024;
-            if(num>1024){
-              size="MB";
-              num/=1024;
-            }
-          }
-          return num.toFixed(2) + " " + size;
-        }
-    }
-}
-
 @Component({
   moduleId: module.id,
   selector: 'bc-doc-revision',
@@ -44,6 +23,7 @@ export class BcDocRevision {
   newMapForm: FormGroup;
   newInvoiceForm: FormGroup;
   _id:String;
+  invoceFormatRegExp=<RegExp>/.+[,\/\-\\.\|_].+[,\/\-\\.\|_].+/  
   name:String;
   docs:IFile[]=[];
   maps:IFile[]=[];
@@ -289,8 +269,12 @@ export class BcDocRevision {
     this.currentFileToggle=-1;
   }
 
+  testInvoiceName(value){
+    return true// invoceFormatRegExp.test(value);
+  }
+
   addInvoice(){
-    if(this.newInvoiceForm.valid){
+    if(this.newInvoiceForm.valid&&this.testInvoiceName(<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value)){
       this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;

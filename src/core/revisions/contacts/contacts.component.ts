@@ -41,7 +41,7 @@ export class BcContactsRevision {
             mobilePhone:[""],
             role:[""],
             emailAddress:[""],
-            mailPec:[""],
+            prenotation_link:[""],
             webAddress:[""],
             openings:fb.array([])
         }); 
@@ -119,8 +119,8 @@ export class BcContactsRevision {
             let endDate;
             if(this.newOpeningForm.controls['newOpeningStartDate'].value!=null&&this.newOpeningForm.controls['newOpeningStartDate'].value!=""&&
                 this.newOpeningForm.controls['newOpeningEndDate'].value!=null&&this.newOpeningForm.controls['newOpeningEndDate'].value!=""){
-                startDate=Date.parse(this.newOpeningForm.controls['newOpeningStartDate'].value);
-                endDate=Date.parse(this.newOpeningForm.controls['newOpeningEndDate'].value);
+                startDate=parseDate(this.newOpeningForm.controls['newOpeningStartDate'].value);
+                endDate=parseDate(this.newOpeningForm.controls['newOpeningEndDate'].value);
                 if(startDate>endDate){
                     this.invalid=true;
                     return;
@@ -160,27 +160,32 @@ export class BcContactsRevision {
         });
     }
 
+    processUrl(value){
+        if(value!=null&&value!=""){
+            let wSite="http";
+            if(value.toLowerCase().indexOf("://")==-1){
+                wSite+="://"+value;
+            }else{
+                wSite=value;
+            }
+            
+            return wSite;
+        }else{
+            return null;
+        }
+    }
+
     save(confirm){
         if(this.contactForm.valid){
             let shelter:any={_id:this._id,name:this.name};
-            let wSite=null;
-            if(this.contactForm.controls.webAddress.value!=null&&this.contactForm.controls.webAddress.value!=""){
-                wSite="http";
-                if(this.contactForm.controls.webAddress.value.indexOf(wSite)==-1){
-                    wSite+="://"+this.contactForm.controls.webAddress.value;
-                }else{
-                    wSite=this.contactForm.controls.webAddress.value;
-                }
-            }
 
             let contacts:IContacts={
                 fixedPhone:this.contactForm.controls.fixedPhone.value || null,
                 mobilePhone:this.contactForm.controls.mobilePhone.value || null,
                 role:this.contactForm.controls.role.value || null,
                 emailAddress:this.contactForm.controls.emailAddress.value || null,
-                mailPec:this.contactForm.controls.mailPec.value || null,
-                webAddress:wSite
-                
+                prenotation_link:this.processUrl(this.contactForm.controls.prenotation_link.value),
+                webAddress:this.processUrl(this.contactForm.controls.webAddress.value)
             }
             const control = <FormArray>this.contactForm.controls['openings'];
             let openings:IOpening[]=[];

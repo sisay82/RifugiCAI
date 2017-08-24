@@ -1,5 +1,5 @@
 <div style="display:block;margin-left:4px;background:white">
-    <div class="bc-h6 bc-detail-title">Contatti:</div>
+    <div class="bc-h6 bc-detail-title">Contatti del rifugio:</div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Telefono:</div>
@@ -21,9 +21,10 @@
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
-        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
-            <div class="bc-body-strong" style="margin-right:4px">PEC:</div>
-            <div class="bc-body">{{contacts?(contacts.mailPec || '------------'):'------------'}}</div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
+            <div class="bc-body-strong" style="margin-right:4px">Link prenotazione:</div>
+            <div *ngIf="contacts.prenotation_link!=null" (click)="gotoSite(contacts.prenotation_link)" class="bc-body bc-link">{{contacts.prenotation_link}}</div>
+            <div class="bc-body" *ngIf="contacts.prenotation_link==null">------------</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Sito web:</div>
@@ -41,11 +42,11 @@
             </div>
             <div *ngIf="item.startDate!=undefined&&item.startDate!=null" style="flex:1;display: flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:1%">Inizio:</div>
-                <div class="bc-body"> {{item.startDate | date:"dd/MM/yy" }}</div>
+                <div class="bc-body"> {{item.startDate | date:"dd/MM" }}</div>
             </div>
             <div *ngIf="item.endDate!=undefined&&item.endDate!=null" style="flex:1;display: flex;flex-direction:row">
                 <div class="bc-body-strong" style="margin-right:1%">Fine:</div>
-                <div class="bc-body">{{item.endDate | date:"dd/MM/yy" }}</div>
+                <div class="bc-body">{{item.endDate | date:"dd/MM" }}</div>
             </div>
         </div>
     </div>

@@ -48,6 +48,9 @@ export class BcGeoRevision {
             longitude:[""],
             massif:[""],
             valley:[""],
+            ski_area:[""],
+            protected_area:[""],
+            site:[""],
             tags:fb.array([])
         }); 
 
@@ -169,7 +172,10 @@ export class BcGeoRevision {
                 latitude:this.geoForm.controls.latitude.value||null,
                 longitude:this.geoForm.controls.longitude.value||null,
                 massif:this.geoForm.controls.massif.value||null,
-                valley:this.geoForm.controls.valley.value||null
+                valley:this.geoForm.controls.valley.value||null,
+                ski_area:this.geoForm.controls.ski_area.value||null,
+                protected_area:this.geoForm.controls.protected_area.value||null,
+                site:this.geoForm.controls.site.value||null
             }
             const control = (<FormArray>this.geoForm.controls['tags']).controls;
             let tags:ITag[]=[];

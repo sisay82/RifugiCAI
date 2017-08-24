@@ -56,6 +56,7 @@
 </div>
 <bc-divider></bc-divider>
 <div class="bc-h6 bc-doc-title">Fatture</div>
+<div class="bc-body-strong" style="font-style:italic">I file vanno rinominati nel seguente modo: fornitore, numero, data</div>
 <div *ngFor="let file of invoices" >
     <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
         <bc-icon (click)="removeInvoice(file._id)" class="bc-file" name="times" size=s></bc-icon>
@@ -76,7 +77,7 @@
 <div style="margin-left:1%;display:flex;flex-direction:row;align-items:center" *ngIf="!isHiddenFile(2)">
     <form [formGroup]="newInvoiceForm">
         <div style="display:inline-block">
-            <bc-file-input [contentType]="getKeys('Invoices_Type')" formControlName="file"></bc-file-input>
+            <bc-file-input [contentType]="getKeys('Invoices_Type')" [validator]="invoceFormatRegExp" formControlName="file"></bc-file-input>
         </div>
     </form>
     <bc-button style="margin-left:1%" [disabled]="getKeys('Invoices_Type').length==0" [button]="sendInvoiceButton"></bc-button>
