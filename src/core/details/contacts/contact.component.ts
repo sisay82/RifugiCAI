@@ -1,11 +1,23 @@
 import {
-  Component,Input,OnInit,OnDestroy
+  Component,Input,OnInit,OnDestroy,Pipe, PipeTransform
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IContacts, IOpening } from '../../../app/shared/types/interfaces';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+
+@Pipe({name: 'prefixPipe'})
+export class PrefixPipe implements PipeTransform {
+    public transform(input:string): string{
+        if (!input) {
+            return '------------';
+        } else {
+            return "+39"+input;
+        }
+    }
+    
+}
 
 @Component({
   moduleId: module.id,

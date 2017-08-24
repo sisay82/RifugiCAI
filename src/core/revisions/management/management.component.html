@@ -15,29 +15,27 @@
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
+                <bc-text-input formControlName="reference" title="Riferimento" [displayError]="displayError"></bc-text-input>
+            </div>
+            <div class="bc-revision-management">
                 <bc-text-input formControlName="propEmail" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input formControlName="propPec" title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
+        </div>
+        <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input formControlName="propWebSite" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
             </div>
-        </div>
-        <div style="display: flex;flex-direction:row">
-            <bc-checkbox-input formControlName="pickupKey" title="Ritiro chiavi"></bc-checkbox-input>
-            <bc-checkbox-input formControlName="self_management" title="Autogestione"></bc-checkbox-input>
-        </div>
-        <bc-divider></bc-divider>
-        <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input formControlName="rent" title="Canone annuale (€)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
             </div>
+        </div>
+        <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-select-input enumName="Possession_Type" formControlName="period" title="Tipo possesso" [displayError]="displayError"></bc-select-input>
             </div>
-        </div>
-        <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input formControlName="contract_start_date" validator="validateDate" title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
             </div>
@@ -47,6 +45,10 @@
         </div>
         <bc-divider></bc-divider>
         <div class="bc-management-title bc-h6">Custodia e/o gestione</div>
+        <div style="display: flex;flex-direction:row">
+            <bc-checkbox-input formControlName="pickupKey" title="Ritiro chiavi"></bc-checkbox-input>
+            <bc-checkbox-input formControlName="self_management" title="Autogestione"></bc-checkbox-input>
+        </div>
         <div *ngFor="let open of managForm.controls['subjects'].controls;let i = index" formArrayName="subjects">
             <div [formGroupName]="i">
                 <div style="display: flex;flex-direction:row;align-items:center">

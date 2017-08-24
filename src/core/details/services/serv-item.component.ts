@@ -1,8 +1,7 @@
 import {
-  Component,Input,OnInit
+  Component,Input,OnInit,Pipe, PipeTransform
 } from '@angular/core';
 import { IService,ITag } from '../../../app/shared/types/interfaces'
-import {Pipe, PipeTransform} from '@angular/core';
 
 @Pipe({name: 'titleCase'})
 export class TitleCasePipe implements PipeTransform {
