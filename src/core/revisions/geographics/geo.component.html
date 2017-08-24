@@ -1,6 +1,6 @@
 <form style="position:relative" [formGroup]="geoForm">
     <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
-    <div class="bc-h6 bc-geographic-title">Posizione</div>
+    <div class="bc-h6 bc-geographic-title">Dati geografici</div>
     <div style="display:flex;flex-direction:row">
         <div class="bc-geographic-input">
             <bc-text-input formControlName="locality" title="Località" [displayError]="displayError"></bc-text-input>

@@ -45,10 +45,6 @@
         </div>
         <bc-divider></bc-divider>
         <div class="bc-management-title bc-h6">Custodia e/o gestione</div>
-        <div style="display: flex;flex-direction:row">
-            <bc-checkbox-input formControlName="pickupKey" title="Ritiro chiavi"></bc-checkbox-input>
-            <bc-checkbox-input formControlName="self_management" title="Autogestione"></bc-checkbox-input>
-        </div>
         <div *ngFor="let open of managForm.controls['subjects'].controls;let i = index" formArrayName="subjects">
             <div [formGroupName]="i">
                 <div style="display: flex;flex-direction:row;align-items:center">
@@ -87,7 +83,10 @@
                 </div>
             </div>
         </div>
-        <br>
+        <div style="display: flex;flex-direction:row">
+            <bc-checkbox-input formControlName="pickupKey" title="Ritiro chiavi"></bc-checkbox-input>
+            <bc-checkbox-input formControlName="self_management" title="Autogestione"></bc-checkbox-input>
+        </div>
         <bc-divider></bc-divider>
     </div>
  </form>
