@@ -151,6 +151,7 @@ export interface IDrain{
     type?:Enums.Drain_Type;
     regulation?:Boolean;
     oilSeparator?:Boolean;
+    water_certification?:Boolean;
     recycling?:Boolean;
     water_type?:Enums.Water_Type;
     water_availability?:Enums.Water_Availability;
