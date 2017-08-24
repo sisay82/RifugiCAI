@@ -198,8 +198,6 @@ export class BcTextInput implements ControlValueAccessor {
                     let date=parseDate(this.value);
                     if(date){
                         if(date.toString()!="Invalid Date"){
-                            console.log(parseDate(this.value));
-                            console.log(parseDate(this.value).toLocaleString("en-US",{month:'numeric',day:'numeric'}));
                             return parseDate(this.value,true).toLocaleDateString("it-IT",{month:'numeric',day:'numeric'})
                         }else{
                             return this.value;
