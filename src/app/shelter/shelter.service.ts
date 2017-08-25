@@ -15,8 +15,8 @@ import { Enums  } from '../shared/types/enums';
 export class ShelterService {
 
     //sheltersBaseUrl: string = '/api/shelters';
-    //sheltersBaseUrl: string = 'http://localhost:8080/api/shelters';
-    sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
+    sheltersBaseUrl: string = 'http://31.14.133.111:27010/api/shelters';
+    //sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 
