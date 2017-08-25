@@ -9,6 +9,7 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
+import {BcDetailsService} from '../details.service';
 
 @Component({
   moduleId: module.id,
@@ -22,7 +23,7 @@ export class BcDoc {
     docs:IFile[]=[];
     maps:IFile[]=[];
     invoices:IFile[]=[];
-    constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute) {
+    constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private detailsService:BcDetailsService) {
         shared.activeComponent="documents";
         this.shared.onActiveOutletChange("content");
     }
@@ -82,32 +83,45 @@ export class BcDoc {
         }else{
             return "file-text-o"
         }
-        
+    }
+
+    initDocs(files){
+        for(let file of files){
+            if(file.type!=undefined){
+                if(file.type==Enums.File_Type.doc){
+                    this.docs.push(file);       
+                }else if(file.type==Enums.File_Type.map){
+                    this.maps.push(file);
+                }else if(file.type==Enums.File_Type.invoice){
+                    this.invoices.push(file);
+                }   
+            }
+        }
     }
 
     ngOnInit() {
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
-            let queryFileSub=this.shelterService.getFilesByShelterId(this._id).subscribe(files=>{
-                for(let file of files){
-                    if(file.type!=undefined){
-                        if(file.type==Enums.File_Type.doc){
-                            this.docs.push(file);       
-                        }else if(file.type==Enums.File_Type.map){
-                            this.maps.push(file);
-                        }else if(file.type==Enums.File_Type.invoice){
-                            this.invoices.push(file);
-                        }   
-                    }
-                }
-                if(queryFileSub!=undefined){
+            let loadServiceSub=this.detailsService.loadFiles$.subscribe(files=>{
+              if(!files){
+                let queryFileSub=this.shelterService.getFilesByShelterId(this._id).subscribe(files=>{
+                  this.initDocs(files);
+                  this.detailsService.onChildSaveFiles(files);
+                  if(queryFileSub!=undefined){
                     queryFileSub.unsubscribe();
-                }
-                if(routeSub!=undefined){
+                  }
+                  if(routeSub!=undefined){
                     routeSub.unsubscribe();
-                }
+                  }
+                });
+              }else{
+                this.initDocs(files);
+              }
+              if(loadServiceSub!=undefined){
+                loadServiceSub.unsubscribe();
+              }
             });
+            this.detailsService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice]);
         });
-    
     }
 }

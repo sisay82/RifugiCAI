@@ -273,7 +273,7 @@ export class BcContactsRevision {
         }
     }
 
-     getOpening(id):Promise<IOpening[]>{
+    getOpening(id):Promise<IOpening[]>{
         return new Promise<IOpening[]>((resolve,reject)=>{
             let revSub=this.revisionService.load$.subscribe(shelter=>{
                 if(shelter!=null&&shelter.openingTime!=undefined){

@@ -24,7 +24,16 @@ export class BcRevisions{
     maskSaveSub:Subscription;
     maskCancelSub:Subscription;
     childDeleteSub:Subscription;
+    outletChangeSub:Subscription;
     constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService){
+        this.outletChangeSub=shared.activeOutletChange$.subscribe((outlet)=>{
+            if(outlet=="content"){
+                delete(this.ShelterToUpdate);
+                delete(this.Docs);
+                delete(this.Images);
+            }
+        });
+
         this.saveSub=revisionService.save$.subscribe(obj=>{
             if(this.ShelterToUpdate!=undefined){
                 this.ShelterToUpdate[obj.section]=obj.shelter[obj.section];
@@ -162,9 +171,9 @@ export class BcRevisions{
     }
 
     ngOnDestroy(){
-        delete(this.Docs);
-        delete(this.Images);
-        delete(this.ShelterToUpdate);
+        if(this.outletChangeSub!=undefined){
+            this.outletChangeSub.unsubscribe();
+        }
         if(this.saveSub!=undefined){
             this.saveSub.unsubscribe();
         }

@@ -270,7 +270,7 @@ export class BcGeoRevision {
             });
             this.revisionService.onChildLoadRequest("geoData");
         });
-     }
+    }
 
     ngOnInit(){
         let routeSub=this._route.parent.params.subscribe(params=>{
