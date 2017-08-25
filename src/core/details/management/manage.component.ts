@@ -2,11 +2,12 @@ import {
   Component,Input,OnInit,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IManagement,ISubject } from '../../../app/shared/types/interfaces';
+import { IManagement,ISubject,IShelter } from '../../../app/shared/types/interfaces';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+import { BcDetailsService } from '../details.service';
 
 @Component({
   moduleId: module.id,
@@ -19,7 +20,7 @@ export class BcManage {
   data:IManagement={subject:[{name:null}]};
   owner:ISubject;
   managers:ISubject[]=[];
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService){
+  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private detailsService:BcDetailsService){
     shared.activeComponent="management";
     this.shared.onActiveOutletChange("content");
   }
@@ -28,26 +29,55 @@ export class BcManage {
 
   }
 
-  ngOnInit(){
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      let shelSub=this.shelterService.getShelterSection(params['id'],"management").subscribe(shelter=>{
-        this.data=shelter.management;
-        if(this.data!=undefined&&this.data.subject!=undefined){
-          this.data.subject.forEach(subject=>{
-            if(subject.type!=undefined&&subject.type.toLowerCase().indexOf("proprietario")>-1){
-              this.owner=subject;
-            }else{
-              this.managers.push(subject);
-            }
-          })
-        }
-        if(shelSub!=undefined){
-          shelSub.unsubscribe();
-        }
-        if(routeSub!=undefined){
-          routeSub.unsubscribe();
+  initManagement(management:IManagement){
+    this.data=management;
+    if(this.data!=undefined&&this.data.subject!=undefined){
+      this.data.subject.forEach(subject=>{
+        if(subject.type!=undefined&&subject.type.toLowerCase().indexOf("proprietario")>-1){
+          this.owner=subject;
+        }else{
+          this.managers.push(subject);
         }
       })
+    }
+
+  }
+
+  getManagement(id):Promise<IShelter>{
+    return new Promise<IShelter>((resolve,reject)=>{
+        let detSub=this.detailsService.load$.subscribe(shelter=>{
+            if(shelter!=null&&shelter.management!=undefined){
+                if(detSub!=undefined){
+                  detSub.unsubscribe();
+                }
+                resolve(shelter);
+            }else{
+                let managSub=this.shelterService.getShelterSection(id,"management").subscribe(shelter=>{
+                    if(shelter.management==undefined) shelter.management={subject:[] as [ISubject]};
+                    this.detailsService.onChildSave(shelter,"management");
+                    if(managSub!=undefined){
+                        managSub.unsubscribe();
+                    }
+                    if(detSub!=undefined){
+                      detSub.unsubscribe();
+                    }
+                    resolve(shelter);
+                });
+            }
+        });
+        this.detailsService.onChildLoadRequest("management");
+    });
+}
+
+  ngOnInit(){
+    let routeSub=this._route.parent.params.subscribe(params=>{
+      this.getManagement(params["id"])
+      .then(shelter=>{
+          this.initManagement(shelter.management);
+          if(routeSub!=undefined){
+              routeSub.unsubscribe();
+          }
+      });
     });
   }
 
