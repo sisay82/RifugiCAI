@@ -1,7 +1,7 @@
 <form [formGroup]="managForm">
     <div style="display:block;margin-left:4px;background:white">
         <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
-        <div class="bc-management-title bc-h6">Proprietà:</div>
+        <div class="bc-management-title bc-h6">Proprietà</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input formControlName="propName" title="Ente" [displayError]="displayError"></bc-text-input>
