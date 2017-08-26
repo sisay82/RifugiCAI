@@ -85,7 +85,7 @@ export function createValidationFunction(validator:string){
 
 let validators= {
     stringValidator:<RegExp>/^([A-Za-z0-99À-ÿ� ,.:/';+!?|)(_-]*)*$/,
-    telephoneValidator:<RegExp>/^([+][0-9])?([0-9]*)*$/,
+    telephoneValidator:<RegExp>/^([+]([0-9][0-9][\s])?)?([0-9]*)*$/,
     mailValidator:<RegExp>/(^$|^.*@.*\..*$)/,
     numberValidator:<RegExp>/^[0-9]+[.]{0,1}[0-9]*$/,
     urlValidator:<RegExp>/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
@@ -196,7 +196,7 @@ export class BcTextInput implements ControlValueAccessor {
             if(this.options){
                 if(this.options.removeYear){
                     let date=parseDate(this.value);
-                    if(date){
+                    if(date!=undefined){
                         if(date.toString()!="Invalid Date"){
                             return parseDate(this.value,true).toLocaleDateString("it-IT",{month:'numeric',day:'numeric'})
                         }else{
