@@ -256,8 +256,8 @@ export class BcManagementRevision {
                     email:c.value.email||null,
                     webSite:this.processUrl(c.value.webSite),
                     type:c.value.type||null,
-                    contract_start_date:c.value.contract_start_date,
-                    contract_end_date: c.value.contract_end_date,
+                    contract_start_date:c.value.contract_start_date?(parseDate(c.value.contract_start_date)):null,
+                    contract_end_date: c.value.contract_end_date?(parseDate(c.value.contract_end_date)):null,
                     contract_duration:c.value.contract_duration,
                     contract_fee:c.value.contract_fee,
                     possession_type:c.value.possession_type
