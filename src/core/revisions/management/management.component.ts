@@ -192,8 +192,8 @@ export class BcManagementRevision {
             email:[subject.email],
             webSite:[subject.webSite],
             type:[subject.type],
-            contract_start_date:[(new Date(subject.contract_start_date).toLocaleDateString())],
-            contract_end_date:[(new Date(subject.contract_end_date).toLocaleDateString())],
+            contract_start_date:[subject.contract_start_date?(new Date(subject.contract_start_date).toLocaleDateString()):null],
+            contract_end_date:[subject.contract_end_date?(new Date(subject.contract_end_date).toLocaleDateString()):null],
             contract_duration:[subject.contract_duration],
             contract_fee:[subject.contract_fee],
             possession_type:[subject.possession_type]
@@ -317,8 +317,8 @@ export class BcManagementRevision {
                         this.managForm.controls["propPec"].setValue(subj.pec);
                         this.managForm.controls["propEmail"].setValue(subj.email);
                         this.managForm.controls["propWebSite"].setValue(subj.webSite);
-                        this.managForm.controls["propContract_start_date"].setValue((new Date(subj.contract_start_date).toLocaleDateString()));
-                        this.managForm.controls["propContract_end_date"].setValue((new Date(subj.contract_end_date).toLocaleDateString()));
+                        this.managForm.controls["propContract_start_date"].setValue(subj.contract_start_date?(new Date(subj.contract_start_date).toLocaleDateString()):null);
+                        this.managForm.controls["propContract_end_date"].setValue(subj.contract_end_date?(new Date(subj.contract_end_date).toLocaleDateString()):null);
                         this.managForm.controls["propContract_duration"].setValue(subj.contract_duration);
                         this.managForm.controls["propContract_fee"].setValue(subj.contract_fee);
                         this.managForm.controls["propPossessionType"].setValue(subj.possession_type);
