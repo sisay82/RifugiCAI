@@ -63,7 +63,7 @@
     </div>
     <bc-divider></bc-divider>
     <div class="bc-detail-title bc-h6">Custodia e/o gestione:</div>
-    <div *ngFor="let manager of managers">
+    <div *ngFor="let manager of managers;let i=index">
         <div style="display: flex;flex-direction:row">
             <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
                 <div class="bc-body-strong" style="margin-right:4px">Nome e Cognome:</div>
@@ -131,7 +131,7 @@
                 <div class="bc-body">{{manager?(getDifferenceDates(manager.contract_start_date,manager.contract_end_date) | processDate):'----'}}</div>
             </div>
         </div>
-        <bc-divider *ngIf="managers&&managers.length>0" ></bc-divider>
+        <br>
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
