@@ -5,6 +5,7 @@ var https = require("https");
 var session = require("express-session");
 var xmldom = require("xmldom");
 var express = require("express");
+var bodyParser = require("body-parser");
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://prova.cai.it";
 var appBaseUrl = "http://localhost:4200";
@@ -26,7 +27,6 @@ function validationPromise(ticket) {
                 try {
                     var el = (new DOMParser()).parseFromString(rawData, "text/html").firstChild;
                     var res_1 = false;
-                    console.log(rawData);
                     for (var i = 0; i < el.childNodes.length; i++) {
                         if (el.childNodes.item(i).localName) {
                             if (el.childNodes.item(i).localName == "authenticationSuccess") {
@@ -51,7 +51,9 @@ function validationPromise(ticket) {
         });
     });
 }
-app.use(session({
+app.use(bodyParser.urlencoded({
+    extended: true
+}), session({
     secret: '24e9v81i3ourgfhsd8i7vg1or3f5',
     resave: false,
     saveUninitialized: true
@@ -81,47 +83,28 @@ app.get('/j_spring_cas_security_check', function (req, res) {
         res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
 });
+app.get('/validate', function (req, res, next) {
+    var parsedUrl = encodeURIComponent(appBaseUrl + "/validate/j_spring_cas_security_check");
+    res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+});
+app.get("/validate/j_spring_cas_security_check", function (req, res, next) {
+    var user = userList.find(function (obj) { return obj.id == req.session.id; });
+    if (user) {
+        user.ticket = req.query.ticket;
+        res.redirect(user.resource);
+    }
+    else {
+        console.log("Invalid user request");
+        userList.push({ id: req.session.id, resource: appBaseUrl });
+        res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+    }
+});
 app.get('/', function (req, res, next) {
-    console.log(req.method + " REQUEST: " + JSON.stringify(req.query));
-    console.log(req.path);
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     //res.header('Access-Control-Allow-Origin', '*');
     res.setHeader('content-type', 'text/html; charset=utf-8');
-    var user = userList.find(function (obj) { return obj.id == req.session.id; });
-    if (!user) {
-        console.log("User not logged");
-        userList.push({ id: req.session.id, resource: "/list" });
-        res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
-    }
-    else {
-        if (user.ticket) {
-            console.log("Checking ticket");
-            console.log(user.ticket);
-            validationPromise(user.ticket)
-                .then(function (response) {
-                console.log("Valid ticket");
-                next();
-            })["catch"](function (err) {
-                console.log("Invalid ticket");
-                var userIndex = userList.findIndex(function (obj) { return obj.id == user.id; });
-                if (userIndex > -1) {
-                    userList.splice(userIndex, 1);
-                }
-                res.redirect(casBaseUrl + "/cai-cas/logout?service=" + parsedUrl);
-                //res.redirect(casBaseUrl+"/login?service="+parsedUrl);
-            });
-        }
-        else {
-            console.log("Invalid user ticket");
-            var userIndex = this.userList.findIndex(function (obj) { return obj.id == user.id; });
-            if (userIndex > -1) {
-                userList.splice(userIndex, 1);
-            }
-            res.redirect(casBaseUrl + "/cai-cas/logout?service=" + parsedUrl);
-            //res.redirect(casBaseUrl+"/login?service="+parsedUrl);
-        }
-    }
+    res.redirect("/list");
 });
 app.use(express.static(__dirname + '/dist'));
 app.get('/*', function (req, res) {
@@ -147,22 +130,14 @@ app.get('/*', function (req, res) {
                 res.sendFile(path.join(__dirname + '/dist/index.html'));
             })["catch"](function (err) {
                 console.log("Invalid ticket");
-                var userIndex = userList.findIndex(function (obj) { return obj.id == user.id; });
-                if (userIndex > -1) {
-                    userList.splice(userIndex, 1);
-                }
-                res.redirect(casBaseUrl + "/cai-cas/logout?service=" + parsedUrl);
-                //res.redirect(casBaseUrl+"/login?service="+parsedUrl);
+                user.resource = req.path;
+                res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
             });
         }
         else {
             console.log("Invalid user ticket");
-            var userIndex = this.userList.findIndex(function (obj) { return obj.id == user.id; });
-            if (userIndex > -1) {
-                userList.splice(userIndex, 1);
-            }
-            res.redirect(casBaseUrl + "/cai-cas/logout?service=" + parsedUrl);
-            //res.redirect(casBaseUrl+"/login?service="+parsedUrl);
+            user.resource = req.path;
+            res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
         }
     }
 });
