@@ -90,7 +90,7 @@ export class BcFileInput implements ControlValueAccessor {
     }
 
     checkExtension(value:String){
-        return this.types.includes(value);
+        return this.types.includes(value.toLowerCase());
     }
 
     testName(value:string){
