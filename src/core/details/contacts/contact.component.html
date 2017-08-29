@@ -23,12 +23,12 @@
     <div style="display: flex;flex-direction:row">
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Link prenotazione:</div>
-            <div *ngIf="contacts.prenotation_link!=null" (click)="gotoSite(contacts.prenotation_link)" class="bc-body bc-link">{{contacts.prenotation_link}}</div>
+            <a *ngIf="contacts.prenotation_link!=null" class="bc-body bc-link" [href]="contacts.prenotation_link">{{contacts.prenotation_link}}</a>
             <div class="bc-body" *ngIf="contacts.prenotation_link==null">------------</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
             <div class="bc-body-strong" style="margin-right:4px">Sito web:</div>
-            <div *ngIf="contacts.webAddress!=null" (click)="gotoSite(contacts.webAddress)" class="bc-body bc-link">{{contacts.webAddress}}</div>
+            <a *ngIf="contacts.webAddress!=null" class="bc-body bc-link" [href]="contacts.webAddress">{{contacts.webAddress}}</a>
             <div class="bc-body" *ngIf="contacts.webAddress==null">------------</div>
         </div>
     </div>

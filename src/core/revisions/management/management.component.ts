@@ -242,11 +242,16 @@ export class BcManagementRevision {
                 type:"Proprietario"
             }
 
+            if(prop.contract_start_date>prop.contract_end_date){
+                this.displayError=true;
+                return;
+            }
+
             const control = <FormArray>this.managForm.controls['subjects'];
             let subjects:ISubject[]=[];
             subjects.push(prop);
-            for(let c of control.controls){         
-                subjects.push({
+            for(let c of control.controls){     
+                let s={
                     name:c.value.name||null,
                     surname:c.value.surname||null,
                     taxCode:c.value.taxCode||null,
@@ -261,7 +266,12 @@ export class BcManagementRevision {
                     contract_duration:c.value.contract_duration,
                     contract_fee:c.value.contract_fee,
                     possession_type:c.value.possession_type
-                });
+                }    
+                if(s.contract_start_date>s.contract_end_date){
+                    this.displayError=true;
+                    return;
+                }
+                subjects.push(s);
             }
             shelter.management=management
             shelter.management.subject=subjects as [ISubject];
