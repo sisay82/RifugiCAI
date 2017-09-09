@@ -1,52 +1,57 @@
 import path = require('path');
-import https = require('https');
-import http = require('http');
 import session = require('express-session');
 import xmldom = require('xmldom');
+import request = require('request');
 import express = require('express');
 import bodyParser = require('body-parser');
+import { Enums } from './src/app/shared/types/enums';
+import querystring = require('querystring');
 
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://prova.cai.it";
 var appBaseUrl = "http://localhost:4200";
 var app = express();
 var parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
-var userList:{id:String,resource:String,ticket?:String}[]=[];
+var userList:{id:String,resource:String,ticket?:String,uuid?:String}[]=[];
 
-function validationPromise(ticket):Promise<Node>{
-    return new Promise((resolve,reject)=>{
-        var options={
-            host:"prova.cai.it",
-            method:'GET',
-            path:"/cai-cas/serviceValidate?service="+parsedUrl+"&ticket="+ticket
+function getChildByName(node:Node,name:String):Node{
+    for(let i=0;i<node.childNodes.length;i++){
+        if(node.childNodes.item(i).localName==name){
+            return node.childNodes.item(i);
         }
-        https.get(options,(res)=>{
-            res.setEncoding('utf8');
-            let rawData = '';
-            res.on('data', (chunk) => { rawData += chunk; });
-            res.on('end', () => {
-                try {
-                    var el:Node=(new DOMParser()).parseFromString(rawData,"text/html").firstChild;
-                    let res:boolean=false;
-                    for(let i=0;i<el.childNodes.length;i++){
-                        if(el.childNodes.item(i).localName){
-                            if(el.childNodes.item(i).localName=="authenticationSuccess"){
-                                res=true;
-                            }
-                        }
-                    }
-                    if(res){
-                        resolve(el);
-                    }else{
-                        reject(null);
-                    }
-                } catch (e) {
+        if(node.childNodes.item(i).hasChildNodes()){
+            let n = getChildByName(node.childNodes.item(i),name);
+            if(n){
+                return n;
+            }
+        }
+    }
+    return null;
+}
+
+function validationPromise(ticket):Promise<String>{
+    return new Promise((resolve,reject)=>{
+        request.post({
+            url:casBaseUrl+"/cai-cas/serviceValidate?service="+parsedUrl+"&ticket="+ticket,
+            method:"GET"
+        },function(err,response,body){
+            try {
+                var el:Node=(new DOMParser()).parseFromString(body,"text/xml").firstChild;
+                let res:boolean=false;
+                let user;
+                if(getChildByName(el,'authenticationSuccess')){
+                    res=true;
+                    user=getChildByName(el,'uuid').textContent;
+                }
+                if(res){
+                    resolve(user);
+                }else{
                     reject(null);
                 }
-            });
-        }).on('error',function(e){
-            console.log(e);
-            reject(null);
+            } catch (e) {
+                console.log(e);
+                reject(null);
+            }
         });
     });
 }
@@ -86,22 +91,40 @@ app.get('/j_spring_cas_security_check',function(req,res){
     }
 });
 
-app.get('/validate',function(req,res,next){
-    var parsedUrl=encodeURIComponent(appBaseUrl+"/validate/j_spring_cas_security_check");
-    res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
-});
-
-app.get("/validate/j_spring_cas_security_check",function(req,res,next){
+app.get('/user',function(req,res,next){
     let user=userList.find(obj=>obj.id==req.session.id);
-    if(user){
-        user.ticket=req.query.ticket;
-        res.redirect(user.resource);
+    if(user!=undefined){
+        var post_data=`<?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+                <n:getUserDataByUuid xmlns:n="http://service.core.ws.auth.cai.it/">
+                    <arg0>`+user.uuid+`</arg0>
+                </n:getUserDataByUuid>
+            </soap:Body>
+        </soap:Envelope>`;
+
+        request.post({
+            url:'http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid',
+            method:"POST",
+            headers:{
+                "Content-Type":"text/xml"
+            },
+            body:post_data
+        },function(err,response,body){
+            var el:Node=(new DOMParser()).parseFromString(body,"text/xml");
+            let code = getChildByName(el,'sectionCode').textContent;
+            if(code){
+                res.status(200).send(code);                    
+            }else{
+                res.status(500).send({'error':'Error user request'});
+            }
+        });
     }else{
-        console.log("Invalid user request");
-        userList.push({id:req.session.id,resource:appBaseUrl});
+        console.log("User not logged");
+        userList.push({id:req.session.id,resource:appBaseUrl+'/list'});
         res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
     }
-});
+})
 
 app.get('/',function(req,res,next){
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -133,6 +156,7 @@ app.get('/*', function(req, res) {
         validationPromise(user.ticket)
         .then((response)=>{
             console.log("Valid ticket");
+            user.uuid=response;
             res.sendFile(path.join(__dirname + '/dist/index.html'));
         })
         .catch((err)=>{

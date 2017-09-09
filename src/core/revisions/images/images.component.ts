@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
+import {BcAuthService} from '../../../app/shared/auth.service';
 
 var maxImages:Number=10;
 
@@ -58,8 +59,9 @@ export class BcImgRevision {
   newDocFormValidSub:Subscription;
   docsFormValidSub:Subscription;
   hiddenImage:boolean=true;
+  permissionSub:Subscription;      
   sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
-  constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+  constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
     this.newDocForm = fb.group({
       file:[],
       description:[""]
@@ -102,6 +104,10 @@ export class BcImgRevision {
       if(disableSaveSub!=undefined){
           disableSaveSub.unsubscribe();
       }
+    });
+
+    this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
+      this.checkPermission(permissions);
     });
 
     shared.onActiveOutletChange("revision");
@@ -268,6 +274,9 @@ export class BcImgRevision {
     if(this.docsForm.valid&&this.docsForm.dirty){
       this.save(false);
     }
+    if(this.permissionSub!=undefined){
+      this.permissionSub.unsubscribe();
+    }
     if(this.maskSaveSub!=undefined){
       this.maskSaveSub.unsubscribe();
     }
@@ -291,7 +300,7 @@ export class BcImgRevision {
     }
   }
 
-  ngOnInit() {
+  initialize() {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
       let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
@@ -316,6 +325,24 @@ export class BcImgRevision {
       this.revisionService.onChildLoadFilesRequest([Enums.File_Type.image]);
     });
     
+  }
+
+  ngOnInit() {
+    let permissions = this.revisionService.getLocalPermissions();
+    if(permissions!=undefined){
+        this.checkPermission(permissions);
+    }        
+  }
+
+  checkPermission(permissions){
+      if(permissions.length>0){
+          if(permissions.find(obj=>obj==Enums.MenuSection.document)>-1){
+              this.revisionService.updateLocalPermissions(permissions);
+              this.initialize();
+          }else{
+              location.href="/list";
+          }
+      }
   }
 
 }

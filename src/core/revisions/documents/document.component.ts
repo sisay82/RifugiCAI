@@ -1,5 +1,5 @@
 import {
-  Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
+  Component,Input,OnDestroy,Pipe,PipeTransform,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
+import {BcAuthService} from '../../../app/shared/auth.service';
 
 @Pipe({name: 'formatsize'})
 export class FormatSizePipe implements PipeTransform {
@@ -61,11 +62,12 @@ export class BcDocRevision {
   invoiceFormValidSub:Subscription;
   hiddenTag:boolean=true;
   uploading:boolean=false;
+  permissionSub:Subscription;      
   currentFileToggle:number=-1;
   sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
   sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"}
-  constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+  constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
     this.newDocForm = fb.group({
       file:[]
     });
@@ -134,6 +136,10 @@ export class BcDocRevision {
           shared.onDisplayError();
           this.displayError=true;
         }
+    });
+
+    this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
+      this.checkPermission(permissions);
     });
 
     shared.activeComponent="documents";
@@ -354,6 +360,9 @@ export class BcDocRevision {
     if(this.maskSaveSub!=undefined){
       this.maskSaveSub.unsubscribe();
     }
+    if(this.permissionSub!=undefined){
+      this.permissionSub.unsubscribe();
+    }
     if(this.docFormValidSub!=undefined){
       this.docFormValidSub.unsubscribe();
     }
@@ -385,7 +394,7 @@ export class BcDocRevision {
     }
   }
 
-  ngOnInit() {
+  initialize() {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
       let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
@@ -409,6 +418,24 @@ export class BcDocRevision {
       });
       this.revisionService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice]);
     });
+  }
+
+  ngOnInit() {
+    let permissions = this.revisionService.getLocalPermissions();
+    if(permissions!=undefined){
+        this.checkPermission(permissions);
+    }        
+  }
+
+  checkPermission(permissions){
+      if(permissions.length>0){
+          if(permissions.find(obj=>obj==Enums.MenuSection.document)>-1){
+              this.revisionService.updateLocalPermissions(permissions);
+              this.initialize();
+          }else{
+              location.href="/list";
+          }
+      }
   }
 
 }

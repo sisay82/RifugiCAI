@@ -11,6 +11,11 @@ $menu-width:200px;
     z-index: 1;
 }
 
+a.disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
 .bc-list-button{
     background-color: map_get($bc-grey-cai, 0);
     border-color: map_get($bc-grey-cai, 0);    

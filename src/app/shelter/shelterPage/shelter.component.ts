@@ -26,7 +26,7 @@ export class BcShelter {
     appMenuElements:IMenu={
       layers:[
         {
-            layerName:"",
+            layerName:"detail",
             elements:[
                 {name:"Dati geografici",icon:"map-signs",link:"geographic"},
                 {name:"Servizi",icon:"home",link:"services"},
@@ -34,12 +34,12 @@ export class BcShelter {
                 {name:"Proprietà e custodia",icon:"user",link:"management"},
                 {name:"Dati catastali",icon:"book",link:"catastal"}
             ]},{
-            layerName:"",
+            layerName:"document",
             elements:[
                 {name:"Documenti",icon:"file-pdf-o",link:"documents"},
                 {name:"Immagini",icon:"picture-o",link:"images"},
             ]},{
-            layerName:"",
+            layerName:"economy",
             elements:[
                 {name:"Economia",icon:"certificate",link:"economy"},
                 {name:"Richiesta contributi",icon:"eur",link:"contribution"},

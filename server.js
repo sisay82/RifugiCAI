@@ -1,9 +1,9 @@
 "use strict";
 exports.__esModule = true;
 var path = require("path");
-var https = require("https");
 var session = require("express-session");
 var xmldom = require("xmldom");
+var request = require("request");
 var express = require("express");
 var bodyParser = require("body-parser");
 var DOMParser = xmldom.DOMParser;
@@ -12,42 +12,45 @@ var appBaseUrl = "http://localhost:4200";
 var app = express();
 var parsedUrl = encodeURIComponent(appBaseUrl + "/j_spring_cas_security_check");
 var userList = [];
+function getChildByName(node, name) {
+    for (var i = 0; i < node.childNodes.length; i++) {
+        if (node.childNodes.item(i).localName == name) {
+            return node.childNodes.item(i);
+        }
+        if (node.childNodes.item(i).hasChildNodes()) {
+            var n = getChildByName(node.childNodes.item(i), name);
+            if (n) {
+                return n;
+            }
+        }
+    }
+    return null;
+}
 function validationPromise(ticket) {
     return new Promise(function (resolve, reject) {
-        var options = {
-            host: "prova.cai.it",
-            method: 'GET',
-            path: "/cai-cas/serviceValidate?service=" + parsedUrl + "&ticket=" + ticket
-        };
-        https.get(options, function (res) {
-            res.setEncoding('utf8');
-            var rawData = '';
-            res.on('data', function (chunk) { rawData += chunk; });
-            res.on('end', function () {
-                try {
-                    var el = (new DOMParser()).parseFromString(rawData, "text/html").firstChild;
-                    var res_1 = false;
-                    for (var i = 0; i < el.childNodes.length; i++) {
-                        if (el.childNodes.item(i).localName) {
-                            if (el.childNodes.item(i).localName == "authenticationSuccess") {
-                                res_1 = true;
-                            }
-                        }
-                    }
-                    if (res_1) {
-                        resolve(el);
-                    }
-                    else {
-                        reject(null);
-                    }
+        request.post({
+            url: casBaseUrl + "/cai-cas/serviceValidate?service=" + parsedUrl + "&ticket=" + ticket,
+            method: "GET"
+        }, function (err, response, body) {
+            try {
+                var el = (new DOMParser()).parseFromString(body, "text/xml").firstChild;
+                var res = false;
+                var user = void 0;
+                if (getChildByName(el, 'authenticationSuccess')) {
+                    res = true;
+                    user = getChildByName(el, 'uuid').textContent;
                 }
-                catch (e) {
+                if (res) {
+                    resolve(user);
+                }
+                else {
                     reject(null);
                 }
-            });
-        }).on('error', function (e) {
-            console.log(e);
-            reject(null);
+            }
+            catch (e) {
+                console.log(e);
+                reject(null);
+            }
         });
     });
 }
@@ -83,19 +86,31 @@ app.get('/j_spring_cas_security_check', function (req, res) {
         res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
 });
-app.get('/validate', function (req, res, next) {
-    var parsedUrl = encodeURIComponent(appBaseUrl + "/validate/j_spring_cas_security_check");
-    res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
-});
-app.get("/validate/j_spring_cas_security_check", function (req, res, next) {
+app.get('/user', function (req, res, next) {
     var user = userList.find(function (obj) { return obj.id == req.session.id; });
-    if (user) {
-        user.ticket = req.query.ticket;
-        res.redirect(user.resource);
+    if (user != undefined) {
+        var post_data = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n        <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n            <soap:Body>\n                <n:getUserDataByUuid xmlns:n=\"http://service.core.ws.auth.cai.it/\">\n                    <arg0>" + user.uuid + "</arg0>\n                </n:getUserDataByUuid>\n            </soap:Body>\n        </soap:Envelope>";
+        request.post({
+            url: 'http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid',
+            method: "POST",
+            headers: {
+                "Content-Type": "text/xml"
+            },
+            body: post_data
+        }, function (err, response, body) {
+            var el = (new DOMParser()).parseFromString(body, "text/xml");
+            var code = getChildByName(el, 'sectionCode').textContent;
+            if (code) {
+                res.status(200).send(code);
+            }
+            else {
+                res.status(500).send({ 'error': 'Error user request' });
+            }
+        });
     }
     else {
-        console.log("Invalid user request");
-        userList.push({ id: req.session.id, resource: appBaseUrl });
+        console.log("User not logged");
+        userList.push({ id: req.session.id, resource: appBaseUrl + '/list' });
         res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
 });
@@ -127,6 +142,7 @@ app.get('/*', function (req, res) {
             validationPromise(user.ticket)
                 .then(function (response) {
                 console.log("Valid ticket");
+                user.uuid = response;
                 res.sendFile(path.join(__dirname + '/dist/index.html'));
             })["catch"](function (err) {
                 console.log("Invalid ticket");

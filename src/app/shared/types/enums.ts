@@ -141,6 +141,48 @@ export namespace Enums {
         "IMOF trasporto a valle"
     }
 
+    //tipologia di utente
+    export enum User_Type {
+        "central",
+        "regional",
+        "sectional"
+    }
+
+    //permessi per dettagli rifugio
+    export const DetailRevisionPermission:any[] = [
+        User_Type.central,
+        User_Type.sectional
+    ]  
+    
+    //permessi per documenti rifugio
+    export const DocRevisionPermission:any[] = [
+        User_Type.central,
+        User_Type.sectional
+    ]
+
+    //permessi per economia rifugio
+    export const EconomyRevisionPermission:any[] = [
+        User_Type.central,
+        User_Type.sectional
+    ]
+
+    //permessi per inserimento rifugio
+    export const InsertShelterPermission:any[] = [
+        User_Type.central
+    ]
+    
+    //permessi per rimozione rifugio
+    export const DeleteShelterPermission:any[] = [
+        User_Type.central
+    ]
+
+    //sezioni del menu
+    export enum MenuSection {
+        "detail",
+        "document",
+        "economy"
+    }
+
     //coerenza tipologica
     export enum Typo_consistency {
         "Piena",

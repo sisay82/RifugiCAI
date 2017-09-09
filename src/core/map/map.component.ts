@@ -175,7 +175,6 @@ export class BcMap implements OnInit{
     }
 
     moveEvent(event:L.Event){
-        console.log("B");
         if(event.target.getZoom()>7){
             this.removeMarkers();
             this.setMarkersAround(event.target.getCenter());

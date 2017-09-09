@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { parseDate } from '../../inputs/text/text_input.component';
+import {BcAuthService} from '../../../app/shared/auth.service';
 
 @Component({
   moduleId: module.id,
@@ -33,9 +34,10 @@ export class BcManagementRevision {
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
     maskError:boolean=false;
+    permissionSub:Subscription;    
     hiddenSubject:boolean=true;
     formValidSub:Subscription;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    constructor(private shared:BcSharedService,private authService:BcAuthService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.managForm = fb.group({
             rent:[""],
             period:[""],
@@ -101,6 +103,10 @@ export class BcManagementRevision {
                 shared.onDisplayError();
                 this.displayError=true;
             }
+        });
+
+        this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
+            this.checkPermission(permissions);
         });
 
         let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
@@ -306,6 +312,9 @@ export class BcManagementRevision {
             if(!this.disableSave)
                 this.save(false);
         }
+        if(this.permissionSub!=undefined){
+            this.permissionSub.unsubscribe();
+        }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
         }
@@ -343,7 +352,7 @@ export class BcManagementRevision {
         });
     }
 
-    ngOnInit(){
+    initialize(){
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.getManagement(params["id"])
@@ -355,5 +364,23 @@ export class BcManagementRevision {
             });
         });
 
+    }
+
+    ngOnInit() {
+        let permissions = this.revisionService.getLocalPermissions();
+        if(permissions!=undefined){
+            this.checkPermission(permissions);
+        }        
+    }
+
+    checkPermission(permissions){
+        if(permissions.length>0){
+            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
+                this.revisionService.updateLocalPermissions(permissions);
+                this.initialize();
+            }else{
+                location.href="/list";
+            }
+        }
     }
 }

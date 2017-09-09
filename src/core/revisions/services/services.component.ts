@@ -8,7 +8,9 @@ import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
 import {BcSharedService} from '../../../app/shared/shared.service';
+import { Enums } from '../../../app/shared/types/enums';
 import { Subscription } from 'rxjs/Subscription';
+import {BcAuthService} from '../../../app/shared/auth.service';
 
 @Component({
   moduleId: module.id,
@@ -39,8 +41,9 @@ export class BcServRevision {
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
     maskError:boolean=false;
+    permissionSub:Subscription; 
     formValidSub:Subscription;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    constructor(private shared:BcSharedService,private authService:BcAuthService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.servForm = fb.group({
             services:fb.array([])
             
@@ -58,6 +61,10 @@ export class BcServRevision {
         this.newTagForm = fb.group({
             newTagKey:["Informazione"],
             newTagValue:["Valore"],
+        });
+
+        this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
+            this.checkPermission(permissions);
         });
 
         shared.onActiveOutletChange("revision");
@@ -340,18 +347,23 @@ export class BcServRevision {
     initForm(shelter:IShelter){
         this.name=shelter.name;
         for(let service of shelter.services){
-            const currentService:FormGroup=<FormGroup>(<FormArray>this.servForm.controls.services).controls.find(serv=>serv.value.category.toLowerCase().indexOf(service.category.toLowerCase())>-1);
-            if(currentService==undefined){
+            var currentService:FormGroup
+            if(service.category!=undefined){
+                currentService=<FormGroup>(<FormArray>this.servForm.controls.services).controls.find(serv=>serv.value.category.toLowerCase().indexOf(service.category.toLowerCase())>-1);                
+            }
+            if(service.category!=undefined&&currentService==undefined){
                 this.serviceList.push({_id:service._id,category:service.category,tags:service.tags});
                 (<FormArray>this.servForm.controls.services).push(this.initService(service));
             }else{
                 this.serviceListChange=true;
                 this.newServiceAdded=true;
-                for(let tag of service.tags){
-                    let currentTag:FormGroup=<FormGroup>(<FormArray>currentService.controls.tags).controls.find(t=>
-                        t.value.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
-                    if(currentTag==undefined){
-                        (<FormArray>currentService.controls.tags).push(this.initTag(tag.key,tag.value));
+                if(service.tags!=undefined){
+                    for(let tag of service.tags){
+                        let currentTag:FormGroup=<FormGroup>(<FormArray>currentService.controls.tags).controls.find(t=>
+                            t.value.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
+                        if(currentTag==undefined){
+                            (<FormArray>currentService.controls.tags).push(this.initTag(tag.key,tag.value));
+                        }
                     }
                 }
                 this.serviceToRemove.push(service._id);
@@ -365,6 +377,9 @@ export class BcServRevision {
         if(this.serviceListChange||this.servForm.dirty){
             if(!this.disableSave)
                 this.save(false);
+        }
+        if(this.permissionSub!=undefined){
+            this.permissionSub.unsubscribe();
         }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
@@ -403,7 +418,7 @@ export class BcServRevision {
         });
     }
 
-    ngOnInit(){
+    initialize(){
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.getService(params["id"])
@@ -415,5 +430,23 @@ export class BcServRevision {
             });
         });
 
+    }
+
+    ngOnInit() {
+        let permissions = this.revisionService.getLocalPermissions();
+        if(permissions!=undefined){
+            this.checkPermission(permissions);
+        }        
+    }
+
+    checkPermission(permissions){
+        if(permissions!=undefined&&permissions.length>0){
+            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
+                this.revisionService.updateLocalPermissions(permissions);
+                this.initialize();
+            }else{
+                location.href="/list";
+            }
+        }
     }
 }

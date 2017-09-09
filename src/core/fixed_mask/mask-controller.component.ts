@@ -1,26 +1,52 @@
 import {
-  Component, Input,OnDestroy
+  Component, Input,OnDestroy,OnInit
 } from '@angular/core';
 import { IShelter } from '../../app/shared/types/interfaces';
 import {Router,ActivatedRoute} from '@angular/router';
 import {BcSharedService} from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+import {ShelterService} from '../../app/shelter/shelter.service'
+import {BcAuthService} from '../../app/shared/auth.service';
 
 @Component({
     moduleId: module.id,
     selector: 'bc-mask',
-    templateUrl: 'mask-controller.component.html'
+    templateUrl: 'mask-controller.component.html',
+    providers:[ShelterService]
 })
 export class BcMaskController {
   @Input() shelter:IShelter;
   @Input() ref:string;
   currentOutlet:string="";
   activeOutletSub:Subscription;
-  constructor(private shared:BcSharedService,private route:ActivatedRoute){
+  revisionPermission:boolean=false;
+  constructor(private shared:BcSharedService,private route:ActivatedRoute,private shelterService:ShelterService,private authService:BcAuthService){
     this.currentOutlet=shared.activeOutlet;
     this.activeOutletSub=shared.activeOutletChange$.subscribe(outlet=>{
         this.currentOutlet=outlet;
     });
+  }
+
+  ngOnInit(){
+    if(this.shelter==undefined){
+      let routeSub=this.route.params.subscribe(params=>{
+        let shelSub=this.shelterService.getShelter(params['id']).subscribe(shelter=>{
+            this.shelter=shelter;
+            let permissionSub = this.authService.checkRevisionPermission(shelter.idCai).subscribe(val=>{
+              this.revisionPermission=val;
+              if(permissionSub!=undefined){
+                permissionSub.unsubscribe();
+              }
+            });
+            if(routeSub!=undefined){
+              routeSub.unsubscribe();
+            }
+            if(shelSub!=undefined){
+              shelSub.unsubscribe();
+            }
+        });
+      });
+    }
   }
 
   ngOnDestroy(){

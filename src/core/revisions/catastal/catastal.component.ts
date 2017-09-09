@@ -1,5 +1,5 @@
 import {
-  Component,Input,OnInit,OnDestroy
+  Component,Input,OnDestroy,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IDrain,IEnergy,ICatastal, IButton, IShelter } from '../../../app/shared/types/interfaces'
@@ -9,12 +9,7 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/throw';
-import { Observer } from 'rxjs/Observer';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/of';
+import {BcAuthService} from '../../../app/shared/auth.service';
 
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
@@ -53,8 +48,9 @@ export class BcCatastalRevision {
     formCatValidSub:Subscription;
     formEnergyValidSub:Subscription;
     formDrainValidSub:Subscription;
+    permissionSub:Subscription;    
     maskError:boolean=false;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.catastalForm = fb.group({
             buildingRegulation:[""],
             buildYear:[""],
@@ -129,6 +125,16 @@ export class BcCatastalRevision {
             this.revisionService.onChildDisableSaveAnswer();
             if(disableSaveSub!=undefined){
                 disableSaveSub.unsubscribe();
+            }
+        });
+
+        this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
+            if(permissions.length>0){
+                if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
+                    this.initialize();
+                }else{
+                    location.href="/list";
+                }
             }
         });
 
@@ -307,6 +313,9 @@ export class BcCatastalRevision {
             if(!this.disableSave)
                 this.save(false);
         }
+        if(this.permissionSub!=undefined){
+            this.permissionSub.unsubscribe();
+        }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
         }
@@ -409,7 +418,7 @@ export class BcCatastalRevision {
         });
     }
 
-    ngOnInit(){
+    initialize(){
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.getCatastal(params["id"])
@@ -424,5 +433,23 @@ export class BcCatastalRevision {
                 });
             });
         });
+    }
+
+    ngOnInit() {
+        let permissions = this.revisionService.getLocalPermissions();
+        if(permissions!=undefined){
+            this.checkPermission(permissions);
+        }        
+    }
+
+    checkPermission(permissions){
+        if(permissions.length>0){
+            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
+                this.revisionService.updateLocalPermissions(permissions);
+                this.initialize();
+            }else{
+                location.href="/list";
+            }
+        }
     }
 }

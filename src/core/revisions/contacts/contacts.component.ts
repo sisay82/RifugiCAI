@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { parseDate } from '../../inputs/text/text_input.component';
+import {BcAuthService} from '../../../app/shared/auth.service';
 
 @Component({
   moduleId: module.id,
@@ -34,8 +35,9 @@ export class BcContactsRevision {
     maskInvalidSub:Subscription;
     maskValidSub:Subscription;
     maskError:boolean=false;
+    permissionSub:Subscription;    
     hiddenOpening:boolean=true;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.contactForm = fb.group({
             fixedPhone:[""],
             mobilePhone:[""],
@@ -77,6 +79,10 @@ export class BcContactsRevision {
             if(disableSaveSub!=undefined){
                 disableSaveSub.unsubscribe();
             }
+        });
+
+        this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
+            this.checkPermission(permissions);
         });
 
         this.shared.onActiveOutletChange("revision");
@@ -258,6 +264,9 @@ export class BcContactsRevision {
             if(!this.disableSave)
                 this.save(false);
         }
+        if(this.permissionSub!=undefined){
+            this.permissionSub.unsubscribe();
+        }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
         }
@@ -321,7 +330,7 @@ export class BcContactsRevision {
         });
      }
 
-    ngOnInit(){
+    initialize(){
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.getContact(params["id"])
@@ -336,5 +345,23 @@ export class BcContactsRevision {
                 });
             });
         });
+    }
+
+    ngOnInit() {
+        let permissions = this.revisionService.getLocalPermissions();
+        if(permissions!=undefined){
+            this.checkPermission(permissions);
+        }        
+    }
+
+    checkPermission(permissions){
+        if(permissions.length>0){
+            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
+                this.revisionService.updateLocalPermissions(permissions);
+                this.initialize();
+            }else{
+                location.href="/list";
+            }
+        }
     }
 }
