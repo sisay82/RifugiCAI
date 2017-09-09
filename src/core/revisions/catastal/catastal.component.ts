@@ -15,6 +15,7 @@ import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/of';
+import {RevisionBase} from '../shared/revision_base';
 
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
@@ -35,26 +36,18 @@ function validateDate(c:FormControl){
   styleUrls: ['catastal.component.scss'],
   providers:[ShelterService]
 })
-export class BcCatastalRevision {
-    _id:String;
-    name:String;
+export class BcCatastalRevision extends RevisionBase{
     catastalForm: FormGroup; 
     energyForm: FormGroup; 
     drainForm: FormGroup; 
-    invalid:boolean=false;
     catastal:ICatastal;
     energy:IEnergy;
     drain:IDrain;
-    displayError:boolean=false;
-    maskSaveSub:Subscription;
-    disableSave=false;
-    maskInvalidSub:Subscription;
-    maskValidSub:Subscription;
     formCatValidSub:Subscription;
     formEnergyValidSub:Subscription;
     formDrainValidSub:Subscription;
-    maskError:boolean=false;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService);
         this.catastalForm = fb.group({
             buildingRegulation:[""],
             buildYear:[""],
@@ -114,27 +107,6 @@ export class BcCatastalRevision {
             }
         });
 
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.maskError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            this.maskError=false;
-            if(this.drainForm.valid&&this.catastalForm.valid&&this.energyForm.valid){
-                this.displayError=false;
-            }
-        });
-
-        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-            this.disableSave=true;
-            this.revisionService.onChildDisableSaveAnswer();
-            if(disableSaveSub!=undefined){
-                disableSaveSub.unsubscribe();
-            }
-        });
-
-        this.shared.onActiveOutletChange("revision");
-
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(!this.maskError&&this.catastalForm.valid&&this.energyForm.valid&&this.drainForm.valid){
                 if(this.catastalForm.dirty||this.energyForm.dirty||this.drainForm.dirty){
@@ -150,6 +122,10 @@ export class BcCatastalRevision {
         });
 
         shared.activeComponent="catastal";
+    }
+
+    checkValidForm(){
+        return this.drainForm.valid&&this.catastalForm.valid&&this.energyForm.valid;
     }
 
     save(confirm){

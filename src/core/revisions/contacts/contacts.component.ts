@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { parseDate } from '../../inputs/text/text_input.component';
+import {RevisionBase} from '../shared/revision_base';
 
 @Component({
   moduleId: module.id,
@@ -18,25 +19,16 @@ import { parseDate } from '../../inputs/text/text_input.component';
   styleUrls: ['contacts.component.scss'],
   providers:[ShelterService]
 })
-export class BcContactsRevision {
-    _id:String;
-    name:String;
+export class BcContactsRevision extends RevisionBase {
     contactForm: FormGroup; 
     newOpeningForm: FormGroup;
-    invalid:boolean=false;
     contacts:IContacts;
     openings:IOpening[];
-    disableSave=false;
-    displayError:boolean=false;
-    maskSaveSub:Subscription;
     openingChange:boolean=false;
-    formValidSub:Subscription;
-    maskInvalidSub:Subscription;
-    maskValidSub:Subscription;
-    maskError:boolean=false;
     hiddenOpening:boolean=true;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        this.contactForm = fb.group({
+    super(shelterService,shared,revisionService);
+    this.contactForm = fb.group({
             fixedPhone:[""],
             mobilePhone:[""],
             role:[""],
@@ -60,27 +52,6 @@ export class BcContactsRevision {
             }
         });
 
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.maskError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            this.maskError=false;
-            if(this.contactForm.valid){
-                this.displayError=false;
-            }
-        });
-
-        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-            this.disableSave=true;
-            this.revisionService.onChildDisableSaveAnswer();
-            if(disableSaveSub!=undefined){
-                disableSaveSub.unsubscribe();
-            }
-        });
-
-        this.shared.onActiveOutletChange("revision");
-
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(!this.maskError&&this.contactForm.valid){
                 if(this.openingChange||this.contactForm.dirty){
@@ -97,6 +68,10 @@ export class BcContactsRevision {
 
         shared.activeComponent="contacts";
     } 
+
+    checkValidForm(){
+        return this.contactForm.valid;
+    }
 
     toggleOpenings(){
         this.hiddenOpening=!this.hiddenOpening;
