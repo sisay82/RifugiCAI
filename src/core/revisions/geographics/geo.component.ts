@@ -8,7 +8,7 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-
+import {RevisionBase} from '../shared/revision_base';
 @Component({
   moduleId: module.id,
   selector: 'bc-geo-revision',
@@ -16,25 +16,15 @@ import { Subscription } from 'rxjs/Subscription';
   styleUrls: ['geo.component.scss'],
   providers:[ShelterService]
 })
-export class BcGeoRevision {
-    _id:String;
-    name:String;
-    geoForm: FormGroup; 
-    newTagForm: FormGroup;
-    data:IGeographic;
-    displayTagError:boolean=false;
-    invalid:boolean=false;
-    disableSave=false;
-    maskSaveSub:Subscription;
-    tagChange:boolean=false
-    displayError:boolean=false;
-    maskError:boolean=false;
-    maskInvalidSub:Subscription;
-    maskValidSub:Subscription;
-    formValidSub:Subscription;
-    hiddenTag:boolean=true;
+export class BcGeoRevision extends RevisionBase {
+    private geoForm: FormGroup; 
+    private newTagForm: FormGroup;
+    private data:IGeographic;
+    private tagChange:boolean=false
+    private hiddenTag:boolean=true;
 
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService);
         this.geoForm = fb.group({
             region:[""],
             province:[""],
@@ -67,27 +57,6 @@ export class BcGeoRevision {
             }
         });
 
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.maskError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            this.maskError=false;
-            if(this.geoForm.valid){
-                this.displayError=false;
-            }
-        });
-
-        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-            this.disableSave=true;
-            this.revisionService.onChildDisableSaveAnswer();
-            if(disableSaveSub!=undefined){
-                disableSaveSub.unsubscribe();
-            }
-        });
-
-        shared.onActiveOutletChange("revision");
-
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(!this.maskError&&this.geoForm.valid){
                 if(this.tagChange||this.geoForm.dirty){
@@ -104,6 +73,10 @@ export class BcGeoRevision {
 
         shared.activeComponent="geographic";
     } 
+
+    checkValidForm(){
+        return this.geoForm.valid;
+    }
 
     isHiddenTag(){
         return this.hiddenTag;

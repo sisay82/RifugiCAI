@@ -9,6 +9,7 @@ import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
 import {BcSharedService,ServiceBase} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+import {RevisionBase} from '../shared/revision_base';
 
 @Component({
   moduleId: module.id,
@@ -18,9 +19,7 @@ import { Subscription } from 'rxjs/Subscription';
   providers:[ShelterService],
   animations: [ Animations.slideInOut ]
 })
-export class BcServRevision {
-    _id:String;
-    name:String;
+export class BcServRevision extends RevisionBase {
     servForm: FormGroup; 
     newServiceForm: FormGroup;
     newTagForm: FormGroup;
@@ -28,19 +27,13 @@ export class BcServRevision {
     serviceList:IService[]=[];
     currentServiceTag:number=-1;
     serviceHidden:boolean=true;
-    displayError:boolean=false;
-    maskSaveSub:Subscription;
-    disableSave=false;
     invalidTag:boolean=false;
     invalidService:boolean=false;
     newServiceAdded=false;
     newTagHidden:boolean=true;
     serviceListChange:boolean=false;
-    maskInvalidSub:Subscription;
-    maskValidSub:Subscription;
-    maskError:boolean=false;
-    formValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService);
         this.servForm = fb.group({
             services:fb.array([])
         }); 
@@ -59,8 +52,6 @@ export class BcServRevision {
             newTagValue:["Valore"],
         });
 
-        shared.onActiveOutletChange("revision");
-
         this.formValidSub = this.servForm.statusChanges.subscribe((value)=>{
             if(value=="VALID"){
                 if(!this.maskError){
@@ -68,27 +59,6 @@ export class BcServRevision {
                 }
             }
         });
-
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.maskError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            this.maskError=false;
-            if(this.servForm.valid){
-                this.displayError=false;
-            }
-        });
-
-        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-            this.disableSave=true;
-            this.revisionService.onChildDisableSaveAnswer();
-            if(disableSaveSub!=undefined){
-                disableSaveSub.unsubscribe();
-            }
-        });
-
-        shared.activeComponent="services";
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(!this.maskError&&this.servForm.valid){
@@ -104,6 +74,10 @@ export class BcServRevision {
             }
         });
     } 
+
+    checkValidForm(){
+        return this.servForm.valid;
+    }
 
     toggleNewTag(){
         this.newTagHidden=!this.newTagHidden;
