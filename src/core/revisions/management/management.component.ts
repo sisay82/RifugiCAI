@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { parseDate } from '../../inputs/text/text_input.component';
+import {RevisionBase} from '../shared/revision_base';
 
 @Component({
   moduleId: module.id,
@@ -18,24 +19,15 @@ import { parseDate } from '../../inputs/text/text_input.component';
   styleUrls: ['management.component.scss'],
   providers:[ShelterService]
 })
-export class BcManagementRevision {
-    _id:String;
-    name:String;
+export class BcManagementRevision extends RevisionBase{
     managForm: FormGroup; 
     newSubjectForm: FormGroup;
     data:IManagement;
     property:ISubject;
-    invalid:Boolean=false;
-    displayError:boolean=false;
-    disableSave=false;
-    maskSaveSub:Subscription;
     subjectChange:boolean=false;
-    maskInvalidSub:Subscription;
-    maskValidSub:Subscription;
-    maskError:boolean=false;
     hiddenSubject:boolean=true;
-    formValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService);
         this.managForm = fb.group({
             rentType:[""],
             valuta:[""],
@@ -73,8 +65,6 @@ export class BcManagementRevision {
             newPossessionType:[""]
         });
 
-        shared.onActiveOutletChange("revision");
-
         this.formValidSub = this.managForm.statusChanges.subscribe((value)=>{
             if(value=="VALID"){
                 if(!this.maskError){
@@ -83,16 +73,6 @@ export class BcManagementRevision {
             }
         });
 
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.maskError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            this.maskError=false;
-            if(this.managForm.valid){
-                this.displayError=false;
-            }
-        });
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(!this.maskError&&this.managForm.valid){
@@ -108,16 +88,12 @@ export class BcManagementRevision {
             }
         });
 
-        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-            this.disableSave=true;
-            this.revisionService.onChildDisableSaveAnswer();
-            if(disableSaveSub!=undefined){
-                disableSaveSub.unsubscribe();
-            }
-        });
-
         shared.activeComponent="management";
     } 
+
+    checkValidForm(){
+        return this.managForm.valid;
+    }
 
 
     isHiddenSubject(){
