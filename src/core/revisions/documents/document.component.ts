@@ -11,6 +11,7 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
 import {BcAuthService} from '../../../app/shared/auth.service';
+import {RevisionBase} from '../shared/revision_base';
 
 @Component({
   moduleId: module.id,
@@ -19,35 +20,25 @@ import {BcAuthService} from '../../../app/shared/auth.service';
   styleUrls: ['document.component.scss'],
   providers:[ShelterService]
 })
-export class BcDocRevision {
-  newDocForm: FormGroup;
-  newMapForm: FormGroup;
-  newInvoiceForm: FormGroup;
-  _id:String;
-  invoceFormatRegExp=<RegExp>/.+[,\/\-\\.\|_].+[,\/\-\\.\|_].+/  
-  name:String;
-  docs:IFile[]=[];
-  maps:IFile[]=[];
-  invoices:IFile[]=[];
-  displayTagError:boolean=false;
-  invalid:boolean=false;
-  disableSave=false;
-  maskSaveSub:Subscription;
-  displayError:boolean=false;
-  maskError:boolean=false;
-  maskInvalidSub:Subscription;
-  maskValidSub:Subscription;
-  docFormValidSub:Subscription;
-  mapFormValidSub:Subscription;
-  invoiceFormValidSub:Subscription;
-  hiddenTag:boolean=true;
-  uploading:boolean=false;
-  permissionSub:Subscription;      
-  currentFileToggle:number=-1;
-  sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
-  sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
-  sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"}
+export class BcDocRevision extends RevisionBase{
+  private newDocForm: FormGroup;
+  private newMapForm: FormGroup;
+  private newInvoiceForm: FormGroup;
+  private invoceFormatRegExp=<RegExp>/.+[,\/\-\\.\|_].+[,\/\-\\.\|_].+/  
+  private docs:IFile[]=[];
+  private maps:IFile[]=[];
+  private invoices:IFile[]=[];
+  private docFormValidSub:Subscription;
+  private mapFormValidSub:Subscription;
+  private invoiceFormValidSub:Subscription;
+  private hiddenTag:boolean=true;
+  private uploading:boolean=false;
+  private currentFileToggle:number=-1;
+  private sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
+  private sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
+  private  sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"}
   constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    super(shelterService,shared,revisionService,authService);
     this.newDocForm = fb.group({
       file:[]
     });
@@ -83,27 +74,6 @@ export class BcDocRevision {
           }
       }
     });
-    
-     this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-        this.maskError=true;
-    });
-
-    this.maskValidSub = shared.maskValid$.subscribe(()=>{
-        this.maskError=false;
-        if(this.newDocForm.valid&&this.newInvoiceForm.valid&&this.newMapForm.valid){
-            this.displayError=false;
-        }
-    });
-
-    let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-        this.disableSave=true;
-        this.revisionService.onChildDisableSaveAnswer();
-        if(disableSaveSub!=undefined){
-            disableSaveSub.unsubscribe();
-        }
-    });
-
-    shared.onActiveOutletChange("revision");
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
         if(!this.maskError){
@@ -117,12 +87,12 @@ export class BcDocRevision {
           this.displayError=true;
         }
     });
-
-    this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
-      this.checkPermission(permissions);
-    });
-
+    
     shared.activeComponent="documents";
+  }
+
+  checkValidForm(){
+    return this.newDocForm.valid&&this.newInvoiceForm.valid&&this.newMapForm.valid;
   }
 
   getKeys(enumName){

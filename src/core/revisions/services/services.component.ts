@@ -11,6 +11,7 @@ import {BcSharedService,ServiceBase} from '../../../app/shared/shared.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { Subscription } from 'rxjs/Subscription';
 import {BcAuthService} from '../../../app/shared/auth.service';
+import {RevisionBase} from '../shared/revision_base';
 
 @Component({
   moduleId: module.id,
@@ -20,30 +21,21 @@ import {BcAuthService} from '../../../app/shared/auth.service';
   providers:[ShelterService],
   animations: [ Animations.slideInOut ]
 })
-export class BcServRevision {
-    _id:String;
-    name:String;
-    servForm: FormGroup; 
-    newServiceForm: FormGroup;
-    newTagForm: FormGroup;
-    serviceToRemove:String[]=[];
-    serviceList:IService[]=[];
-    currentServiceTag:number=-1;
-    serviceHidden:boolean=true;
-    displayError:boolean=false;
-    maskSaveSub:Subscription;
-    disableSave=false;
-    invalidTag:boolean=false;
-    invalidService:boolean=false;
-    newServiceAdded=false;
-    newTagHidden:boolean=true;
-    serviceListChange:boolean=false;
-    maskInvalidSub:Subscription;
-    maskValidSub:Subscription;
-    maskError:boolean=false;
-    permissionSub:Subscription; 
-    formValidSub:Subscription;
-    constructor(private shared:BcSharedService,private authService:BcAuthService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+export class BcServRevision extends RevisionBase {
+    private servForm: FormGroup; 
+    private newServiceForm: FormGroup;
+    private newTagForm: FormGroup;
+    private serviceToRemove:String[]=[];
+    private serviceList:IService[]=[];
+    private currentServiceTag:number=-1;
+    private serviceHidden:boolean=true;
+    private invalidTag:boolean=false;
+    private invalidService:boolean=false;
+    private newServiceAdded=false;
+    private newTagHidden:boolean=true;
+    private serviceListChange:boolean=false;
+    constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,authService);
         this.servForm = fb.group({
             services:fb.array([])
         }); 
@@ -62,12 +54,6 @@ export class BcServRevision {
             newTagValue:["Valore"],
         });
 
-        this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
-            this.checkPermission(permissions);
-        });
-
-        shared.onActiveOutletChange("revision");
-
         this.formValidSub = this.servForm.statusChanges.subscribe((value)=>{
             if(value=="VALID"){
                 if(!this.maskError){
@@ -75,27 +61,6 @@ export class BcServRevision {
                 }
             }
         });
-
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.maskError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            this.maskError=false;
-            if(this.servForm.valid){
-                this.displayError=false;
-            }
-        });
-
-        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-            this.disableSave=true;
-            this.revisionService.onChildDisableSaveAnswer();
-            if(disableSaveSub!=undefined){
-                disableSaveSub.unsubscribe();
-            }
-        });
-
-        shared.activeComponent="services";
 
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(!this.maskError&&this.servForm.valid){
@@ -111,6 +76,10 @@ export class BcServRevision {
             }
         });
     } 
+
+    checkValidForm(){
+        return this.servForm.valid;
+    }
 
     toggleNewTag(){
         this.newTagHidden=!this.newTagHidden;
@@ -365,14 +334,6 @@ export class BcServRevision {
         }
     }
 
-    toTitleCase(input:string): string{
-        if (!input) {
-            return '';
-        } else {
-            return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1) )).replace(/_/g," ");
-        }
-    }
-
     initForm(shelter:IShelter){
         this.name=shelter.name;
         let serviceList=new ServiceBase();
@@ -471,7 +432,6 @@ export class BcServRevision {
                 }
             });
         });
-
     }
 
     ngOnInit() {

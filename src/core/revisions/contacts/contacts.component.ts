@@ -11,6 +11,7 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { parseDate } from '../../inputs/text/text_input.component';
 import {BcAuthService} from '../../../app/shared/auth.service';
+import {RevisionBase} from '../shared/revision_base';
 
 @Component({
   moduleId: module.id,
@@ -19,25 +20,15 @@ import {BcAuthService} from '../../../app/shared/auth.service';
   styleUrls: ['contacts.component.scss'],
   providers:[ShelterService]
 })
-export class BcContactsRevision {
-    _id:String;
-    name:String;
-    contactForm: FormGroup; 
-    newOpeningForm: FormGroup;
-    invalid:boolean=false;
-    contacts:IContacts;
-    openings:IOpening[];
-    disableSave=false;
-    displayError:boolean=false;
-    maskSaveSub:Subscription;
-    openingChange:boolean=false;
-    formValidSub:Subscription;
-    maskInvalidSub:Subscription;
-    maskValidSub:Subscription;
-    maskError:boolean=false;
-    permissionSub:Subscription;    
-    hiddenOpening:boolean=true;
+export class BcContactsRevision extends RevisionBase {
+    private contactForm: FormGroup; 
+    private newOpeningForm: FormGroup;
+    private contacts:IContacts;
+    private openings:IOpening[];
+    private openingChange:boolean=false;
+    private hiddenOpening:boolean=true;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,authService);
         this.contactForm = fb.group({
             fixedPhone:[""],
             mobilePhone:[""],
@@ -62,31 +53,6 @@ export class BcContactsRevision {
             }
         });
 
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.maskError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            this.maskError=false;
-            if(this.contactForm.valid){
-                this.displayError=false;
-            }
-        });
-
-        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-            this.disableSave=true;
-            this.revisionService.onChildDisableSaveAnswer();
-            if(disableSaveSub!=undefined){
-                disableSaveSub.unsubscribe();
-            }
-        });
-
-        this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
-            this.checkPermission(permissions);
-        });
-
-        this.shared.onActiveOutletChange("revision");
-
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(!this.maskError&&this.contactForm.valid){
                 if(this.openingChange||this.contactForm.dirty){
@@ -103,6 +69,10 @@ export class BcContactsRevision {
 
         shared.activeComponent="contacts";
     } 
+
+    checkValidForm(){
+        return this.contactForm.valid;
+    }
 
     toggleOpenings(){
         this.hiddenOpening=!this.hiddenOpening;

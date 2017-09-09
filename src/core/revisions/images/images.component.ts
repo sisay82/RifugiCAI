@@ -11,6 +11,7 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
 import {BcAuthService} from '../../../app/shared/auth.service';
+import {RevisionBase} from '../shared/revision_base';
 
 var maxImages:Number=10;
 
@@ -21,26 +22,16 @@ var maxImages:Number=10;
   styleUrls: ['images.component.scss'],
   providers:[ShelterService]
 })
-export class BcImgRevision {
-  newDocForm: FormGroup;
-  docsForm: FormGroup;
-  _id:String;
-  name:String;
-  displayTagError:boolean=false;
-  invalid:boolean=false;
-  disableSave=false;
-  uploading:boolean=false;
-  maskSaveSub:Subscription;
-  displayError:boolean=false;
-  maskError:boolean=false;
-  maskInvalidSub:Subscription;
-  maskValidSub:Subscription;
-  newDocFormValidSub:Subscription;
-  docsFormValidSub:Subscription;
-  hiddenImage:boolean=true;
-  permissionSub:Subscription;      
-  sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
+export class BcImgRevision extends RevisionBase {
+  private newDocForm: FormGroup;
+  private docsForm: FormGroup;
+  private uploading:boolean=false;
+  private newDocFormValidSub:Subscription;
+  private docsFormValidSub:Subscription;
+  private hiddenImage:boolean=true;
+  private sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    super(shelterService,shared,revisionService,authService);
     this.newDocForm = fb.group({
       file:[],
       description:[""]
@@ -65,31 +56,6 @@ export class BcImgRevision {
         }
       }
     });
-    
-    this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-      this.maskError=true;
-    });
-
-    this.maskValidSub = shared.maskValid$.subscribe(()=>{
-      this.maskError=false;
-      if(this.newDocForm.valid){
-          this.displayError=false;
-      }
-    });
-
-    let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-      this.disableSave=true;
-      this.revisionService.onChildDisableSaveAnswer();
-      if(disableSaveSub!=undefined){
-          disableSaveSub.unsubscribe();
-      }
-    });
-
-    this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
-      this.checkPermission(permissions);
-    });
-
-    shared.onActiveOutletChange("revision");
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
       if(!this.maskError){
@@ -106,6 +72,10 @@ export class BcImgRevision {
     });
 
     shared.activeComponent="images";
+  }
+
+  checkValidForm(){
+    return this.docsForm.valid;
   }
 
   initFile(file:IFile){

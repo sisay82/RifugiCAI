@@ -10,7 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import {BcAuthService} from '../../../app/shared/auth.service';
 import { Subscription } from 'rxjs/Subscription';
-
+import {RevisionBase} from '../shared/revision_base';
 @Component({
   moduleId: module.id,
   selector: 'bc-geo-revision',
@@ -18,26 +18,14 @@ import { Subscription } from 'rxjs/Subscription';
   styleUrls: ['geo.component.scss'],
   providers:[ShelterService]
 })
-export class BcGeoRevision {
-    _id:String;
-    name:String;
-    geoForm: FormGroup; 
-    newTagForm: FormGroup;
-    data:IGeographic;
-    displayTagError:boolean=false;
-    invalid:boolean=false;
-    disableSave=false;
-    maskSaveSub:Subscription;
-    tagChange:boolean=false
-    displayError:boolean=false;
-    maskError:boolean=false;
-    maskInvalidSub:Subscription;
-    maskValidSub:Subscription;
-    formValidSub:Subscription;
-    hiddenTag:boolean=true;
-    permissionSub:Subscription;
-    
-    constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private authService:BcAuthService,private revisionService:BcRevisionsService) { 
+export class BcGeoRevision extends RevisionBase {
+    private geoForm: FormGroup; 
+    private newTagForm: FormGroup;
+    private data:IGeographic;
+    private tagChange:boolean=false
+    private hiddenTag:boolean=true;
+    constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,authService);
         this.geoForm = fb.group({
             region:[""],
             province:[""],
@@ -70,27 +58,6 @@ export class BcGeoRevision {
             }
         });
 
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.maskError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            this.maskError=false;
-            if(this.geoForm.valid){
-                this.displayError=false;
-            }
-        });
-
-        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-            this.disableSave=true;
-            this.revisionService.onChildDisableSaveAnswer();
-            if(disableSaveSub!=undefined){
-                disableSaveSub.unsubscribe();
-            }
-        });
-
-        shared.onActiveOutletChange("revision");
-
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(!this.maskError&&this.geoForm.valid){
                 if(this.tagChange||this.geoForm.dirty){
@@ -103,10 +70,6 @@ export class BcGeoRevision {
                 shared.onDisplayError();
                 this.displayError=true;
             }
-        });
-
-        this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
-            this.checkPermission(permissions);            
         });
 
         shared.activeComponent="geographic";
@@ -129,6 +92,10 @@ export class BcGeoRevision {
                 location.href="/list";
             }
         }
+    }
+    
+    checkValidForm(){
+        return this.geoForm.valid;
     }
 
     isHiddenTag(){

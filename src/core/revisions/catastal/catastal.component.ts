@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {BcAuthService} from '../../../app/shared/auth.service';
+import {RevisionBase} from '../shared/revision_base';
 
 function validateDate(c:FormControl){
     if(c.value!=''&&c.value!=null){
@@ -30,27 +31,18 @@ function validateDate(c:FormControl){
   styleUrls: ['catastal.component.scss'],
   providers:[ShelterService]
 })
-export class BcCatastalRevision {
-    _id:String;
-    name:String;
-    catastalForm: FormGroup; 
-    energyForm: FormGroup; 
-    drainForm: FormGroup; 
-    invalid:boolean=false;
-    catastal:ICatastal;
-    energy:IEnergy;
-    drain:IDrain;
-    displayError:boolean=false;
-    maskSaveSub:Subscription;
-    disableSave=false;
-    maskInvalidSub:Subscription;
-    maskValidSub:Subscription;
-    formCatValidSub:Subscription;
-    formEnergyValidSub:Subscription;
-    formDrainValidSub:Subscription;
-    permissionSub:Subscription;    
-    maskError:boolean=false;
+export class BcCatastalRevision extends RevisionBase{
+    private catastalForm: FormGroup; 
+    private energyForm: FormGroup; 
+    private drainForm: FormGroup; 
+    private catastal:ICatastal;
+    private energy:IEnergy;
+    private drain:IDrain;
+    private formCatValidSub:Subscription;
+    private formEnergyValidSub:Subscription;
+    private formDrainValidSub:Subscription;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,authService);
         this.catastalForm = fb.group({
             buildingRegulation:[""],
             buildYear:[""],
@@ -110,37 +102,6 @@ export class BcCatastalRevision {
             }
         });
 
-        this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-            this.maskError=true;
-        });
-
-        this.maskValidSub = shared.maskValid$.subscribe(()=>{
-            this.maskError=false;
-            if(this.drainForm.valid&&this.catastalForm.valid&&this.energyForm.valid){
-                this.displayError=false;
-            }
-        });
-
-        let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-            this.disableSave=true;
-            this.revisionService.onChildDisableSaveAnswer();
-            if(disableSaveSub!=undefined){
-                disableSaveSub.unsubscribe();
-            }
-        });
-
-        this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
-            if(permissions.length>0){
-                if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
-                    this.initialize();
-                }else{
-                    location.href="/list";
-                }
-            }
-        });
-
-        this.shared.onActiveOutletChange("revision");
-
         this.maskSaveSub=shared.maskSave$.subscribe(()=>{
             if(!this.maskError&&this.catastalForm.valid&&this.energyForm.valid&&this.drainForm.valid){
                 if(this.catastalForm.dirty||this.energyForm.dirty||this.drainForm.dirty){
@@ -156,6 +117,10 @@ export class BcCatastalRevision {
         });
 
         shared.activeComponent="catastal";
+    }
+
+    checkValidForm(){
+        return this.drainForm.valid&&this.catastalForm.valid&&this.energyForm.valid;
     }
 
     save(confirm){
