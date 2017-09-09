@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
+import {RevisionBase} from '../shared/revision_base';
 
 var maxImages:Number=10;
 
@@ -20,25 +21,17 @@ var maxImages:Number=10;
   styleUrls: ['images.component.scss'],
   providers:[ShelterService]
 })
-export class BcImgRevision {
+export class BcImgRevision extends RevisionBase {
   newDocForm: FormGroup;
   docsForm: FormGroup;
-  _id:String;
-  name:String;
   displayTagError:boolean=false;
-  invalid:boolean=false;
-  disableSave=false;
   uploading:boolean=false;
-  maskSaveSub:Subscription;
-  displayError:boolean=false;
-  maskError:boolean=false;
-  maskInvalidSub:Subscription;
-  maskValidSub:Subscription;
   newDocFormValidSub:Subscription;
   docsFormValidSub:Subscription;
   hiddenImage:boolean=true;
   sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    super(shelterService,shared,revisionService);
     this.newDocForm = fb.group({
       file:[],
       description:[""]
@@ -63,27 +56,6 @@ export class BcImgRevision {
         }
       }
     });
-    
-    this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-      this.maskError=true;
-    });
-
-    this.maskValidSub = shared.maskValid$.subscribe(()=>{
-      this.maskError=false;
-      if(this.newDocForm.valid){
-          this.displayError=false;
-      }
-    });
-
-    let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-      this.disableSave=true;
-      this.revisionService.onChildDisableSaveAnswer();
-      if(disableSaveSub!=undefined){
-          disableSaveSub.unsubscribe();
-      }
-    });
-
-    shared.onActiveOutletChange("revision");
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
       if(!this.maskError){
@@ -100,6 +72,10 @@ export class BcImgRevision {
     });
 
     shared.activeComponent="images";
+  }
+
+  checkValidForm(){
+    return this.docsForm.valid;
   }
 
   initFile(file:IFile){
