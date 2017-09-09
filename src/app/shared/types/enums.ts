@@ -150,12 +150,6 @@ export namespace Enums {
         "sectional"
     }
 
-    //permessi per dettagli rifugio
-    export const DetailRevisionPermission:any[] = [
-        User_Type.central,
-        User_Type.sectional
-    ]  
-    
     //permessi per documenti rifugio
     export const DocRevisionPermission:any[] = [
         User_Type.central,
@@ -167,6 +161,14 @@ export namespace Enums {
         User_Type.central,
         User_Type.sectional
     ]
+
+    //permessi per dettagli rifugio
+    export const DetailRevisionPermission:any[] = [
+        ...DocRevisionPermission.concat(EconomyRevisionPermission).filter(function(item,index,input){
+            return input.indexOf(item)==index;
+        }),
+        User_Type.regional
+    ]  
 
     //permessi per inserimento rifugio
     export const InsertShelterPermission:any[] = [

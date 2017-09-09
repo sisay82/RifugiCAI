@@ -160,11 +160,6 @@ var Enums;
         User_Type[User_Type["regional"] = 1] = "regional";
         User_Type[User_Type["sectional"] = 2] = "sectional";
     })(User_Type = Enums.User_Type || (Enums.User_Type = {}));
-    //permessi per dettagli rifugio
-    Enums.DetailRevisionPermission = [
-        User_Type.central,
-        User_Type.sectional
-    ];
     //permessi per documenti rifugio
     Enums.DocRevisionPermission = [
         User_Type.central,
@@ -175,6 +170,12 @@ var Enums;
         User_Type.central,
         User_Type.sectional
     ];
+    //permessi per dettagli rifugio
+    Enums.DetailRevisionPermission = Enums.DocRevisionPermission.concat(Enums.EconomyRevisionPermission).filter(function (item, index, input) {
+        return input.indexOf(item) == index;
+    }).concat([
+        User_Type.regional
+    ]);
     //permessi per inserimento rifugio
     Enums.InsertShelterPermission = [
         User_Type.central

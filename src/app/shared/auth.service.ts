@@ -56,7 +56,7 @@ export class BcAuthService{
                 /*if(id.substr(0,2)==sectionCode.substr(0,2)){
                     permission=true;
                 }*/
-                if(sectionCode.substr(0,2)=='92'){
+                if(sectionCode.substr(0,2)=='93'){
                     permission=true;
                 }
             }else if(name==Enums.User_Type.regional){
