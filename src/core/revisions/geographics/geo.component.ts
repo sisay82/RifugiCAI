@@ -44,12 +44,16 @@ export class BcGeoRevision {
             municipality:[""],
             locality:[""],
             ownerRegion:[""],
+            regional_commission:[""],
             authorityJurisdiction:[""],
             altitude:[""],//number
             latitude:[""],
             longitude:[""],
             massif:[""],
             valley:[""],
+            ski_area:[""],
+            protected_area:[""],
+            site:[""],
             tags:fb.array([])
         }); 
 
@@ -188,12 +192,16 @@ export class BcGeoRevision {
                 municipality:this.geoForm.controls.municipality.value||null,
                 locality:this.geoForm.controls.locality.value||null,
                 ownerRegion:this.geoForm.controls.ownerRegion.value||null,
+                regional_commission:this.geoForm.controls.regional_commission.value||null,
                 authorityJurisdiction:this.geoForm.controls.authorityJurisdiction.value||null,
                 altitude:this.geoForm.controls.altitude.value||null,
                 latitude:this.geoForm.controls.latitude.value||null,
                 longitude:this.geoForm.controls.longitude.value||null,
                 massif:this.geoForm.controls.massif.value||null,
-                valley:this.geoForm.controls.valley.value||null
+                valley:this.geoForm.controls.valley.value||null,
+                ski_area:this.geoForm.controls.ski_area.value||null,
+                protected_area:this.geoForm.controls.protected_area.value||null,
+                site:this.geoForm.controls.site.value||null
             }
             const control = (<FormArray>this.geoForm.controls['tags']).controls;
             let tags:ITag[]=[];

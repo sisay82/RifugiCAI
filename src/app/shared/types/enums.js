@@ -75,7 +75,9 @@ var Enums;
     (function (Water_Type) {
         Water_Type[Water_Type["Assente"] = 0] = "Assente";
         Water_Type[Water_Type["Acquedotto"] = 1] = "Acquedotto";
-        Water_Type[Water_Type["Captazione"] = 2] = "Captazione";
+        Water_Type[Water_Type["Captazione superficiale"] = 2] = "Captazione superficiale";
+        Water_Type[Water_Type["Captazione da sorgente"] = 3] = "Captazione da sorgente";
+        Water_Type[Water_Type["Nelle vicinanze"] = 4] = "Nelle vicinanze";
     })(Water_Type = Enums.Water_Type || (Enums.Water_Type = {}));
     //tipo rifugio
     var Shelter_Type;

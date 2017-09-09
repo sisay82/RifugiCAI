@@ -113,7 +113,10 @@ export class ShelterService {
     }
 
     insertFile(file:IFile):Observable<string>{
-        return this.http.post(this.sheltersBaseUrl+"/file/confirm", file)
+        let formData:FormData=new FormData();
+        let b=(new Blob([JSON.stringify(file)]))
+        formData.append("file",b);
+        return this.http.post(this.sheltersBaseUrl+"/file/confirm", formData)
             .map((res:Response)=>res.json())
             .catch(this.handleError.bind(this));
     }

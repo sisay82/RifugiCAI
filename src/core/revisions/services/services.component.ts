@@ -7,7 +7,7 @@ import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
-import {BcSharedService} from '../../../app/shared/shared.service';
+import {BcSharedService,ServiceBase} from '../../../app/shared/shared.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { Subscription } from 'rxjs/Subscription';
 import {BcAuthService} from '../../../app/shared/auth.service';
@@ -46,7 +46,6 @@ export class BcServRevision {
     constructor(private shared:BcSharedService,private authService:BcAuthService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         this.servForm = fb.group({
             services:fb.array([])
-            
         }); 
 
         this.newServiceForm = fb.group({
@@ -212,7 +211,7 @@ export class BcServRevision {
             tags:this.fb.array([])
         });
         for(let tag of service.tags){
-            (<FormArray>group.controls.tags).push(this.initTag(tag.key,tag.value));
+            (<FormArray>group.controls.tags).push(this.initTag(tag.key,tag.value,tag.type));
         }
 
         return group;        
@@ -284,11 +283,19 @@ export class BcServRevision {
         }
     }
 
-    initTag(key:String,value:String){
-        return this.fb.group({
-            key:[key],
-            value: [value]
-        });
+    initTag(key:String,value:String,type?:String){
+        if(type){
+            return this.fb.group({
+                key:[key],
+                value: [value],
+                type:type
+            });
+        }else{
+            return this.fb.group({
+                key:[key],
+                value: [value]
+            });
+        }
     }
 
     save(confirm){
@@ -344,33 +351,68 @@ export class BcServRevision {
         }
     }
 
+    getValidator(value){
+        switch(value){
+            case("number"):{
+                return "numberValidator";
+            };
+            case("string"):{
+                return "stringValidator";
+            };
+            default:{
+                return "stringValidator"; 
+            }
+        }
+    }
+
+    toTitleCase(input:string): string{
+        if (!input) {
+            return '';
+        } else {
+            return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1) )).replace(/_/g," ");
+        }
+    }
+
     initForm(shelter:IShelter){
         this.name=shelter.name;
-        for(let service of shelter.services){
-            var currentService:FormGroup
-            if(service.category!=undefined){
-                currentService=<FormGroup>(<FormArray>this.servForm.controls.services).controls.find(serv=>serv.value.category.toLowerCase().indexOf(service.category.toLowerCase())>-1);                
+        let serviceList=new ServiceBase();
+        for(let category of Object.getOwnPropertyNames(serviceList)){
+            let s:IService={}
+            s.name=s.category=this.toTitleCase(category);
+            s.tags=[] as [ITag];
+            let serv=shelter.services.find(obj=>obj.category.toLowerCase().indexOf(s.category.toLowerCase())>-1);
+            for(let service of Object.getOwnPropertyNames(serviceList[category])){
+                let tag={key:this.toTitleCase(service),value:null,type:typeof(serviceList[category][service])};
+                if(serv!=undefined){
+                    s._id=serv._id;
+                    let t=serv.tags.find(obj=>obj.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
+                    if(t!=undefined){
+                        tag.value=t.value;
+                    }
+                }else{
+                    this.serviceListChange=true;
+                }
+                s.tags.push(tag);
             }
-            if(service.category!=undefined&&currentService==undefined){
-                this.serviceList.push({_id:service._id,category:service.category,tags:service.tags});
-                (<FormArray>this.servForm.controls.services).push(this.initService(service));
-            }else{
-                this.serviceListChange=true;
-                this.newServiceAdded=true;
-                if(service.tags!=undefined){
-                    for(let tag of service.tags){
-                        let currentTag:FormGroup=<FormGroup>(<FormArray>currentService.controls.tags).controls.find(t=>
-                            t.value.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
-                        if(currentTag==undefined){
-                            (<FormArray>currentService.controls.tags).push(this.initTag(tag.key,tag.value));
+            this.serviceList.push(s);
+            (<FormArray>this.servForm.controls.services).push(this.initService(s));
+        }
+        let servRemove:IService[]=shelter.services.filter(obj=>{
+            if(obj._id){
+                for(let serv of this.serviceList){
+                    if(serv._id){
+                        if(serv._id.toLowerCase().indexOf(obj._id.toString())>-1){
+                            return false;
                         }
                     }
                 }
-                this.serviceToRemove.push(service._id);
             }
             
-        }
-
+            return true;
+        });
+        servRemove.forEach(val=>{
+            this.serviceToRemove.push(val._id);
+        });
     }  
 
     ngOnDestroy(){

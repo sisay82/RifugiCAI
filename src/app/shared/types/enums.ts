@@ -64,7 +64,9 @@ export namespace Enums {
     export enum Water_Type {
         "Assente", 
         "Acquedotto", 
-        "Captazione"
+        "Captazione superficiale",
+        "Captazione da sorgente",
+        "Nelle vicinanze"
     }
 
     //tipo rifugio

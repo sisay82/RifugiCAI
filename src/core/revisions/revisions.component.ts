@@ -24,7 +24,16 @@ export class BcRevisions{
     maskSaveSub:Subscription;
     maskCancelSub:Subscription;
     childDeleteSub:Subscription;
+    outletChangeSub:Subscription;
     constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService){
+        this.outletChangeSub=shared.activeOutletChange$.subscribe((outlet)=>{
+            if(outlet=="content"){
+                delete(this.ShelterToUpdate);
+                delete(this.Docs);
+                delete(this.Images);
+            }
+        });
+
         this.saveSub=revisionService.save$.subscribe(obj=>{
             if(this.ShelterToUpdate!=undefined){
                 this.ShelterToUpdate[obj.section]=obj.shelter[obj.section];
@@ -117,16 +126,16 @@ export class BcRevisions{
         this.loadFilesSub=revisionService.loadFilesRequest$.subscribe(types=>{
             let files:IFile[]=[];
             let retNull=false;
-            if(this.Docs!=undefined&&types.includes([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice])){
+            if(this.Docs!=undefined&&
+                (types.includes(Enums.File_Type.doc)||types.includes(Enums.File_Type.map)||types.includes(Enums.File_Type.invoice))){
                 files=files.concat(this.Docs.filter(f=>types.includes(f.type)));
             }else{
-                retNull=true;
-            }
-            if(this.Images!=undefined&&types.includes(Enums.File_Type.image)){
-                retNull=false;
-                files=files.concat(this.Images.filter(f=>types.includes(f.type)));
-            }else{
-                retNull=true;
+                if(this.Images!=undefined&&types.includes(Enums.File_Type.image)){
+                    retNull=false;
+                    files=files.concat(this.Images.filter(f=>types.includes(f.type)));
+                }else{
+                    retNull=true;
+                }
             }
 
             if(retNull){
@@ -162,9 +171,9 @@ export class BcRevisions{
     }
 
     ngOnDestroy(){
-        delete(this.Docs);
-        delete(this.Images);
-        delete(this.ShelterToUpdate);
+        if(this.outletChangeSub!=undefined){
+            this.outletChangeSub.unsubscribe();
+        }
         if(this.saveSub!=undefined){
             this.saveSub.unsubscribe();
         }

@@ -211,6 +211,21 @@ export class BcMaskRevision {
         this.newShelter=false;
       }
     });
+    if(!this.newShelter&&!this.shelterInitialized&&this.shelter!=undefined){
+      this.shelterInitialized=true;
+      let authSub = this.authService.checkRevisionPermission(this.shelter.idCai).subscribe(val=>{
+        if(val){
+          this.revisionPermission=true;
+          this.initForm();
+        }
+        else{
+          this.return();
+        }
+        if(authSub!=undefined){
+          authSub.unsubscribe();
+        }
+      });
+    }
   }
 
   cancel(){

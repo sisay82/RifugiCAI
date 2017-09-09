@@ -18,18 +18,34 @@ export class BcMaskController {
   @Input() shelter:IShelter;
   @Input() ref:string;
   currentOutlet:string="";
+  _id:String;
   activeOutletSub:Subscription;
   revisionPermission:boolean=false;
   constructor(private shared:BcSharedService,private route:ActivatedRoute,private shelterService:ShelterService,private authService:BcAuthService){
     this.currentOutlet=shared.activeOutlet;
     this.activeOutletSub=shared.activeOutletChange$.subscribe(outlet=>{
-        this.currentOutlet=outlet;
+      if(this.currentOutlet=='revision'&&outlet=='content'){
+        let shelSub=this.shelterService.getShelter(this._id).subscribe(shelter=>{
+          this.shelter=shelter;
+          let permissionSub = this.authService.checkRevisionPermission(shelter.idCai).subscribe(val=>{
+            this.revisionPermission=val;
+            if(permissionSub!=undefined){
+              permissionSub.unsubscribe();
+            }
+          });
+          if(shelSub!=undefined){
+            shelSub.unsubscribe();
+          }
+        });
+      }
+      this.currentOutlet=outlet;
     });
   }
 
   ngOnInit(){
     if(this.shelter==undefined){
       let routeSub=this.route.params.subscribe(params=>{
+        this._id=params['id'];
         let shelSub=this.shelterService.getShelter(params['id']).subscribe(shelter=>{
             this.shelter=shelter;
             let permissionSub = this.authService.checkRevisionPermission(shelter.idCai).subscribe(val=>{
@@ -50,6 +66,8 @@ export class BcMaskController {
   }
 
   ngOnDestroy(){
+    if(this.activeOutletSub!=undefined){
       this.activeOutletSub.unsubscribe();
+    }
   }
 }

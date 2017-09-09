@@ -43,6 +43,7 @@ export class BcFileInput implements ControlValueAccessor {
     propagateChange = (_: any) => {};
     invalid:boolean=false;
     value:File;
+    @Input() validator:RegExp;
     @Input() required:boolean=false;
     @Input() title = "";
     @Input() sizeLimit:number=1024*1024*16;
@@ -89,26 +90,44 @@ export class BcFileInput implements ControlValueAccessor {
     }
 
     checkExtension(value:String){
-        return this.types.includes(value);
+        return this.types.includes(value.toLowerCase());
+    }
+
+    testName(value:string){
+        if(value.indexOf(".")>-1){
+            let parts=value.split(".");
+            let name="";
+            for(let i=0;i<(parts.length-1);i++){
+                name+=parts[i]+".";
+            }
+            name=name.substr(0,name.length-1)
+            return this.validator.test(name);
+        }else{
+            return false;
+        }
     }
 
     validate(c:FormControl){
         if(c.value!=undefined){
-            if(c.value.size>0){
-                if(this.checkExtension(this.getExtension(c.value.name))){
-                    this.value = c.value;
-                    if(this.value.size>this.sizeLimit){
-                        this.invalid=true;
-                        return {err:"Size over limit"};
+            if(this.validator==undefined || this.testName(c.value.name)){
+                if(c.value.size>0){
+                    if(this.checkExtension(this.getExtension(c.value.name))){
+                        this.value = c.value;
+                        if(this.value.size>this.sizeLimit){
+                            this.invalid=true;
+                            return {err:"Size over limit"};
+                        }else{
+                            this.invalid=false;
+                            return null;
+                        }
                     }else{
-                        this.invalid=false;
-                        return null;
+                        return {err:"Invalid content type"};
                     }
                 }else{
-                    return {err:"Invalid content type"};
+                    return {err:"Content Type or Size is null"};
                 }
             }else{
-                return {err:"Content Type or Size is null"};
+                return {err:"Name format not valid"};
             }
         }else{
             return {err:"Value is null"};

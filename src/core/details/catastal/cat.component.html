@@ -51,7 +51,7 @@
         <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
             <bc-icon *ngIf="catastal.matericalCoherence!=null&&catastal.matericalCoherence==true" name="check-square-o" size=s></bc-icon>
             <bc-icon *ngIf="catastal.matericalCoherence==null||catastal.matericalCoherence==false" name="square-o" size=s></bc-icon>
-            <div class="bc-body-strong" style="margin-right:4px">Consistenza materica</div>
+            <div class="bc-body-strong" style="margin-right:4px">Coerenza materica</div>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -127,6 +127,11 @@
             <div class="bc-body-strong" style="margin-right:4px">Acqua:</div>
             <div class="bc-body">{{drain?(drain.water_type || '----'):'----'}}</div>
         </div>
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.water_certification!=null&&drain.water_certification==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.water_certification==null||drain.water_certification==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Captazione certificata</div>
+        </div> 
         <div style="align-items:center;flex:1;display:flex;flex-direction:row">
             <div class="bc-body-strong" style="margin-right:4px">Disponibilità acqua:</div>
             <div class="bc-body">{{drain?(drain.water_availability || '----'):'----'}}</div>

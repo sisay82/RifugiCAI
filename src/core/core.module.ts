@@ -18,10 +18,10 @@ import { BcMenuModule } from './menu/menu.module';
 // import { SorterService } from './services/sorter.service';
 // import { TrackByService } from './services/trackby.service';
 
-import { CapitalizePipe } from './pipes/capitalize.pipe';
-import { TrimPipe } from './pipes/trim.pipe';
+import { PipesModule } from './pipes/pipes.module';
 
 const COMPONENTS_MODULES = [
+    PipesModule,
     BcContentModule,
     BcBackdropModule,
     BcIconModule,
@@ -37,10 +37,16 @@ const COMPONENTS_MODULES = [
     BcSelectGroupModule,
     BcMenuModule
 ];
-const PIPES_MODULES = [
+
+/*const PIPES_MODULES = [
     CapitalizePipe,
-    TrimPipe
-];
+    TrimPipe,
+    TitleCasePipe,
+    PrefixPipe,
+    ProcessDatePipe,
+    TitleCaseLowPipe
+];*/
+
 // const SERVICES_MODULES = [
 //     FilterService,
 //     SorterService,
@@ -49,8 +55,8 @@ const PIPES_MODULES = [
 
 @NgModule({
     imports: COMPONENTS_MODULES,
-    declarations: PIPES_MODULES,
+    //declarations: PIPES_MODULES,
     // providers: SERVICES_MODULES,
-    exports: [].concat(COMPONENTS_MODULES, PIPES_MODULES)
+    exports: [].concat(COMPONENTS_MODULES/*, PIPES_MODULES*/)
 })
 export class CoreModule { }
