@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
+import {RevisionBase} from '../shared/revision_base';
 
 @Component({
   moduleId: module.id,
@@ -18,24 +19,15 @@ import 'rxjs/Rx';
   styleUrls: ['document.component.scss'],
   providers:[ShelterService]
 })
-export class BcDocRevision {
+export class BcDocRevision extends RevisionBase{
   newDocForm: FormGroup;
   newMapForm: FormGroup;
   newInvoiceForm: FormGroup;
-  _id:String;
   invoceFormatRegExp=<RegExp>/.+[,\/\-\\.\|_].+[,\/\-\\.\|_].+/  
-  name:String;
   docs:IFile[]=[];
   maps:IFile[]=[];
   invoices:IFile[]=[];
-  displayTagError:boolean=false;
   invalid:boolean=false;
-  disableSave=false;
-  maskSaveSub:Subscription;
-  displayError:boolean=false;
-  maskError:boolean=false;
-  maskInvalidSub:Subscription;
-  maskValidSub:Subscription;
   docFormValidSub:Subscription;
   mapFormValidSub:Subscription;
   invoiceFormValidSub:Subscription;
@@ -46,6 +38,7 @@ export class BcDocRevision {
   sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
   sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"}
   constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    super(shelterService,shared,revisionService);
     this.newDocForm = fb.group({
       file:[]
     });
@@ -81,27 +74,6 @@ export class BcDocRevision {
           }
       }
     });
-    
-     this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
-        this.maskError=true;
-    });
-
-    this.maskValidSub = shared.maskValid$.subscribe(()=>{
-        this.maskError=false;
-        if(this.newDocForm.valid&&this.newInvoiceForm.valid&&this.newMapForm.valid){
-            this.displayError=false;
-        }
-    });
-
-    let disableSaveSub = this.revisionService.childDisableSaveRequest$.subscribe(()=>{
-        this.disableSave=true;
-        this.revisionService.onChildDisableSaveAnswer();
-        if(disableSaveSub!=undefined){
-            disableSaveSub.unsubscribe();
-        }
-    });
-
-    shared.onActiveOutletChange("revision");
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
         if(!this.maskError){
@@ -117,6 +89,10 @@ export class BcDocRevision {
     });
 
     shared.activeComponent="documents";
+  }
+
+  checkValidForm(){
+    return this.newDocForm.valid&&this.newInvoiceForm.valid&&this.newMapForm.valid;
   }
 
   getKeys(enumName){
