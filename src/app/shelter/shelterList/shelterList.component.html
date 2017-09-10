@@ -5,7 +5,7 @@
         <bc-select-group>
           <bc-button [pre_selected]=true [button]="list_view_button"></bc-button>
           <bc-button [button]="map_view_button"></bc-button>
-          <bc-button [button]="add_shelter_button"></bc-button>
+          <bc-button *ngIf="isCentralUser()" [button]="add_shelter_button"></bc-button>
         </bc-select-group>
       </div>
       <span class="bc-navbar-filler"></span>

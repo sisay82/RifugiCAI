@@ -61,17 +61,23 @@ export class BcMaskRevision {
   }
 
   remove(){
-    let removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val)=>{
-      if(val){
-        this.return();
-      }else{
-        
-        this.shared.onMaskInvalid();
-      }
-      if(removeShelSub!=undefined){
-        removeShelSub.unsubscribe();
-      }
-    });
+    if(this.isCentralUser()){
+      let removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val)=>{
+        if(val){
+          this.return();
+        }else{
+          
+          this.shared.onMaskInvalid();
+        }
+        if(removeShelSub!=undefined){
+          removeShelSub.unsubscribe();
+        }
+      });
+    }
+  }
+
+  isCentralUser(){
+    return (this.revisionPermission&&this.revisionPermission==Enums.User_Type.central);
   }
 
   save(){
