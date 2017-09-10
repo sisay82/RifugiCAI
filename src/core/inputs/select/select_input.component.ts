@@ -36,6 +36,7 @@ export class BcSelectInputErrorStyler {
 export class BcSelectInput implements ControlValueAccessor {
     propagateChange = (_: any) => {};
     invalid:boolean=false;
+    isDisabled:boolean=false;
     @Input() value = "";
     @Input() required:boolean=false;
     @Input() title = "";
@@ -80,27 +81,33 @@ export class BcSelectInput implements ControlValueAccessor {
     }
 
     writeValue(value: any): void {
-        if(value!=undefined){
+        if(!this.isDisabled&&value!=undefined){
             this.value=value;
         }
     }
 
     registerOnChange(fn: any): void {
-        this.propagateChange = fn;
+        if(!this.isDisabled){
+            this.propagateChange = fn;            
+        }
     }
 
     registerOnTouched(fn: any): void {}
 
-    setDisabledState?(isDisabled: boolean): void {}
+    setDisabledState?(isDisabled: boolean): void {
+        this.isDisabled=isDisabled;
+    }
 
     onChange(event:any) {
-        this.value=event.target.value;
-        if(this.value==""&&this.required){
-            if(this.displayError){
-                this.invalid=true;
+        if(!this.isDisabled){
+            this.value=event.target.value;
+            if(this.value==""&&this.required){
+                if(this.displayError){
+                    this.invalid=true;
+                }
+            }else{
+                this.invalid=false;
             }
-        }else{
-            this.invalid=false;
         }
         this.propagateChange(this.value);
     }

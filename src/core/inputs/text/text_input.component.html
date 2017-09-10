@@ -2,7 +2,7 @@
 <div  style="white-space: nowrap;margin-right:1%">{{title}}</div>
 <div *ngIf="required" style="display:inline;color:red;margin-right:1%">*</div>
 </div>
-<input [bc-enable-error]="invalid" type="text" style="text-overflow: ellipsis; font-style: normal; font-weight: normal; text-decoration: inherit;"
+<input [bc-enable-error]="invalid" [disabled]="isDisabled" type="text" style="text-overflow: ellipsis; font-style: normal; font-weight: normal; text-decoration: inherit;"
     class="form-control" (keyup)="onKey($event)" [value]="getValue()">
 <div [hidden]="!(displayError&&enableBlock)" class="alert alert-danger">{{errorMessage||'Invalid!'}}</div>
 

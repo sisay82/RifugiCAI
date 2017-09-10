@@ -15,6 +15,9 @@
   white-space:nowrap;
   margin:1% 2%;
   align-items: center;
+}
+
+input{
   &[disabled]{
     input{
       pointer-events: none;

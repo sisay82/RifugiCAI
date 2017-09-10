@@ -25,8 +25,8 @@ export class BcMaskRevision {
   displayErrorSub:Subscription;
   displayError:boolean=false;
   shelterInitialized:Boolean=false;
+  revisionPermission:Enums.User_Type;
   newShelter:boolean=false;
-  revisionPermission:boolean=false;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder,private authService:BcAuthService){
     this.maskForm = fb.group({
         name:[""],
@@ -159,7 +159,8 @@ export class BcMaskRevision {
     
   }
 
-  initForm(){
+  initForm(permission){
+    this.revisionPermission=permission;    
     if(this.shelter!=undefined){
       this.maskForm.controls.name.setValue(this.shelter.name);
       this.maskForm.controls.alias.setValue(this.shelter.alias);
@@ -169,6 +170,10 @@ export class BcMaskRevision {
       this.maskForm.controls.owner.setValue(this.shelter.owner);
       this.maskForm.controls.category.setValue(this.shelter.category);
       this.maskForm.controls.regional_type.setValue(this.shelter.regional_type);
+    }
+
+    if(permission!=Enums.User_Type.central){
+      this.maskForm.controls.idCai.disable();
     }
   }   
 
@@ -186,10 +191,8 @@ export class BcMaskRevision {
       this.shelterInitialized=true;
       let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
         if(val){
-          this.revisionPermission=true;
-          this.initForm();
-        }
-        else{
+          this.initForm(val);
+        }else{
           this.return();
         }
         if(authSub!=undefined){
@@ -215,10 +218,8 @@ export class BcMaskRevision {
       this.shelterInitialized=true;
       let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
         if(val){
-          this.revisionPermission=true;
-          this.initForm();
-        }
-        else{
+          this.initForm(val);
+        }else{
           this.return();
         }
         if(authSub!=undefined){

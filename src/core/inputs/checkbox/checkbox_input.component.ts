@@ -28,9 +28,9 @@ export class BcCheckboxInput implements ControlValueAccessor {
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
     @Input() title = "";
-
+    isDisabled:boolean=false;
     writeValue(value: any): void {
-        if(value!=undefined){
+        if(!this.isDisabled&&value!=undefined){
             this.value=value;
         }
     }
@@ -47,15 +47,21 @@ export class BcCheckboxInput implements ControlValueAccessor {
     }
 
     registerOnChange(fn: any): void {
-        this.propagateChange = fn;
+        if(!this.isDisabled){
+            this.propagateChange = fn;
+        }
     }
 
     registerOnTouched(fn: any): void {}
 
-    setDisabledState?(isDisabled: boolean): void {}
+    setDisabledState?(isDisabled: boolean): void {
+        this.isDisabled=isDisabled;
+    }
 
     onChange(event:any){
-        this.value=event.target.checked;
+        if(!this.isDisabled){
+            this.value=event.target.checked;
+        }
 
         this.propagateChange(this.value);
     }

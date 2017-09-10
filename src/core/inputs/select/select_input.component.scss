@@ -7,6 +7,13 @@
   border-left: 5px solid #a94442;
 }
 
+select{
+  &[disabled] {
+    pointer-events: none;
+    cursor: default;
+  }
+}
+
 .bc-select-input{
   position: relative;
   align-items: center;
@@ -14,11 +21,5 @@
   &[one-line]{
     display: flex;
     flex-direction: row;
-  }
-  &[disabled]{
-    input{
-      pointer-events: none;
-      cursor: default;
-    }
   }
 }
