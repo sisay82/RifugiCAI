@@ -8,7 +8,9 @@ import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
 import {BcSharedService,ServiceBase} from '../../../app/shared/shared.service';
+import { Enums } from '../../../app/shared/types/enums';
 import { Subscription } from 'rxjs/Subscription';
+import {BcAuthService} from '../../../app/shared/auth.service';
 import {RevisionBase} from '../shared/revision_base';
 
 @Component({
@@ -20,20 +22,20 @@ import {RevisionBase} from '../shared/revision_base';
   animations: [ Animations.slideInOut ]
 })
 export class BcServRevision extends RevisionBase {
-    servForm: FormGroup; 
-    newServiceForm: FormGroup;
-    newTagForm: FormGroup;
-    serviceToRemove:String[]=[];
-    serviceList:IService[]=[];
-    currentServiceTag:number=-1;
-    serviceHidden:boolean=true;
-    invalidTag:boolean=false;
-    invalidService:boolean=false;
-    newServiceAdded=false;
-    newTagHidden:boolean=true;
-    serviceListChange:boolean=false;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        super(shelterService,shared,revisionService);
+    private servForm: FormGroup; 
+    private newServiceForm: FormGroup;
+    private newTagForm: FormGroup;
+    private serviceToRemove:String[]=[];
+    private serviceList:IService[]=[];
+    private currentServiceTag:number=-1;
+    private serviceHidden:boolean=true;
+    private invalidTag:boolean=false;
+    private invalidService:boolean=false;
+    private newServiceAdded=false;
+    private newTagHidden:boolean=true;
+    private serviceListChange:boolean=false;
+    constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,authService);
         this.servForm = fb.group({
             services:fb.array([])
         }); 
@@ -332,14 +334,6 @@ export class BcServRevision extends RevisionBase {
         }
     }
 
-    toTitleCase(input:string): string{
-        if (!input) {
-            return '';
-        } else {
-            return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1) )).replace(/_/g," ");
-        }
-    }
-
     initForm(shelter:IShelter){
         this.name=shelter.name;
         let serviceList=new ServiceBase();
@@ -387,6 +381,9 @@ export class BcServRevision extends RevisionBase {
             if(!this.disableSave)
                 this.save(false);
         }
+        if(this.permissionSub!=undefined){
+            this.permissionSub.unsubscribe();
+        }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
         }
@@ -424,7 +421,7 @@ export class BcServRevision extends RevisionBase {
         });
     }
 
-    ngOnInit(){
+    initialize(){
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.getService(params["id"])
@@ -435,6 +432,25 @@ export class BcServRevision extends RevisionBase {
                 }
             });
         });
+    }
 
+    ngOnInit() {
+        let permissionSub = this.revisionService.childGetPermissions$.subscribe(permissions=>{
+            this.checkPermission(permissions);
+            if(permissionSub!=undefined){
+                permissionSub.unsubscribe();
+            }
+        });
+        this.revisionService.onChildGetPermissions();         
+    }
+
+    checkPermission(permissions){
+        if(permissions&&permissions.length>0){
+            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
+                this.initialize();
+            }else{
+                location.href="/list";
+            }
+        }
     }
 }

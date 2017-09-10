@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
+import {BcAuthService} from '../../../app/shared/auth.service';
 import {RevisionBase} from '../shared/revision_base';
 
 var maxImages:Number=10;
@@ -22,16 +23,15 @@ var maxImages:Number=10;
   providers:[ShelterService]
 })
 export class BcImgRevision extends RevisionBase {
-  newDocForm: FormGroup;
-  docsForm: FormGroup;
-  displayTagError:boolean=false;
-  uploading:boolean=false;
-  newDocFormValidSub:Subscription;
-  docsFormValidSub:Subscription;
-  hiddenImage:boolean=true;
-  sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
-  constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-    super(shelterService,shared,revisionService);
+  private newDocForm: FormGroup;
+  private docsForm: FormGroup;
+  private uploading:boolean=false;
+  private newDocFormValidSub:Subscription;
+  private docsFormValidSub:Subscription;
+  private hiddenImage:boolean=true;
+  private sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
+  constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    super(shelterService,shared,revisionService,authService);
     this.newDocForm = fb.group({
       file:[],
       description:[""]
@@ -223,6 +223,9 @@ export class BcImgRevision extends RevisionBase {
     if(this.docsForm.valid&&this.docsForm.dirty){
       this.save(false);
     }
+    if(this.permissionSub!=undefined){
+      this.permissionSub.unsubscribe();
+    }
     if(this.maskSaveSub!=undefined){
       this.maskSaveSub.unsubscribe();
     }
@@ -246,7 +249,7 @@ export class BcImgRevision extends RevisionBase {
     }
   }
 
-  ngOnInit() {
+  initialize() {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
       let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
@@ -271,6 +274,26 @@ export class BcImgRevision extends RevisionBase {
       this.revisionService.onChildLoadFilesRequest([Enums.File_Type.image]);
     });
     
+  }
+
+  ngOnInit() {
+    let permissionSub = this.revisionService.childGetPermissions$.subscribe(permissions=>{
+      this.checkPermission(permissions);
+      if(permissionSub!=undefined){
+          permissionSub.unsubscribe();
+      }
+    });
+    this.revisionService.onChildGetPermissions();            
+  }
+
+  checkPermission(permissions){
+      if(permissions&&permissions.length>0){
+          if(permissions.find(obj=>obj==Enums.MenuSection.document)>-1){
+              this.initialize();
+          }else{
+              location.href="/list";
+          }
+      }
   }
 
 }

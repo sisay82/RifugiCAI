@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { parseDate } from '../../inputs/text/text_input.component';
+import {BcAuthService} from '../../../app/shared/auth.service';
 import {RevisionBase} from '../shared/revision_base';
 
 @Component({
@@ -20,14 +21,14 @@ import {RevisionBase} from '../shared/revision_base';
   providers:[ShelterService]
 })
 export class BcManagementRevision extends RevisionBase{
-    managForm: FormGroup; 
-    newSubjectForm: FormGroup;
-    data:IManagement;
-    property:ISubject;
-    subjectChange:boolean=false;
-    hiddenSubject:boolean=true;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        super(shelterService,shared,revisionService);
+    private managForm: FormGroup; 
+    private newSubjectForm: FormGroup;
+    private data:IManagement;
+    private property:ISubject;
+    private subjectChange:boolean=false;
+    private hiddenSubject:boolean=true;
+    constructor(private shared:BcSharedService,private authService:BcAuthService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,authService);
         this.managForm = fb.group({
             rentType:[""],
             valuta:[""],
@@ -321,6 +322,9 @@ export class BcManagementRevision extends RevisionBase{
             if(!this.disableSave)
                 this.save(false);
         }
+        if(this.permissionSub!=undefined){
+            this.permissionSub.unsubscribe();
+        }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
         }
@@ -358,7 +362,7 @@ export class BcManagementRevision extends RevisionBase{
         });
     }
 
-    ngOnInit(){
+    initialize(){
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.getManagement(params["id"])
@@ -370,5 +374,25 @@ export class BcManagementRevision extends RevisionBase{
             });
         });
 
+    }
+
+    ngOnInit() {
+        let permissionSub = this.revisionService.childGetPermissions$.subscribe(permissions=>{
+            this.checkPermission(permissions);
+            if(permissionSub!=undefined){
+                permissionSub.unsubscribe();
+            }
+        });
+        this.revisionService.onChildGetPermissions();           
+    }
+
+    checkPermission(permissions){
+        if(permissions&&permissions.length>0){
+            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
+                this.initialize();
+            }else{
+                location.href="/list";
+            }
+        }
     }
 }

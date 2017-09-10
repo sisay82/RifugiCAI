@@ -4,6 +4,8 @@ import { IShelter,IFile } from '../../app/shared/types/interfaces';
 
 @Injectable()
 export class BcRevisionsService{
+    private localPermissions:any[];
+
     private childSaveSource = new Subject<{shelter:IShelter,section:string}>();
     save$ = this.childSaveSource.asObservable();
 
@@ -33,6 +35,20 @@ export class BcRevisionsService{
 
     private childLoadFilesSourceRequest = new Subject<any[]>();
     loadFilesRequest$ = this.childLoadFilesSourceRequest.asObservable();
+
+    private childGetPermissionsSource = new Subject<void>();
+    childGetPermissions$ = this.childGetPermissionsSource.asObservable();
+
+    private fatherReturnPermissionsSource = new Subject<any[]>();
+    fatherReturnPermissions$ = this.fatherReturnPermissionsSource.asObservable();
+
+    onChildGetPermissions(){
+        this.childGetPermissionsSource.next();
+    }
+    
+    onFatherReturnPermissions(permissions){
+        this.fatherReturnPermissionsSource.next(permissions);
+    }
 
     onChildSaveFile(file:IFile,remove?:Boolean){
         this.childSaveFileSource.next({file:file,remove:remove});

@@ -1,12 +1,14 @@
 import {
-  Component,Input,OnInit,OnDestroy
+  Component,Input,OnDestroy,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ITag,ILocation,IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
+import { Enums } from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
+import {BcAuthService} from '../../../app/shared/auth.service';
 import { Subscription } from 'rxjs/Subscription';
 import {RevisionBase} from '../shared/revision_base';
 @Component({
@@ -22,9 +24,8 @@ export class BcGeoRevision extends RevisionBase {
     private data:IGeographic;
     private tagChange:boolean=false
     private hiddenTag:boolean=true;
-
-    constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        super(shelterService,shared,revisionService);
+    constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,authService);
         this.geoForm = fb.group({
             region:[""],
             province:[""],
@@ -74,6 +75,27 @@ export class BcGeoRevision extends RevisionBase {
         shared.activeComponent="geographic";
     } 
 
+    
+    ngOnInit() {
+        let permissionSub = this.revisionService.childGetPermissions$.subscribe(permissions=>{
+            this.checkPermission(permissions);
+            if(permissionSub!=undefined){
+                permissionSub.unsubscribe();
+            }
+        });
+        this.revisionService.onChildGetPermissions();      
+    }
+
+    checkPermission(permissions){
+        if(permissions&&permissions.length>0){
+            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
+                this.initialize();
+            }else{
+                location.href="/list";
+            }
+        }
+    }
+    
     checkValidForm(){
         return this.geoForm.valid;
     }
@@ -245,7 +267,7 @@ export class BcGeoRevision extends RevisionBase {
         });
     }
 
-    ngOnInit(){
+    initialize(){
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.getGeoData(params["id"])
@@ -256,6 +278,5 @@ export class BcGeoRevision extends RevisionBase {
                 }
             });
         });
-
     }
 }

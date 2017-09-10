@@ -1,5 +1,5 @@
 import {
-  Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
+  Component,Input,OnDestroy,Pipe,PipeTransform,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
+import {BcAuthService} from '../../../app/shared/auth.service';
 import {RevisionBase} from '../shared/revision_base';
 
 @Component({
@@ -20,25 +21,24 @@ import {RevisionBase} from '../shared/revision_base';
   providers:[ShelterService]
 })
 export class BcDocRevision extends RevisionBase{
-  newDocForm: FormGroup;
-  newMapForm: FormGroup;
-  newInvoiceForm: FormGroup;
-  invoceFormatRegExp=<RegExp>/.+[,\/\-\\.\|_].+[,\/\-\\.\|_].+/  
-  docs:IFile[]=[];
-  maps:IFile[]=[];
-  invoices:IFile[]=[];
-  invalid:boolean=false;
-  docFormValidSub:Subscription;
-  mapFormValidSub:Subscription;
-  invoiceFormValidSub:Subscription;
-  hiddenTag:boolean=true;
-  uploading:boolean=false;
-  currentFileToggle:number=-1;
-  sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
-  sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
-  sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"}
-  constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-    super(shelterService,shared,revisionService);
+  private newDocForm: FormGroup;
+  private newMapForm: FormGroup;
+  private newInvoiceForm: FormGroup;
+  private invoceFormatRegExp=<RegExp>/.+[,\/\-\\.\|_].+[,\/\-\\.\|_].+/  
+  private docs:IFile[]=[];
+  private maps:IFile[]=[];
+  private invoices:IFile[]=[];
+  private docFormValidSub:Subscription;
+  private mapFormValidSub:Subscription;
+  private invoiceFormValidSub:Subscription;
+  private hiddenTag:boolean=true;
+  private uploading:boolean=false;
+  private currentFileToggle:number=-1;
+  private sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
+  private sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
+  private  sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"}
+  constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+    super(shelterService,shared,revisionService,authService);
     this.newDocForm = fb.group({
       file:[]
     });
@@ -87,7 +87,7 @@ export class BcDocRevision extends RevisionBase{
           this.displayError=true;
         }
     });
-
+    
     shared.activeComponent="documents";
   }
 
@@ -314,6 +314,9 @@ export class BcDocRevision extends RevisionBase{
     if(this.maskSaveSub!=undefined){
       this.maskSaveSub.unsubscribe();
     }
+    if(this.permissionSub!=undefined){
+      this.permissionSub.unsubscribe();
+    }
     if(this.docFormValidSub!=undefined){
       this.docFormValidSub.unsubscribe();
     }
@@ -354,7 +357,7 @@ export class BcDocRevision extends RevisionBase{
     }
   }
 
-  ngOnInit() {
+  initialize() {
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"];
       let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
@@ -378,6 +381,26 @@ export class BcDocRevision extends RevisionBase{
       });
       this.revisionService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice]);
     });
+  }
+
+  ngOnInit() {
+    let permissionSub = this.revisionService.childGetPermissions$.subscribe(permissions=>{
+      this.checkPermission(permissions);
+      if(permissionSub!=undefined){
+          permissionSub.unsubscribe();
+      }
+    });
+    this.revisionService.onChildGetPermissions();    
+  }
+
+  checkPermission(permissions){
+      if(permissions&&permissions.length>0){
+          if(permissions.find(obj=>obj==Enums.MenuSection.document)>-1){
+              this.initialize();
+          }else{
+              location.href="/list";
+          }
+      }
   }
 
 }

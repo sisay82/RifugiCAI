@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnInit, OnDestroy
+  Component, Input, OnInit, OnDestroy,SimpleChanges,OnChanges
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
@@ -9,6 +9,7 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {createValidationFunction} from '../../inputs/text/text_input.component';
+import {BcAuthService} from '../../../app/shared/auth.service';
 
 @Component({
     moduleId: module.id,
@@ -23,8 +24,10 @@ export class BcMaskRevision {
   formValiditySub:Subscription;
   displayErrorSub:Subscription;
   displayError:boolean=false;
+  shelterInitialized:Boolean=false;
+  revisionPermission:Enums.User_Type;
   newShelter:boolean=false;
-  constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
+  constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder,private authService:BcAuthService){
     this.maskForm = fb.group({
         name:[""],
         alias:[""],
@@ -72,7 +75,7 @@ export class BcMaskRevision {
   }
 
   save(){
-    if(this.maskForm.valid){
+    if(this.revisionPermission&&this.maskForm.valid){
       let shelter:IShelter;
       if(this.maskForm.dirty){
         shelter={
@@ -156,18 +159,22 @@ export class BcMaskRevision {
     
   }
 
-  initForm(){
-      if(this.shelter!=undefined){
-        this.maskForm.controls.name.setValue(this.shelter.name);
-        this.maskForm.controls.alias.setValue(this.shelter.alias);
-        this.maskForm.controls.idCai.setValue(this.shelter.idCai);
-        this.maskForm.controls.type.setValue(this.shelter.type);
-        this.maskForm.controls.branch.setValue(this.shelter.branch);
-        this.maskForm.controls.owner.setValue(this.shelter.owner);
-        this.maskForm.controls.category.setValue(this.shelter.category);
-        this.maskForm.controls.regional_type.setValue(this.shelter.regional_type);
-      }
+  initForm(permission){
+    this.revisionPermission=permission;    
+    if(this.shelter!=undefined){
+      this.maskForm.controls.name.setValue(this.shelter.name);
+      this.maskForm.controls.alias.setValue(this.shelter.alias);
+      this.maskForm.controls.idCai.setValue(this.shelter.idCai);
+      this.maskForm.controls.type.setValue(this.shelter.type);
+      this.maskForm.controls.branch.setValue(this.shelter.branch);
+      this.maskForm.controls.owner.setValue(this.shelter.owner);
+      this.maskForm.controls.category.setValue(this.shelter.category);
+      this.maskForm.controls.regional_type.setValue(this.shelter.regional_type);
+    }
 
+    if(permission!=Enums.User_Type.central){
+      this.maskForm.controls.idCai.disable();
+    }
   }   
 
   ngOnDestroy(){
@@ -179,28 +186,45 @@ export class BcMaskRevision {
     }
   }
 
-  ngOnInit(){
-    if(this.shelter==undefined){
-      let routeSub=this._route.params.subscribe(params=>{
-        if(params["name"]!=undefined){
-          if(params["name"]=="newShelter"){
-            this.newShelter=true;
-          }else{
-           this.router.navigateByUrl("list");
-          }
+  ngOnChanges(changes: SimpleChanges) {
+    if(!this.newShelter&&!this.shelterInitialized&&this.shelter!=undefined){
+      this.shelterInitialized=true;
+      let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
+        if(val){
+          this.initForm(val);
         }else{
-          this.newShelter=false;
+          this.return();
         }
-        let shelSub=this.shelterService.getShelter(params['id']).subscribe(shelter=>{
-            this.shelter=shelter;
-            this.initForm();
-            if(shelSub!=undefined){
-              shelSub.unsubscribe();
-            } 
-            if(routeSub!=undefined){
-              routeSub.unsubscribe();
-            }
-        });
+        if(authSub!=undefined){
+          authSub.unsubscribe();
+        }
+      });
+    }
+  }
+
+  ngOnInit(){
+    let routeSub=this._route.params.subscribe(params=>{
+      if(params["name"]!=undefined){
+        if(params["name"]=="newShelter"){
+          this.newShelter=true;
+        }else{
+        this.router.navigateByUrl("list");
+        }
+      }else{
+        this.newShelter=false;
+      }
+    });
+    if(!this.newShelter&&!this.shelterInitialized&&this.shelter!=undefined){
+      this.shelterInitialized=true;
+      let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
+        if(val){
+          this.initForm(val);
+        }else{
+          this.return();
+        }
+        if(authSub!=undefined){
+          authSub.unsubscribe();
+        }
       });
     }
   }

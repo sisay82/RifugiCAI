@@ -1,7 +1,3 @@
-import { Component,Input,OnInit,OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ITag,ILocation,IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
-import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
@@ -19,8 +15,8 @@ export abstract class RevisionBase {
     protected maskInvalidSub:Subscription;
     protected maskValidSub:Subscription;
     protected formValidSub:Subscription;
-
-    constructor(shelterService,shared,revisionService){
+    protected permissionSub:Subscription;
+    constructor(shelterService,shared,revisionService,authService){
 
         shared.onActiveOutletChange("revision");
 
@@ -42,9 +38,20 @@ export abstract class RevisionBase {
                 disableSaveSub.unsubscribe();
             }
         });
+
     }
 
     protected abstract checkValidForm();
 
     protected abstract save(confirm);
+
+    protected abstract checkPermission(permissions);
+
+    protected toTitleCase(input:string): string{
+        if (!input) {
+            return '';
+        } else {
+            return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1) )).replace(/_/g," ");
+        }
+    }
 }

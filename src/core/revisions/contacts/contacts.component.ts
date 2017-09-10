@@ -10,6 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { parseDate } from '../../inputs/text/text_input.component';
+import {BcAuthService} from '../../../app/shared/auth.service';
 import {RevisionBase} from '../shared/revision_base';
 
 @Component({
@@ -20,15 +21,15 @@ import {RevisionBase} from '../shared/revision_base';
   providers:[ShelterService]
 })
 export class BcContactsRevision extends RevisionBase {
-    contactForm: FormGroup; 
-    newOpeningForm: FormGroup;
-    contacts:IContacts;
-    openings:IOpening[];
-    openingChange:boolean=false;
-    hiddenOpening:boolean=true;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-    super(shelterService,shared,revisionService);
-    this.contactForm = fb.group({
+    private contactForm: FormGroup; 
+    private newOpeningForm: FormGroup;
+    private contacts:IContacts;
+    private openings:IOpening[];
+    private openingChange:boolean=false;
+    private hiddenOpening:boolean=true;
+    constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,authService);
+        this.contactForm = fb.group({
             fixedPhone:[""],
             mobilePhone:[""],
             role:[""],
@@ -237,6 +238,9 @@ export class BcContactsRevision extends RevisionBase {
             if(!this.disableSave)
                 this.save(false);
         }
+        if(this.permissionSub!=undefined){
+            this.permissionSub.unsubscribe();
+        }
         if(this.maskSaveSub!=undefined){
             this.maskSaveSub.unsubscribe();
         }
@@ -304,7 +308,7 @@ export class BcContactsRevision extends RevisionBase {
         });
      }
 
-    ngOnInit(){
+    initialize(){
         let routeSub=this._route.parent.params.subscribe(params=>{
             this._id=params["id"];
             this.getContact(params["id"])
@@ -319,5 +323,25 @@ export class BcContactsRevision extends RevisionBase {
                 });
             });
         });
+    }
+
+    ngOnInit() {
+        let permissionSub = this.revisionService.childGetPermissions$.subscribe(permissions=>{
+            this.checkPermission(permissions);
+            if(permissionSub!=undefined){
+                permissionSub.unsubscribe();
+            }
+        });
+        this.revisionService.onChildGetPermissions();           
+    }
+
+    checkPermission(permissions){
+        if(permissions&&permissions.length>0){
+            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
+                this.initialize();
+            }else{
+                location.href="/list";
+            }
+        }
     }
 }

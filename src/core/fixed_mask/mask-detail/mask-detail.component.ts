@@ -1,5 +1,5 @@
 import {
-  Component, Input,OnInit
+  Component, Input,OnInit,OnChanges,SimpleChanges
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
@@ -7,6 +7,7 @@ import {Router,ActivatedRoute} from '@angular/router';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+import {BcAuthService} from '../../../app/shared/auth.service';
 
 @Component({
     moduleId: module.id,
@@ -17,8 +18,11 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class BcMask {
   @Input() shelter:IShelter;
-
-  constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService){}
+  private revisionPermission:Enums.User_Type;
+  private shelterInitialized:Boolean=false;
+  constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private authService:BcAuthService){
+    
+  }
 
   toggleMenu(){
     this.shared.onToggleMenu();
@@ -38,22 +42,14 @@ export class BcMask {
     this.router.navigateByUrl("list");
   }
 
-  getRegionalType(value){
-    if(value==undefined){
-      return '----';
-    }else{
-      return Object.keys(Enums.Regional_Type).find(k=>Enums.Source_Type[k]===value);
-    }
-  }
-
-  ngOnInit(){
-    if(this.shelter==undefined){
-      let routeSub=this._route.params.subscribe(params=>{
-        let shelSub=this.shelterService.getShelter(params['id']).subscribe(shelter=>{
-            this.shelter=shelter;
-            routeSub.unsubscribe();
-            shelSub.unsubscribe();
-        });
+  ngOnChanges(changes: SimpleChanges) {
+    if(!this.shelterInitialized&&this.shelter!=undefined){
+      this.shelterInitialized=true;
+      let permissionSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
+        this.revisionPermission=val;
+        if(permissionSub!=undefined){
+          permissionSub.unsubscribe();
+        }
       });
     }
   }
