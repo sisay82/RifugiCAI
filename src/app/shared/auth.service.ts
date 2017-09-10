@@ -72,20 +72,22 @@ export class BcAuthService{
         this.newShelter=true;
     }
 
-    private checkEnumPermission(names,id,sectionCode){
+    private checkEnumPermission(names,shelId,sectionCode){
         let permission:boolean=false;
         names.forEach(name=>{
             if(name==Enums.User_Type.central){
                 if(sectionCode.substr(0,2)==Enums.User_Type.central){
                     permission=true;
                 }
-            }else if(name==Enums.User_Type.regional){
-                if(id&&id.substr(2,2)==sectionCode.substr(2,2)){
-                    permission=true;
-                }
-            }else if(id&&name==Enums.User_Type.sectional){
-                if(id.substr(4,3)==sectionCode.substr(4,3)){
-                    permission=true;
+            }else if(shelId){
+                if(name==Enums.User_Type.regional){
+                    if(shelId.substr(2,2)==sectionCode.substr(2,2)){
+                        permission=true;
+                    }
+                }else if(name==Enums.User_Type.sectional){
+                    if(shelId.substr(4,3)==sectionCode.substr(4,3)){
+                        permission=true;
+                    }
                 }
             }
         });
@@ -134,14 +136,14 @@ export class BcAuthService{
                     observer.next(Enums.User_Type.central);
                 }
                 else if(code.substr(0,2)==Enums.User_Type.regional.toString()){
-                    if(code.substr(2,2)==shelId.substr(2,2)){
+                    if(shelId&&code.substr(2,2)==shelId.substr(2,2)){
                         observer.next(Enums.User_Type.regional);                        
                     }else{
                         observer.next(null);
                     }
                 }
                 else if(code.substr(0,2)==Enums.User_Type.sectional.toString()){
-                    if(code.substr(4,3)==shelId.substr(4,3)){
+                    if(shelId&&code.substr(4,3)==shelId.substr(4,3)){
                         observer.next(Enums.User_Type.sectional);                        
                     }else{
                         observer.next(null);
