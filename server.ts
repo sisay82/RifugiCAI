@@ -9,6 +9,7 @@ import querystring = require('querystring');
 
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://prova.cai.it";
+var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
 var appBaseUrl = "http://localhost:4200";
 var app = express();
 var parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
@@ -105,7 +106,7 @@ app.get('/user',function(req,res,next){
         </soap:Envelope>`;
 
         request.post({
-            url:'http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid',
+            url:authUrl,
             method:"POST",
             headers:{
                 "Content-Type":"text/xml"

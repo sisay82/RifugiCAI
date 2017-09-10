@@ -8,6 +8,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://prova.cai.it";
+var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
 var appBaseUrl = "http://localhost:4200";
 var app = express();
 var parsedUrl = encodeURIComponent(appBaseUrl + "/j_spring_cas_security_check");
@@ -92,7 +93,7 @@ app.get('/user', function (req, res, next) {
     if (user != undefined) {
         var post_data = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n        <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n            <soap:Body>\n                <n:getUserDataByUuid xmlns:n=\"http://service.core.ws.auth.cai.it/\">\n                    <arg0>" + user.uuid + "</arg0>\n                </n:getUserDataByUuid>\n            </soap:Body>\n        </soap:Envelope>";
         request.post({
-            url: 'http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid',
+            url: authUrl,
             method: "POST",
             headers: {
                 "Content-Type": "text/xml"
