@@ -35,6 +35,10 @@ export class BcShelterList {
         return code.substr(4,3);
     }
 
+    private isCentralUser(){
+        return (this.sectionCode&&this.sectionCode.substr(0,2)==Enums.User_Type.central.toString());
+    }
+
     ngOnInit() {
         let permissionSub = this.authService.getUserSectionCode().subscribe(code=>{
             this.sectionCode=code;
@@ -67,14 +71,16 @@ export class BcShelterList {
     }
 
     createShel(){
-        let newShelSub=this.shelterService.getNewId().subscribe((obj)=>{
-            this.shared.activeOutlet="revision";
-            this.shared.activeComponent="geographic";
-            if(newShelSub!=undefined){
-                newShelSub.unsubscribe();
-            }
-            location.href="newShelter/"+obj.id+"/(revision:geographic)";
-        });
+        if(this.isCentralUser()){
+            let newShelSub=this.shelterService.getNewId().subscribe((obj)=>{
+                this.shared.activeOutlet="revision";
+                this.shared.activeComponent="geographic";
+                if(newShelSub!=undefined){
+                    newShelSub.unsubscribe();
+                }
+                location.href="newShelter/"+obj.id+"/(revision:geographic)";
+            });
+        }
     }
 
     buttonAction(){

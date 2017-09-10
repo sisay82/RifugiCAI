@@ -8,7 +8,7 @@
         <li class="navbar-item">
           <a href="map" class="btn btn-default"><i class="fa fa-map" aria-hidden="true"></i>  Map View</a>
         </li>
-        <li class="navbar-item">
+        <li *ngIf="isCentralUser()" class="navbar-item">
           <a (click)="createShel()" class="btn btn-default"><i class="fa fa-plus" aria-hidden="true"></i>  New Shelter</a>
         </li>
       </ul>
