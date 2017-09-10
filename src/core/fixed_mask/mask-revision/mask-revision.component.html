@@ -19,13 +19,13 @@
         </div>
         <div class="bc-mask-line" style="margin-left:10px">
             <div class="bc-mask-revision-control">
-                <bc-text-input one-line formControlName="idCai" title="ID" [displayError]="displayError"></bc-text-input>
+                <bc-text-input one-line required="true" formControlName="idCai" title="ID" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-mask-revision-control">
                 <bc-select-input one-line required="true" [displayError]="displayError" enumName="Shelter_Type" formControlName="type" title="Tipo"></bc-select-input>
             </div>
             <div class="bc-mask-revision-control">
-                <bc-text-input one-line formControlName="branch" required="true" title="Sezione CAI" [displayError]="displayError"></bc-text-input>
+                <bc-text-input one-line required="true" formControlName="branch" required="true" title="Sezione CAI" [displayError]="displayError"></bc-text-input>
             </div>
 
             <div class="bc-mask-revision-control">
@@ -33,10 +33,10 @@
             </div>
         </div>
         <div class="bc-mask-line" style="margin-left:15px">
-            <div>
+            <div style="width:auto;margin-right:2%">
                 <bc-select-input defaultContent="|" style=" width:auto;" one-line enumName="Shelter_Category" [displayError]="displayError" formControlName="category" title="Categoria"></bc-select-input>
             </div>
-            <div>
+            <div style="width:auto;margin-right:2%">
                 <bc-select-input one-line enumName="Regional_Type" [displayError]="displayError" formControlName="regional_type" title="Categoria per la regione"></bc-select-input>                    
             </div>
             <div class="bc-mask-revision-control">
