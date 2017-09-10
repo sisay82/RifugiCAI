@@ -145,9 +145,9 @@ export namespace Enums {
 
     //tipologia di utente
     export enum User_Type {
-        "central",
-        "regional",
-        "sectional"
+        central = <any>"93",
+        regional = <any>"",
+        sectional = <any>"92"
     }
 
     //permessi per documenti rifugio

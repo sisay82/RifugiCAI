@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ShelterService } from '../shelter.service'
 import { IShelter } from '../../shared/types/interfaces';
+import { Enums } from '../../shared/types/enums';
 import {BcSharedService} from '../../shared/shared.service';
+import {BcAuthService} from '../../shared/auth.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     moduleId: module.id,
@@ -14,18 +17,53 @@ export class BcShelterList {
     filterText: string = "";
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
+    private sectionCode:String;
 
-    constructor(private shelterService: ShelterService,private shared:BcSharedService) {
+    constructor(private shelterService: ShelterService,private shared:BcSharedService,private authService:BcAuthService) {
+        
+    }
 
+    private checkUser(code:String):any{
+        return code.substr(0,2)
+    }
+
+    private getRegion(code:String){
+        return code.substr(2,2);
+    }
+
+    private getSection(code:String){
+        return code.substr(4,3);
     }
 
     ngOnInit() {
-        this.filterText = "";
-        this.shelterService.getShelters().subscribe(shelters => {
-            this.rifugiSample = shelters;
-            this.filteredShelter = shelters;
-            this.filterChanged("");
+        let permissionSub = this.authService.getUserSectionCode().subscribe(code=>{
+            this.sectionCode=code;
+            
+            let section;
+            let region;
+            let userType=this.checkUser(code);
+            if(userType==Enums.User_Type.regional){
+                region=this.getRegion(code);
+            }else if(userType==Enums.User_Type.sectional){
+                section=this.getSection(code);
+            }else if(userType!=Enums.User_Type.central){
+                console.log("Invalid User");
+                return;
+            }
+            let shelSub = this.shelterService.getShelters(region,section).subscribe(shelters => {
+                this.rifugiSample = shelters;
+                this.filteredShelter = shelters;
+                this.filterChanged("");
+    
+                if(shelSub!=undefined){
+                    shelSub.unsubscribe();
+                }
+                if(permissionSub){
+                    permissionSub.unsubscribe();
+                }
+            });
         });
+        this.filterText = "";
     }
 
     createShel(){

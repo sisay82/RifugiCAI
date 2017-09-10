@@ -156,9 +156,9 @@ var Enums;
     //tipologia di utente
     var User_Type;
     (function (User_Type) {
-        User_Type[User_Type["central"] = 0] = "central";
-        User_Type[User_Type["regional"] = 1] = "regional";
-        User_Type[User_Type["sectional"] = 2] = "sectional";
+        User_Type[User_Type["central"] = "93"] = "central";
+        User_Type[User_Type["regional"] = ""] = "regional";
+        User_Type[User_Type["sectional"] = "92"] = "sectional";
     })(User_Type = Enums.User_Type || (Enums.User_Type = {}));
     //permessi per documenti rifugio
     Enums.DocRevisionPermission = [

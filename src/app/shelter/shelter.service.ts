@@ -18,8 +18,20 @@ export class ShelterService {
 
     constructor(private http: Http) { }
 
-    getShelters(): Observable<IShelter[]> {
-        return this.http.get(this.sheltersBaseUrl)
+    getShelters(region?:String,section?:String): Observable<IShelter[]> {
+        let query="";
+        if(region){
+            query+="?region="+region
+            if(section){
+                query+="&section="+section
+            }
+        }else{
+            if(section){
+                query+="?section="+section
+            }
+        }
+
+        return this.http.get(this.sheltersBaseUrl+query)
             .map((res: Response) => {
                 let shelters = res.json();
                 return shelters;

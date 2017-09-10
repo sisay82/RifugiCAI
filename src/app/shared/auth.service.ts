@@ -53,10 +53,7 @@ export class BcAuthService{
         let permission:boolean=false;
         names.forEach(name=>{
             if(name==Enums.User_Type.central){
-                /*if(id.substr(0,2)==sectionCode.substr(0,2)){
-                    permission=true;
-                }*/
-                if(sectionCode.substr(0,2)=='93'){
+                if(sectionCode.substr(0,2)==Enums.User_Type.central){
                     permission=true;
                 }
             }else if(name==Enums.User_Type.regional){
