@@ -9,7 +9,9 @@ var bodyParser = require("body-parser");
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://prova.cai.it";
 var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
-var appBaseUrl = "http://localhost:4200";
+var serverUrl = "31.14.133.111";
+var portUrl = 90;
+var appBaseUrl = "http://" + serverUrl + ":" + portUrl;
 var app = express();
 var parsedUrl = encodeURIComponent(appBaseUrl + "/j_spring_cas_security_check");
 var userList = [];
@@ -62,7 +64,7 @@ app.use(bodyParser.urlencoded({
     resave: false,
     saveUninitialized: true
 }));
-var server = app.listen(90, '31.14.133.111', function () {
+var server = app.listen(portUrl, serverUrl, function () {
     var port = server.address().port;
     console.log("App now running on " + appBaseUrl);
 });
