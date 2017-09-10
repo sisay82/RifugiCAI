@@ -16,7 +16,6 @@ export class BcFileInputErrorStyler {
     @Input('bc-enable-error') invalid: boolean;
 }
 
-
 @Component({
     moduleId: module.id,
     selector: 'bc-file-input',

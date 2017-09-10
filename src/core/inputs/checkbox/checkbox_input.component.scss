@@ -15,6 +15,12 @@
   white-space:nowrap;
   margin:1% 2%;
   align-items: center;
+  &[disabled]{
+    input{
+      pointer-events: none;
+      cursor: default;
+    }
+  }
 }
 
 .bc-check-content{

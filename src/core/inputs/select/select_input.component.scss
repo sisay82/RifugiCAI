@@ -15,4 +15,10 @@
     display: flex;
     flex-direction: row;
   }
+  &[disabled]{
+    input{
+      pointer-events: none;
+      cursor: default;
+    }
+  }
 }

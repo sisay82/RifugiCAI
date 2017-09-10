@@ -39,9 +39,6 @@ export abstract class RevisionBase {
             }
         });
 
-        this.permissionSub = authService.revisionPermissions.subscribe(permissions=>{
-            this.checkPermission(permissions);
-        });
     }
 
     protected abstract checkValidForm();

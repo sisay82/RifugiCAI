@@ -15,4 +15,8 @@
     display: flex;
     flex-direction: row;
   }
+  &[disabled] {
+    pointer-events: none;
+    cursor: default;
+  }
 }

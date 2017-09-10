@@ -18,7 +18,7 @@ import {BcAuthService} from '../../../app/shared/auth.service';
 })
 export class BcMask {
   @Input() shelter:IShelter;
-  private revisionPermission:Boolean=false;
+  private revisionPermission:Enums.User_Type;
   private shelterInitialized:Boolean=false;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private authService:BcAuthService){
     
@@ -45,7 +45,7 @@ export class BcMask {
   ngOnChanges(changes: SimpleChanges) {
     if(!this.shelterInitialized&&this.shelter!=undefined){
       this.shelterInitialized=true;
-      let permissionSub = this.authService.checkRevisionPermission(this.shelter.idCai).subscribe(val=>{
+      let permissionSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
         this.revisionPermission=val;
         if(permissionSub!=undefined){
           permissionSub.unsubscribe();

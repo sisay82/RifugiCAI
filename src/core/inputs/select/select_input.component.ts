@@ -15,7 +15,6 @@ export class BcSelectInputErrorStyler {
     @Input('bc-enable-error') invalid: boolean;
 }
 
-
 @Component({
     moduleId: module.id,
     selector: 'bc-select-input',

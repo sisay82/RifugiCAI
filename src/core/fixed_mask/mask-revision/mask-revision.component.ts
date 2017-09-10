@@ -184,7 +184,7 @@ export class BcMaskRevision {
   ngOnChanges(changes: SimpleChanges) {
     if(!this.newShelter&&!this.shelterInitialized&&this.shelter!=undefined){
       this.shelterInitialized=true;
-      let authSub = this.authService.checkRevisionPermission(this.shelter.idCai).subscribe(val=>{
+      let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
         if(val){
           this.revisionPermission=true;
           this.initForm();
@@ -213,7 +213,7 @@ export class BcMaskRevision {
     });
     if(!this.newShelter&&!this.shelterInitialized&&this.shelter!=undefined){
       this.shelterInitialized=true;
-      let authSub = this.authService.checkRevisionPermission(this.shelter.idCai).subscribe(val=>{
+      let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
         if(val){
           this.revisionPermission=true;
           this.initForm();

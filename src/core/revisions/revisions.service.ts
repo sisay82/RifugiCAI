@@ -36,12 +36,18 @@ export class BcRevisionsService{
     private childLoadFilesSourceRequest = new Subject<any[]>();
     loadFilesRequest$ = this.childLoadFilesSourceRequest.asObservable();
 
-    updateLocalPermissions(permissions){
-        this.localPermissions=permissions
-    }
+    private childGetPermissionsSource = new Subject<void>();
+    childGetPermissions$ = this.childGetPermissionsSource.asObservable();
 
-    getLocalPermissions(){
-        return this.localPermissions;
+    private fatherReturnPermissionsSource = new Subject<any[]>();
+    fatherReturnPermissions$ = this.fatherReturnPermissionsSource.asObservable();
+
+    onChildGetPermissions(){
+        this.childGetPermissionsSource.next();
+    }
+    
+    onFatherReturnPermissions(permissions){
+        this.fatherReturnPermissionsSource.next(permissions);
     }
 
     onChildSaveFile(file:IFile,remove?:Boolean){

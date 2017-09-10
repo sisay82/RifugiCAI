@@ -435,16 +435,18 @@ export class BcServRevision extends RevisionBase {
     }
 
     ngOnInit() {
-        let permissions = this.revisionService.getLocalPermissions();
-        if(permissions!=undefined){
+        let permissionSub = this.revisionService.childGetPermissions$.subscribe(permissions=>{
             this.checkPermission(permissions);
-        }        
+            if(permissionSub!=undefined){
+                permissionSub.unsubscribe();
+            }
+        });
+        this.revisionService.onChildGetPermissions();         
     }
 
     checkPermission(permissions){
-        if(permissions!=undefined&&permissions.length>0){
+        if(permissions&&permissions.length>0){
             if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
-                this.revisionService.updateLocalPermissions(permissions);
                 this.initialize();
             }else{
                 location.href="/list";

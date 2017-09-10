@@ -82,7 +82,7 @@ export class BcMenu {
       };
     }
 
-    this.menuPermissionSub = authService.revisionPermissions.subscribe(permissions=>{
+    this.menuPermissionSub = authService.getPermissions().subscribe(permissions=>{
       this.detailPermission = permissions.find(obj=>obj==Enums.MenuSection.detail)>-1;
       this.documentPermission = permissions.find(obj=>obj==Enums.MenuSection.document)>-1;
       this.economyPermission = permissions.find(obj=>obj==Enums.MenuSection.economy)>-1;

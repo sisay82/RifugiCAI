@@ -88,6 +88,7 @@ app.get('/j_spring_cas_security_check', function (req, res) {
 });
 app.get('/user', function (req, res, next) {
     var user = userList.find(function (obj) { return obj.id == req.session.id; });
+    console.log("User permissions request (UUID): ", user.uuid);
     if (user != undefined) {
         var post_data = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n        <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n            <soap:Body>\n                <n:getUserDataByUuid xmlns:n=\"http://service.core.ws.auth.cai.it/\">\n                    <arg0>" + user.uuid + "</arg0>\n                </n:getUserDataByUuid>\n            </soap:Body>\n        </soap:Envelope>";
         request.post({
@@ -117,7 +118,6 @@ app.get('/user', function (req, res, next) {
 app.get('/', function (req, res, next) {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
-    //res.header('Access-Control-Allow-Origin', '*');
     res.setHeader('content-type', 'text/html; charset=utf-8');
     res.redirect("/list");
 });
@@ -127,7 +127,6 @@ app.get('/*', function (req, res) {
     console.log(req.path);
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
-    //res.header('Access-Control-Allow-Origin', '*');
     res.setHeader('content-type', 'text/html; charset=utf-8');
     var user = userList.find(function (obj) { return obj.id == req.session.id; });
     if (!user) {
@@ -137,8 +136,7 @@ app.get('/*', function (req, res) {
     }
     else {
         if (user.ticket) {
-            console.log("Checking ticket");
-            console.log(user.ticket);
+            console.log("Checking ticket: ", user.ticket);
             validationPromise(user.ticket)
                 .then(function (response) {
                 console.log("Valid ticket");

@@ -5,6 +5,7 @@ import { BcRevisionsService } from './revisions.service';
 import {BcSharedService} from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {Router,RoutesRecognized} from '@angular/router';
+import {BcAuthService} from '../../app/shared/auth.service';
 
 @Component({
     moduleId:module.id,
@@ -18,19 +19,31 @@ export class BcRevisions{
     Images:IFile[];
     saveSub:Subscription;
     loadSub:Subscription;
+    localPermissions:any[];
     saveFilesSub:Subscription;
     saveFileSub:Subscription;
     loadFilesSub:Subscription;
     maskSaveSub:Subscription;
     maskCancelSub:Subscription;
     childDeleteSub:Subscription;
+    childPermissionGetSub:Subscription;
     outletChangeSub:Subscription;
-    constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService){
+    constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService,private authService:BcAuthService){
         this.outletChangeSub=shared.activeOutletChange$.subscribe((outlet)=>{
             if(outlet=="content"){
                 delete(this.ShelterToUpdate);
                 delete(this.Docs);
                 delete(this.Images);
+            }
+        });
+
+        let permissionSub = authService.getPermissions().subscribe(permissions=>{
+            this.localPermissions=permissions;          
+            this.childPermissionGetSub = revisionService.childGetPermissions$.subscribe(()=>{
+                revisionService.onFatherReturnPermissions(this.localPermissions);
+            });
+            if(permissionSub!=undefined){
+                permissionSub.unsubscribe();
             }
         });
 
@@ -171,6 +184,9 @@ export class BcRevisions{
     }
 
     ngOnDestroy(){
+        if(this.childPermissionGetSub!=undefined){
+            this.childPermissionGetSub.unsubscribe();
+        }
         if(this.outletChangeSub!=undefined){
             this.outletChangeSub.unsubscribe();
         }
