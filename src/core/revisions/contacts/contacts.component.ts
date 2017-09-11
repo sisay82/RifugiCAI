@@ -326,7 +326,7 @@ export class BcContactsRevision extends RevisionBase {
     }
 
     ngOnInit() {
-        let permissionSub = this.revisionService.childGetPermissions$.subscribe(permissions=>{
+        let permissionSub = this.revisionService.fatherReturnPermissions$.subscribe(permissions=>{
             this.checkPermission(permissions);
             if(permissionSub!=undefined){
                 permissionSub.unsubscribe();

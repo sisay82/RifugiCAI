@@ -15,7 +15,7 @@ var portUrl=90;
 var appBaseUrl = "http://"+serverUrl+":"+portUrl;
 var app = express();
 var parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
-var userList:{id:String,resource:String,ticket?:String,uuid?:String}[]=[];
+var userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type}[]=[];
 
 function getChildByName(node:Node,name:String):Node{
     for(let i=0;i<node.childNodes.length;i++){
@@ -32,7 +32,7 @@ function getChildByName(node:Node,name:String):Node{
     return null;
 }
 
-function validationPromise(ticket):Promise<String>{
+function validationPromise(ticket):Promise<{uuid:String,role:Enums.User_Type}>{
     return new Promise((resolve,reject)=>{
         request.post({
             url:casBaseUrl+"/cai-cas/serviceValidate?service="+parsedUrl+"&ticket="+ticket,
@@ -41,10 +41,16 @@ function validationPromise(ticket):Promise<String>{
             try {
                 var el:Node=(new DOMParser()).parseFromString(body,"text/xml").firstChild;
                 let res:boolean=false;
-                let user;
+                let user:any={};
                 if(getChildByName(el,'authenticationSuccess')){
                     res=true;
-                    user=getChildByName(el,'uuid').textContent;
+                    user.uuid=getChildByName(el,'uuid').textContent;
+                    /**
+                     * SET ROLE
+                     */
+                    //DEV
+                    user.role=Enums.User_Type.sectional;
+                    /** */
                 }
                 if(res){
                     resolve(user);
@@ -97,32 +103,37 @@ app.get('/j_spring_cas_security_check',function(req,res){
 app.get('/user',function(req,res,next){
     let user=userList.find(obj=>obj.id==req.session.id);
     console.log("User permissions request (UUID): ",user.uuid);    
-    if(user!=undefined){
-        var post_data=`<?xml version="1.0" encoding="utf-8"?>
-        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-            <soap:Body>
-                <n:getUserDataByUuid xmlns:n="http://service.core.ws.auth.cai.it/">
-                    <arg0>`+user.uuid+`</arg0>
-                </n:getUserDataByUuid>
-            </soap:Body>
-        </soap:Envelope>`;
-
-        request.post({
-            url:authUrl,
-            method:"POST",
-            headers:{
-                "Content-Type":"text/xml"
-            },
-            body:post_data
-        },function(err,response,body){
-            var el:Node=(new DOMParser()).parseFromString(body,"text/xml");
-            let code = getChildByName(el,'sectionCode').textContent;
-            if(code){
-                res.status(200).send(code);                    
-            }else{
-                res.status(500).send({'error':'Error user request'});
-            }
-        });
+    if(user!=undefined&&user.uuid!=undefined){
+        if(user.code==undefined||user.role==undefined){
+            var post_data=`<?xml version="1.0" encoding="utf-8"?>
+            <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <soap:Body>
+                    <n:getUserDataByUuid xmlns:n="http://service.core.ws.auth.cai.it/">
+                        <arg0>`+user.uuid+`</arg0>
+                    </n:getUserDataByUuid>
+                </soap:Body>
+            </soap:Envelope>`;
+    
+            request.post({
+                url:authUrl,
+                method:"POST",
+                headers:{
+                    "Content-Type":"text/xml"
+                },
+                body:post_data
+            },function(err,response,body){
+                var el:Node=(new DOMParser()).parseFromString(body,"text/xml");
+                let code = getChildByName(el,'sectionCode').textContent;
+                if(code){
+                    user.code=code;
+                    res.status(200).send({code:user.code,role:user.role});                    
+                }else{
+                    res.status(500).send({'error':'Error user request'});
+                }
+            });
+        }else{
+            res.status(200).send({code:user.code,role:user.role});
+        }
     }else{
         console.log("User not logged");
         userList.push({id:req.session.id,resource:appBaseUrl+'/list'});
@@ -155,9 +166,10 @@ app.get('/*', function(req, res) {
       if(user.ticket){
         console.log("Checking ticket: ",user.ticket);
         validationPromise(user.ticket)
-        .then((response)=>{
+        .then((usr)=>{
             console.log("Valid ticket");
-            user.uuid=response;
+            user.uuid=usr.uuid;
+            user.role=usr.role;
             res.sendFile(path.join(__dirname + '/dist/index.html'));
         })
         .catch((err)=>{

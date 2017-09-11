@@ -81,9 +81,9 @@ export class BcMaskRevision {
   }
 
   save(){
-    if(this.revisionPermission&&this.maskForm.valid){
+    if(this.revisionPermission&&(this.revisionPermission!=Enums.User_Type.central||this.maskForm.valid)){
       let shelter:IShelter;
-      if(this.maskForm.dirty){
+      if(this.revisionPermission==Enums.User_Type.central&&this.maskForm.dirty){
         shelter={
           _id:this.shelter._id,
           name:this.maskForm.controls.name.value,
@@ -179,7 +179,7 @@ export class BcMaskRevision {
     }
 
     if(permission!=Enums.User_Type.central){
-      this.maskForm.controls.idCai.disable();
+      this.maskForm.disable();
     }
   }   
 

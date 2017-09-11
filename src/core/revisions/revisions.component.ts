@@ -38,7 +38,8 @@ export class BcRevisions{
         });
 
         let permissionSub = authService.getPermissions().subscribe(permissions=>{
-            this.localPermissions=permissions;          
+            this.localPermissions=permissions; 
+            revisionService.onFatherReturnPermissions(this.localPermissions);         
             this.childPermissionGetSub = revisionService.childGetPermissions$.subscribe(()=>{
                 revisionService.onFatherReturnPermissions(this.localPermissions);
             });

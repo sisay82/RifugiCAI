@@ -21,7 +21,7 @@ export class BcShelterList {
     filterText: string = "";
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
-    private sectionCode:String;
+    private profile:{code:String,role:Enums.User_Type};
 
     constructor(private shelterService: ShelterService,private shared:BcSharedService,private authService:BcAuthService) {
         
@@ -40,21 +40,20 @@ export class BcShelterList {
     }
 
     private isCentralUser(){
-        return (this.sectionCode&&this.sectionCode.substr(0,2)==Enums.User_Type.central.toString());
+        return (this.profile&&this.profile.role==Enums.User_Type.central);
     }
 
     ngOnInit() {
-        let permissionSub = this.authService.getUserSectionCode().subscribe(code=>{
-            this.sectionCode=code;
+        let permissionSub = this.authService.getUserProfile().subscribe(profile=>{
+            this.profile=profile;
             
             let section;
             let region;
-            let userType=this.checkUser(code);
-            if(userType==Enums.User_Type.regional){
-                region=this.getRegion(code);
-            }else if(userType==Enums.User_Type.sectional){
-                section=this.getSection(code);
-            }else if(userType!=Enums.User_Type.central){
+            if(profile.role==Enums.User_Type.regional){
+                region=this.getRegion(profile.code);
+            }else if(profile.role==Enums.User_Type.sectional){
+                section=this.getSection(profile.code);
+            }else if(profile.role!=Enums.User_Type.central){
                 console.log("Invalid User");
                 return;
             }
