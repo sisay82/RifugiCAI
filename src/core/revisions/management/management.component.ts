@@ -253,22 +253,21 @@ export class BcManagementRevision extends RevisionBase{
             shelter.management=management
             shelter.management.subject=subjects as [ISubject];
             this.revisionService.onChildSave(shelter,"management");
-            if(this.managForm.valid){
-                let managSub=this.shelterService.preventiveUpdateShelter(shelter,"management").subscribe((returnVal)=>{
-                    if(returnVal){
-                        this.displayError=false;
-                        if(confirm){
-                            this.shared.onMaskConfirmSave("management");
-                        }
-                    }else{
-                        console.log(returnVal);
-                        this.displayError=true;
+        
+            let managSub=this.shelterService.preventiveUpdateShelter(shelter,"management").subscribe((returnVal)=>{
+                if(returnVal){
+                    this.displayError=false;
+                    if(confirm){
+                        this.shared.onMaskConfirmSave("management");
                     }
-                    if(managSub!=undefined){
-                        managSub.unsubscribe();
-                    }
-                });
-            }
+                }else{
+                    console.log("Err "+returnVal);
+                    this.displayError=true;
+                }
+                if(managSub!=undefined){
+                    managSub.unsubscribe();
+                }
+            });
         }else{
             this.displayError=true;
         }

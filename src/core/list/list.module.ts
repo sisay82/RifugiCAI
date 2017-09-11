@@ -5,7 +5,7 @@ import { BcDividerModule } from '../divider/divider.module';
 import { BcList, BcListStyler, BcListAvatarStyler} from './list.component';
 
 import { BcListHeaderModule } from './listHeader/list-header.module';
-import { BcListItemGroupModule } from './listItemGroup/list-item-group.module';
+import { BcListItemGroupModule } from './listItemgroup/list-item-group.module';
 import { BcListItemModule } from './listItem/list-item.module';
 
 @NgModule({

@@ -4,9 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { BcPageNotFound } from "./pageNotFound/pageNotFound.component";
 
 const appRoutes: Routes = [
-    {path:'',redirectTo:'shelter/id',pathMatch:'full'},
+    { path: '', redirectTo:'list', pathMatch:'full'},
     { path: '**', component: BcPageNotFound }
-    //   { path: 'shelter/:id', component: ShelterDetailComponent },
 ];
 
 @NgModule({

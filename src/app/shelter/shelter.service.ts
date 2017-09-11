@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import * as L from 'leaflet';
+
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import { Observer } from 'rxjs/Observer';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import * as L from 'leaflet';
+import { Map } from 'leaflet';
 import { IPagedResults, IShelter, IMarker, IFile } from '../shared/types/interfaces';
 import { Enums  } from '../shared/types/enums';
 
@@ -68,7 +70,7 @@ export class ShelterService {
     }
 
     getConutryMarkersNumber(countryName:String): Observable<any>{
-        return this.http.get(this.sheltersBaseUrl + '/country/' + countryName)
+        return this.http.get(this.sheltersBaseUrl + '/country?name=' + countryName)
             .map((res: Response) => {
                 let markers = res.json();
                 return markers;
@@ -77,7 +79,7 @@ export class ShelterService {
     }
 
     getSheltersAroundPoint(point:L.LatLng,range:number):Observable<IShelter[]>{
-        return this.http.get(this.sheltersBaseUrl + '/point/' + point.lat +'/' + point.lng + '/' + range)
+        return this.http.get(this.sheltersBaseUrl + '/point?lat='+ point.lat +"&lng="+ point.lng+"&range="+range)
             .map((res: Response) => {
                 let shelter = res.json();
                 return shelter;

@@ -6,6 +6,7 @@ import { IGeographic,IShelter,ITag } from '../../../app/shared/types/interfaces'
 import {BcMap} from '../../map/map.component';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
+import * as L from 'leaflet';
 import { Subscription } from 'rxjs/Subscription';
 import {BcSharedService} from '../../../app/shared/shared.service'
 import {BcDetailsService} from '../details.service';

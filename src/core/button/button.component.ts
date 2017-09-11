@@ -50,6 +50,7 @@ export class BcButton{
         }else{
             this.button.action.call(this.button.ref);
         }
+        
     }
 
     btnUncheck(){

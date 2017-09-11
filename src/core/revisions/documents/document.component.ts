@@ -332,6 +332,15 @@ export class BcDocRevision extends RevisionBase{
     if(this.maskValidSub!=undefined){
         this.maskValidSub.unsubscribe();
     }
+    if(this.docFormValidSub!=undefined){
+      this.docFormValidSub.unsubscribe();
+    }
+    if(this.mapFormValidSub!=undefined){
+      this.mapFormValidSub.unsubscribe();
+    }
+    if(this.invoiceFormValidSub!=undefined){
+      this.invoiceFormValidSub.unsubscribe();
+    }
   }
 
   initData(files){

@@ -46,6 +46,7 @@
   "dependencies": {
     "@angular/animations": "^4.0.2",
     "@angular/cli": "^1.0.0",
+    "@types/node": "^7.0.42",
     "@angular/common": "^4.0.2",
     "@angular/compiler": "^4.0.2",
     "@angular/compiler-cli": "^4.0.2",

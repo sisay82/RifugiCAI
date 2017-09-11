@@ -9,5 +9,6 @@
 }
 
 .bc-link:hover{
+    color:map-get($bc-teal,400 );
     cursor: pointer;
 }

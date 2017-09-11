@@ -1,5 +1,5 @@
 import {
-  Component,Input,OnInit, trigger, state, style, transition, animate//,OnDestroy
+  Component,Input,OnInit, trigger, state, style, transition, animate,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IButton, IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
