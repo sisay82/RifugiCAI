@@ -13,8 +13,8 @@ export class BcAuthService{
     private userSectionCodeSub:Subscription;
 
     constructor(private http: Http) {
-        this.userSectionCodeSub = this.updateUserSectionCode().subscribe(code=>{
-            this.userSectionCodeSource.next(code);
+        this.userSectionCodeSub = this.updateProfile().subscribe(profile=>{
+            this.userProfileSource.next(profile);
             if(this.userSectionCodeSub){
                 this.userSectionCodeSub.unsubscribe();
             }
@@ -33,59 +33,45 @@ export class BcAuthService{
         this.shelIdRequestSource.next();
     }
 
-    private userSectionCode;    
-    private userSectionCodeSource = new Subject<String>();
-    getUserSectionCode():Observable<String>{
-        if(this.userSectionCode){
-            return Observable.of(this.userSectionCode);
+    private userProfile:{code:String,role:Enums.User_Type};
+    private userProfileSource = new Subject<{code:String,role:Enums.User_Type}>();
+    getUserProfile():Observable<{code:String,role:Enums.User_Type}>{
+        if(this.userProfile){
+            return Observable.of(this.userProfile);
         }else{
-            return this.userSectionCodeSource.asObservable();
+            return this.userProfileSource.asObservable();
         }
     }
 
-    private updateUserSectionCode(){
+    private updateProfile():Observable<any>{
         return this.http.get(this.userBaseUrl)
         .map((res: Response) => {
-            this.userSectionCodeSource.next(res.text().toString());
-            this.userSectionCode=res.text().toString();
-            return this.userSectionCode;
+            let user=res.json();
+            user.role=(user.role?(user.role):Enums.User_Type.sectional);
+            this.userProfile=user
+            return user;
         })
         .catch(this.handleError.bind(this));
-    }
-
-    private getChildByName(node:Node,name:String):Node{
-        for(let i=0;i<node.childNodes.length;i++){
-            if(node.childNodes.item(i).localName==name){
-                return node.childNodes.item(i);
-            }
-            if(node.childNodes.item(i).hasChildNodes()){
-                let n = this.getChildByName(node.childNodes.item(i),name);
-                if(n){
-                    return n;
-                }
-            }
-        }
-        return null;
     }
 
     setNewShelter(){
         this.newShelter=true;
     }
 
-    private checkEnumPermission(names,shelId,sectionCode){
+    private checkEnumPermission(names,shelId,profile){
         let permission:boolean=false;
         names.forEach(name=>{
             if(name==Enums.User_Type.central){
-                if(sectionCode.substr(0,2)==Enums.User_Type.central){
+                if(profile.role==Enums.User_Type.central){
                     permission=true;
                 }
             }else if(shelId){
-                if(name==Enums.User_Type.regional){
-                    if(shelId.substr(2,2)==sectionCode.substr(2,2)){
+                if(name==Enums.User_Type.regional&&profile.role==Enums.User_Type.regional){
+                    if(shelId.substr(2,2)==profile.code.substr(2,2)){
                         permission=true;
                     }
-                }else if(name==Enums.User_Type.sectional){
-                    if(shelId.substr(4,3)==sectionCode.substr(4,3)){
+                }else if(name==Enums.User_Type.sectional&&profile.role==Enums.User_Type.sectional){
+                    if(shelId.substr(4,3)==profile.code.substr(4,3)){
                         permission=true;
                     }
                 }
@@ -100,15 +86,15 @@ export class BcAuthService{
         }else{
             let permissions:any[]=[];
             return Observable.create(observer=>{
-                let getSectionCodeSub = this.getUserSectionCode().subscribe(sectionCode=>{
+                let getSectionCodeSub = this.getUserProfile().subscribe(profile=>{
                     let getShelIdSub = this.shelId$.subscribe(shelId=>{
-                        if(this.checkEnumPermission(Enums.DetailRevisionPermission,shelId,sectionCode)){
+                        if(this.checkEnumPermission(Enums.DetailRevisionPermission,shelId,profile)){
                             permissions.push(Enums.MenuSection.detail);
                         }
-                        if(this.checkEnumPermission(Enums.DocRevisionPermission,shelId,sectionCode)){
+                        if(this.checkEnumPermission(Enums.DocRevisionPermission,shelId,profile)){
                             permissions.push(Enums.MenuSection.document);
                         }
-                        if(this.checkEnumPermission(Enums.EconomyRevisionPermission,shelId,sectionCode)){
+                        if(this.checkEnumPermission(Enums.EconomyRevisionPermission,shelId,profile)){
                             permissions.push(Enums.MenuSection.economy);
                         }
                         this.localPermissions=permissions
@@ -131,19 +117,19 @@ export class BcAuthService{
         this.onShelId(shelId);
         let revisionPermission:Enums.User_Type;    
         return Observable.create(observer=>{
-            let sectionCodeInit = this.getUserSectionCode().subscribe(code=>{
-                if(code.substr(0,2)==Enums.User_Type.central.toString()){
+            let sectionCodeInit = this.getUserProfile().subscribe(profile=>{
+                if(profile.role==Enums.User_Type.central){
                     observer.next(Enums.User_Type.central);
                 }
-                else if(code.substr(0,2)==Enums.User_Type.regional.toString()){
-                    if(shelId&&code.substr(2,2)==shelId.substr(2,2)){
+                else if(profile.role==Enums.User_Type.regional){
+                    if(shelId&&profile.code.substr(2,2)==shelId.substr(2,2)){
                         observer.next(Enums.User_Type.regional);                        
                     }else{
                         observer.next(null);
                     }
                 }
-                else if(code.substr(0,2)==Enums.User_Type.sectional.toString()){
-                    if(shelId&&code.substr(4,3)==shelId.substr(4,3)){
+                else if(profile.role==Enums.User_Type.sectional){
+                    if(shelId&&profile.code.substr(4,3)==shelId.substr(4,3)){
                         observer.next(Enums.User_Type.sectional);                        
                     }else{
                         observer.next(null);
@@ -161,14 +147,14 @@ export class BcAuthService{
     checkUserPermission():Observable<Enums.User_Type>{
         let revisionPermission:Enums.User_Type;    
         return Observable.create(observer=>{
-            let sectionCodeInit = this.getUserSectionCode().subscribe(code=>{
-                if(code.substr(0,2)==Enums.User_Type.central.toString()){
+            let sectionCodeInit = this.getUserProfile().subscribe(profile=>{
+                if(profile.role==Enums.User_Type.central){
                     observer.next(Enums.User_Type.central);
                 }
-                else if(code.substr(2,2)==Enums.User_Type.regional.toString()){
+                else if(profile.role==Enums.User_Type.regional){
                     observer.next(Enums.User_Type.regional);
                 }
-                else if(code.substr(4,3)==Enums.User_Type.sectional.toString()){
+                else if(profile.role==Enums.User_Type.sectional){
                     observer.next(Enums.User_Type.sectional);
                 }
                 else observer.next(null);

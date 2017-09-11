@@ -6,6 +6,7 @@ var xmldom = require("xmldom");
 var request = require("request");
 var express = require("express");
 var bodyParser = require("body-parser");
+var enums_1 = require("./src/app/shared/types/enums");
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://prova.cai.it";
 var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
@@ -36,10 +37,16 @@ function validationPromise(ticket) {
             try {
                 var el = (new DOMParser()).parseFromString(body, "text/xml").firstChild;
                 var res = false;
-                var user = void 0;
+                var user = {};
                 if (getChildByName(el, 'authenticationSuccess')) {
                     res = true;
-                    user = getChildByName(el, 'uuid').textContent;
+                    user.uuid = getChildByName(el, 'uuid').textContent;
+                    /**
+                     * SET ROLE
+                     */
+                    //DEV
+                    user.role = enums_1.Enums.User_Type.sectional;
+                    /** */
                 }
                 if (res) {
                     resolve(user);
@@ -90,25 +97,31 @@ app.get('/j_spring_cas_security_check', function (req, res) {
 app.get('/user', function (req, res, next) {
     var user = userList.find(function (obj) { return obj.id == req.session.id; });
     console.log("User permissions request (UUID): ", user.uuid);
-    if (user != undefined) {
-        var post_data = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n        <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n            <soap:Body>\n                <n:getUserDataByUuid xmlns:n=\"http://service.core.ws.auth.cai.it/\">\n                    <arg0>" + user.uuid + "</arg0>\n                </n:getUserDataByUuid>\n            </soap:Body>\n        </soap:Envelope>";
-        request.post({
-            url: authUrl,
-            method: "POST",
-            headers: {
-                "Content-Type": "text/xml"
-            },
-            body: post_data
-        }, function (err, response, body) {
-            var el = (new DOMParser()).parseFromString(body, "text/xml");
-            var code = getChildByName(el, 'sectionCode').textContent;
-            if (code) {
-                res.status(200).send(code);
-            }
-            else {
-                res.status(500).send({ 'error': 'Error user request' });
-            }
-        });
+    if (user != undefined && user.uuid != undefined) {
+        if (user.code == undefined || user.role == undefined) {
+            var post_data = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n            <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n                <soap:Body>\n                    <n:getUserDataByUuid xmlns:n=\"http://service.core.ws.auth.cai.it/\">\n                        <arg0>" + user.uuid + "</arg0>\n                    </n:getUserDataByUuid>\n                </soap:Body>\n            </soap:Envelope>";
+            request.post({
+                url: authUrl,
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/xml"
+                },
+                body: post_data
+            }, function (err, response, body) {
+                var el = (new DOMParser()).parseFromString(body, "text/xml");
+                var code = getChildByName(el, 'sectionCode').textContent;
+                if (code) {
+                    user.code = code;
+                    res.status(200).send({ code: user.code, role: user.role });
+                }
+                else {
+                    res.status(500).send({ 'error': 'Error user request' });
+                }
+            });
+        }
+        else {
+            res.status(200).send({ code: user.code, role: user.role });
+        }
     }
     else {
         console.log("User not logged");
@@ -139,9 +152,10 @@ app.get('/*', function (req, res) {
         if (user.ticket) {
             console.log("Checking ticket: ", user.ticket);
             validationPromise(user.ticket)
-                .then(function (response) {
+                .then(function (usr) {
                 console.log("Valid ticket");
-                user.uuid = response;
+                user.uuid = usr.uuid;
+                user.role = usr.role;
                 res.sendFile(path.join(__dirname + '/dist/index.html'));
             })["catch"](function (err) {
                 console.log("Invalid ticket");
