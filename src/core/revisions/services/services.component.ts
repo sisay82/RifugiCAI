@@ -284,7 +284,7 @@ export class BcServRevision extends RevisionBase {
                 }
                 let tags:ITag[]=[];
                 for (let tag of (<FormArray>serv.controls.tags).controls){
-                    tags.push({key:tag.value.key,value:tag.value.value});
+                    tags.push({key:tag.value.key,value:tag.value.value||null});
                 }
                 service.tags=tags as [ITag];
                 services.push(service);
@@ -341,7 +341,7 @@ export class BcServRevision extends RevisionBase {
             let s:IService={}
             s.name=s.category=this.toTitleCase(category);
             s.tags=[] as [ITag];
-            let serv=shelter.services.find(obj=>obj.category.toLowerCase().indexOf(s.category.toLowerCase())>-1);
+            let serv=shelter.services.find(obj=>obj.category&&obj.category.toLowerCase().indexOf(s.category.toLowerCase())>-1);
             for(let service of Object.getOwnPropertyNames(serviceList[category])){
                 let tag={key:this.toTitleCase(service),value:null,type:typeof(serviceList[category][service])};
                 if(serv!=undefined){
