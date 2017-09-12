@@ -19,14 +19,15 @@ function getNormalMarkerHtml(size){
 }
 
 function getTooltip(name,municipality,province,region){
-    return `<div class="bc-tooltip">
-                <div class="bc-tooltip-head">
-                    <div style="top:20%;position:relative">`+name+`</div>
-                </div>
-                <div class="bc-tooltip-line">
-                    <div class="bc-tooltip-content-line">`+municipality||'---'+`, `+province||'---'+`</br>`+region||'---'+`</div>
-                </div>
-            </div>`;
+    let tooltip=`<div class="bc-tooltip">
+    <div class="bc-tooltip-head">
+        <div style="top:20%;position:relative">`+(name?(name):'---')+`</div>
+    </div>
+    <div class="bc-tooltip-line">
+        <div class="bc-tooltip-content-line">`+(municipality?(municipality):'---')+`, `+(province?(province):'---')+`</br>`+(region?(region):'---')+`</div>
+    </div>
+</div>`
+    return tooltip;
 }
 
 @Component({
@@ -206,15 +207,19 @@ export class BcMap implements OnInit{
                         }
                         this.map.eachLayer(function(layer){layer.closeTooltip()});               
                         if(!isOpen){
-                            this.map.off('moveend');
-                            this.map.on('moveend',(ev)=>{
-                                ev.target.openTooltip(e.target._tooltip);
+                            if(e.latlng.distanceTo(this.map.getCenter())>100){
                                 this.map.off('moveend');
-                                this.map.on("moveend",this.moveEvent,this);
-                                
-                            });
-                            this.map.setView(e.target._latlng);
-                            e.target.toggleTooltip();
+                                this.map.on('moveend',(ev)=>{
+                                    ev.target.openTooltip(e.target._tooltip);
+                                    this.map.off('moveend');
+                                    this.map.on("moveend",this.moveEvent,this);
+                                    
+                                });
+                                this.map.setView(e.target._latlng);
+                                e.target.toggleTooltip();
+                            }else{
+                                e.target.openTooltip(e.target._tooltip);                                
+                            }
                         }    
                     },this);
                     this.addMarker(mark);
