@@ -18,8 +18,8 @@ import {BcAuthService} from '../../app/shared/auth.service';
 export class BcMaskController {
   @Input() shelter:IShelter;
   @Input() ref:string;
+  currentOutlet:string="";
   _id:String;
-  currentOutlet:string="none";
   activeOutletSub:Subscription;
   shelIdRequest:Subscription;
   revisionPermission:Enums.User_Type;
