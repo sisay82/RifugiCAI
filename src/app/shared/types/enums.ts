@@ -242,7 +242,7 @@ export namespace Enums {
         "Recuperabile",
         "Nessuna"
     }
-
+    
     //tipo fonte risorsa
     export enum Source_Type {
         "Energetica",
