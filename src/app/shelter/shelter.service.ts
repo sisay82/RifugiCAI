@@ -69,8 +69,20 @@ export class ShelterService {
             .catch(this.handleError.bind(this));
     }
 
-    getConutryMarkersNumber(countryName:String): Observable<any>{
-        return this.http.get(this.sheltersBaseUrl + '/country?name=' + countryName)
+    getConutryMarkersNumber(countryName:String,section:String,region:String): Observable<any>{
+        let query="?";
+        if(countryName){
+            query='name=' + countryName+"&";
+        }
+
+        if(region){
+            query+="region="+region
+            if(section){
+                query+='&section='+section;
+            }
+        } 
+        
+        return this.http.get(this.sheltersBaseUrl + '/country' + query)
             .map((res: Response) => {
                 let markers = res.json();
                 return markers;
@@ -78,8 +90,15 @@ export class ShelterService {
             .catch(this.handleError.bind(this));
     }
 
-    getSheltersAroundPoint(point:L.LatLng,range:number):Observable<IShelter[]>{
-        return this.http.get(this.sheltersBaseUrl + '/point?lat='+ point.lat +"&lng="+ point.lng+"&range="+range)
+    getSheltersAroundPoint(point:L.LatLng,range:number,section?:String,region?:String):Observable<IShelter[]>{
+        let query='?lat='+ point.lat +"&lng="+ point.lng+"&range="+range;
+        if(region){
+            query+='&section='+section;
+        }
+        if(section){
+            query+='&region='+region;
+        }
+        return this.http.get(this.sheltersBaseUrl + '/point' + query)
             .map((res: Response) => {
                 let shelter = res.json();
                 return shelter;
