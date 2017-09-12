@@ -19,7 +19,7 @@
         </div>
         <div class="bc-mask-line" style="margin-left:10px">
             <div class="bc-mask-revision-control">
-                <bc-text-input one-line required="true" formControlName="idCai" title="ID" [displayError]="displayError"></bc-text-input>
+                <bc-text-input one-line required="true" minLength=8 maxLength=10 validator="numberValidator" formControlName="idCai" title="ID" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-mask-revision-control">
                 <bc-select-input one-line required="true" [displayError]="displayError" enumName="Shelter_Type" formControlName="type" title="Tipo"></bc-select-input>

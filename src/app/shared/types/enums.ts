@@ -151,6 +151,31 @@ export namespace Enums {
         "Nessuna"
     }
 
+    //Region group code for cai
+    export enum Region_Code{
+        "Liguria"=10,
+        "Piemonte"=12,
+        "Valle d'Aosta"=14,
+        "Lombardia"=16,
+        "Trentino Alto Adige"=18,
+        "Alto Adige"=19,
+        "Veneto"=20,
+        "Friuli-Venezia Giulia"=22,
+        "Emilia Romagna"=24,
+        "Toscana"=26,
+        "Marche"=28,
+        "Umbria"=30,
+        "Lazio"=32,
+        "Abruzzo"=34,
+        "Molise"=36,
+        "Campania"=38,
+        "Puglia"=40,
+        "Basilicata"=42,
+        "Calabria"=44,
+        "Sicilia"=46,
+        "Sardegna"=48
+    }
+
     //tipo fonte risorsa
     export enum Source_Type {
         "Energetica",

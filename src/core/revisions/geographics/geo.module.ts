@@ -9,10 +9,11 @@ import {BcButtonModule} from '../../button/button.module';
 import {BcIconModule} from '../../icon/icon.module';
 import {BcTextInputModule} from '../../inputs/text/text_input.module';
 import {BcCheckboxInputModule} from '../../inputs/checkbox/checkbox_input.module';
+import {BcSelectInputModule} from '../../inputs/select/select_input.module';
 
 @NgModule({
     declarations: [BcGeoRevision],
     exports: [BcGeoRevision],
-    imports:[BcCheckboxInputModule,BcIconModule,BcTextInputModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
+    imports:[BcCheckboxInputModule,BcIconModule,BcTextInputModule,BcSelectInputModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
 })
 export class BcGeoRevisionModule { }

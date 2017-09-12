@@ -131,6 +131,8 @@ export class BcTextInput implements ControlValueAccessor {
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
     @Input() title = "";
+    @Input() minLength:number;
+    @Input() maxLength:number;
     _displayError:boolean=false;
     @Input() set displayError(enable:boolean){
         this._displayError=enable;
@@ -234,8 +236,42 @@ export class BcTextInput implements ControlValueAccessor {
                     }
                     return {valid:false};
                 }else{
-                    this.invalid=false;
-                    return null;
+                    if(this.minLength){
+                        if(c.value.length>=this.minLength){
+                            if(this.maxLength){
+                                if(c.value.length<=this.maxLength){
+                                    this.invalid=false;
+                                    return null;
+                                }else{
+                                    if(this.displayError){
+                                        this.invalid=true;
+                                    }
+                                    return {valid:false};
+                                }
+                            }else{
+                                this.invalid=false;
+                                return null;
+                            }
+                        }else{
+                            if(this.displayError){
+                                this.invalid=true;
+                            }
+                            return {valid:false};
+                        }
+                    }else if(this.maxLength){
+                        if(c.value.length<=this.maxLength){
+                            this.invalid=false;
+                            return null;
+                        }else{
+                            if(this.displayError){
+                                this.invalid=true;
+                            }
+                            return {valid:false};
+                        }
+                    }else{
+                        this.invalid=false;
+                        return null;
+                    }
                 }
             }
         }
