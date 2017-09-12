@@ -131,6 +131,7 @@ export class BcTextInput implements ControlValueAccessor {
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
     @Input() title = "";
+    isDisabled:boolean=false;
     @Input() minLength:number;
     @Input() maxLength:number;
     _displayError:boolean=false;
@@ -168,22 +169,27 @@ export class BcTextInput implements ControlValueAccessor {
     }
 
     writeValue(value: any): void {
-        if(value!=undefined){
+        if(!this.isDisabled&&value!=undefined){
             this.value=value;
         }
     }
 
     registerOnChange(fn: any): void {
-        this.propagateChange = fn;
+        if(!this.isDisabled){
+            this.propagateChange = fn;            
+        }
     }
 
     registerOnTouched(fn: any): void {}
 
-    setDisabledState?(isDisabled: boolean): void {}
+    setDisabledState?(isDisabled: boolean): void {
+        this.isDisabled=isDisabled;
+    }
     
     onKey(event:any){
-        this.value=event.target.value;
-
+        if(!this.isDisabled){
+            this.value=event.target.value;
+        }
         this.propagateChange(this.value);
     }
 

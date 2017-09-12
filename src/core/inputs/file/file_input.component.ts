@@ -16,7 +16,6 @@ export class BcFileInputErrorStyler {
     @Input('bc-enable-error') invalid: boolean;
 }
 
-
 @Component({
     moduleId: module.id,
     selector: 'bc-file-input',
@@ -43,6 +42,7 @@ export class BcFileInput implements ControlValueAccessor {
     propagateChange = (_: any) => {};
     invalid:boolean=false;
     value:File;
+    isDisabled:boolean=false;
     @Input() validator:RegExp;
     @Input() required:boolean=false;
     @Input() title = "";
@@ -64,23 +64,28 @@ export class BcFileInput implements ControlValueAccessor {
     }
     
     writeValue(value: any): void {
-        if(value!=undefined){
+        if(!this.isDisabled&&value!=undefined){
             this.value=value;
         }
     }
 
     registerOnChange(fn: any): void {
-        this.propagateChange = fn;
+        if(!this.isDisabled){
+            this.propagateChange = fn;
+        }
     }
 
     registerOnTouched(fn: any): void {}
 
-    setDisabledState?(isDisabled: boolean): void {}
+    setDisabledState?(isDisabled: boolean): void {
+        this.isDisabled=isDisabled;
+    }
 
     onChange(event){
-        const files = event.target.files || event.srcElement.files;
-        this.value = files[0];
-        
+        if(!this.isDisabled){
+            const files = event.target.files || event.srcElement.files;
+            this.value = files[0];
+        }
         this.propagateChange(this.value);
     }
 
