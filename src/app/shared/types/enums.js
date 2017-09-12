@@ -146,7 +146,7 @@ var Enums;
         Region_Code[Region_Code["Piemonte"] = 12] = "Piemonte";
         Region_Code[Region_Code["Valle d'Aosta"] = 14] = "Valle d'Aosta";
         Region_Code[Region_Code["Lombardia"] = 16] = "Lombardia";
-        Region_Code[Region_Code["Trentino Alto Adige"] = 18] = "Trentino Alto Adige";
+        Region_Code[Region_Code["Trentino"] = 18] = "Trentino";
         Region_Code[Region_Code["Alto Adige"] = 19] = "Alto Adige";
         Region_Code[Region_Code["Veneto"] = 20] = "Veneto";
         Region_Code[Region_Code["Friuli-Venezia Giulia"] = 22] = "Friuli-Venezia Giulia";
