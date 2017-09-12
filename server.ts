@@ -14,6 +14,10 @@ var appBaseUrl = "http://localhost:4200";
 var app = express();
 var parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
 var userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type}[]=[];
+var centralRole="ROLE_RIFUGI_ADMIN";
+var regionalRoleName="PGR";
+var sectionalPRoleName="Responsabile Esterno Sezione";
+var sectionalURoleName="Operatore Sezione Esteso"; 
 
 function getChildByName(node:Node,name:String):Node{
     for(let i=0;i<node.childNodes.length;i++){
@@ -30,7 +34,61 @@ function getChildByName(node:Node,name:String):Node{
     return null;
 }
 
-function validationPromise(ticket):Promise<{uuid:String,role:Enums.User_Type}>{
+function getChildsByName(node:Node,name:String):Node[]{
+    let nodes:Node[]=[];
+    for(let i=0;i<node.childNodes.length;i++){
+        if(node.childNodes.item(i).localName==name){
+            nodes.push(node.childNodes.item(i));
+        }
+        if(node.childNodes.item(i).hasChildNodes()){
+            let n = getChildsByName(node.childNodes.item(i),name);
+            if(n){
+                nodes=nodes.concat(n);
+            }
+        }
+    }
+    return nodes;
+}
+
+function getTargetNodesByName(node:Node,name:String,target:String):Node[]{
+    let nodes:Node[]=[];
+    for(let n of getChildsByName(node,name)){
+        let child=getChildByName(n,target);
+        if(child){
+            nodes.push(child);
+        }        
+    }
+    return nodes;
+}
+
+function getRole(node:Node):Enums.User_Type{
+    for(let n of getTargetNodesByName(node,"aggregatedAuthorities","role")){
+        if(n.textContent==centralRole){
+            return Enums.User_Type.central;
+        }
+    }
+    let userGroups=getChildByName(node,"userGroups");
+    if(userGroups){
+        let name=getChildByName(userGroups,"name");        
+        if(name){
+            if(name.textContent==regionalRoleName){
+                return Enums.User_Type.regional;
+            }else{
+                if(name.textContent==sectionalPRoleName||name.textContent==sectionalURoleName){
+                    return Enums.User_Type.sectional
+                }else{
+                    return null;
+                }
+            }
+        }else{
+            return null;
+        }
+    }else{
+        return null;
+    }
+}
+
+function validationPromise(ticket):Promise<String>{
     return new Promise((resolve,reject)=>{
         request.post({
             url:casBaseUrl+"/cai-cas/serviceValidate?service="+parsedUrl+"&ticket="+ticket,
@@ -39,16 +97,10 @@ function validationPromise(ticket):Promise<{uuid:String,role:Enums.User_Type}>{
             try {
                 var el:Node=(new DOMParser()).parseFromString(body,"text/xml").firstChild;
                 let res:boolean=false;
-                let user:any={};
+                let user:String;
                 if(getChildByName(el,'authenticationSuccess')){
                     res=true;
-                    user.uuid=getChildByName(el,'uuid').textContent;
-                    /**
-                     * SET ROLE
-                     */
-                    //DEV
-                    user.role=Enums.User_Type.sectional;
-                    /** */
+                    user=getChildByName(el,'uuid').textContent;
                 }
                 if(res){
                     resolve(user);
@@ -59,6 +111,53 @@ function validationPromise(ticket):Promise<{uuid:String,role:Enums.User_Type}>{
                 console.log(e);
                 reject(null);
             }
+        });
+    });
+}
+
+function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
+    return new Promise<{role:Enums.User_Type,code:String}>((resolve,reject)=>{
+        var post_data=`<?xml version="1.0" encoding="utf-8"?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+                <n:getUserDataByUuid xmlns:n="http://service.core.ws.auth.cai.it/">
+                    <arg0>`+uuid+`</arg0>
+                </n:getUserDataByUuid>
+            </soap:Body>
+        </soap:Envelope>`;
+
+        request.post({
+            url:authUrl,
+            method:"POST",
+            headers:{
+                "Content-Type":"text/xml"
+            },
+            body:post_data
+        },function(err,response,body){
+            var el:Node=(new DOMParser()).parseFromString(body,"text/xml");
+            let role=getRole(el);
+            let user:{role:Enums.User_Type,code:String}={role:null,code:null};
+            user.role=role;
+            if(!role){
+                reject();
+            }else{
+                let code;
+                if(role==Enums.User_Type.sectional){
+                    code = getChildByName(el,'sectionCode').textContent;
+                }else{
+                    let tmpCode = getChildByName(el,'regionaleGroupCode').textContent;
+                    if(tmpCode){
+                        code = tmpCode.substr(0,2)+tmpCode.substr(5,2)+tmpCode.substr(2,3);                        
+                    }
+                }
+                if(code){
+                    user.code=code;
+                    resolve(user);                 
+                }else{
+                    reject();
+                }
+            }
+        
         });
     });
 }
@@ -79,11 +178,11 @@ var server = app.listen(process.env.PORT || 4200,function(){
 app.get('/logout',function(req,res){
     let user=userList.findIndex(obj=>obj.id==req.session.id);
     console.log("Logging out");
-    //var parsedUrl=encodeURIComponent(appBaseUrl);
+
     if(user>-1){
         userList.splice(user,1);
     }
-    res.redirect(casBaseUrl+"/cai-cas/logout?service="+parsedUrl);
+    res.redirect(casBaseUrl+"/cai-cas/logout");
 });
 
 app.get('/j_spring_cas_security_check',function(req,res){
@@ -103,31 +202,14 @@ app.get('/user',function(req,res,next){
     console.log("User permissions request (UUID): ",user.uuid);    
     if(user!=undefined&&user.uuid!=undefined){
         if(user.code==undefined||user.role==undefined){
-            var post_data=`<?xml version="1.0" encoding="utf-8"?>
-            <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-                <soap:Body>
-                    <n:getUserDataByUuid xmlns:n="http://service.core.ws.auth.cai.it/">
-                        <arg0>`+user.uuid+`</arg0>
-                    </n:getUserDataByUuid>
-                </soap:Body>
-            </soap:Envelope>`;
-    
-            request.post({
-                url:authUrl,
-                method:"POST",
-                headers:{
-                    "Content-Type":"text/xml"
-                },
-                body:post_data
-            },function(err,response,body){
-                var el:Node=(new DOMParser()).parseFromString(body,"text/xml");
-                let code = getChildByName(el,'sectionCode').textContent;
-                if(code){
-                    user.code=code;
-                    res.status(200).send({code:user.code,role:user.role});                    
-                }else{
-                    res.status(500).send({'error':'Error user request'});
-                }
+            checkUserPromise(user.uuid)
+            .then(usr=>{
+                user.code=usr.code;
+                user.role=usr.role;
+                res.status(200).send(usr);
+            })
+            .catch(()=>{
+                res.status(500).send({error:"Invalid user or request"});
             });
         }else{
             res.status(200).send({code:user.code,role:user.role});
@@ -166,9 +248,25 @@ app.get('/*', function(req, res) {
         validationPromise(user.ticket)
         .then((usr)=>{
             console.log("Valid ticket");
-            user.uuid=usr.uuid;
-            user.role=usr.role;
-            res.sendFile(path.join(__dirname + '/dist/index.html'));
+            if(user.code==undefined||user.role==undefined){
+                user.uuid=usr;
+                checkUserPromise(usr)
+                .then(us=>{
+                    console.log("Access granted with role and code: ",us.role,us.code);
+                    user.code=us.code;
+                    user.role=us.role;
+                    res.sendFile(path.join(__dirname + '/dist/index.html'));                
+                })
+                .catch(()=>{
+                    console.log("Access denied");                
+                    res.redirect('/logout');
+                });
+            }else{
+                console.log("Access granted with role and code: ",user.role,user.code);
+                res.sendFile(path.join(__dirname + '/dist/index.html'));
+            }
+            
+            
         })
         .catch((err)=>{
             console.log("Invalid ticket");

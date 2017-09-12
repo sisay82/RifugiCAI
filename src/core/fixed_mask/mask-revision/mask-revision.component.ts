@@ -192,11 +192,19 @@ export class BcMaskRevision {
     }
   }
 
+  reviseCheck(permission?){
+    if(permission){
+      return (Enums.DetailRevisionPermission.find(obj=>obj==permission)!=null);      
+    }else{
+      return (Enums.DetailRevisionPermission.find(obj=>obj==this.revisionPermission)!=null);      
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if(!this.newShelter&&!this.shelterInitialized&&this.shelter!=undefined){
       this.shelterInitialized=true;
       let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
-        if(val){
+        if(val&&this.reviseCheck(val)){
           this.initForm(val);
         }else{
           this.return();
@@ -209,28 +217,37 @@ export class BcMaskRevision {
   }
 
   ngOnInit(){
-    let routeSub=this._route.params.subscribe(params=>{
-      if(params["name"]!=undefined){
-        if(params["name"]=="newShelter"){
-          this.newShelter=true;
-        }else{
-        this.router.navigateByUrl("list");
-        }
-      }else{
-        this.newShelter=false;
-      }
-    });
-    if(!this.newShelter&&!this.shelterInitialized&&this.shelter!=undefined){
+    if(!this.shelterInitialized&&this.shelter!=undefined){
       this.shelterInitialized=true;
-      let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
-        if(val){
-          this.initForm(val);
+      let routeSub=this._route.params.subscribe(params=>{
+        if(params["name"]!=undefined){
+          if(params["name"]=="newShelter"){
+            this.newShelter=true;
+          }else{
+          this.router.navigateByUrl("list");
+          }
         }else{
-          this.return();
+          this.newShelter=false;
         }
-        if(authSub!=undefined){
-          authSub.unsubscribe();
-        }
+        let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
+          this.revisionPermission=val;
+          if(!this.newShelter){
+            if(val&&this.reviseCheck(val)){
+              this.initForm(val);
+            }else{
+              this.return();
+            }
+          }
+          if(!val){
+            this.return();
+          }
+          if(routeSub!=undefined){
+            routeSub.unsubscribe();
+          }
+          if(authSub!=undefined){
+            authSub.unsubscribe();
+          }
+        });
       });
     }
   }

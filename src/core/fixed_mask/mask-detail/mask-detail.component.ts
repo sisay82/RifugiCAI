@@ -32,10 +32,16 @@ export class BcMask {
     return (navigator.userAgent.toLowerCase().indexOf("win")==-1);
   }
 
+  reviseCheck(){
+    return (Enums.DetailRevisionPermission.find(obj=>obj==this.revisionPermission)!=null);
+  }
+
   revision(){
-    let component = this.shared.activeComponent;
-    this.shared.onActiveOutletChange("revision");
-    this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(revision:"+component+")");
+    if(this.reviseCheck()){
+      let component = this.shared.activeComponent;
+      this.shared.onActiveOutletChange("revision");
+      this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(revision:"+component+")");
+    }
   }
 
   return(){
