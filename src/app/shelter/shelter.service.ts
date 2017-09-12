@@ -56,22 +56,22 @@ export class ShelterService {
     }
 
     getConutryMarkersNumber(countryName:String): Observable<any>{
-        return this.http.get(this.sheltersBaseUrl + '/country/' + countryName)
+        return this.http.get(this.sheltersBaseUrl + '/country?name=' + countryName)
             .map((res: Response) => {
                 let markers = res.json();
                 return markers;
             })
-            .catch(this.handleError);
+            .catch(this.handleError.bind(this));
     }
 
     getSheltersAroundPoint(point:L.LatLng,range:number):Observable<IShelter[]>{
-        return this.http.get(this.sheltersBaseUrl + '/point/' + point.lat +'/' + point.lng + '/' + range)
+        return this.http.get(this.sheltersBaseUrl + '/point?lat='+ point.lat +"&lng="+ point.lng+"&range="+range)
             .map((res: Response) => {
                 let shelter = res.json();
                 return shelter;
             })
-            .catch(this.handleError);
-    }   
+            .catch(this.handleError.bind(this));
+    }      
 
     getShelterSection(id: String,section: string): Observable<IShelter> {
         return this.http.get(this.sheltersBaseUrl + '/' + id + '/' + section)

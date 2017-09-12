@@ -19,14 +19,15 @@ function getNormalMarkerHtml(size){
 }
 
 function getTooltip(name,municipality,province,region){
-    return `<div class="bc-tooltip">
-                <div class="bc-tooltip-head">
-                    <div style="top:20%;position:relative">`+name+`</div>
-                </div>
-                <div class="bc-tooltip-line">
-                    <div class="bc-tooltip-content-line">`+municipality||'---'+`, `+province||'---'+`</br>`+region||'---'+`</div>
-                </div>
-            </div>`;
+    let tooltip=`<div class="bc-tooltip">
+    <div class="bc-tooltip-head">
+        <div style="top:20%;position:relative">`+(name?(name):'---')+`</div>
+    </div>
+    <div class="bc-tooltip-line">
+        <div class="bc-tooltip-content-line">`+(municipality?(municipality):'---')+`, `+(province?(province):'---')+`</br>`+(region?(region):'---')+`</div>
+    </div>
+</div>`
+    return tooltip;
 }
 
 @Component({
@@ -41,13 +42,12 @@ export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
     @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
-    @Input() windowSize:{width:string,height:string}={width:'100%',height:'100%'};
     @Input() initialCenter:Subject<L.LatLng|L.LatLngExpression>;
     @Input() initialZoom:number=6;
     @Input() openTooltipCenter:boolean=false;
     increaseRatio:number=1;
     private _toggle:boolean=false;
-
+    countrySheltersNumber:{region:String,marker:L.Marker}[]=[];
     public static defaultCenter:L.LatLng=L.latLng(41.9051,12.4879);
     public static latLngCountries: IMarker[]=[
         {latLng:new L.LatLng(45.7372,7.3206),popup:"",optional:{id:"Valle d'Aosta"}},
@@ -93,10 +93,7 @@ export class BcMap implements OnInit{
 
     ngOnInit(){
         this.getMapInit('map');
-        if(this.windowSize!=undefined){
-            document.getElementById("map").style.width=this.windowSize.width;
-            document.getElementById("map").style.height=this.windowSize.height;
-        }
+        this.map.invalidateSize();
         this.map.setView(BcMap.defaultCenter,this.initialZoom);
         if(this.initialCenter!=undefined){
             let initialCenterSub=this.initialCenter.subscribe(value=>{
@@ -127,7 +124,6 @@ export class BcMap implements OnInit{
     }
 
     addMarker(marker:L.Marker){
-        this.map.invalidateSize();
         this.markerPane.addLayer(marker);
     }
 
@@ -149,20 +145,30 @@ export class BcMap implements OnInit{
 
     markRegions(){
         for(let item of BcMap.latLngCountries){       
-            let countryMarkerSub=this.shelterService.getConutryMarkersNumber(item.optional.id).subscribe(obj=>{
-                if(obj!=undefined&&obj.num!=undefined&&obj.num>0){
-                    let regionIcon= L.divIcon({
-                        className:'',
-                        iconSize:null,
-                        iconAnchor:[this.regionIconSize/4,this.regionIconSize],
-                        html:  getRegionMarkerHtml(obj.num,this.regionIconSize)
-                    });
-                    this.addMarker(L.marker(item.latLng,{icon:regionIcon}).on("click",this.openPopupRegion,this));
-                }
-                if(countryMarkerSub!=undefined){
-                    countryMarkerSub.unsubscribe();
-                }
-            });
+            let m=this.countrySheltersNumber.find(obj=>obj.region.toLowerCase().indexOf(item.optional.id.toLowerCase())>-1);
+            if(m==undefined){
+                let countryMarkerSub=this.shelterService.getConutryMarkersNumber(item.optional.id).subscribe(obj=>{
+                    if(obj!=undefined&&obj.num!=undefined&&obj.num>0){
+                        let regionIcon= L.divIcon({
+                            className:'',
+                            iconSize:null,
+                            iconAnchor:[this.regionIconSize/4,this.regionIconSize],
+                            html:  getRegionMarkerHtml(obj.num,this.regionIconSize)
+                        });
+                        let mark:L.Marker=L.marker(item.latLng,{icon:regionIcon});
+                        this.countrySheltersNumber.push({marker:mark,region:item.optional.id})            
+                        this.addMarker(mark.on("click",this.openPopupRegion,this));
+                    }else{
+                        this.countrySheltersNumber.push({marker:null,region:item.optional.id})
+                    }
+                    if(countryMarkerSub!=undefined){
+                        countryMarkerSub.unsubscribe();
+                    }
+                });
+            }else{
+                if(m.marker!=null)
+                    this.addMarker(m.marker.on("click",this.openPopupRegion,this));
+            }
         }
     }
 
@@ -201,15 +207,19 @@ export class BcMap implements OnInit{
                         }
                         this.map.eachLayer(function(layer){layer.closeTooltip()});               
                         if(!isOpen){
-                            this.map.off('moveend');
-                            this.map.on('moveend',(ev)=>{
-                                ev.target.openTooltip(e.target._tooltip);
+                            if(e.latlng.distanceTo(this.map.getCenter())>100){
                                 this.map.off('moveend');
-                                this.map.on("moveend",this.moveEvent,this);
-                                
-                            });
-                            this.map.setView(e.target._latlng);
-                            e.target.toggleTooltip();
+                                this.map.on('moveend',(ev)=>{
+                                    ev.target.openTooltip(e.target._tooltip);
+                                    this.map.off('moveend');
+                                    this.map.on("moveend",this.moveEvent,this);
+                                    
+                                });
+                                this.map.setView(e.target._latlng);
+                                e.target.toggleTooltip();
+                            }else{
+                                e.target.openTooltip(e.target._tooltip);                                
+                            }
                         }    
                     },this);
                     this.addMarker(mark);
@@ -237,15 +247,4 @@ export class BcMap implements OnInit{
             }
         }
     }
-
-    clickCloseEvent(event:Event){    
-        if(this._toggle){
-            document.getElementById("map").style.width=this.windowSize.width;
-            document.getElementById("map").style.height=this.windowSize.height;
-            document.getElementById("map").style.position="relative";
-            this.map.invalidateSize();
-            this._toggle=false;
-        }
-    }
-
 }
