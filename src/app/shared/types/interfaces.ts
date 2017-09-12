@@ -45,7 +45,7 @@ export interface ILocation{
     province?:String;
     municipality?:String;
     locality?:String;
-    ownerRegion?:String;
+    ownerRegion?:Enums.Region_Code;
     regional_commission?:String;
     authorityJurisdiction?:String;
     altitude?:Number;

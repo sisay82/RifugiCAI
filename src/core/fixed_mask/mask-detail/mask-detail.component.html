@@ -8,7 +8,7 @@
                 <div style="white-space: nowrap;margin-right:1%">{{shelter?.alias||'Nome comune'}}</div>
             </div>
             <div style="display: inline;margin-left:auto;margin-right:1%">
-                <bc-icon *ngIf="revisionPermission!=null" (click)="revision()" class="bc-mask-icon" name="edit" size=s></bc-icon>
+                <bc-icon *ngIf="reviseCheck()" (click)="revision()" class="bc-mask-icon" name="edit" size=s></bc-icon>
             </div>
         </div>
     </div>

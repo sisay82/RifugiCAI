@@ -193,9 +193,9 @@ export namespace Enums {
 
     //tipologia di utente
     export enum User_Type {
-        central = <any>"93",
-        regional = <any>"",
-        sectional = <any>"92"
+        central=1,
+        regional=2,
+        sectional=3
     }
 
     //permessi per documenti rifugio
@@ -215,7 +215,7 @@ export namespace Enums {
         ...DocRevisionPermission.concat(EconomyRevisionPermission).filter(function(item,index,input){
             return input.indexOf(item)==index;
         }),
-        User_Type.regional
+       // User_Type.regional
     ]  
 
     //permessi per inserimento rifugio
