@@ -243,7 +243,7 @@ app.get('/*', function (req, res) {
                     user.uuid = usr;
                     checkUserPromise(usr)
                         .then(function (us) {
-                        console.log("Access granted with role and code: ", us.role, us.code);
+                        console.log("Access granted with role and code: ", enums_1.Enums.User_Type[us.role], us.code);
                         user.code = us.code;
                         user.role = us.role;
                         res.sendFile(path.join(__dirname + '/dist/index.html'));

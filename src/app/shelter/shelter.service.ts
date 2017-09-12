@@ -73,7 +73,10 @@ export class ShelterService {
     getConutryMarkersNumber(countryName:String,section:String,region:String): Observable<any>{
         let query="?";
         if(countryName){
-            query='name=' + countryName+"&";
+            query+='name=' + countryName;
+            if(region){
+                query+="&";
+            }
         }
 
         if(region){
