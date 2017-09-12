@@ -17,6 +17,15 @@
   align-items: center;
 }
 
+input{
+  &[disabled]{
+    input{
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+}
+
 .bc-check-content{
     width:20px;
     height: 20px;

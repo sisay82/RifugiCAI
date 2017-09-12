@@ -1,7 +1,7 @@
 <div class="bc-body" style="white-space: nowrap;margin-right:1%">{{title}}
     <div *ngIf="required" class="bc-h6" style="display:inline;color:red;margin-right:1%">*</div>
 </div>
-<select [bc-enable-error]="invalid" (change)="onChange($event)" style="text-overflow: ellipsis; font-style: normal; font-weight: normal; text-decoration: inherit;"
+<select [bc-enable-error]="invalid" [disabled]="isDisabled" (change)="onChange($event)" style="text-overflow: ellipsis; font-style: normal; font-weight: normal; text-decoration: inherit;"
     class="form-control" >
     <option [selected]="value==undefined" value="">-- {{defaultContent || title}} --</option>
     <option *ngFor="let name of getEnumNames()" [selected]="checkEnumValue(name)" [value]="name">{{name}}</option>
