@@ -135,7 +135,7 @@ export namespace Enums {
         "Piemonte"=12,
         "Valle d'Aosta"=14,
         "Lombardia"=16,
-        "Trentino Alto Adige"=18,
+        "Trentino"=18,
         "Alto Adige"=19,
         "Veneto"=20,
         "Friuli-Venezia Giulia"=22,
