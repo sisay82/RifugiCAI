@@ -247,12 +247,19 @@ app.get('/*', function (req, res) {
                         res.sendFile(path.join(__dirname + '/dist/index.html'));
                     })["catch"](function () {
                         console.log("Access denied");
-                        res.redirect('/logout');
+                        res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        //res.status(200).send("Access Denied <a href='"+casBaseUrl+"/cai-cas/logout"+"'> Logout </a>");
                     });
                 }
                 else {
-                    console.log("Access granted with role and code: ", user.role, user.code);
-                    res.sendFile(path.join(__dirname + '/dist/index.html'));
+                    if (user.role) {
+                        console.log("Access granted with role and code: ", user.role, user.code);
+                        res.sendFile(path.join(__dirname + '/dist/index.html'));
+                    }
+                    else {
+                        res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        //res.status(200).send("Access Denied");
+                    }
                 }
             })["catch"](function (err) {
                 console.log("Invalid ticket");

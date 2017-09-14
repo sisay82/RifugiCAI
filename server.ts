@@ -258,12 +258,16 @@ app.get('/*', function(req, res) {
                     res.sendFile(path.join(__dirname + '/dist/index.html'));                
                 })
                 .catch(()=>{
-                    console.log("Access denied");                
-                    res.redirect('/logout');
+                    console.log("Access denied");   
+                    res.sendFile(path.join(__dirname + '/dist/index.html'));
                 });
             }else{
-                console.log("Access granted with role and code: ",user.role,user.code);
-                res.sendFile(path.join(__dirname + '/dist/index.html'));
+                if(user.role){
+                    console.log("Access granted with role and code: ",user.role,user.code);
+                    res.sendFile(path.join(__dirname + '/dist/index.html'));
+                }else{
+                    res.sendFile(path.join(__dirname + '/dist/index.html'));
+                }
             }
             
             
