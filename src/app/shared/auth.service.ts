@@ -115,7 +115,6 @@ export class BcAuthService{
 
     checkRevisionPermissionForShelter(shelId:String):Observable<Enums.User_Type>{
         this.onShelId(shelId);
-        let revisionPermission:Enums.User_Type;    
         return Observable.create(observer=>{
             let sectionCodeInit = this.getUserProfile().subscribe(profile=>{
                 if(profile.role==Enums.User_Type.central){
