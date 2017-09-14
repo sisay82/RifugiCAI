@@ -13,7 +13,7 @@ var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
 var appBaseUrl = "http://localhost:4200";
 var app = express();
 var parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
-var userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type}[]=[];
+var userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type,redirections:number}[]=[];
 var centralRole="ROLE_RIFUGI_ADMIN";
 var regionalRoleName="PGR";
 var sectionalPRoleName="Responsabile Esterno Sezione";
@@ -192,7 +192,7 @@ app.get('/j_spring_cas_security_check',function(req,res){
         res.redirect(user.resource);
     }else{
         console.log("Invalid user request");
-        userList.push({id:req.session.id,resource:appBaseUrl});
+        userList.push({id:req.session.id,resource:appBaseUrl,redirections:0});
         res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
     }
 });
@@ -216,7 +216,7 @@ app.get('/user',function(req,res,next){
         }
     }else{
         console.log("User not logged");
-        userList.push({id:req.session.id,resource:appBaseUrl+'/list'});
+        userList.push({id:req.session.id,resource:appBaseUrl+'/list',redirections:0});
         res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
     }
 })
@@ -240,7 +240,7 @@ app.get('/*', function(req, res) {
     let user=userList.find(obj=>obj.id==req.session.id);
     if(!user){
       console.log("User not logged");
-      userList.push({id:req.session.id,resource:req.path});
+      userList.push({id:req.session.id,resource:req.path,redirections:0});
       res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
     }else{
       if(user.ticket){
@@ -269,18 +269,31 @@ app.get('/*', function(req, res) {
                     res.sendFile(path.join(__dirname + '/dist/index.html'));
                 }
             }
-            
-            
         })
         .catch((err)=>{
             console.log("Invalid ticket");
             user.resource=req.path;
-            res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
+            user.redirections++;
+            if(user.redirections>=3){
+                let index=userList.findIndex(obj=>obj.id==user.id);
+                userList.splice(index,1);
+                res.status(500).send(`Error, try logout <a href='`+casBaseUrl+"/cai-cas/logout"+`'>here</a> before try again.
+                <br>Error info:<br><br>`+err);
+            }else{
+                res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);                
+            }
         });
       }else{
         console.log("Invalid user ticket");
         user.resource=req.path;
-        res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
+        user.redirections++;
+        if(user.redirections>=3){
+            let index=userList.findIndex(obj=>obj.id==user.id);
+            userList.splice(index,1);
+            res.status(500).send("Error, try logout <a href='"+casBaseUrl+"/cai-cas/logout"+"'>here</a> before try again");
+        }else{
+            res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);                
+        }
       }
     }
     

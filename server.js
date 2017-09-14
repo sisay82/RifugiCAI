@@ -184,7 +184,7 @@ app.get('/j_spring_cas_security_check', function (req, res) {
     }
     else {
         console.log("Invalid user request");
-        userList.push({ id: req.session.id, resource: appBaseUrl });
+        userList.push({ id: req.session.id, resource: appBaseUrl, redirections: 0 });
         res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
 });
@@ -208,7 +208,7 @@ app.get('/user', function (req, res, next) {
     }
     else {
         console.log("User not logged");
-        userList.push({ id: req.session.id, resource: appBaseUrl + '/list' });
+        userList.push({ id: req.session.id, resource: appBaseUrl + '/list', redirections: 0 });
         res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
 });
@@ -228,7 +228,7 @@ app.get('/*', function (req, res) {
     var user = userList.find(function (obj) { return obj.id == req.session.id; });
     if (!user) {
         console.log("User not logged");
-        userList.push({ id: req.session.id, resource: req.path });
+        userList.push({ id: req.session.id, resource: req.path, redirections: 0 });
         res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
     else {
@@ -248,7 +248,6 @@ app.get('/*', function (req, res) {
                     })["catch"](function () {
                         console.log("Access denied");
                         res.sendFile(path.join(__dirname + '/dist/index.html'));
-                        //res.status(200).send("Access Denied <a href='"+casBaseUrl+"/cai-cas/logout"+"'> Logout </a>");
                     });
                 }
                 else {
@@ -258,19 +257,34 @@ app.get('/*', function (req, res) {
                     }
                     else {
                         res.sendFile(path.join(__dirname + '/dist/index.html'));
-                        //res.status(200).send("Access Denied");
                     }
                 }
             })["catch"](function (err) {
                 console.log("Invalid ticket");
                 user.resource = req.path;
-                res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+                user.redirections++;
+                if (user.redirections >= 3) {
+                    var index = userList.findIndex(function (obj) { return obj.id == user.id; });
+                    userList.splice(index, 1);
+                    res.status(500).send("Error, try logout <a href='" + casBaseUrl + "/cai-cas/logout" + "'>here</a> before try again.\n                <br>Error info:<br><br>" + err);
+                }
+                else {
+                    res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+                }
             });
         }
         else {
             console.log("Invalid user ticket");
             user.resource = req.path;
-            res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+            user.redirections++;
+            if (user.redirections >= 3) {
+                var index = userList.findIndex(function (obj) { return obj.id == user.id; });
+                userList.splice(index, 1);
+                res.status(500).send("Error, try logout <a href='" + casBaseUrl + "/cai-cas/logout" + "'>here</a> before try again");
+            }
+            else {
+                res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+            }
         }
     }
 });
