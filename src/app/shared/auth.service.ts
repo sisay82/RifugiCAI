@@ -4,6 +4,7 @@ import { Http, Response,Headers,RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Enums } from './types/enums';
 import { Subscription } from 'rxjs/Subscription';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class BcAuthService{
@@ -12,7 +13,7 @@ export class BcAuthService{
     private localPermissions:any[];
     private userSectionCodeSub:Subscription;
 
-    constructor(private http: Http) {
+    constructor(private http: Http,private route:ActivatedRoute) {
         this.userSectionCodeSub = this.updateProfile().subscribe(profile=>{
             this.userProfileSource.next(profile);
             if(this.userSectionCodeSub){
@@ -46,6 +47,8 @@ export class BcAuthService{
     private updateProfile():Observable<any>{
         return this.http.get(this.userBaseUrl)
         .map((res: Response) => {
+            this.routeError=false;
+            this.errorRouteSource.next(false);
             let user=res.json();
             user.role=(user.role?(user.role):Enums.User_Type.sectional);
             this.userProfile=user
@@ -162,19 +165,24 @@ export class BcAuthService{
         });
     }
 
-    private handleError(error: any) {
-        console.error('server error:', error);
-        if (error instanceof Response) {
-            let errMessage = '';
-            try {
-                errMessage = error.json().error;
-            } catch (err) {
-                errMessage = error.statusText;
-            }
-            return Observable.throw(errMessage);
+    getRouteError():Observable<boolean>{
+        if(!this.routeError){
+            return this.errorRoute$;
+        }else{
+            return Observable.of(this.routeError);
         }
-        
-        return Observable.throw(error || 'Node.js server error');
+    }
+
+    private errorRouteSource = new Subject<boolean>();
+    private routeError;
+    private errorRoute$ = this.errorRouteSource.asObservable();
+    private handleError(error: any) {
+        if(!this.route.children.find(child=>child.outlet=="access-denied")){
+            location.href="/(access-denied:)";
+        }
+        this.routeError=true;
+        this.errorRouteSource.next(true);
+        return Observable.throw({error:"Access denied"})
     }
 
 }
