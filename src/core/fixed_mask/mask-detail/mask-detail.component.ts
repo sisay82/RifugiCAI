@@ -32,12 +32,8 @@ export class BcMask {
     return (navigator.userAgent.toLowerCase().indexOf("win")==-1);
   }
 
-  reviseCheck(permission?){
-    if(permission){
-      return (Enums.DetailRevisionPermission.find(obj=>obj==permission)!=null);      
-    }else{
-      return (Enums.DetailRevisionPermission.find(obj=>obj==this.revisionPermission)!=null);      
-    }
+  reviseCheck(){
+    return (Enums.DetailRevisionPermission.find(obj=>obj==this.revisionPermission)!=null);      
   }
 
   revision(){
@@ -56,7 +52,7 @@ export class BcMask {
     if(!this.shelterInitialized&&this.shelter!=undefined){
       this.shelterInitialized=true;
       let permissionSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
-        if(!val||!this.reviseCheck(val)){
+        if(!val){
           this.return();
         }else{
           this.revisionPermission=val;
