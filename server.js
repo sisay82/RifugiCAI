@@ -111,8 +111,7 @@ function validationPromise(ticket) {
                 }
             }
             catch (e) {
-                console.log(e);
-                reject(null);
+                reject(e);
             }
         });
     });
@@ -237,6 +236,7 @@ app.get('/*', function (req, res) {
             validationPromise(user.ticket)
                 .then(function (usr) {
                 console.log("Valid ticket");
+                user.redirections = 0;
                 if (user.code == undefined || user.role == undefined) {
                     user.uuid = usr;
                     checkUserPromise(usr)
@@ -247,6 +247,7 @@ app.get('/*', function (req, res) {
                         res.sendFile(path.join(__dirname + '/dist/index.html'));
                     })["catch"](function () {
                         console.log("Access denied");
+                        //res.redirect("/(access-denied:)")
                         res.sendFile(path.join(__dirname + '/dist/index.html'));
                     });
                 }
@@ -261,8 +262,8 @@ app.get('/*', function (req, res) {
                 }
             })["catch"](function (err) {
                 console.log("Invalid ticket");
-                user.resource = req.path;
                 user.redirections++;
+                user.resource = req.path;
                 if (user.redirections >= 3) {
                     var index = userList.findIndex(function (obj) { return obj.id == user.id; });
                     userList.splice(index, 1);
