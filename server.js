@@ -139,12 +139,18 @@ function checkUserPromise(uuid) {
             else {
                 var code = void 0;
                 if (role == enums_1.Enums.User_Type.sectional) {
-                    code = getChildByName(el, 'sectionCode').textContent;
+                    var child = getChildByName(el, 'sectionCode');
+                    if (child) {
+                        code = getChildByName(el, 'sectionCode').textContent;
+                    }
                 }
                 else {
-                    var tmpCode = getChildByName(el, 'regionaleGroupCode').textContent;
-                    if (tmpCode) {
-                        code = tmpCode.substr(0, 2) + tmpCode.substr(5, 2) + tmpCode.substr(2, 3);
+                    var child = getChildByName(el, 'sectionCode');
+                    if (child) {
+                        var tmpCode = child.textContent;
+                        if (tmpCode) {
+                            code = tmpCode.substr(0, 2) + tmpCode.substr(5, 2) + tmpCode.substr(2, 3);
+                        }
                     }
                 }
                 if (code) {
@@ -265,7 +271,6 @@ app.get('/*', function (req, res) {
             })["catch"](function (err) {
                 console.log("Invalid ticket");
                 user.redirections++;
-                user.id = req.session.id;
                 user.resource = req.path;
                 if (user.redirections >= 3) {
                     var index = userList.findIndex(function (obj) { return obj.id == user.id; });
