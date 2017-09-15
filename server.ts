@@ -142,11 +142,17 @@ function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
             }else{
                 let code;
                 if(role==Enums.User_Type.sectional){
-                    code = getChildByName(el,'sectionCode').textContent;
+                    let child=getChildByName(el,'sectionCode');
+                    if(child){
+                        code = getChildByName(el,'sectionCode').textContent;
+                    }
                 }else{
-                    let tmpCode = getChildByName(el,'regionaleGroupCode').textContent;
-                    if(tmpCode){
-                        code = tmpCode.substr(0,2)+tmpCode.substr(5,2)+tmpCode.substr(2,3);                        
+                    let child=getChildByName(el,'sectionCode');
+                    if(child){
+                        let tmpCode = child.textContent;
+                        if(tmpCode){
+                            code = tmpCode.substr(0,2)+tmpCode.substr(5,2)+tmpCode.substr(2,3);                        
+                        }
                     }
                 }
                 if(code){
