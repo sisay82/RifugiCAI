@@ -13,7 +13,7 @@ var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
 var appBaseUrl = "http://localhost:4200";
 var app = express();
 var parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
-var userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type,redirections:number}[]=[];
+var userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type,redirections:number,checked:boolean}[]=[];
 var centralRole="ROLE_RIFUGI_ADMIN";
 var regionalRoleName="PGR";
 var sectionalPRoleName="Responsabile Esterno Sezione";
@@ -115,6 +115,7 @@ function validationPromise(ticket):Promise<String>{
 }
 
 function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
+    console.log("CHECKUSER");
     return new Promise<{role:Enums.User_Type,code:String}>((resolve,reject)=>{
         var post_data=`<?xml version="1.0" encoding="utf-8"?>
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -147,7 +148,7 @@ function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
                         code = getChildByName(el,'sectionCode').textContent;
                     }
                 }else{
-                    let child=getChildByName(el,'sectionCode');
+                    let child=getChildByName(el,'regionaleGroupCode');
                     if(child){
                         let tmpCode = child.textContent;
                         if(tmpCode){
@@ -197,7 +198,7 @@ app.get('/j_spring_cas_security_check',function(req,res){
         res.redirect(user.resource);
     }else{
         console.log("Invalid user request");
-        userList.push({id:req.session.id,resource:appBaseUrl,redirections:0});
+        userList.push({id:req.session.id,resource:appBaseUrl,redirections:0,checked:false});
         res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
     }
 });
@@ -207,21 +208,26 @@ app.get('/user',function(req,res,next){
     console.log("User permissions request (UUID): ",user.uuid);    
     if(user!=undefined&&user.uuid!=undefined){
         if(user.code==undefined||user.role==undefined){
-            checkUserPromise(user.uuid)
-            .then(usr=>{
-                user.code=usr.code;
-                user.role=usr.role;
-                res.status(200).send(usr);
-            })
-            .catch(()=>{
+            if(user.checked){
+                user.checked=false;
                 res.status(500).send({error:"Invalid user or request"});
-            });
+            }else{
+                checkUserPromise(user.uuid)
+                .then(usr=>{
+                    user.code=usr.code;
+                    user.role=usr.role;
+                    res.status(200).send(usr);
+                })
+                .catch(()=>{
+                    res.status(500).send({error:"Invalid user or request"});
+                });
+            }
         }else{
             res.status(200).send({code:user.code,role:user.role});
         }
     }else{
         console.log("User not logged");
-        userList.push({id:req.session.id,resource:appBaseUrl+'/list',redirections:0});
+        userList.push({id:req.session.id,resource:appBaseUrl+'/list',redirections:0,checked:false});
         res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
     }
 })
@@ -245,7 +251,7 @@ app.get('/*', function(req, res) {
     let user=userList.find(obj=>obj.id==req.session.id);
     if(!user){
       console.log("User not logged");
-      userList.push({id:req.session.id,resource:req.path,redirections:0});
+      userList.push({id:req.session.id,resource:req.path,redirections:0,checked:false});
       res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
     }else{
       if(user.ticket){
@@ -253,6 +259,7 @@ app.get('/*', function(req, res) {
         validationPromise(user.ticket)
         .then((usr)=>{
             console.log("Valid ticket");
+            user.checked=true;            
             user.redirections=0;
             if(user.code==undefined||user.role==undefined){
                 user.uuid=usr;
@@ -261,11 +268,11 @@ app.get('/*', function(req, res) {
                     console.log("Access granted with role and code: ",Enums.User_Type[us.role],us.code);
                     user.code=us.code;
                     user.role=us.role;
+                    
                     res.sendFile(path.join(__dirname + '/dist/index.html'));                
                 })
                 .catch(()=>{
                     console.log("Access denied");
-                    //res.redirect("/(access-denied:)")
                     res.sendFile(path.join(__dirname + '/dist/index.html'));
                 });
             }else{

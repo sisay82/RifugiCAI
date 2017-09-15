@@ -5,7 +5,7 @@
     </div>
   </bc-content-header>
   <bc-content-section>
-    <div style="display:flex;flex-direction:row;position:relative">
+    <div *ngIf="getAuth()" style="display:flex;flex-direction:row;position:relative">
       <div style="position: relative;z-index:2000">
         <bc-menu [menuElements]="appMenuElements"></bc-menu>
       </div>

@@ -4,7 +4,7 @@ import { Http, Response,Headers,RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Enums } from './types/enums';
 import { Subscription } from 'rxjs/Subscription';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable()
 export class BcAuthService{
@@ -13,7 +13,7 @@ export class BcAuthService{
     private localPermissions:any[];
     private userSectionCodeSub:Subscription;
 
-    constructor(private http: Http,private route:ActivatedRoute) {
+    constructor(private http: Http,private route:ActivatedRoute,private router:Router) {
         this.userSectionCodeSub = this.updateProfile().subscribe(profile=>{
             this.userProfileSource.next(profile);
             if(this.userSectionCodeSub){
@@ -178,7 +178,7 @@ export class BcAuthService{
     private errorRoute$ = this.errorRouteSource.asObservable();
     private handleError(error: any) {
         if(!this.route.children.find(child=>child.outlet=="access-denied")){
-            location.href="/(access-denied:)";
+            this.router.navigate([{outlets:({'access-denied': '','primary': null})}]);
         }
         this.routeError=true;
         this.errorRouteSource.next(true);
