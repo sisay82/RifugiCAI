@@ -119,6 +119,7 @@ function validationPromise(ticket) {
     });
 }
 function checkUserPromise(uuid) {
+    console.log("CHECKUSER");
     return new Promise(function (resolve, reject) {
         var post_data = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n        <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n            <soap:Body>\n                <n:getUserDataByUuid xmlns:n=\"http://service.core.ws.auth.cai.it/\">\n                    <arg0>" + uuid + "</arg0>\n                </n:getUserDataByUuid>\n            </soap:Body>\n        </soap:Envelope>";
         request.post({
@@ -145,7 +146,7 @@ function checkUserPromise(uuid) {
                     }
                 }
                 else {
-                    var child = getChildByName(el, 'sectionCode');
+                    var child = getChildByName(el, 'regionaleGroupCode');
                     if (child) {
                         var tmpCode = child.textContent;
                         if (tmpCode) {
@@ -191,7 +192,7 @@ app.get('/j_spring_cas_security_check', function (req, res) {
     }
     else {
         console.log("Invalid user request");
-        userList.push({ id: req.session.id, resource: appBaseUrl, redirections: 0 });
+        userList.push({ id: req.session.id, resource: appBaseUrl, redirections: 0, checked: false });
         res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
 });
@@ -200,14 +201,20 @@ app.get('/user', function (req, res, next) {
     console.log("User permissions request (UUID): ", user.uuid);
     if (user != undefined && user.uuid != undefined) {
         if (user.code == undefined || user.role == undefined) {
-            checkUserPromise(user.uuid)
-                .then(function (usr) {
-                user.code = usr.code;
-                user.role = usr.role;
-                res.status(200).send(usr);
-            })["catch"](function () {
+            if (user.checked) {
+                user.checked = false;
                 res.status(500).send({ error: "Invalid user or request" });
-            });
+            }
+            else {
+                checkUserPromise(user.uuid)
+                    .then(function (usr) {
+                    user.code = usr.code;
+                    user.role = usr.role;
+                    res.status(200).send(usr);
+                })["catch"](function () {
+                    res.status(500).send({ error: "Invalid user or request" });
+                });
+            }
         }
         else {
             res.status(200).send({ code: user.code, role: user.role });
@@ -215,7 +222,7 @@ app.get('/user', function (req, res, next) {
     }
     else {
         console.log("User not logged");
-        userList.push({ id: req.session.id, resource: appBaseUrl + '/list', redirections: 0 });
+        userList.push({ id: req.session.id, resource: appBaseUrl + '/list', redirections: 0, checked: false });
         res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
 });
@@ -235,7 +242,7 @@ app.get('/*', function (req, res) {
     var user = userList.find(function (obj) { return obj.id == req.session.id; });
     if (!user) {
         console.log("User not logged");
-        userList.push({ id: req.session.id, resource: req.path, redirections: 0 });
+        userList.push({ id: req.session.id, resource: req.path, redirections: 0, checked: false });
         res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
     else {
@@ -244,6 +251,7 @@ app.get('/*', function (req, res) {
             validationPromise(user.ticket)
                 .then(function (usr) {
                 console.log("Valid ticket");
+                user.checked = true;
                 user.redirections = 0;
                 if (user.code == undefined || user.role == undefined) {
                     user.uuid = usr;
@@ -255,7 +263,6 @@ app.get('/*', function (req, res) {
                         res.sendFile(path.join(__dirname + '/dist/index.html'));
                     })["catch"](function () {
                         console.log("Access denied");
-                        //res.redirect("/(access-denied:)")
                         res.sendFile(path.join(__dirname + '/dist/index.html'));
                     });
                 }

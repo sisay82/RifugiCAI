@@ -1,5 +1,5 @@
 <bc-content>
-    <bc-content-section>
+    <bc-content-section *ngIf="getAuth()">
         <div bc-navbar style="z-index: 10;position:absolute;height:55px;left:5%;padding-top:5px;display:inline-block;z-index:410">
             <bc-select-group>
             <bc-button [button]="list_view_button"></bc-button>

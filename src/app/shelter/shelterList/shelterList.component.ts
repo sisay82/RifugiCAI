@@ -43,6 +43,10 @@ export class BcShelterList {
         return (this.profile&&this.profile.role==Enums.User_Type.central);
     }
 
+    getAuth(){
+        return (this.profile!=null)
+    }
+
     ngOnInit() {
         let permissionSub = this.authService.getUserProfile().subscribe(profile=>{
             this.profile=profile;

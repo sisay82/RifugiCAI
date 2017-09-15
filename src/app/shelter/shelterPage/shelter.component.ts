@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
+import { Component,AfterViewInit,ChangeDetectorRef } from '@angular/core';
 import {IMenu} from '../../shared/types/interfaces';
+import {BcAuthService} from '../../shared/auth.service';
+import { Subscription } from 'rxjs/Subscription';
 @Component({
     moduleId: module.id,
     selector: 'bc-shelter',
     templateUrl: 'shelter.component.html',
     styleUrls: ['shelter.component.scss']
-
+    
 })
 export class BcShelter {
+    authorization:boolean;
+
     appMenuElements:IMenu={
       layers:[
         {
@@ -32,5 +36,24 @@ export class BcShelter {
             ]}
         ]
     };
-    
+
+    constructor(private authService:BcAuthService,private cd:ChangeDetectorRef){
+        
+    }
+
+    getAuth(){
+        return this.authorization;
+    }
+
+    ngAfterViewInit() {
+        let permSub = this.authService.getUserProfile().subscribe(profile=>{
+            if(profile){
+                this.authorization=true;
+            }
+            if(permSub){
+                permSub.unsubscribe();
+            }
+            this.cd.detectChanges();
+        });
+    }   
 }
