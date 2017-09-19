@@ -7,7 +7,7 @@ import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
-import {BcSharedService,ServiceBase} from '../../../app/shared/shared.service';
+import {BcSharedService,ServiceBase,ServicePlaceholders} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {RevisionBase} from '../shared/revision_base';
 
@@ -32,8 +32,10 @@ export class BcServRevision extends RevisionBase {
     newServiceAdded=false;
     newTagHidden:boolean=true;
     serviceListChange:boolean=false;
+    placeholders:ServicePlaceholders;
     constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
         super(shelterService,shared,revisionService);
+        this.placeholders=new ServicePlaceholders()
         this.servForm = fb.group({
             services:fb.array([])
         }); 
@@ -330,6 +332,38 @@ export class BcServRevision extends RevisionBase {
                 return "stringValidator"; 
             }
         }
+    }
+
+    uglifyString(str:String):string{
+        return str.replace(/(\s)/g,"_");
+    }
+    
+    decapitalize(str:String):string{
+        return str.charAt(0).toLowerCase() + str.slice(1);
+    }
+
+    getPlaceholder(category,name){
+        category=this.uglifyString(category);
+        name=this.uglifyString(name);
+
+        if(this.placeholders.service[category.toLowerCase()]){
+            category=category.toLowerCase();
+        }else if(this.placeholders.service[this.decapitalize(category)]){
+            category=this.decapitalize(category);
+        }else if(!this.placeholders.service[category]){
+            return "";
+        }
+
+        if(this.placeholders.service[category][name.toLowerCase()]){
+            name=name.toLowerCase();
+        }else if(this.placeholders.service[category][this.decapitalize(name)]){
+            name=this.decapitalize(name);
+        }else if(!this.placeholders.service[category][name]){
+            return "";
+        }
+
+        return this.placeholders.service[category][name];
+
     }
 
     toTitleCase(input:string): string{
