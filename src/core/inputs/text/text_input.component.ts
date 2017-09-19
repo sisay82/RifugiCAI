@@ -131,6 +131,23 @@ export class BcTextInput implements ControlValueAccessor {
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
     @Input() title = "";
+    private _placeholder;
+    @Input() set placeholder(value){
+        if(value){
+            this._placeholder=value;
+        }else{
+            this._placeholder="";
+        }
+    }
+
+    get placeholder(){
+        if(this._placeholder){
+            return this._placeholder;
+        }else{
+            return "";
+        }
+    }
+
     isDisabled:boolean=false;
     @Input() minLength:number;
     @Input() maxLength:number;
