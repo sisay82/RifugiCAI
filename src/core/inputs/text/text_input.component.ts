@@ -85,9 +85,9 @@ export function createValidationFunction(validator:string){
 
 let validators= {
     stringValidator:<RegExp>/^([A-Za-z0-99À-ÿ� ,.:/';+!?|)(_-]*)*$/,
-    telephoneValidator:<RegExp>/^([+]([0-9][0-9][\s])?)?([0-9]*)*$/,
+    telephoneValidator:<RegExp>/^([+]([0-9][0-9][\s])?)?([0-9]*(\s)?[0-9]*)$/,
     mailValidator:<RegExp>/(^$|^.*@.*\..*$)/,
-    numberValidator:<RegExp>/^[0-9]+[.]{0,1}[0-9]*$/,
+    numberValidator:<RegExp>/^[0-9]+([.][0-9]*)?$/,
     urlValidator:<RegExp>/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
 }
 
