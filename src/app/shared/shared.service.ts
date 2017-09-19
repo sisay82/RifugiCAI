@@ -153,3 +153,54 @@ export class ServiceBase {
         };
     }
 }
+
+export class ServicePlaceholders {
+    public service:any;
+
+    constructor(){
+        this.service={
+            pernottamento:{
+                camerate:"Es: 8 (solo numeri)",
+                cuccette:"Es: 13 (solo numeri)",
+                cuccette_invernali:"Es: 5 (solo numeri)",
+                tavolato:"Es: 6 (solo numeri)",
+                posti_totali:"Es: 23 (solo numeri)",
+                vendita_sacco_lenzuolo:"Sì/no, costi, tipologia ecc."
+            },
+            ristorazione:{
+                ristorante:"Sì/no, orari, restrizioni ecc.",
+                accesso_alla_cucina:"Sì/no, attrezzature presenti ecc."
+            },
+            acqua:{
+                acqua_calda:"Sì/no",
+                acqua_in_rifugio:"Sì/no"
+            },
+            servizi_igenici:{
+                docce:"Es: 4 (solo numeri)",
+                WC_in_camera:"Es: 0 (solo numeri)",
+                WC_uso_comune:"Es: 5 (solo numeri)"
+            },
+            elettricità:{
+                elettricità:"Sì/no, tipo impianto",
+                punti_ricarica_camere:"Es: 1 (solo numeri)",
+                punti_ricarica_spazi_comuni:"Es: 6 (solo numeri)"
+            },
+            WIFI_e_GSM:{
+                WIFI:"Es: WIFI gratuito dalle 10 alle 22",
+                segnale_GSM:"Es: Assente, E, 3G, 4G",
+                gestore_telefonia_mobile:"Es: Tim, Vodafone, Wind, Coopvoce, Tre, Postemobile"
+            },
+            accessibilità:{
+                accessibilità_ai_disabili:"Sì/no, rampa di accesso ecc.",
+                accessibilità_macchina:"Sì/no",
+                accessibilità_animali_domestici:"Sì/no, limitazioni ecc.",
+                stanze_dedicate:"Es: 1 (solo numeri)"
+            },
+            servizi_aggiuntivi:{
+                pagamento_POS:"Sì/no",
+                convenzioni:"Es: ANPI, soci ACI ecc.",
+                richiesta_di_rifornire_il_rifugio:"Sì/no"
+            }
+        }
+    }
+}

@@ -9,7 +9,7 @@
                         <div [formGroupName]="j" style="display: flex;flex-direction:row;height:inherit;align-items:center">
                             <div class="bc-body" style="white-space:nowrap">{{tag.controls.key.value}}:</div>
                             <div class="bc-revision-services-tags">
-                                <bc-text-input formControlName="value" [validator]="getValidator(tag.value.type)" [displayError]="displayError"></bc-text-input>
+                                <bc-text-input [placeholder]="getPlaceholder(service.controls.category.value,tag.controls.key.value)" formControlName="value" [validator]="getValidator(tag.value.type)" [displayError]="displayError"></bc-text-input>
                             </div>
                         </div>
                         <br>
