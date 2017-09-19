@@ -7,7 +7,7 @@ import { BcGeo } from "./geographics/geo.component";
 import { BcDetails } from "./details.component";
 import { BcManage } from "./management/manage.component";
 import { BcCatastal } from "./catastal/cat.component";
-
+import { BcWorkingDetailPage } from "./pageOnWork/working-detail.component";
 
 @NgModule({
   imports: [RouterModule],
@@ -26,8 +26,8 @@ export class DetailsRoutingModule {
     { path: 'catastal', component: BcCatastal,outlet:'content' },
     { path: 'documents', component: BcGeo,outlet:'content' },
     { path: 'images', component: BcGeo,outlet:'content' },
-    { path: 'economy', component: BcGeo,outlet:'content' },
-    { path: 'contribution', component: BcGeo,outlet:'content' },
-    { path: 'use', component: BcGeo,outlet:'content' }
+    { path: 'economy', component: BcWorkingDetailPage,outlet:'content' },
+    { path: 'contribution', component: BcWorkingDetailPage,outlet:'content' },
+    { path: 'use', component: BcWorkingDetailPage,outlet:'content' }
   ];
 }

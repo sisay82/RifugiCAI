@@ -9,9 +9,10 @@ import { BcRevisions } from "./revisions.component";
 import { RouterModule, Routes } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import {BrowserAnimationsModule}from '@angular/platform-browser/animations';
+import { WorkingRevisionPage } from "./pageOnWork/working-revision.module";
 
 @NgModule({
-    imports: [HttpModule,RouterModule,BcGeoRevisionModule,BcServRevisionModule,BcContactsRevisionModule,BcManagementRevisionModule,BcCatastalRevisionModule],
+    imports: [HttpModule,RouterModule,WorkingRevisionPage,BcGeoRevisionModule,BcServRevisionModule,BcContactsRevisionModule,BcManagementRevisionModule,BcCatastalRevisionModule],
     declarations:[BcRevisions],
     exports: [BcRevisions]
 })

@@ -8,9 +8,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { BcManageModule } from "./management/manage.module";
 import { BcCatastalModule } from "./catastal/cat.module";
 import { HttpModule } from '@angular/http';
+import { WorkingDetailPage } from "./pageOnWork/working-detail.module";
 
 @NgModule({
-    imports: [HttpModule,RouterModule,BcGeoModule,BcServModule,BcContactModule,BcCatastalModule,BcManageModule],
+    imports: [HttpModule,RouterModule,WorkingDetailPage,BcGeoModule,BcServModule,BcContactModule,BcCatastalModule,BcManageModule],
     declarations:[BcDetails],
     exports: [BcGeoModule,BcDetails]
 })
