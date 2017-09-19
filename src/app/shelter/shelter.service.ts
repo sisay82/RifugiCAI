@@ -15,7 +15,7 @@ import { Enums  } from '../shared/types/enums';
 export class ShelterService {
 
     //sheltersBaseUrl: string = '/api/shelters';
-    sheltersBaseUrl: string = 'http://localhost:8080/api/shelters';
+    sheltersBaseUrl: string = 'http://localhost:27010/api/shelters';
     //sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
@@ -107,7 +107,7 @@ export class ShelterService {
                 return shelter;
             })
             .catch(this.handleError.bind(this));
-    }   
+    }      
 
     getShelterSection(id: String,section: string): Observable<IShelter> {
         return this.http.get(this.sheltersBaseUrl + '/' + id + '/' + section)
