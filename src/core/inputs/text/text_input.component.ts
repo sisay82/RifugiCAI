@@ -85,9 +85,9 @@ export function createValidationFunction(validator:string){
 
 let validators= {
     stringValidator:<RegExp>/^([A-Za-z0-99À-ÿ� ,.:/';+!?|)(_-]*)*$/,
-    telephoneValidator:<RegExp>/^([+]([0-9][0-9][\s])?)?([0-9]*)*$/,
+    telephoneValidator:<RegExp>/^([+]([0-9][0-9][\s])?)?([0-9]*(\s)?[0-9]*)$/,
     mailValidator:<RegExp>/(^$|^.*@.*\..*$)/,
-    numberValidator:<RegExp>/^[0-9]+[.]{0,1}[0-9]*$/,
+    numberValidator:<RegExp>/^[0-9]+([.][0-9]*)?$/,
     urlValidator:<RegExp>/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
 }
 
@@ -131,6 +131,23 @@ export class BcTextInput implements ControlValueAccessor {
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
     @Input() title = "";
+    private _placeholder;
+    @Input() set placeholder(value){
+        if(value){
+            this._placeholder=value;
+        }else{
+            this._placeholder="";
+        }
+    }
+
+    get placeholder(){
+        if(this._placeholder){
+            return this._placeholder;
+        }else{
+            return "";
+        }
+    }
+
     isDisabled:boolean=false;
     @Input() minLength:number;
     @Input() maxLength:number;

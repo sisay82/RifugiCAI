@@ -139,31 +139,6 @@ var Enums;
         Invoices_Type[Invoices_Type["xls"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xls";
         Invoices_Type[Invoices_Type["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xlsx";
     })(Invoices_Type = Enums.Invoices_Type || (Enums.Invoices_Type = {}));
-    //Region group code for cai
-    var Region_Code;
-    (function (Region_Code) {
-        Region_Code[Region_Code["Liguria"] = 10] = "Liguria";
-        Region_Code[Region_Code["Piemonte"] = 12] = "Piemonte";
-        Region_Code[Region_Code["Valle d'Aosta"] = 14] = "Valle d'Aosta";
-        Region_Code[Region_Code["Lombardia"] = 16] = "Lombardia";
-        Region_Code[Region_Code["Trentino"] = 18] = "Trentino";
-        Region_Code[Region_Code["Alto Adige"] = 19] = "Alto Adige";
-        Region_Code[Region_Code["Veneto"] = 20] = "Veneto";
-        Region_Code[Region_Code["Friuli-Venezia Giulia"] = 22] = "Friuli-Venezia Giulia";
-        Region_Code[Region_Code["Emilia Romagna"] = 24] = "Emilia Romagna";
-        Region_Code[Region_Code["Toscana"] = 26] = "Toscana";
-        Region_Code[Region_Code["Marche"] = 28] = "Marche";
-        Region_Code[Region_Code["Umbria"] = 30] = "Umbria";
-        Region_Code[Region_Code["Lazio"] = 32] = "Lazio";
-        Region_Code[Region_Code["Abruzzo"] = 34] = "Abruzzo";
-        Region_Code[Region_Code["Molise"] = 36] = "Molise";
-        Region_Code[Region_Code["Campania"] = 38] = "Campania";
-        Region_Code[Region_Code["Puglia"] = 40] = "Puglia";
-        Region_Code[Region_Code["Basilicata"] = 42] = "Basilicata";
-        Region_Code[Region_Code["Calabria"] = 44] = "Calabria";
-        Region_Code[Region_Code["Sicilia"] = 46] = "Sicilia";
-        Region_Code[Region_Code["Sardegna"] = 48] = "Sardegna";
-    })(Region_Code = Enums.Region_Code || (Enums.Region_Code = {}));
     var Region_LanLng;
     (function (Region_LanLng) {
         Region_LanLng[Region_LanLng["valle d'aosta"] = [45.7372, 7.3206]] = "valle d'aosta";
@@ -245,6 +220,31 @@ var Enums;
         Typo_consistency[Typo_consistency["Recuperabile"] = 2] = "Recuperabile";
         Typo_consistency[Typo_consistency["Nessuna"] = 3] = "Nessuna";
     })(Typo_consistency = Enums.Typo_consistency || (Enums.Typo_consistency = {}));
+    //Region group code for cai
+    var Region_Code;
+    (function (Region_Code) {
+        Region_Code[Region_Code["Liguria"] = 10] = "Liguria";
+        Region_Code[Region_Code["Piemonte"] = 12] = "Piemonte";
+        Region_Code[Region_Code["Valle d'Aosta"] = 14] = "Valle d'Aosta";
+        Region_Code[Region_Code["Lombardia"] = 16] = "Lombardia";
+        Region_Code[Region_Code["Trentino Alto Adige"] = 18] = "Trentino Alto Adige";
+        Region_Code[Region_Code["Alto Adige"] = 19] = "Alto Adige";
+        Region_Code[Region_Code["Veneto"] = 20] = "Veneto";
+        Region_Code[Region_Code["Friuli-Venezia Giulia"] = 22] = "Friuli-Venezia Giulia";
+        Region_Code[Region_Code["Emilia Romagna"] = 24] = "Emilia Romagna";
+        Region_Code[Region_Code["Toscana"] = 26] = "Toscana";
+        Region_Code[Region_Code["Marche"] = 28] = "Marche";
+        Region_Code[Region_Code["Umbria"] = 30] = "Umbria";
+        Region_Code[Region_Code["Lazio"] = 32] = "Lazio";
+        Region_Code[Region_Code["Abruzzo"] = 34] = "Abruzzo";
+        Region_Code[Region_Code["Molise"] = 36] = "Molise";
+        Region_Code[Region_Code["Campania"] = 38] = "Campania";
+        Region_Code[Region_Code["Puglia"] = 40] = "Puglia";
+        Region_Code[Region_Code["Basilicata"] = 42] = "Basilicata";
+        Region_Code[Region_Code["Calabria"] = 44] = "Calabria";
+        Region_Code[Region_Code["Sicilia"] = 46] = "Sicilia";
+        Region_Code[Region_Code["Sardegna"] = 48] = "Sardegna";
+    })(Region_Code = Enums.Region_Code || (Enums.Region_Code = {}));
     //tipo fonte risorsa
     var Source_Type;
     (function (Source_Type) {

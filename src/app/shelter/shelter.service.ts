@@ -108,7 +108,7 @@ export class ShelterService {
                 return shelter;
             })
             .catch(this.handleError.bind(this));
-    }   
+    }      
 
     getShelterSection(id: String,section: string): Observable<IShelter> {
         return this.http.get(this.sheltersBaseUrl + '/' + id + '/' + section)
