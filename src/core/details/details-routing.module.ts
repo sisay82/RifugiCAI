@@ -9,6 +9,7 @@ import { BcManage } from "./management/manage.component";
 import { BcCatastal } from "./catastal/cat.component";
 import { BcDoc } from "./documents/document.component";
 import { BcImg } from "./images/images.component";
+import { BcWorkingDetailPage } from "./pageOnWork/working-detail.component";
 
 @NgModule({
   imports: [RouterModule],
@@ -27,8 +28,8 @@ export class DetailsRoutingModule {
     { path: 'catastal', component: BcCatastal,outlet:'content' },
     { path: 'documents', component: BcDoc,outlet:'content' },
     { path: 'images', component: BcImg,outlet:'content' },
-    { path: 'economy', component: BcGeo,outlet:'content' },
-    { path: 'contribution', component: BcGeo,outlet:'content' },
-    { path: 'use', component: BcGeo,outlet:'content' }
+    { path: 'economy', component: BcWorkingDetailPage,outlet:'content' },
+    { path: 'contribution', component: BcWorkingDetailPage,outlet:'content' },
+    { path: 'use', component: BcWorkingDetailPage,outlet:'content' }
   ];
 }
