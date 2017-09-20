@@ -117,6 +117,9 @@ export class BcServRevision extends RevisionBase {
         if(this.serviceList[serviceIndex]!=undefined){
             let service=this.serviceList[serviceIndex];
             if(service!=undefined){
+                if(!this.serviceToRemove){
+                    this.serviceToRemove=[];
+                }
                 this.serviceToRemove.push(service._id);
             }
         }
@@ -291,9 +294,11 @@ export class BcServRevision extends RevisionBase {
                 service.tags=tags as [ITag];
                 services.push(service);
             }
-            this.serviceToRemove.forEach(service=>{
-                services.push({_id:service});
-            });
+            if(this.serviceToRemove){
+                this.serviceToRemove.forEach(service=>{
+                    services.push({_id:service});
+                });
+            }
             delete(this.serviceToRemove);
     
             shelter.services=services;

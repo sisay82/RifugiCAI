@@ -118,7 +118,6 @@ export class BcMaskRevision {
           this.shared.onMaskSave(shelter);
         });
       }else{
-        console.log("B");
         let maskConfirmSub=this.shared.maskConfirmSave$.subscribe((component)=>{
           let shelSub=this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
             if(!value){
