@@ -27,14 +27,6 @@ export class BcServ {
 
   }
 
-  toTitleCase(input:string): string{
-    if (!input) {
-        return '';
-    } else {
-        return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1) )).replace(/_/g," ");
-    }
-  }
-
   initServices(services){
     let serviceList=new ServiceBase();
     if(!services){
@@ -42,14 +34,14 @@ export class BcServ {
     }
     for(let category of Object.getOwnPropertyNames(serviceList)){
         let s:IService={}
-        s.category=this.toTitleCase(category);
+        s.category=category;
         s.tags=[] as [ITag];
-        let serv=services.find(obj=>obj.category&&obj.category.toLowerCase().indexOf(s.category.toLowerCase())>-1);
+        let serv=services.find(obj=>obj.category&&obj.category==s.category);
         for(let service of Object.getOwnPropertyNames(serviceList[category])){
-            let tag={key:this.toTitleCase(service),value:null,type:typeof(serviceList[category][service])};
+            let tag={key:service,value:null,type:typeof(serviceList[category][service])};
             if(serv!=undefined){
                 s._id=serv._id;
-                let t=serv.tags.find(obj=>obj.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
+                let t=serv.tags.find(obj=>obj.key==tag.key);
                 if(t!=undefined){
                     tag.value=t.value;
                 }

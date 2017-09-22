@@ -10,10 +10,11 @@ import {BrowserAnimationsModule}from '@angular/platform-browser/animations';
 import {BcIconModule} from '../../icon/icon.module';
 import {BcTextInputModule} from '../../inputs/text/text_input.module';
 import {BcCheckboxInputModule} from '../../inputs/checkbox/checkbox_input.module';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @NgModule({
     declarations: [BcServRevision],
     exports: [BcServRevision,BrowserAnimationsModule],
-    imports:[BcCheckboxInputModule,BcTextInputModule,BcIconModule,BrowserAnimationsModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
+    imports:[PipesModule,BcCheckboxInputModule,BcTextInputModule,BcIconModule,BrowserAnimationsModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
 })
 export class BcServRevisionModule { }

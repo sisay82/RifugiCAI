@@ -39,9 +39,9 @@ export class BcContactsRevision extends RevisionBase {
         }); 
         
         this.newOpeningForm = fb.group({
-            newOpeningStartDate:["Inizio"],
-            newOpeningEndDate:["Fine"],
-            newOpeningType:["Tipo"]
+            newOpeningStartDate:[""],
+            newOpeningEndDate:[""],
+            newOpeningType:[""]
         });
 
         this.formValidSub = this.contactForm.statusChanges.subscribe((value)=>{
@@ -120,9 +120,9 @@ export class BcContactsRevision extends RevisionBase {
 
     resetOpeningForm(){
         this.newOpeningForm = this.fb.group({
-            newOpeningStartDate:["Inizio"],
-            newOpeningEndDate:["Fine"],
-            newOpeningType:["Tipo"]
+            newOpeningStartDate:[""],
+            newOpeningEndDate:[""],
+            newOpeningType:[""]
         });
         this.toggleOpenings();
     }

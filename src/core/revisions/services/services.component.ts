@@ -371,27 +371,19 @@ export class BcServRevision extends RevisionBase {
 
     }
 
-    toTitleCase(input:string): string{
-        if (!input) {
-            return '';
-        } else {
-            return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1) )).replace(/_/g," ");
-        }
-    }
-
     initForm(shelter:IShelter){
         this.name=shelter.name;
         let serviceList=new ServiceBase();
         for(let category of Object.getOwnPropertyNames(serviceList)){
-            let s:IService={}
-            s.name=s.category=this.toTitleCase(category);
+            let s:IService={};
+            s.name=s.category=category;
             s.tags=[] as [ITag];
-            let serv=shelter.services.find(obj=>obj.category&&obj.category.toLowerCase().indexOf(s.category.toLowerCase())>-1);
+            let serv=shelter.services.find(obj=>obj.category&&obj.category==category);
             for(let service of Object.getOwnPropertyNames(serviceList[category])){
-                let tag={key:this.toTitleCase(service),value:null,type:typeof(serviceList[category][service])};
+                let tag={key:service,value:null,type:typeof(serviceList[category][service])};
                 if(serv!=undefined){
                     s._id=serv._id;
-                    let t=serv.tags.find(obj=>obj.key.toLowerCase().indexOf(tag.key.toLowerCase())>-1);
+                    let t=serv.tags.find(obj=>obj.key==tag.key);
                     if(t!=undefined){
                         tag.value=t.value;
                     }
@@ -416,8 +408,13 @@ export class BcServRevision extends RevisionBase {
             
             return true;
         });
+        
         servRemove.forEach(val=>{
-            this.serviceToRemove.push(val._id);
+            if(!this.serviceToRemove){
+                this.serviceToRemove=[val._id];
+            }else{
+                this.serviceToRemove.push(val._id);
+            }
         });
     }  
 
