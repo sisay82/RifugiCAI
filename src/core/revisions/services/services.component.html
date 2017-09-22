@@ -3,11 +3,11 @@
     <div formArrayName="services">
         <div *ngFor="let service of servForm.controls.services.controls;let i = index">
             <div [formGroupName]="i">
-                <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{service.controls.category.value}}</div>
+                <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{service.controls.category.value | titleCase}}</div>
                 <div formArrayName="tags">
                     <div *ngFor="let tag of service.controls.tags.controls;let j = index">
                         <div [formGroupName]="j" style="display: flex;flex-direction:row;height:inherit;align-items:center">
-                            <div class="bc-body" style="white-space:nowrap">{{tag.controls.key.value}}:</div>
+                            <div class="bc-body" style="white-space:nowrap">{{tag.controls.key.value | titleCase}}:</div>
                             <div class="bc-revision-services-tags">
                                 <bc-text-input [placeholder]="getPlaceholder(service.controls.category.value,tag.controls.key.value)" formControlName="value" [validator]="getValidator(tag.value.type)" [displayError]="displayError"></bc-text-input>
                             </div>
