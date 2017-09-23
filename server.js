@@ -10,9 +10,9 @@ var enums_1 = require("./src/app/shared/types/enums");
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://prova.cai.it";
 var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
-var serverUrl = "31.14.133.111";
-var portUrl = 90;
-var appBaseUrl = "http://" + serverUrl + ":" + portUrl;
+var serverUrl = "app-cai.herokuapp.com";
+var portUrl = process.env.PORT || 8080;
+var appBaseUrl = "http://" + serverUrl;
 var app = express();
 var parsedUrl = encodeURIComponent(appBaseUrl + "/j_spring_cas_security_check");
 var userList = [];
@@ -172,7 +172,7 @@ app.use(bodyParser.urlencoded({
     resave: false,
     saveUninitialized: true
 }));
-var server = app.listen(portUrl, serverUrl, function () {
+var server = app.listen(portUrl, function () {
     var port = server.address().port;
     console.log("App now running on " + appBaseUrl);
 });
@@ -188,6 +188,7 @@ app.get('/j_spring_cas_security_check', function (req, res) {
     var user = userList.find(function (obj) { return obj.id == req.session.id; });
     if (user) {
         user.ticket = req.query.ticket;
+        console.log("Got j spring request and redirect to: " + user.resource);
         res.redirect(user.resource);
     }
     else {
