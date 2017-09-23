@@ -1,6 +1,6 @@
 <div class="bc-content-service">
     <div style="flex:1">
-        <div *ngFor="let tag of item.tags" class="bc-content-service" style="display: flex;flex-direction:row;">
+        <div *ngFor="let tag of item.tags" class="bc-content-service" style="display: flex;flex-direction:row;align-items:center">
             <div *ngIf="tag.value!=undefined&&tag.value!=''" class="bc-body-strong" style="margin-right:4px">{{tag.key | titleCase}}</div>
             <div *ngIf="tag.value!=undefined&&tag.value!=''" class="bc-body">: {{tag.value | titleCase}}</div>
         </div>
