@@ -45,10 +45,11 @@ $bc-list-item-heights: (
 
     .bc-list-item {
         color: bc-color($foreground, 'text');
+        background: bc-color($background, 'background');
 
         &.list-group-item {
             color: bc-color($foreground, 'text');
-
+            
             @include bc-list-item-disable($activeColor, $background, $foreground);
             @include bc-list-item-active($activeColor, $background, $foreground);
 
@@ -91,6 +92,11 @@ $bc-list-item-heights: (
         text-decoration: none;
         color: inherit;
         cursor: pointer;
+
+        &.disabled, &[disabled] &[data-disabled] {
+            pointer-events: none;
+            cursor: not-allowed;
+        }
     }
 
     .bc-list-item {
@@ -240,9 +246,9 @@ $bc-list-item-heights: (
 
 @mixin bc-list-item-disable($accent, $background, $foreground){
     &.disabled {
-        color: bc-color($foreground, 'text');
-        background: bc-color($background, 'disabled-button');
-        border-color: bc-color($background, 'disabled-button');
+        color: bc-color($foreground, 'disabled');
+        background: bc-color($background, 'disabled');
+        border-color: bc-color($background, 'disabled');
     }
 }
 

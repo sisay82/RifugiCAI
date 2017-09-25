@@ -48,11 +48,14 @@
 
 
 // Creates a container object for a light theme to be given to individual component theme mixins.
-@function bc-light-theme($primary, $accent, $warn: bc-palette($bc-red)) {
+@function bc-light-theme($primary, $accent, $info: bc-palette($bc-blue), $success: bc-palette($bc-green), $warn: bc-palette($bc-yellow), $danger: bc-palette($bc-red)) {
   @return (
     primary: $primary,
     accent: $accent,
+    info: $info,
+    success: $success,
     warn: $warn,
+    danger: $danger,
     is-dark: false,
     foreground: $bc-light-theme-foreground,
     background: $bc-light-theme-background
@@ -61,11 +64,14 @@
 
 
 // Creates a container object for a dark theme to be given to individual component theme mixins.
-@function bc-dark-theme($primary, $accent, $warn: bc-palette($bc-red)) {
+@function bc-dark-theme($primary, $accent, $info: bc-palette($bc-blue), $success: bc-palette($bc-green), $warn: bc-palette($bc-yellow), $danger: bc-palette($bc-red)) {
   @return (
     primary: $primary,
     accent: $accent,
+    info: $info,
+    success: $success,
     warn: $warn,
+    danger: $danger,
     is-dark: true,
     foreground: $bc-dark-theme-foreground,
     background: $bc-dark-theme-background

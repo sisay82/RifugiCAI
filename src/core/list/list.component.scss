@@ -13,10 +13,12 @@ $bc-list-no-border: 0px;
 
 
 @mixin bc-list-theme($theme) {
+  $background: map-get($theme, background);
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
   .bc-list {
+    background: bc-color($background, 'background');
     // bc-list-header theme
     @include bc-list-header-theme($theme);
     // bc-list-item-group theme
@@ -31,17 +33,17 @@ $bc-list-no-border: 0px;
     &.bc-accent {
       @include bc-list-item-theme($theme, $accent);
     }
-
-    &.bc-warn {
-      @include bc-list-item-theme($theme, $warn);
-    }
   }
 }
 
 .bc-list {
   display: block;
   list-style-type: none;
-
+  
+  &.list-group {
+    margin-bottom: 0px;
+    padding-bottom: 20px;
+  }
   // bc-list-header style
   @include bc-list-header-base($bc-list-padding-start, $bc-list-padding-end);
   

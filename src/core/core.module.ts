@@ -4,6 +4,7 @@ import { BcContentModule } from './content/content.module';
 import { BcBackdropModule } from './backdrop/backdrop.module';
 import { BcIconModule } from './icon/icon.module';
 import { BcAvatarModule } from './avatar/avatar.module';
+import { BcButtonModule } from './button/button.module';
 import { BcDividerModule } from './divider/divider.module';
 import { BcNavbarModule } from './navbar/navbar.module';
 import { BcListModule } from './list/list.module';
@@ -22,6 +23,7 @@ const COMPONENTS_MODULES = [
     BcBackdropModule,
     BcIconModule,
     BcAvatarModule,
+    BcButtonModule,
     BcDividerModule,
     BcNavbarModule,
     BcListModule,

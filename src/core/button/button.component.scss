@@ -1,0 +1,146 @@
+@import '../style/typography';
+@import '../style/vendor-prefixes';
+@import '../style/palette';
+@import '../style/theme';
+
+$bc-button-min-width: 88px;
+
+$bc-button-height-lg: 48px;
+$bc-button-height: 36px;
+$bc-button-height-sm: 32px;
+
+$bc-button-margin: 6px;
+$bc-button-padding-end: 8px;
+$bc-button-border-radius: 2px;
+
+@mixin bc-button-color($palette) {
+  background: bc-color($palette);
+  color: bc-color($palette, default-contrast);
+}
+
+@mixin bc-button-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $info: map-get($theme, info);
+  $success: map-get($theme, success);
+  $warn: map-get($theme, warn);
+  $danger: map-get($theme, danger);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  .bc-button {
+    background: bc-color($background, raised-button);
+    color: bc-color($foreground, text);
+    &:hover, &:focus {
+      background: mix(bc-color($background, focused-button), bc-color($background, raised-button));
+    }
+    &[disabled], &[data-disabled] {
+      background: bc-color($background, 'disabled');
+      color: bc-color($foreground, 'disabled');
+    }
+  // disabled-button: $white-12alpha,
+  // raised-button: map-get($bc-grey-cai, 700),
+  // focused-button: $white-6alpha,
+  // selected-button: map_get($bc-grey-cai, 800),
+  // selected-disabled-button: map_get($bc-grey-cai, 700),
+  // disabled-button-toggle: map_get($bc-grey-cai, 900),
+    &.bc-primary {
+      @include bc-button-color($primary);
+    }
+
+    &.bc-accent {
+      @include bc-button-color($accent);
+    }
+    
+    &.bc-info {
+      @include bc-button-color($info);
+    }
+
+    &.bc-success {
+      @include bc-button-color($success);
+    }
+    &.bc-warn {
+      @include bc-button-color($warn);
+    }
+    &.bc-danger {
+      @include bc-button-color($danger);
+    }
+  }
+}
+
+.bc-button {
+  position: relative;
+  z-index: 0;
+
+  display: inline-block;
+
+  min-width: $bc-button-min-width;
+  height: $bc-button-height;
+  margin: $bc-button-margin;
+  padding: 0px $bc-button-padding-end;
+
+  border: 1px solid transparent;
+  border-radius: $bc-button-border-radius;
+  
+  cursor: pointer;
+
+  @include bc-typography-scale-to-styles(bc-typographic-scale(), button);
+  text-align: center;
+  vertical-align: middle;
+
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+
+  font-kerning: none;
+
+  @include user-select(none);
+  
+  // transition: all .15s ease-in-out;
+
+  & .bc-button-inner {
+    width: 100%;
+    height: 100%;
+    padding: 0px $bc-button-padding-end;
+    @include flex-box();
+    @include flex-flow (row);
+    
+
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  //Disable button
+  &[disabled], &[data-disabled] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  //Button size
+  &.bc-outline {
+    background-color: transparent;
+    border-color: currentColor;
+    border-style: solid;
+    border-width: 1px;
+    color: currentColor;
+  }
+
+  &.bc-clear {
+    background-color: transparent;
+    border-color: currentColor;
+    border-style: none;
+    border-width: 0px;
+    color: currentColor;
+    text-transform: uppercase;
+  }
+
+  //Button size
+  &.bc-lg {
+    height: $bc-button-height-lg;
+  }
+
+  &.bc-sm {
+    height: $bc-button-height-sm;
+  }
+}
