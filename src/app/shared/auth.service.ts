@@ -74,7 +74,7 @@ export class BcAuthService{
                         permission=true;
                     }
                 }else if(name==Enums.User_Type.sectional&&profile.role==Enums.User_Type.sectional){
-                    if(shelId.substr(4,3)==profile.code.substr(4,3)){
+                    if(shelId.substr(2,5)==profile.code.substr(2,5)){
                         permission=true;
                     }
                 }
@@ -131,7 +131,7 @@ export class BcAuthService{
                     }
                 }
                 else if(profile.role==Enums.User_Type.sectional){
-                    if(shelId&&profile.code.substr(4,3)==shelId.substr(4,3)){
+                    if(shelId&&profile.code.substr(2,5)==shelId.substr(2,5)){
                         observer.next(Enums.User_Type.sectional);                        
                     }else{
                         observer.next(null);
