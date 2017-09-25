@@ -12,7 +12,7 @@ var casBaseUrl = "https://prova.cai.it";
 var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
 var serverUrl = "rifugi.cai.it";
 var portUrl=90;
-var appBaseUrl = "http://"+serverUrl+":"+portUrl;
+var appBaseUrl = "http://"+serverUrl;
 var app = express();
 var parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
 var userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type,redirections:number,checked:boolean}[]=[];
@@ -178,7 +178,7 @@ app.use(bodyParser.urlencoded({
     saveUninitialized: true
 }));
 
-var server = app.listen(portUrl,serverUrl,function(){
+var server = app.listen(portUrl,function(){
     let port = server.address().port;
     console.log("App now running on " + appBaseUrl);
 });
