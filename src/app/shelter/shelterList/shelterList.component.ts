@@ -57,6 +57,7 @@ export class BcShelterList {
                 region=this.getRegion(profile.code);
             }else if(profile.role==Enums.User_Type.sectional){
                 section=this.getSection(profile.code);
+                region=this.getRegion(profile.code);
             }else if(profile.role!=Enums.User_Type.central){
                 console.log("Invalid User");
                 return;
