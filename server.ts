@@ -9,9 +9,9 @@ import querystring = require('querystring');
 
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://prova.cai.it";
-var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
+var authUrl = "https://prova.cai.it/cai-integration-ws/secured/users/";
 var serverUrl = "rifugi.cai.it";
-var portUrl=90;
+var portUrl=8000;
 var appBaseUrl = "http://"+serverUrl;
 var app = express();
 var parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
@@ -63,25 +63,14 @@ function getTargetNodesByName(node:Node,name:String,target:String):Node[]{
     return nodes;
 }
 
-function getRole(node:Node):Enums.User_Type{
-    for(let n of getTargetNodesByName(node,"aggregatedAuthorities","role")){
-        if(n.textContent==centralRole){
-            return Enums.User_Type.central;
-        }
-    }
-    let userGroups=getChildByName(node,"userGroups");
-    if(userGroups){
-        let name=getChildByName(userGroups,"name");        
-        if(name){
-            if(name.textContent==regionalRoleName){
-                return Enums.User_Type.regional;
-            }else{
-                if(name.textContent==sectionalPRoleName||name.textContent==sectionalURoleName){
-                    return Enums.User_Type.sectional
-                }else{
-                    return null;
-                }
-            }
+function getRole(data):Enums.User_Type{
+    if(data.aggregatedAuthorities&&data.aggregatedAuthorities.find(obj=>obj.role==centralRole)){
+        return Enums.User_Type.central;
+    }else if(data.userGroups){
+        if(data.userGroups.find(obj=>obj.name==regionalRoleName)){
+            return Enums.User_Type.regional;
+        }else if(data.userGroups.find(obj=>obj.name==sectionalPRoleName||obj.name==sectionalURoleName)){
+            return Enums.User_Type.sectional;
         }else{
             return null;
         }
@@ -92,7 +81,7 @@ function getRole(node:Node):Enums.User_Type{
 
 function validationPromise(ticket):Promise<String>{
     return new Promise((resolve,reject)=>{
-        request.post({
+        request.get({
             url:casBaseUrl+"/cai-cas/serviceValidate?service="+parsedUrl+"&ticket="+ticket,
             method:"GET"
         },function(err,response,body){
@@ -119,53 +108,43 @@ function validationPromise(ticket):Promise<String>{
 function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
     console.log("CHECKUSER");
     return new Promise<{role:Enums.User_Type,code:String}>((resolve,reject)=>{
-        var post_data=`<?xml version="1.0" encoding="utf-8"?>
-        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-            <soap:Body>
-                <n:getUserDataByUuid xmlns:n="http://service.core.ws.auth.cai.it/">
-                    <arg0>`+uuid+`</arg0>
-                </n:getUserDataByUuid>
-            </soap:Body>
-        </soap:Envelope>`;
-
-        request.post({
-            url:authUrl,
-            method:"POST",
+        request.get({
+            url:authUrl+uuid+'/full',
+            method:"GET",
             headers:{
-                "Content-Type":"text/xml"
+                "Content-Type":"text/xml",
+                "Authorization":"Basic YXBwcmlmdWdpQGNhaS5pdDp3YXp1eS12dXNBM2E="
             },
-            body:post_data
         },function(err,response,body){
-            var el:Node=(new DOMParser()).parseFromString(body,"text/xml");
-            let role=getRole(el);
-            let user:{role:Enums.User_Type,code:String}={role:null,code:null};
-            user.role=role;
-            if(!role){
-                reject();
-            }else{
-                let code;
-                if(role==Enums.User_Type.sectional){
-                    let child=getChildByName(el,'sectionCode');
-                    if(child){
-                        code = getChildByName(el,'sectionCode').textContent;
-                    }
-                }else{
-                    let child=getChildByName(el,'regionaleGroupCode');
-                    if(child){
-                        let tmpCode = child.textContent;
-                        if(tmpCode){
-                            code = tmpCode.substr(0,2)+tmpCode.substr(5,2)+tmpCode.substr(2,3);                        
+            try{
+                let data=JSON.parse(body);     
+                let role=getRole(data); 
+
+                if(role){
+                    let code;
+                    if(role==Enums.User_Type.sectional){
+                        if(data.sectionCode){
+                            code=data.sectionCode;
+                        }   
+                    }else{
+                        if(data.regionaleGroupCode){
+                            let tmpCode = data.regionaleGroupCode;
+                            if(tmpCode){
+                                code = tmpCode.substr(0,2)+tmpCode.substr(5,2)+tmpCode.substr(2,3);                        
+                            }
                         }
                     }
-                }
-                if(code){
-                    user.code=code;
-                    resolve(user);                 
+                    if(code){
+                        resolve({role:role,code:code});                                                  
+                    }else{
+                        reject("Error code");
+                    }
                 }else{
-                    reject();
+                    reject("User not authorized");
                 }
+            }catch(e){
+                reject(e);
             }
-        
         });
     });
 }
