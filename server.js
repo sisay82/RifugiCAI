@@ -9,7 +9,7 @@ var bodyParser = require("body-parser");
 var enums_1 = require("./src/app/shared/types/enums");
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://prova.cai.it";
-var authUrl = "http://prova.cai.it/cai-auth-ws/AuthService/getUserDataByUuid";
+var authUrl = "https://prova.cai.it/cai-integration-ws/secured/users/";
 var appBaseUrl = "http://localhost:4200";
 var app = express();
 var parsedUrl = encodeURIComponent(appBaseUrl + "/j_spring_cas_security_check");
@@ -58,28 +58,16 @@ function getTargetNodesByName(node, name, target) {
     }
     return nodes;
 }
-function getRole(node) {
-    for (var _i = 0, _a = getTargetNodesByName(node, "aggregatedAuthorities", "role"); _i < _a.length; _i++) {
-        var n = _a[_i];
-        if (n.textContent == centralRole) {
-            return enums_1.Enums.User_Type.central;
-        }
+function getRole(data) {
+    if (data.aggregatedAuthorities && data.aggregatedAuthorities.find(function (obj) { return obj.role == centralRole; })) {
+        return enums_1.Enums.User_Type.central;
     }
-    var userGroups = getChildByName(node, "userGroups");
-    if (userGroups) {
-        var name_1 = getChildByName(userGroups, "name");
-        if (name_1) {
-            if (name_1.textContent == regionalRoleName) {
-                return enums_1.Enums.User_Type.regional;
-            }
-            else {
-                if (name_1.textContent == sectionalPRoleName || name_1.textContent == sectionalURoleName) {
-                    return enums_1.Enums.User_Type.sectional;
-                }
-                else {
-                    return null;
-                }
-            }
+    else if (data.userGroups) {
+        if (data.userGroups.find(function (obj) { return obj.name == regionalRoleName; })) {
+            return enums_1.Enums.User_Type.regional;
+        }
+        else if (data.userGroups.find(function (obj) { return obj.name == sectionalPRoleName || obj.name == sectionalURoleName; })) {
+            return enums_1.Enums.User_Type.sectional;
         }
         else {
             return null;
@@ -91,7 +79,7 @@ function getRole(node) {
 }
 function validationPromise(ticket) {
     return new Promise(function (resolve, reject) {
-        request.post({
+        request.get({
             url: casBaseUrl + "/cai-cas/serviceValidate?service=" + parsedUrl + "&ticket=" + ticket,
             method: "GET"
         }, function (err, response, body) {
@@ -119,46 +107,45 @@ function validationPromise(ticket) {
 function checkUserPromise(uuid) {
     console.log("CHECKUSER");
     return new Promise(function (resolve, reject) {
-        var post_data = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n        <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n            <soap:Body>\n                <n:getUserDataByUuid xmlns:n=\"http://service.core.ws.auth.cai.it/\">\n                    <arg0>" + uuid + "</arg0>\n                </n:getUserDataByUuid>\n            </soap:Body>\n        </soap:Envelope>";
-        request.post({
-            url: authUrl,
-            method: "POST",
+        request.get({
+            url: authUrl + uuid + '/full',
+            method: "GET",
             headers: {
-                "Content-Type": "text/xml"
-            },
-            body: post_data
-        }, function (err, response, body) {
-            var el = (new DOMParser()).parseFromString(body, "text/xml");
-            var role = getRole(el);
-            var user = { role: null, code: null };
-            user.role = role;
-            if (!role) {
-                reject();
+                "Content-Type": "text/xml",
+                "Authorization": "Basic YXBwcmlmdWdpQGNhaS5pdDp3YXp1eS12dXNBM2E="
             }
-            else {
-                var code = void 0;
-                if (role == enums_1.Enums.User_Type.sectional) {
-                    var child = getChildByName(el, 'sectionCode');
-                    if (child) {
-                        code = getChildByName(el, 'sectionCode').textContent;
-                    }
-                }
-                else {
-                    var child = getChildByName(el, 'regionaleGroupCode');
-                    if (child) {
-                        var tmpCode = child.textContent;
-                        if (tmpCode) {
-                            code = tmpCode.substr(0, 2) + tmpCode.substr(5, 2) + tmpCode.substr(2, 3);
+        }, function (err, response, body) {
+            try {
+                var data = JSON.parse(body);
+                var role = getRole(data);
+                if (role) {
+                    var code = void 0;
+                    if (role == enums_1.Enums.User_Type.sectional) {
+                        if (data.sectionCode) {
+                            code = data.sectionCode;
                         }
                     }
-                }
-                if (code) {
-                    user.code = code;
-                    resolve(user);
+                    else {
+                        if (data.regionaleGroupCode) {
+                            var tmpCode = data.regionaleGroupCode;
+                            if (tmpCode) {
+                                code = tmpCode.substr(0, 2) + tmpCode.substr(5, 2) + tmpCode.substr(2, 3);
+                            }
+                        }
+                    }
+                    if (code) {
+                        resolve({ role: role, code: code });
+                    }
+                    else {
+                        reject("Error code");
+                    }
                 }
                 else {
-                    reject();
+                    reject("User not authorized");
                 }
+            }
+            catch (e) {
+                reject(e);
             }
         });
     });
