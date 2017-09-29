@@ -18,7 +18,11 @@ import {RevisionBase} from '../shared/revision_base';
 })
 export class BcEconomyRevision extends RevisionBase {
 
-
+    constructor(private shelterService:ShelterService,private shared:BcSharedService,private revisionService:BcRevisionsService){
+        super(shelterService,shared,revisionService);
+        shared.activeComponent="economy";
+        shared.onActiveOutletChange("revision");
+    }
     
     save(confirm){
         return true;

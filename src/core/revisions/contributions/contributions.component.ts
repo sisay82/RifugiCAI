@@ -16,9 +16,13 @@ import {RevisionBase} from '../shared/revision_base';
     styleUrls: ['contributions.component.scss'],
     providers:[ShelterService]
 })
-export class BcContributionsRevision extends RevisionBase {
+export class BcContributionRevision extends RevisionBase {
 
-
+    constructor(private shelterService:ShelterService,private shared:BcSharedService,private revisionService:BcRevisionsService){
+        super(shelterService,shared,revisionService);
+        shared.activeComponent="contributions";
+        shared.onActiveOutletChange("revision");
+    }
     
     save(confirm){
         return true;

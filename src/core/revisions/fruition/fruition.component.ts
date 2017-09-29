@@ -18,7 +18,11 @@ import {RevisionBase} from '../shared/revision_base';
 })
 export class BcFruitionRevision extends RevisionBase {
 
-
+    constructor(private shelterService:ShelterService,private shared:BcSharedService,private revisionService:BcRevisionsService){
+        super(shelterService,shared,revisionService);
+        shared.activeComponent="fruition";
+        shared.onActiveOutletChange("revision");
+    }
     
     save(confirm){
         return true;

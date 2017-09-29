@@ -9,4 +9,4 @@ import {BcIconModule} from '../../icon/icon.module';
     exports: [BcContributions],
     imports:[BcIconModule,BcDividerModule,BcMapModule,CommonModule]
 })
-export class BcFruitionModule { }
+export class BcContributionsModule { }

@@ -18,6 +18,13 @@ export namespace Enums {
         "Combinato"
     }
 
+    export enum Contribution_Type {
+        "Ordinario CAI",
+        "FondoStabile",
+        "Contributo Pubblico",
+        "Contributo Privato"
+    }
+
     //tipo classe energetica
     export enum Energy_Class_Type {
         "A+", "A", "B", "C", "D", "E", "F", "G"
