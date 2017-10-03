@@ -7,6 +7,7 @@ var bodyParser = require("body-parser");
 var express = require("express");
 var schema_1 = require("./src/app/shared/types/schema");
 var enums_1 = require("./src/app/shared/types/enums");
+//import http = require('http');
 var multer = require("multer");
 var request = require("request");
 var xmldom = require("xmldom");
@@ -663,9 +664,67 @@ function cleanSheltersToUpdate() {
 /**
  * APP SETUP
  */
+function checkPermissionAppAPI(req, res, next) {
+    var user = req.body.user;
+    if (user) {
+        if (req.method == "GET") {
+            next();
+        }
+        else {
+            if (req.method == "DELETE" || req.method == "POST") {
+                if (user.role == enums_1.Enums.User_Type.central) {
+                    next();
+                }
+                else {
+                    res.status(500).send({ error: "Unauthorized" });
+                }
+            }
+            else if (req.method == "PUT") {
+                if (enums_1.Enums.DetailRevisionPermission.find(function (obj) { return obj == user.role; })) {
+                    next();
+                }
+                else {
+                    res.status(500).send({ error: "Unauthorized" });
+                }
+            }
+            else {
+                res.status(501).send({ error: "Not Implemented method " + req.method });
+            }
+        }
+    }
+    else {
+        res.status(500).send({ error: "Error request" });
+    }
+}
+function checkPermissionFileAPI(req, res, next) {
+    var user = req.body.user;
+    if (user) {
+        if (req.method == "GET") {
+            next();
+        }
+        else {
+            if (req.method == "DELETE" || req.method == "POST" || req.method == "PUT") {
+                if (enums_1.Enums.DocRevisionPermission.find(function (obj) { return obj == user.role; })) {
+                    next();
+                }
+                else {
+                    res.status(500).send({ error: "Unauthorized" });
+                }
+            }
+            else {
+                res.status(501).send({ error: "Not Implemented method " + req.method });
+            }
+        }
+    }
+    else {
+        res.status(500).send({ error: "Error request" });
+    }
+}
 var app = express();
 var appRoute = express.Router();
+appRoute.all("*", checkPermissionAppAPI);
 var fileRoute = express.Router();
+fileRoute.all("*", checkPermissionFileAPI);
 var authRoute = express.Router();
 setInterval(cleanSheltersToUpdate, 1500);
 /**
@@ -1340,6 +1399,7 @@ authRoute.get('/*', function (req, res) {
             })["catch"](function (err) {
                 console.log("Invalid ticket");
                 user.redirections++;
+                user.checked = false;
                 user.resource = req.path;
                 if (user.redirections >= 3) {
                     var index = userList.findIndex(function (obj) { return obj.id == user.id; });
@@ -1380,14 +1440,35 @@ app.use('/api', function (req, res, next) {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('content-type', 'application/json; charset=utf-8');
-    next();
+    var user = userList.find(function (obj) { return obj.id == req.session.id; });
+    if (user != undefined && user.checked && user.role != undefined && user.code != undefined) {
+        req.body.user = user;
+        next();
+    }
+    else {
+        res.status(500).send({ error: "Unauthenticated user" });
+    }
 }, fileRoute, appRoute);
 app.use('/', authRoute);
+/*
+var sslkey = fs.readFileSync('ssl-key.pem');
+var sslcert = fs.readFileSync('ssl-cert.pem')
+
+var options = {
+    key: sslkey,
+    cert: sslcert
+};
+
+var server = https.createServer(options, app);
+
+server.listen(process.env.PORT || appPort, function () {
+    var port = server.address().port;
+    console.log("App now running on port", port);
+});*/
 var server = app.listen(process.env.PORT || appPort, function () {
     var port = server.address().port;
     console.log("App now running on port", port);
 });
-//"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/ProvaDB", function (err) {
     if (err) {
         console.log("Error connection: " + err);

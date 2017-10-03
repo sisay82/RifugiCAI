@@ -3,11 +3,12 @@ import * as mongoose from 'mongoose';
 import * as session from 'express-session';
 import * as bodyParser from 'body-parser';
 import * as express from "express";
+import * as fs from 'fs';
 import { IShelter, IService, IFile, IOpening } from "./src/app/shared/types/interfaces";
 import { Schema } from "./src/app/shared/types/schema";
 import { Enums } from "./src/app/shared/types/enums";
 import https = require('https');
-import http = require('http');
+//import http = require('http');
 import multer = require('multer');
 import request = require('request');
 import xmldom = require('xmldom');
@@ -689,9 +690,59 @@ function cleanSheltersToUpdate(){
  * APP SETUP
  */
 
+function checkPermissionAppAPI(req,res,next){
+    let user=req.body.user;
+    if(user){
+        if(req.method=="GET"){
+           next(); 
+        }else{
+            if(req.method=="DELETE"||req.method=="POST"){
+                if(user.role==Enums.User_Type.central){
+                    next();
+                }else{
+                    res.status(500).send({error:"Unauthorized"});
+                }
+            }else if(req.method=="PUT"){
+                if(Enums.DetailRevisionPermission.find(obj=>obj==user.role)){
+                    next();
+                }else{
+                    res.status(500).send({error:"Unauthorized"});
+                }
+            }else{
+                res.status(501).send({error:"Not Implemented method "+req.method});
+            }
+        }
+    }else{
+        res.status(500).send({error:"Error request"});
+    }
+}
+
+function checkPermissionFileAPI(req,res,next){
+    let user=req.body.user;
+    if(user){
+        if(req.method=="GET"){
+           next(); 
+        }else{
+            if(req.method=="DELETE"||req.method=="POST"||req.method=="PUT"){
+                if(Enums.DocRevisionPermission.find(obj=>obj==user.role)){
+                    next();
+                }else{
+                    res.status(500).send({error:"Unauthorized"});
+                }
+            }else{
+                res.status(501).send({error:"Not Implemented method "+req.method});
+            }
+        }
+    }else{
+        res.status(500).send({error:"Error request"});
+    }
+}
+
 var app = express();
 var appRoute = express.Router();
+appRoute.all("*",checkPermissionAppAPI);
 var fileRoute = express.Router();
+fileRoute.all("*",checkPermissionFileAPI);
 var authRoute = express.Router();
 
 setInterval(cleanSheltersToUpdate,1500);
@@ -1367,6 +1418,7 @@ authRoute.get('/*', function(req, res) {
         .catch((err)=>{
             console.log("Invalid ticket");
             user.redirections++;
+            user.checked=false;
             user.resource=req.path;
             if(user.redirections>=3){
                 let index=userList.findIndex(obj=>obj.id==user.id);
@@ -1409,17 +1461,38 @@ app.use('/api',function(req,res,next){
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('content-type', 'application/json; charset=utf-8');
-    next();
+    let user=userList.find(obj=>obj.id==req.session.id);
+    if(user!=undefined&&user.checked&&user.role!=undefined&&user.code!=undefined){
+        req.body.user=user;
+        next();
+    }else{
+        res.status(500).send({error:"Unauthenticated user"});
+    }
 },fileRoute,appRoute);
 
 app.use('/',authRoute);
+
+/*
+var sslkey = fs.readFileSync('ssl-key.pem');
+var sslcert = fs.readFileSync('ssl-cert.pem')
+
+var options = {
+    key: sslkey,
+    cert: sslcert
+};
+
+var server = https.createServer(options, app);
+
+server.listen(process.env.PORT || appPort, function () {
+    var port = server.address().port;
+    console.log("App now running on port", port);
+});*/
 
 var server = app.listen(process.env.PORT || appPort, function () {
     var port = server.address().port;
     console.log("App now running on port", port);
 });
 
-//"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
 mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/ProvaDB",function(err){
     if(err) {
         console.log("Error connection: "+err);
