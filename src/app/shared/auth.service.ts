@@ -150,16 +150,11 @@ export class BcAuthService{
         let revisionPermission:Enums.User_Type;    
         return Observable.create(observer=>{
             let sectionCodeInit = this.getUserProfile().subscribe(profile=>{
-                if(profile.role==Enums.User_Type.central){
-                    observer.next(Enums.User_Type.central);
+                if(profile.role){
+                    observer.next(profile.role);
+                }else{
+                    observer.next(null);
                 }
-                else if(profile.role==Enums.User_Type.regional){
-                    observer.next(Enums.User_Type.regional);
-                }
-                else if(profile.role==Enums.User_Type.sectional){
-                    observer.next(Enums.User_Type.sectional);
-                }
-                else observer.next(null);
                 observer.complete();
             });
         });
