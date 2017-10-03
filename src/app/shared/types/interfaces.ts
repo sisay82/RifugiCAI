@@ -1,6 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes } from '@angular/router';
-import { Enums } from './enums'
+import { Enums } from './enums';
 import * as L from 'leaflet';
 
 export interface IPagedResults<T> {
@@ -187,7 +187,7 @@ export interface IUse {
 }
 
 export interface IShelter{
-    _id:String;
+    _id?:String;
     name?:String;
     alias?:String;
     idCai?:String;
