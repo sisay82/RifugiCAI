@@ -181,8 +181,10 @@ export interface IEconomy{
 export interface IUse {
     year:Number;
     stay_count_associate?:Number;
+    stay_count_reciprocity?:Number;    
     stay_count?:Number;
     transit_count_associate?:Number;
+    transit_count_reciprocity?:Number;
     transit_count?:Number;
 }
 
