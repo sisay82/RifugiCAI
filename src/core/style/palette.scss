@@ -227,13 +227,9 @@ $bc-light-theme-background: (
   card:       $white,
   dialog:     $white,
   disabled: $black-12alpha,
-  disabled-button: $black-12alpha,
   raised-button: $white,
-  focused-button: $black-6alpha,
-  selected-button: map_get($bc-grey-cai, 300),
-  selected-disabled-button: map_get($bc-grey-cai, 400),
-  disabled-button-toggle: map_get($bc-grey-cai, 200),
-);
+  focused-button: $black-6alpha
+  );
 
 // Background palette for dark themes.
 $bc-dark-theme-background: (
@@ -244,13 +240,9 @@ $bc-dark-theme-background: (
   card:       map_get($bc-grey-cai, 700),
   dialog:     map_get($bc-grey-cai, 700),
   disabled: $white-12alpha,
-  disabled-button: $white-12alpha,
   raised-button: map-get($bc-grey-cai, 700),
-  focused-button: $white-6alpha,
-  selected-button: map_get($bc-grey-cai, 800),
-  selected-disabled-button: map_get($bc-grey-cai, 700),
-  disabled-button-toggle: map_get($bc-grey-cai, 900),
-);
+  focused-button: $white-6alpha
+ );
 
 // Foreground palette for light themes.
 $bc-light-theme-foreground: (
@@ -258,7 +250,6 @@ $bc-light-theme-foreground: (
   divider:         $black-12alpha,
   dividers:        $black-12alpha,
   disabled:        $black-38alpha,
-  disabled-button: $black-38alpha,
   hint-text:       $black-38alpha,
   secondary-text:  $black-54alpha,
   icon:            $black-54alpha,
@@ -272,7 +263,6 @@ $bc-dark-theme-foreground: (
   divider:         $white-12alpha,
   dividers:        $white-12alpha,
   disabled:        $white-30alpha,
-  disabled-button: $white-30alpha,
   hint-text:       $white-30alpha,
   secondary-text:  $white-70alpha,
   icon:            $white,

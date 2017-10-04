@@ -5,7 +5,7 @@
 
 $bc-button-min-width: 88px;
 
-$bc-button-height-lg: 48px;
+$bc-button-height-lg: 46px;
 $bc-button-height: 36px;
 $bc-button-height-sm: 32px;
 
@@ -13,9 +13,26 @@ $bc-button-margin: 6px;
 $bc-button-padding-end: 8px;
 $bc-button-border-radius: 2px;
 
-@mixin bc-button-color($palette) {
-  background: bc-color($palette);
-  color: bc-color($palette, default-contrast);
+@mixin bc-button-color($background, $foreground) {
+  $lightness: lightness($background);
+  $shade: #fff;
+
+  @if ($lightness > 50) {
+    $shade: #000;
+  }
+  // background: bc-color($palette);
+  // color: bc-color($palette, default-contrast);
+  background: $background;
+  color: $foreground;
+
+  &:hover, &:focus {
+    background: mix($shade, $background, 12%);
+    //color: mix(complement($shade), $foreground, 26%);
+  }
+  &:active {
+    background: mix($shade, $background, 22%);
+    //color: mix(complement($shade), $foreground, 26%);
+  }
 }
 
 @mixin bc-button-theme($theme) {
@@ -29,41 +46,33 @@ $bc-button-border-radius: 2px;
   $foreground: map-get($theme, foreground);
 
   .bc-button {
-    background: bc-color($background, raised-button);
-    color: bc-color($foreground, text);
-    &:hover, &:focus {
-      background: mix(bc-color($background, focused-button), bc-color($background, raised-button));
-    }
-    &[disabled], &[data-disabled] {
-      background: bc-color($background, 'disabled');
-      color: bc-color($foreground, 'disabled');
-    }
-  // disabled-button: $white-12alpha,
-  // raised-button: map-get($bc-grey-cai, 700),
-  // focused-button: $white-6alpha,
-  // selected-button: map_get($bc-grey-cai, 800),
-  // selected-disabled-button: map_get($bc-grey-cai, 700),
-  // disabled-button-toggle: map_get($bc-grey-cai, 900),
+    @include bc-button-color(bc-color($background, raised-button), bc-color($foreground, text));
+    box-shadow: 0px 0px 1px 0px rgba(black, 0.2),0px 1px 1px 0px rgba(black, 0.14),0px 1px 2px 0px rgba(black, 0.12);
+
     &.bc-primary {
-      @include bc-button-color($primary);
+      @include bc-button-color(bc-color($primary), bc-color($primary, default-contrast));
     }
 
     &.bc-accent {
-      @include bc-button-color($accent);
+      @include bc-button-color(bc-color($accent), bc-color($accent, default-contrast));
     }
     
     &.bc-info {
-      @include bc-button-color($info);
+      @include bc-button-color(bc-color($info), bc-color($info, default-contrast));
     }
-
     &.bc-success {
-      @include bc-button-color($success);
+      @include bc-button-color(bc-color($success), bc-color($success, default-contrast));
     }
     &.bc-warn {
-      @include bc-button-color($warn);
+      @include bc-button-color(bc-color($warn), bc-color($warn, default-contrast));
     }
     &.bc-danger {
-      @include bc-button-color($danger);
+      @include bc-button-color(bc-color($danger), bc-color($danger, default-contrast));
+    }
+
+    &[disabled], &[data-disabled] {
+      background: bc-color($background, disabled);
+      color: bc-color($foreground, disabled);
     }
   }
 }
@@ -73,7 +82,7 @@ $bc-button-border-radius: 2px;
   z-index: 0;
 
   display: inline-block;
-
+    
   min-width: $bc-button-min-width;
   height: $bc-button-height;
   margin: $bc-button-margin;
@@ -84,27 +93,29 @@ $bc-button-border-radius: 2px;
   
   cursor: pointer;
 
-  @include bc-typography-scale-to-styles(bc-typographic-scale(), button);
+  @include bc-typography-scale-to-styles(bc-typographic-scale(), 'button');
+
+
   text-align: center;
   vertical-align: middle;
-
-  text-overflow: ellipsis;
-  text-transform: none;
+  
   white-space: nowrap;
+  text-transform: none;
 
   font-kerning: none;
 
+  @include touch-action(manipulation);
   @include user-select(none);
   
   // transition: all .15s ease-in-out;
 
   & .bc-button-inner {
-    width: 100%;
-    height: 100%;
-    padding: 0px $bc-button-padding-end;
     @include flex-box();
     @include flex-flow (row);
     
+    margin: 0px $bc-button-padding-end;
+
+    overflow: hidden;
 
     flex-shrink: 0;
     align-items: center;
@@ -113,7 +124,7 @@ $bc-button-border-radius: 2px;
 
   //Disable button
   &[disabled], &[data-disabled] {
-    cursor: default;
+    cursor: auto;
     pointer-events: none;
   }
 
@@ -138,9 +149,12 @@ $bc-button-border-radius: 2px;
   //Button size
   &.bc-lg {
     height: $bc-button-height-lg;
+    @include bc-typography-scale-to-styles(bc-typographic-scale(), 'button-lg');
+    border-radius: $bc-button-border-radius+$bc-button-border-radius;
   }
 
   &.bc-sm {
     height: $bc-button-height-sm;
+    @include bc-typography-scale-to-styles(bc-typographic-scale(), 'button-sm');
   }
 }
