@@ -1,5 +1,65 @@
-<bc-list dense no-border style="align-items:center;display:flex;flex-direction:row">
-    <a bc-list-item *ngFor="let use of data" >
+<div class="btn-group btn-group-justified">
+    <a [active]="isActive(use.year)" (click)="showTab(use.year)" class="btn bc-tab-fruition" *ngFor="let use of data">
         {{use.year}}
     </a>
-</bc-list>
+</div>
+<bc-divider style="margin-top:0;padding-top:0"></bc-divider>
+<div *ngIf="activeTab!=undefined" style="margin-top:5%">
+        <div style="display:flex;flex-direction:row">
+            <div class="bc-h6 bc-title-fruition" style="flex:1;margin-left:25%;width:25%">
+                <div class="bc-title-center">
+                    Soci CAI
+                </div>
+            </div>
+            <div class="bc-h6 bc-title-fruition" style="flex:1;width:25%">
+                <div class="bc-title-center">
+                    Soci reciprocità       
+                </div>
+            </div>
+            <div class="bc-h6 bc-title-fruition" style="flex:1;width:25%">
+                <div class="bc-title-center">
+                    Non soci CAI
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;flex-direction:row">
+            <div class="bc-h6 bc-title-fruition" style="flex:1;width:25%">
+                Passaggi e pasti
+            </div>
+            <div class="bc-body" style="flex:1;width:25%">
+                <div class="bc-body-fruition">
+                    {{activeTab.transit_count_associate?(activeTab.stay_count_associate):0}}
+                </div>
+            </div>
+            <div class="bc-body" style="flex:1;width:25%">
+                <div class="bc-body-fruition">
+                    {{activeTab.transit_count_reciprocity?(activeTab.stay_count_associate):0}}
+                </div>
+            </div>
+            <div class="bc-body" style="flex:1;width:25%">
+                <div class="bc-body-fruition">
+                    {{activeTab.transit_count?(activeTab.stay_count):0}}
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;flex-direction:row">
+            <div class="bc-h6 bc-title-fruition" style="flex:1;width:25%">
+                Pernottamenti
+            </div>
+            <div class="bc-body" style="flex:1;width:25%">
+                <div class="bc-body-fruition">
+                    {{activeTab.stay_count_associate?(activeTab.stay_count_associate):0}}
+                </div>
+            </div>
+            <div class="bc-body" style="flex:1;width:25%">
+                <div class="bc-body-fruition">
+                    {{activeTab.stay_count_associate?(activeTab.stay_count_associate):0}}
+                </div>
+            </div>
+            <div class="bc-body" style="flex:1;width:25%">
+                <div class="bc-body-fruition">
+                    {{activeTab.stay_count?(activeTab.stay_count):0}}
+                </div>
+            </div>
+        </div>
+</div>

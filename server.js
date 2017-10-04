@@ -317,10 +317,114 @@ function updateFile(id, description) {
         });
     });
 }
+function resolveServicesInShelter(shelter, services) {
+    return new Promise(function (resolve, reject) {
+        if (services) {
+            var count_1 = 0;
+            for (var _i = 0, services_2 = services; _i < services_2.length; _i++) {
+                var serv = services_2[_i];
+                var c = 0;
+                for (var k in serv) {
+                    if (serv.hasOwnProperty(k)) {
+                        ++c;
+                    }
+                }
+                if (serv.hasOwnProperty("_id") && c == 1) {
+                    deleteService(serv._id)
+                        .then(function () {
+                        count_1++;
+                        if (count_1 == services.length) {
+                            shelter.save();
+                            resolve(shelter);
+                        }
+                    })["catch"](function (err) {
+                        reject(err);
+                    });
+                }
+                else {
+                    if (serv._id) {
+                        updateService(serv._id, serv)
+                            .then(function () {
+                            count_1++;
+                            if (count_1 == services.length) {
+                                shelter.save();
+                                resolve(shelter);
+                            }
+                        })["catch"](function (err) {
+                            reject(err);
+                        });
+                    }
+                    else {
+                        insertNewService(serv)
+                            .then(function (ser) {
+                            shelter.services.push(ser._id);
+                            count_1++;
+                            if (count_1 == services.length) {
+                                shelter.save();
+                                resolve(shelter);
+                            }
+                        })["catch"](function (err) {
+                            reject(err);
+                        });
+                    }
+                }
+            }
+        }
+        else {
+            resolve(shelter);
+        }
+    });
+}
+function resolveEconomyInShelter(shelter, uses, contributions, economies) {
+    return new Promise(function (resolve, reject) {
+        try {
+            var _loop_1 = function (use) {
+                var u = shelter.use.filter(function (obj) { return obj.year == use.year; })[0];
+                if (u != null) {
+                    u = use;
+                }
+                else {
+                    shelter.use.push(use);
+                }
+            };
+            for (var _i = 0, uses_1 = uses; _i < uses_1.length; _i++) {
+                var use = uses_1[_i];
+                _loop_1(use);
+            }
+            var _loop_2 = function (economy) {
+                var e = shelter.economy.filter(function (obj) { return obj.year == economy.year; })[0];
+                if (e != null) {
+                    if (!e.confirm) {
+                        e = economy;
+                    }
+                }
+                else {
+                    shelter.economy.push(economy);
+                }
+            };
+            for (var _a = 0, economies_1 = economies; _a < economies_1.length; _a++) {
+                var economy = economies_1[_a];
+                _loop_2(economy);
+            }
+            //////////////// contributions
+            shelter.save();
+            resolve(shelter);
+        }
+        catch (e) {
+            reject(e);
+        }
+    });
+}
 function updateShelter(id, params) {
     return new Promise(function (resolve, reject) {
         var services = params.services;
+        var use = params.use;
+        var contributions = params.contributions;
+        var economy = params.economy;
         delete (params.services);
+        delete (params.use);
+        delete (params.economy);
+        delete (params.contributions);
         var options = { setDefaultsOnInsert: true, upsert: true };
         if (params.updateDate == undefined) {
             params.updateDate = new Date(Date.now());
@@ -330,60 +434,17 @@ function updateShelter(id, params) {
                 reject(err);
             }
             else {
-                if (services) {
-                    var count_1 = 0;
-                    for (var _i = 0, services_2 = services; _i < services_2.length; _i++) {
-                        var serv = services_2[_i];
-                        var c = 0;
-                        for (var k in serv) {
-                            if (serv.hasOwnProperty(k)) {
-                                ++c;
-                            }
-                        }
-                        if (serv.hasOwnProperty("_id") && c == 1) {
-                            deleteService(serv._id)
-                                .then(function () {
-                                count_1++;
-                                if (count_1 == services.length) {
-                                    shel.save();
-                                    resolve(true);
-                                }
-                            })["catch"](function (err) {
-                                reject(err);
-                            });
-                        }
-                        else {
-                            if (serv._id) {
-                                updateService(serv._id, serv)
-                                    .then(function () {
-                                    count_1++;
-                                    if (count_1 == services.length) {
-                                        shel.save();
-                                        resolve(true);
-                                    }
-                                })["catch"](function (err) {
-                                    reject(err);
-                                });
-                            }
-                            else {
-                                insertNewService(serv)
-                                    .then(function (ser) {
-                                    shel.services.push(ser._id);
-                                    count_1++;
-                                    if (count_1 == services.length) {
-                                        shel.save();
-                                        resolve(true);
-                                    }
-                                })["catch"](function (err) {
-                                    reject(err);
-                                });
-                            }
-                        }
-                    }
-                }
-                else {
-                    resolve(true);
-                }
+                resolveServicesInShelter(shel, services)
+                    .then(function (shelter) {
+                    resolveEconomyInShelter(shelter, use, contributions, economy)
+                        .then(function (shelter) {
+                        resolve(true);
+                    })["catch"](function (err) {
+                        reject(err);
+                    });
+                })["catch"](function (err) {
+                    reject(err);
+                });
             }
         });
     });
@@ -734,7 +795,7 @@ appRoute.route("/shelters/file/byshel/:id")
         queryFilesByShelterId(req.params.id)
             .then(function (file) {
             if (shel.files != null) {
-                var _loop_1 = function (f) {
+                var _loop_3 = function (f) {
                     if (f.remove) {
                         var fi = file.filter(function (file) { return file._id == f._id; })[0];
                         file.splice(file.indexOf(fi), 1);
@@ -749,7 +810,7 @@ appRoute.route("/shelters/file/byshel/:id")
                 };
                 for (var _i = 0, _a = shel.files.filter(function (f) { return f.type != enums_1.Enums.File_Type.image; }); _i < _a.length; _i++) {
                     var f = _a[_i];
-                    _loop_1(f);
+                    _loop_3(f);
                 }
                 res.status(200).send(file);
             }
@@ -776,7 +837,7 @@ appRoute.route("/shelters/image/byshel/:id")
         queryImagesByShelterId(req.params.id)
             .then(function (file) {
             if (shel.files != null) {
-                var _loop_2 = function (f) {
+                var _loop_4 = function (f) {
                     if (f.remove) {
                         var fi = file.filter(function (file) { return file._id == f._id; })[0];
                         file.splice(file.indexOf(fi), 1);
@@ -791,7 +852,7 @@ appRoute.route("/shelters/image/byshel/:id")
                 };
                 for (var _i = 0, _a = shel.files.filter(function (f) { return f.type == enums_1.Enums.File_Type.image; }); _i < _a.length; _i++) {
                     var f = _a[_i];
-                    _loop_2(f);
+                    _loop_4(f);
                 }
                 res.status(200).send(file);
             }
