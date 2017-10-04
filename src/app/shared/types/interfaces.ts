@@ -158,6 +158,36 @@ export interface IDrain{
     droughts?:Enums.Seasons;
 }
 
+export interface ICountingEntry{
+    key:String;
+    value:Number;
+    tax:Number;
+    contribution_type:Enums.Contribution_Type;
+}
+
+export interface IFileCounting{
+    document:IFile;
+    revenues:[ICountingEntry];
+    outgos:[ICountingEntry];
+}
+
+export interface IEconomy{
+    files:[IFileCounting];
+    year:Number;
+    confirm:Boolean;
+    accepted:Boolean;
+}
+
+export interface IUse {
+    year:Number;
+    stay_count_associate?:Number;
+    stay_count_reciprocity?:Number;    
+    stay_count?:Number;
+    transit_count_associate?:Number;
+    transit_count_reciprocity?:Number;
+    transit_count?:Number;
+}
+
 export interface IShelter{
     _id?:String;
     name?:String;
@@ -179,6 +209,9 @@ export interface IShelter{
     catastal?:ICatastal;
     energy?:IEnergy;
     drain?:IDrain;
+    economy?:[IEconomy];
+    use?:[IUse];
+    contributions?:[String];
 }
 
 export interface IFile{

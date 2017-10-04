@@ -486,10 +486,109 @@ function updateFile(id:any,description:String):Promise<boolean>{
     });
 }
 
+function resolveServicesInShelter(shelter,services):Promise<IShelterExtended>{
+    return new Promise<IShelterExtended>((resolve,reject)=>{
+        if(services){
+            let count=0;
+            for(let serv of services){
+                let c=0;
+                for (var k in serv) {
+                    if (serv.hasOwnProperty(k)) {
+                        ++c;
+                    }
+                }
+                if(serv.hasOwnProperty("_id") && c==1){
+                    deleteService(serv._id)
+                    .then(()=>{
+                        count++;
+                        if(count==services.length){
+                            shelter.save();
+                            resolve(shelter);
+                        }
+                    })
+                    .catch((err)=>{
+                        reject(err);
+                    })
+                }else{
+                    if(serv._id){
+                        updateService(serv._id,serv)
+                        .then(()=>{
+                            count++;
+                            if(count==services.length){
+                                shelter.save();
+                                resolve(shelter);
+                            }
+                        })
+                        .catch((err)=>{
+                            reject(err);
+                        })
+                    }else{
+                        insertNewService(serv)
+                        .then((ser)=>{
+                            shelter.services.push(ser._id);
+                            count++;
+                            if(count==services.length){
+                                shelter.save();
+                                resolve(shelter);
+                            }
+                        })
+                        .catch((err)=>{
+                            reject(err);
+                        })
+                    }
+                }
+            }
+        }else{
+            resolve(shelter);
+        }
+    });
+}
+
+function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributions:any[],economies:any[]):Promise<IShelterExtended>{
+    return new Promise<IShelterExtended>((resolve,reject)=>{
+        try{
+            if(uses!=undefined){
+                for(let use of uses){
+                    let u = shelter.use.findIndex(obj=>obj.year==use.year);
+                    if(u>-1){
+                        shelter.use.splice(u,1);
+                    }
+                    shelter.use.push(use);
+                    
+                }
+            }
+            
+            if(economies!=undefined){
+                for(let economy of economies){
+                    let e = shelter.economy.findIndex(obj=>obj.year==economy.year);
+                    if(e>-1){
+                        shelter.economy.splice(e,1);
+                    }
+                    shelter.economy.push(economy);
+                    
+                }
+            }
+            
+        
+            //////////////// contributions
+        
+            resolve(shelter);
+        }catch(e){
+            reject(e);
+        }
+    });
+}
+
 function updateShelter(id:any,params:IShelterExtended):Promise<boolean>{
     return new Promise<boolean>((resolve,reject)=>{
         let services:any[]=params.services;
+        let use:any[]=params.use;
+        let contributions:any[]=params.contributions;
+        let economy:any[]=params.economy;
         delete(params.services);
+        delete(params.use);
+        delete(params.economy);
+        delete(params.contributions);
         let options:any={setDefaultsOnInsert:true,upsert:true};
         if(params.updateDate==undefined){
             params.updateDate=new Date(Date.now());
@@ -498,59 +597,20 @@ function updateShelter(id:any,params:IShelterExtended):Promise<boolean>{
             if(err){
                 reject(err);
             }else{
-                if(services){
-                    let count=0;
-                    for(let serv of services){
-                        let c=0;
-                        for (var k in serv) {
-                            if (serv.hasOwnProperty(k)) {
-                                ++c;
-                            }
-                        }
-                        if(serv.hasOwnProperty("_id") && c==1){
-                            deleteService(serv._id)
-                            .then(()=>{
-                                count++;
-                                if(count==services.length){
-                                    shel.save();
-                                    resolve(true);
-                                }
-                            })
-                            .catch((err)=>{
-                                reject(err);
-                            })
-                        }else{
-                            if(serv._id){
-                                updateService(serv._id,serv)
-                                .then(()=>{
-                                    count++;
-                                    if(count==services.length){
-                                        shel.save();
-                                        resolve(true);
-                                    }
-                                })
-                                .catch((err)=>{
-                                    reject(err);
-                                })
-                            }else{
-                                insertNewService(serv)
-                                .then((ser)=>{
-                                    shel.services.push(<any>ser._id);
-                                    count++;
-                                    if(count==services.length){
-                                        shel.save();
-                                        resolve(true);
-                                    }
-                                })
-                                .catch((err)=>{
-                                    reject(err);
-                                })
-                            }
-                        }
-                    }
-                }else{
-                    resolve(true);
-                }
+                resolveServicesInShelter(shel,services)
+                .then((shelter)=>{
+                    resolveEconomyInShelter(shelter,use,contributions,economy)
+                    .then((shelter)=>{
+                        shelter.save();
+                        resolve(true);
+                    })
+                    .catch((err)=>{
+                        reject(err);
+                    });
+                })
+                .catch((err)=>{
+                    reject(err);
+                });
             }
         })
     });
