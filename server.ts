@@ -8,11 +8,9 @@ import { IShelter, IService, IFile, IOpening } from "./src/app/shared/types/inte
 import { Schema } from "./src/app/shared/types/schema";
 import { Enums } from "./src/app/shared/types/enums";
 import https = require('https');
-//import http = require('http');
 import multer = require('multer');
 import request = require('request');
 import xmldom = require('xmldom');
-//import querystring = require('querystring');
 
 interface IServiceExtended extends IService,mongoose.Document {
     _id:String;

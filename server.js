@@ -7,7 +7,6 @@ var bodyParser = require("body-parser");
 var express = require("express");
 var schema_1 = require("./src/app/shared/types/schema");
 var enums_1 = require("./src/app/shared/types/enums");
-//import http = require('http');
 var multer = require("multer");
 var request = require("request");
 var xmldom = require("xmldom");

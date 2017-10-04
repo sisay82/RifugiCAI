@@ -70,7 +70,7 @@ export class BcMap implements OnInit{
     private expanded:boolean=false;   
     private markerPane= L.featureGroup();
 
-    private base_url:string="http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
+    private base_url:string="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
     private map:Map;
     private divIcon;
 
@@ -124,8 +124,8 @@ export class BcMap implements OnInit{
 
     getMapInit(mapElement:string){
         this.map = new L.Map(mapElement);
-        L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
+        L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="https://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
         }).addTo(this.map);
         this.map.on("click",function(e:any){
             e.target.eachLayer(function(layer){layer.closeTooltip()})
