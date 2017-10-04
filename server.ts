@@ -400,29 +400,31 @@ function resolveServicesInShelter(shelter,services):Promise<IShelterExtended>{
 function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributions:any[],economies:any[]):Promise<IShelterExtended>{
     return new Promise<IShelterExtended>((resolve,reject)=>{
         try{
-            for(let use of uses){
-                let u = shelter.use.filter(obj=>obj.year==use.year)[0];
-                if(u!=null){
-                    u=use;
-                }else{
-                    shelter.use.push(use);
-                }
-            }
-        
-            for(let economy of economies){
-                let e = shelter.economy.filter(obj=>obj.year==economy.year)[0];
-                if(e!=null){
-                    if(!e.confirm){
-                        e=economy;
+            if(uses!=undefined){
+                for(let use of uses){
+                    let u = shelter.use.findIndex(obj=>obj.year==use.year);
+                    if(u>-1){
+                        shelter.use.splice(u,1);
                     }
-                }else{
-                    shelter.economy.push(economy);
+                    shelter.use.push(use);
+                    
                 }
             }
+            
+            if(economies!=undefined){
+                for(let economy of economies){
+                    let e = shelter.economy.findIndex(obj=>obj.year==economy.year);
+                    if(e>-1){
+                        shelter.economy.splice(e,1);
+                    }
+                    shelter.economy.push(economy);
+                    
+                }
+            }
+            
         
             //////////////// contributions
         
-            shelter.save();
             resolve(shelter);
         }catch(e){
             reject(e);
@@ -452,6 +454,7 @@ function updateShelter(id:any,params:IShelterExtended):Promise<boolean>{
                 .then((shelter)=>{
                     resolveEconomyInShelter(shelter,use,contributions,economy)
                     .then((shelter)=>{
+                        shelter.save();
                         resolve(true);
                     })
                     .catch((err)=>{

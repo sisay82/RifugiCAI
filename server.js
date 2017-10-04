@@ -378,36 +378,33 @@ function resolveServicesInShelter(shelter, services) {
 function resolveEconomyInShelter(shelter, uses, contributions, economies) {
     return new Promise(function (resolve, reject) {
         try {
-            var _loop_1 = function (use) {
-                var u = shelter.use.filter(function (obj) { return obj.year == use.year; })[0];
-                if (u != null) {
-                    u = use;
-                }
-                else {
-                    shelter.use.push(use);
-                }
-            };
-            for (var _i = 0, uses_1 = uses; _i < uses_1.length; _i++) {
-                var use = uses_1[_i];
-                _loop_1(use);
-            }
-            var _loop_2 = function (economy) {
-                var e = shelter.economy.filter(function (obj) { return obj.year == economy.year; })[0];
-                if (e != null) {
-                    if (!e.confirm) {
-                        e = economy;
+            if (uses != undefined) {
+                var _loop_1 = function (use) {
+                    var u = shelter.use.findIndex(function (obj) { return obj.year == use.year; });
+                    if (u > -1) {
+                        shelter.use.splice(u, 1);
                     }
+                    shelter.use.push(use);
+                };
+                for (var _i = 0, uses_1 = uses; _i < uses_1.length; _i++) {
+                    var use = uses_1[_i];
+                    _loop_1(use);
                 }
-                else {
+            }
+            if (economies != undefined) {
+                var _loop_2 = function (economy) {
+                    var e = shelter.economy.findIndex(function (obj) { return obj.year == economy.year; });
+                    if (e > -1) {
+                        shelter.economy.splice(e, 1);
+                    }
                     shelter.economy.push(economy);
+                };
+                for (var _a = 0, economies_1 = economies; _a < economies_1.length; _a++) {
+                    var economy = economies_1[_a];
+                    _loop_2(economy);
                 }
-            };
-            for (var _a = 0, economies_1 = economies; _a < economies_1.length; _a++) {
-                var economy = economies_1[_a];
-                _loop_2(economy);
             }
             //////////////// contributions
-            shelter.save();
             resolve(shelter);
         }
         catch (e) {
@@ -438,6 +435,7 @@ function updateShelter(id, params) {
                     .then(function (shelter) {
                     resolveEconomyInShelter(shelter, use, contributions, economy)
                         .then(function (shelter) {
+                        shelter.save();
                         resolve(true);
                     })["catch"](function (err) {
                         reject(err);

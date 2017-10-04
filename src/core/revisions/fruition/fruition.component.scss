@@ -2,3 +2,14 @@
 @import '../../style/palette';
 
 @include bc-typography();
+
+.bc-use-title{
+    margin-bottom: 4px;
+    color:map-get($bc-teal,400 );
+}
+
+.bc-use-input{
+    position:relative;
+    width:30%;
+    margin-left:1%;
+}
