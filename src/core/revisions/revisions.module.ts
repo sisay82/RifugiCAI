@@ -7,6 +7,9 @@ import { BcManagementRevisionModule } from './management/management.module';
 import { BcCatastalRevisionModule } from './catastal/catastal.module';
 import { BcDocRevisionModule } from './documents/document.module';
 import { BcImgRevisionModule } from './images/images.module';
+import { BcFruitionRevisionModule } from './fruition/fruition.module';
+import { BcContributionRevisionModule } from './contributions/contributions.module';
+import { BcEconomyRevisionModule } from './economy/economy.module';
 import { BcRevisions } from "./revisions.component";
 import { RouterModule, Routes } from '@angular/router';
 import { HttpModule } from '@angular/http';
@@ -22,7 +25,10 @@ import { WorkingRevisionPage } from "./pageOnWork/working-revision.module";
         ,BcManagementRevisionModule
         ,BcCatastalRevisionModule
         ,BcDocRevisionModule
-        ,BcImgRevisionModule],
+        ,BcEconomyRevisionModule
+        ,BcFruitionRevisionModule
+        ,BcImgRevisionModule
+        ,BcContributionRevisionModule],
     declarations:[BcRevisions],
     exports: [BcRevisions]
 })

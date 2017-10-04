@@ -109,6 +109,35 @@ var Schema;
         water_availability: { type: enums_1.Enums.Water_Availability },
         droughts: { type: enums_1.Enums.Seasons }
     });
+    Schema.countingEntrySchema = new mongoose.Schema({
+        key: { type: String, required: true },
+        value: { type: Number, required: true },
+        tax: { type: Number, required: true },
+        contribution_type: { type: enums_1.Enums.Contribution_Type }
+    });
+    Schema.fileCountingSchema = new mongoose.Schema({
+        document: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Files'
+        },
+        revenues: [Schema.countingEntrySchema],
+        outgos: [Schema.countingEntrySchema]
+    });
+    Schema.economySchema = new mongoose.Schema({
+        files: [Schema.fileCountingSchema],
+        year: Number,
+        confirm: Boolean,
+        accepted: Boolean
+    });
+    Schema.useSchema = new mongoose.Schema({
+        year: { type: Number, required: true },
+        stay_count_associate: Number,
+        stay_count_reciprocity: Number,
+        stay_count: Number,
+        transit_count_associate: Number,
+        transit_count_reciprocity: Number,
+        transit_count: Number
+    });
     Schema.shelterSchema = new mongoose.Schema({
         name: String,
         alias: String,
@@ -130,7 +159,10 @@ var Schema;
         management: { type: Schema.managementSchema },
         catastal: { type: Schema.catastalSchema },
         energy: { type: Schema.energySchema },
-        drain: { type: Schema.drainSchema }
+        drain: { type: Schema.drainSchema },
+        economy: [Schema.economySchema],
+        use: [Schema.useSchema],
+        contributions: [String]
     });
     Schema.fileSchema = new mongoose.Schema({
         size: Number,
