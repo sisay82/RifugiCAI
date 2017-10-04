@@ -77,7 +77,7 @@ export class BcMap implements OnInit{
     private expanded:boolean=false;   
     private markerPane= L.featureGroup();
 
-    private base_url:string="http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
+    private base_url:string="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
     private map:Map;
     private divIcon;
 
@@ -129,10 +129,10 @@ export class BcMap implements OnInit{
 
     getMapInit(mapElement:string){
         this.map = new L.Map(mapElement);
-        L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
+        L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="https://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
         }).addTo(this.map);
-        this.map.on("click",function(e:L.MouseEvent){
+        this.map.on("click",function(e:any){
             e.target.eachLayer(function(layer){layer.closeTooltip()})
         });
         this.markerPane.addTo(this.map);
@@ -172,7 +172,7 @@ export class BcMap implements OnInit{
         }
     }
 
-    openPopupRegion(event:L.Event){
+    openPopupRegion(event:any){
         this.map.setView(event.target._latlng,9);
     }
 
@@ -180,7 +180,7 @@ export class BcMap implements OnInit{
         this.markerPane.clearLayers();
     }
 
-    moveEvent(event:L.Event){
+    moveEvent(event:any){
         if(event.target.getZoom()>7){
             this.removeMarkers();
             this.setMarkersAround(event.target.getCenter());
@@ -200,7 +200,7 @@ export class BcMap implements OnInit{
                     tooltip.on("click",function(event:Event){
                         this.router.navigateByUrl("/shelter/"+shelter._id);
                     });
-                    let mark=L.marker([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number],{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:L.MouseEvent){
+                    let mark=L.marker([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number],{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:any){
                         let isOpen=e.target.isTooltipOpen();
                         if(isOpen){
                             location.href="/shelter/"+shelter._id+"/(content:geographic)";
