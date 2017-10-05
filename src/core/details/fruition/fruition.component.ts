@@ -11,7 +11,7 @@ import {BcDetailsService} from '../details.service';
 
 
 @Directive({
-  selector:"a[active]",
+  selector:"div[active]",
   host:{
     "[class.bc-tab-active]":"active"
   }
