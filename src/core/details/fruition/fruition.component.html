@@ -1,65 +1,51 @@
 <div class="btn-group btn-group-justified">
-    <a [active]="isActive(use.year)" (click)="showTab(use.year)" class="btn bc-tab-fruition" *ngFor="let use of data">
-        {{use.year}}
-    </a>
+    <ul class="nav navbar-nav" style="width:100%">
+        <li class="navbar-item" *ngFor="let use of data">
+            <div [active]="isActive(use.year)" (click)="showTab(use.year)" style="padding:15px" class="btn bc-body bc-tab-fruition">
+                {{use.year}}
+            </div>
+        </li>
+    </ul>
 </div>
 <bc-divider style="margin-top:0;padding-top:0"></bc-divider>
-<div *ngIf="activeTab!=undefined" style="margin-top:5%">
-    <div style="display:flex;flex-direction:row">
-        <div class="bc-h6 bc-title-fruition" style="flex:1;margin-left:25%;width:25%">
-            <div class="bc-title-center">
-                Soci CAI
-            </div>
+<div *ngIf="activeTab!=undefined" class="bc-fruition-container">
+    <div class="row">
+        <div class="bc-h6 col-md-3 col-md-offset-3 bc-title-fruition" align="center" style="padding:0">
+            Soci CAI
         </div>
-        <div class="bc-h6 bc-title-fruition" style="flex:1;width:25%">
-            <div class="bc-title-center">
-                Soci reciprocità       
-            </div>
+        <div class="bc-h6 col-md-3 bc-title-fruition" align="center" style="padding:0">
+            Soci reciprocità     
         </div>
-        <div class="bc-h6 bc-title-fruition" style="flex:1;width:25%">
-            <div class="bc-title-center">
-                Non soci CAI
-            </div>
+        <div class="bc-h6 col-md-3 bc-title-fruition" align="center" style="padding:0">
+            Non soci CAI
         </div>
     </div>
-    <div style="display:flex;flex-direction:row">
-        <div class="bc-h6 bc-title-fruition" style="flex:1;width:25%">
+    <div class="row">
+        <div class="bc-h6 col-md-3 bc-title-fruition" style="padding-right:0">
             Passaggi e pasti
         </div>
-        <div class="bc-body" style="flex:1;width:25%">
-            <div class="bc-body-fruition">
-                {{activeTab.transit_count_associate?(activeTab.transit_count_associate):0}}
-            </div>
+        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+            {{activeTab.transit_count_associate?(activeTab.transit_count_associate):0}}                    
         </div>
-        <div class="bc-body" style="flex:1;width:25%">
-            <div class="bc-body-fruition">
-                {{activeTab.transit_count_reciprocity?(activeTab.transit_count_reciprocity):0}}
-            </div>
+        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+            {{activeTab.transit_count_reciprocity?(activeTab.transit_count_reciprocity):0}}
         </div>
-        <div class="bc-body" style="flex:1;width:25%">
-            <div class="bc-body-fruition">
-                {{activeTab.transit_count?(activeTab.transit_count):0}}
-            </div>
+        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+            {{activeTab.transit_count?(activeTab.transit_count):0}}
         </div>
     </div>
-    <div style="display:flex;flex-direction:row">
-        <div class="bc-h6 bc-title-fruition" style="flex:1;width:25%">
+    <div class="row">
+        <div class="bc-h6 col-md-3 bc-title-fruition" style="padding-right:0">
             Pernottamenti
         </div>
-        <div class="bc-body" style="flex:1;width:25%">
-            <div class="bc-body-fruition">
-                {{activeTab.stay_count_associate?(activeTab.stay_count_associate):0}}
-            </div>
+        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+            {{activeTab.stay_count_associate?(activeTab.stay_count_associate):0}}
         </div>
-        <div class="bc-body" style="flex:1;width:25%">
-            <div class="bc-body-fruition">
-                {{activeTab.stay_count_reciprocity?(activeTab.stay_count_reciprocity):0}}
-            </div>
+        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+            {{activeTab.stay_count_reciprocity?(activeTab.stay_count_reciprocity):0}}
         </div>
-        <div class="bc-body" style="flex:1;width:25%">
-            <div class="bc-body-fruition">
-                {{activeTab.stay_count?(activeTab.stay_count):0}}
-            </div>
+        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+            {{activeTab.stay_count?(activeTab.stay_count):0}}
         </div>
     </div>
 </div>

@@ -11,20 +11,22 @@
     border-radius:4px;
 }
 
+.bc-fruition-container{
+    margin-top:2.5%;
+    max-width:90%;
+    width:auto;
+    margin-left:5%;
+    margin-right:5%;
+}
+
 .bc-title-fruition{
     color:map-get($bc-teal,400);
-    .bc-title-center{
-        position: relative;
-        left: 25%;
-        transform: translateX(-25%);
-    }
 }
 
 .bc-body-fruition{
     white-space:nowrap;
     position: relative;
-    left: 50%;
-    transform: translateX(-25%);
+    padding:0;
 }
 
 .bc-tab-active{
