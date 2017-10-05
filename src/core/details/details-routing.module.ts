@@ -9,6 +9,9 @@ import { BcManage } from "./management/manage.component";
 import { BcCatastal } from "./catastal/cat.component";
 import { BcDoc } from "./documents/document.component";
 import { BcImg } from "./images/images.component";
+import { BcContributions } from "./contributions/contributions.component";
+import { BcFruition } from "./fruition/fruition.component";
+import { BcEconomy } from "./economy/economy.component";
 import { BcWorkingDetailPage } from "./pageOnWork/working-detail.component";
 
 @NgModule({
@@ -30,6 +33,6 @@ export class DetailsRoutingModule {
     { path: 'images', component: BcImg,outlet:'content' },
     { path: 'economy', component: BcWorkingDetailPage,outlet:'content' },
     { path: 'contribution', component: BcWorkingDetailPage,outlet:'content' },
-    { path: 'use', component: BcWorkingDetailPage,outlet:'content' }
+    { path: 'use', component: BcFruition,outlet:'content' }
   ];
 }

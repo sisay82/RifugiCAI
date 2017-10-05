@@ -88,7 +88,7 @@ export class BcGeo {
               routeSub.unsubscribe();
           }
       });
-  });
+    });
   }
 
   getTag(key:String){

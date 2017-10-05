@@ -1,0 +1,37 @@
+@import '../../style/typography';
+@import '../../style/palette';
+@import '../../style/theme';
+
+@include bc-typography();
+
+.bc-tab-fruition:hover{
+    color:map-get($bc-teal,400);
+    border:1px solid;
+    border-color: $black-12alpha;
+    border-radius:4px;
+}
+
+.bc-fruition-container{
+    margin-top:2.5%;
+    max-width:90%;
+    width:auto;
+    margin-left:5%;
+    margin-right:5%;
+}
+
+.bc-title-fruition{
+    color:map-get($bc-teal,400);
+}
+
+.bc-body-fruition{
+    white-space:nowrap;
+    position: relative;
+    padding:0;
+}
+
+.bc-tab-active{
+    color:map-get($bc-teal,400);
+    border:1px solid;
+    border-radius:4px;
+    border-color: $black-12alpha;
+}

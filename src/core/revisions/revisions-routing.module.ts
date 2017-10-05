@@ -8,6 +8,9 @@ import { BcManagementRevision } from "./management/management.component";
 import { BcCatastalRevision } from "./catastal/catastal.component";
 import { BcDocRevision } from "./documents/document.component";
 import { BcImgRevision } from "./images/images.component";
+import { BcContributionRevision } from "./contributions/contributions.component";
+import { BcEconomyRevision } from "./economy/economy.component";
+import { BcFruitionRevision } from "./fruition/fruition.component";
 import { BcWorkingRevisionPage } from "./pageOnWork/working-revision.component";
 
 @NgModule({
@@ -29,6 +32,6 @@ export class RevisionsRoutingModule {
     { path: 'images', component: BcImgRevision,outlet:'revision' },
     { path: 'economy', component: BcWorkingRevisionPage,outlet:'revision' },
     { path: 'contribution', component: BcWorkingRevisionPage,outlet:'revision' },
-    { path: 'use', component: BcWorkingRevisionPage,outlet:'revision' }
+    { path: 'use', component: BcFruitionRevision,outlet:'revision' }
   ];
 }
