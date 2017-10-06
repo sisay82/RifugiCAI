@@ -104,19 +104,24 @@ $bc-button-border-radius: 2px;
   @include bc-typography-scale-to-styles(bc-typographic-scale(), 'button');
 
   text-align: center;
-  vertical-align: baseline;
-  text-decoration: none;
+  vertical-align: middle;
   white-space: nowrap;
   text-transform: none;
-
   font-kerning: none;
+
+  text-decoration: none;
+  &:hover, &:focus {
+    color: currentColor;
+    text-decoration: none;
+  }
   
-  // transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
 
   & .bc-button-inner {
     @include flex-box();
     @include flex-flow (row);
     
+    height:100%;
     margin: 0px $bc-button-padding-end;
 
     overflow: hidden;
@@ -124,7 +129,6 @@ $bc-button-border-radius: 2px;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    vertical-align: middle;
   }
 
   //Disable button
@@ -150,6 +154,7 @@ $bc-button-border-radius: 2px;
     border-width: 0px;
     color: currentColor;
     text-transform: uppercase;
+    box-shadow: none;
   }
 
   //Button size
