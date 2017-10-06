@@ -23,8 +23,8 @@ interface IFileExtended extends IFile,mongoose.Document{
 }
 
 var DOMParser = xmldom.DOMParser;
-var casBaseUrl = "https://prova.cai.it";
-var authUrl = "https://prova.cai.it/cai-integration-ws/secured/users/";
+var casBaseUrl = "https://accesso.cai.it";
+var authUrl = "https://services.cai.it/cai-integration-ws/secured/users/";
 var serverUrl = "rifugi.cai.it";
 var appPort=8000;
 var appBaseUrl = "http://"+serverUrl;
@@ -113,8 +113,7 @@ function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
             url:authUrl+uuid+'/full',
             method:"GET",
             headers:{
-                "Content-Type":"text/xml",
-                "Authorization":"Basic YXBwcmlmdWdpQGNhaS5pdDp3YXp1eS12dXNBM2E="
+                "Authorization":"Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc="
             },
         },function(err,response,body){
             try{
@@ -1552,7 +1551,7 @@ var server = app.listen(process.env.PORT || appPort, function () {
     console.log("App now running on port", port);
 });
 
-mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/ProvaDB",function(err){
+mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/CaiDB",function(err){
     if(err) {
         console.log("Error connection: "+err);
         server.close(()=>{
