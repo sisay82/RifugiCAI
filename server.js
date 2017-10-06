@@ -7,13 +7,12 @@ var bodyParser = require("body-parser");
 var express = require("express");
 var schema_1 = require("./src/app/shared/types/schema");
 var enums_1 = require("./src/app/shared/types/enums");
-//import http = require('http');
 var multer = require("multer");
 var request = require("request");
 var xmldom = require("xmldom");
 var DOMParser = xmldom.DOMParser;
-var casBaseUrl = "https://prova.cai.it";
-var authUrl = "https://prova.cai.it/cai-integration-ws/secured/users/";
+var casBaseUrl = "https://accesso.cai.it";
+var authUrl = "https://services.cai.it/cai-integration-ws/secured/users/";
 var appPort = 8000;
 var appBaseUrl = "http://localhost:" + appPort;
 var app = express();
@@ -100,8 +99,7 @@ function checkUserPromise(uuid) {
             url: authUrl + uuid + '/full',
             method: "GET",
             headers: {
-                "Content-Type": "text/xml",
-                "Authorization": "Basic YXBwcmlmdWdpQGNhaS5pdDp3YXp1eS12dXNBM2E="
+                "Authorization": "Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc="
             }
         }, function (err, response, body) {
             try {
@@ -1528,7 +1526,7 @@ var server = app.listen(process.env.PORT || appPort, function () {
     var port = server.address().port;
     console.log("App now running on port", port);
 });
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/ProvaDB", function (err) {
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/CaiDB", function (err) {
     if (err) {
         console.log("Error connection: " + err);
         server.close(function () {
