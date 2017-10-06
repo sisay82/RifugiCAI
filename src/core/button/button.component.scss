@@ -77,35 +77,39 @@ $bc-button-border-radius: 2px;
   }
 }
 
+// Base button styles common to all button types.
 .bc-button {
   position: relative;
   z-index: 0;
-
+  
   display: inline-block;
-    
+  
+  // Sizing
   min-width: $bc-button-min-width;
   height: $bc-button-height;
   margin: $bc-button-margin;
   padding: 0px $bc-button-padding-end;
 
-  border: 1px solid transparent;
+  // Reset agent button style
+  outline:none;
+  border: none;
   border-radius: $bc-button-border-radius;
   
   cursor: pointer;
-
+  
+  @include touch-action(manipulation);
+  @include user-select(none);
+  
+  // Make anchors and buttons render like the same.
   @include bc-typography-scale-to-styles(bc-typographic-scale(), 'button');
 
-
   text-align: center;
-  vertical-align: middle;
-  
+  vertical-align: baseline;
+  text-decoration: none;
   white-space: nowrap;
   text-transform: none;
 
   font-kerning: none;
-
-  @include touch-action(manipulation);
-  @include user-select(none);
   
   // transition: all .15s ease-in-out;
 
@@ -120,11 +124,13 @@ $bc-button-border-radius: 2px;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
+    vertical-align: middle;
   }
 
   //Disable button
   &[disabled], &[data-disabled] {
-    cursor: auto;
+    cursor: default;
+    box-shadow: none;
     pointer-events: none;
   }
 
