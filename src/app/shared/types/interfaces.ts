@@ -158,21 +158,7 @@ export interface IDrain{
     droughts?:Enums.Seasons;
 }
 
-export interface ICountingEntry{
-    key:String;
-    value:Number;
-    tax:Number;
-    contribution_type:Enums.Contribution_Type;
-}
-
-export interface IFileCounting{
-    document:IFile;
-    revenues:[ICountingEntry];
-    outgos:[ICountingEntry];
-}
-
 export interface IEconomy{
-    files?:[IFileCounting];
     year:Number;
     confirm?:Boolean;
     accepted?:Boolean;

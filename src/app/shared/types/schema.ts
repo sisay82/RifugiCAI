@@ -118,24 +118,7 @@ export namespace Schema {
         droughts:{type:Enums.Seasons}
     });
 
-    export var countingEntrySchema = new mongoose.Schema({
-        key:{type:String,required:true},
-        value:{type:Number,required:true},
-        tax:{type:Number,required:true},
-        contribution_type:{type:Enums.Contribution_Type}
-    })
-
-    export var fileCountingSchema = new mongoose.Schema({
-        document:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'Files'
-        },
-        revenues:[countingEntrySchema],
-        outgos:[countingEntrySchema]
-    })
-
     export var economySchema = new mongoose.Schema({
-        files:[fileCountingSchema],
         year:{type:Number,required:true},
         confirm:Boolean,
         accepted:Boolean

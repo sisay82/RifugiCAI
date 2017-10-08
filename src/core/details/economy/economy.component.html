@@ -2,7 +2,7 @@
   <ul class="nav navbar-nav" style="width:100%">
       <li class="navbar-item" *ngFor="let obj of economy">
           <div [active]="isActive(obj.year)" (click)="showTab(obj.year)" style="padding:15px" class="btn bc-body bc-tab-economy">
-              {{activeTab.year}}
+              {{obj.year}}
           </div>
       </li>
   </ul>

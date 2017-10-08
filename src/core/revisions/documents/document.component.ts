@@ -91,7 +91,7 @@ export class BcDocRevision extends RevisionBase{
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
         if(!this.maskError){
-          if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty||this.invoicesForm.dirty){
+          if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty||this.invoicesForm.dirty||this.invoicesChange){
             this.save(true);
           }else{
             this.shared.onMaskConfirmSave("documents");
@@ -304,6 +304,7 @@ export class BcDocRevision extends RevisionBase{
           if(id){
             let f=file;
             f._id=id;
+            this.invoicesChange=true;
             (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(f))
             this.commitToFather(f);
           }
@@ -325,7 +326,7 @@ export class BcDocRevision extends RevisionBase{
   }
 
   save(confirm){
-    if(this.invoicesForm.valid){
+    if(this.invoicesForm.valid&&(!this.invoicesChange||(this.invoicesForm.dirty&&this.invoicesChange))){
       this.displayError=false;
       let i=0;
       if(this.invoicesForm.dirty){
