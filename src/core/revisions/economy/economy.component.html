@@ -1,0 +1,68 @@
+<div class="btn-group btn-group-justified">
+    <ul class="nav navbar-nav" style="width:100%">
+        <li class="navbar-item" *ngFor="let obj of economy">
+            <div [active]="isActive(obj.year)" (click)="showTab(obj.year)" style="padding:15px" class="btn bc-body bc-tab-economy">
+                {{obj.year}}
+            </div>
+        </li>
+    </ul>
+</div>
+<div *ngIf="activeTab!=undefined">
+    <div class="bc-h6">
+        <span class="bc-title-economy">Stato patrimoniale: </span>
+        <span>{{balanceSheet | formatcurrency}}</span>
+    </div>
+    <bc-divider></bc-divider>
+    <div *ngIf="contributions&&contributions.length>0">
+        <p class="bc-h6 bc-title-economy">Contributi:</p>
+        <div style="display:flex; flex-direction:row;">
+        <div *ngFor="let contr of contributions; let i=index" style="flex:1" class="bc-body">
+            Contributo {{i+1}}: {{contr.value | formatcurrency}}
+        </div>
+        </div>
+        <bc-divider></bc-divider>
+    </div>
+    <div style="display:flex; flex-direction:row;">
+        <div style="flex:1">
+        <bc-list color="accent">
+            <bc-list-header><span>Attività</span><span>Totale: {{revenues | formatcurrency}}</span></bc-list-header>
+            <bc-list-item *ngFor="let item of activeTab.revenues">
+            <div bc-line style="display:flex; flex-direction:row;">
+                <a style="flex:1; text-decoration: none;">{{item.key}}</a>
+                <span>Totale: </span><span>getTotal(item.value,item.tax) | formatcurrency</span>
+            </div>
+            <div bc-line style="display:flex; flex-direction:row;">
+                <div style="flex:1">Tipo contributo: {{item.contribution_type}}</div>
+                <div style="flex:1">Imponibile: {{item.value | formatcurrency}}</div>
+                <div style="flex:1">IVA: {{item.tax}}</div>
+            </div>
+            </bc-list-item>
+        </bc-list>
+        </div>
+        <div style="flex:1">
+        <bc-list>
+            <bc-list-header><span>Passività</span><span>Totale: {{outgos | formatcurrency}}</span></bc-list-header>
+            <bc-list-item *ngFor="let item of activeTab.outgos">
+                <div bc-line style="display:flex; flex-direction:row;">
+                    <a style="flex:1; text-decoration: none;">{{item.key}}</a>
+                    <span>Totale: </span><span>getTotal(item.value,item.tax) | formatcurrency</span>
+                </div>
+                <div bc-line style="display:flex; flex-direction:row;">
+                    <div style="flex:1">Tipo contributo: {{item.contribution_type}}</div>
+                    <div style="flex:1">Imponibile: {{item.value | formatcurrency}}</div>
+                    <div style="flex:1">IVA: {{item.tax}}</div>
+                </div>
+            </bc-list-item>
+        </bc-list>
+        </div>
+    </div>
+    <div *ngIf="checkPermissions()" class="btn-group btn-group-justified">
+        <ul class="nav navbar-nav" style="width:100%">
+            <li class="navbar-item">
+                <div [disabled]="isDisabled()" (click)="confirmEconomy(activeTab.year)" style="padding:15px" class="btn bc-body bc-confirm-button">
+                    Convalida
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

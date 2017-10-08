@@ -21,6 +21,7 @@ export class BcMaskRevision {
   @Input() shelter:IShelter;
   maskForm: FormGroup; 
   formValiditySub:Subscription;
+  maskSaveTriggerSub:Subscription;
   displayErrorSub:Subscription;
   displayError:boolean=false;
   newShelter:boolean=false;
@@ -35,6 +36,10 @@ export class BcMaskRevision {
         category:[""],
         regional_type:[""],
     }); 
+
+    this.maskSaveTriggerSub = this.shared.sendMaskSave$.subscribe(()=>{
+     // this.save();
+    });
 
     this.formValiditySub = this.maskForm.statusChanges.subscribe((value)=>{
       if(value=="VALID"){
