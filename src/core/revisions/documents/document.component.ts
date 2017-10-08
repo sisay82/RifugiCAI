@@ -23,13 +23,15 @@ export class BcDocRevision extends RevisionBase{
   newDocForm: FormGroup;
   newMapForm: FormGroup;
   newInvoiceForm: FormGroup;
+  invoicesForm: FormGroup;
   invoceFormatRegExp=<RegExp>/.+[,\/\-\\.\|_].+[,\/\-\\.\|_].+/  
   docs:IFile[]=[];
   maps:IFile[]=[];
-  invoices:IFile[]=[];
+  invoicesChange:boolean=false;
   invalid:boolean=false;
   docFormValidSub:Subscription;
   mapFormValidSub:Subscription;
+  invoicesFormValidSub:Subscription;
   invoiceFormValidSub:Subscription;
   hiddenTag:boolean=true;
   uploading:boolean=false;
@@ -51,33 +53,45 @@ export class BcDocRevision extends RevisionBase{
       file:[]
     });
 
+    this.invoicesForm = fb.group({
+      files:fb.array([])
+    });
+
     this.docFormValidSub = this.newDocForm.statusChanges.subscribe(value=>{
       if(value=="VALID"){
-          if(!this.maskError){
-              this.displayError=false;
-          }
+        if(!this.maskError){
+            this.displayError=false;
+        }
       }
     });
 
     this.invoiceFormValidSub = this.newInvoiceForm.statusChanges.subscribe(value=>{
       if(value=="VALID"){
-          if(!this.maskError){
-              this.displayError=false;
-          }
+        if(!this.maskError){
+            this.displayError=false;
+        }
+      }
+    });
+
+    this.invoicesFormValidSub = this.invoicesForm.statusChanges.subscribe(value=>{
+      if(value=="VALID"){
+        if(!this.maskError){
+            this.displayError=false;
+        }
       }
     });
 
     this.mapFormValidSub = this.newMapForm.statusChanges.subscribe(value=>{
       if(value=="VALID"){
-          if(!this.maskError){
-              this.displayError=false;
-          }
+        if(!this.maskError){
+            this.displayError=false;
+        }
       }
     });
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
         if(!this.maskError){
-          if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty){
+          if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty||this.invoicesForm.dirty){
             this.save(true);
           }else{
             this.shared.onMaskConfirmSave("documents");
@@ -92,7 +106,15 @@ export class BcDocRevision extends RevisionBase{
   }
 
   checkValidForm(){
-    return this.newDocForm.valid&&this.newInvoiceForm.valid&&this.newMapForm.valid;
+    return this.newDocForm.valid&&this.newInvoiceForm.valid&&this.newMapForm.valid&&this.invoicesForm.valid;
+  }
+
+  getTotal(value,tax){
+    if(tax>1){
+      return (value*(tax/100))+value;
+    }else{
+      return (value*tax)+value;
+    }
   }
 
   getKeys(enumName){
@@ -152,13 +174,13 @@ export class BcDocRevision extends RevisionBase{
     })
   }
 
-  removeInvoice(id){
+  removeInvoice(index,id){
     this.commitToFather({_id:id,type:Enums.File_Type.invoice},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
       }else{
-        this.invoices.splice(this.invoices.findIndex(file=>file._id==id),1);
+        (<FormArray>this.invoicesForm.controls.files).removeAt(index);
       }
       if(removeFileSub!=undefined){
         removeFileSub.unsubscribe();
@@ -249,6 +271,19 @@ export class BcDocRevision extends RevisionBase{
     return true// invoceFormatRegExp.test(value);
   }
 
+  initInvoice(file:IFile){
+    return this.fb.group({
+      _id:[file._id],
+      name:[file.name],
+      size:[file.size],
+      invoice_type:[file.invoice_type||""],
+      invoice_tax:[file.invoice_tax||""],
+      invoice_year:[file.invoice_year||""],
+      contribution_type:[file.contribution_type||""],
+      value:[file.value||""]
+    });
+  }
+
   addInvoice(){
     if(this.newInvoiceForm.valid&&this.testInvoiceName(<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value)){
       this.uploading=true;
@@ -269,7 +304,7 @@ export class BcDocRevision extends RevisionBase{
           if(id){
             let f=file;
             f._id=id;
-            this.invoices.push(f);
+            (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(f))
             this.commitToFather(f);
           }
           this.uploading=false;
@@ -290,10 +325,48 @@ export class BcDocRevision extends RevisionBase{
   }
 
   save(confirm){
-    this.displayError=false;
-    if(confirm){
-        this.shared.onMaskConfirmSave("documents");
+    if(this.invoicesForm.valid){
+      this.displayError=false;
+      let i=0;
+      if(this.invoicesForm.dirty){
+        for(let file of (<FormArray>this.invoicesForm.controls.files).controls){
+          if(file.dirty){
+            let updFile:IFile={
+              _id:file.value._id,
+              name:file.value.name,
+              size:file.value.size,
+              type:file.value.type,
+              value:file.value.value,
+              contentType:file.value.contentType,
+              description:file.value.description,
+              shelterId:this._id,
+              invoice_tax:file.value.invoice_tax,
+              invoice_type:file.value.invoice_type,
+              invoice_year:file.value.invoice_year,
+              contribution_type:file.value.contribution_type
+            }
+            this.shelterService.updateFile(updFile).subscribe((val)=>{
+              if(val){
+                i++;
+                if((<FormArray>this.invoicesForm.controls.files).controls.length==i&&confirm){
+                  this.shared.onMaskConfirmSave("documents");
+                }
+              }
+            });
+            this.revisionService.onChildSaveFile(updFile);
+          }
+        }
+
+      }else{
+        this.displayError=false;
+        if(confirm){
+            this.shared.onMaskConfirmSave("documents");
+        }
+      }
+    }else{
+      this.displayError=true;
     }
+    
   }
 
   downloadFile(id){
@@ -335,11 +408,11 @@ export class BcDocRevision extends RevisionBase{
     for(let file of files){
       if(file.type!=undefined){
         if(file.type==Enums.File_Type.doc){
-            this.docs.push(file);       
+          this.docs.push(file);       
         }else if(file.type==Enums.File_Type.map){
-            this.maps.push(file);
+          this.maps.push(file);
         }else if(file.type==Enums.File_Type.invoice){
-            this.invoices.push(file);
+          (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(file));
         }
       }
     }

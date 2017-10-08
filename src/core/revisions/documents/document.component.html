@@ -55,21 +55,36 @@
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
 <bc-divider></bc-divider>
-<div class="bc-h6 bc-doc-title">Fatture</div>
+<div class="bc-h6 bc-doc-title">Documentazione amministrativa</div>
 <div class="bc-body-strong" style="font-style:italic">I file vanno rinominati nel seguente modo: fornitore, numero, data</div>
-<div *ngFor="let file of invoices" >
-    <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-        <bc-icon (click)="removeInvoice(file._id)" class="bc-file" name="times" size=s></bc-icon>
-        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-            <div class="bc-body-strong">Nome:</div>
-            <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>
-        </div>
-        <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-            <div class="bc-body-strong">Dimensione:</div>
-            <div style="margin-left:1%" class="bc-body"> {{file.size | formatsize}}</div>
+<form [formGroup]="invoicesForm">
+    <div formArrayName="files">
+        <div *ngFor="let file of invoicesForm.controls.files.controls;let i = index">
+            <div [formGroupName]="i">
+                <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+                    <bc-icon (click)="removeInvoice(i,file.value._id)" class="bc-file" name="times" size=s></bc-icon>
+                    <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+                        <div class="bc-body-strong">Nome:</div>
+                        <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.value.name}}</div>
+                    </div>
+                    <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+                        <div class="bc-body-strong">Dimensione:</div>
+                        <div style="margin-left:1%" class="bc-body"> {{file.value.size | formatsize}}</div>
+                    </div>
+                </div>
+                <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+                    <bc-text-input required="true" title="Imponibile" formControlName="value" validator="numberValidator" [displayError]="displayError"></bc-text-input>    
+                    <bc-text-input required="true" title="IVA" formControlName="invoice_tax" validator="numberValidator" [displayError]="displayError"></bc-text-input>   
+                    <bc-text-input required="true" title="Anno" formControlName="invoice_year" validator="numberValidator" [displayError]="displayError"></bc-text-input>   
+                </div>
+                <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+                    <bc-select-input required="true" title="Tipo di contributo" defaultContent="Es: FondoStabile" enumName="Contribution_Type" formControlName="contribution_type" [displayError]="displayError"></bc-select-input>
+                    <bc-select-input required="true" title="Tipo di fattura" defaultContent="Es: Attività" enumName="Invoice_Type" formControlName="invoice_type" [displayError]="displayError"></bc-select-input>    
+                </div>
+            </div>  
         </div>
     </div>
-</div>
+</form>
 <div class="bc-body bc-file" (click)="toggleFile(2)" style="display:inline;white-space:nowrap;flex:1">
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
     Aggiungi Fattura

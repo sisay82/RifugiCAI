@@ -99,7 +99,7 @@ function queryFileById(id):Promise<IFileExtended>{
 
 function queryFilesByShelterId(id):Promise<IFileExtended[]>{
     return new Promise<IFileExtended[]>((resolve,reject)=>{
-        Files.find({"shelterId":id,type:{$not:{$in:[Enums.File_Type.image]}}},"name size contentType type description value").exec((err,ris)=>{
+        Files.find({"shelterId":id,type:{$not:{$in:[Enums.File_Type.image]}}},"name size contentType type description value invoice_tax invoice_year contribution_type invoice_type").exec((err,ris)=>{
             if(err){
                 reject(err);
             }else{
@@ -327,9 +327,19 @@ function insertNewService(params):Promise<IServiceExtended>{
  * UPDATE
  */
 
-function updateFile(id:any,description:String):Promise<boolean>{
+function updateFile(id:any,file):Promise<boolean>{
     return new Promise<boolean>((resolve,reject)=>{
-        Files.findByIdAndUpdate(id,{$set:{description:description}}).exec((err,res)=>{
+        let query={
+            $set:{
+                contribution_type:file.contribution_type||null,
+                invoice_year:file.invoice_year||null,
+                invoice_tax:file.invoice_tax||null,
+                invoice_type:file.invoice_type||null,
+                value:file.value||null
+            }
+        }
+
+        Files.findByIdAndUpdate(id,query).exec((err,res)=>{
             if(err){
                 reject(err);
             }else{
@@ -422,8 +432,12 @@ function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributio
                 }
             }
             
-        
-            //////////////// contributions
+            if(contributions!=undefined){
+                shelter.contributions.concat(
+                    contributions.filter(obj=>shelter.contributions.indexOf(obj)==-1)
+                )
+                
+            }
         
             resolve(shelter);
         }catch(e){
@@ -777,24 +791,54 @@ fileRoute.route("/shelters/file/:id")
     })
 })
 .put(function(req,res){
-    let shel = SheltersToUpdate.filter(obj=>obj.shelter._id==req.body.shelId)[0];
-    if(shel!=undefined){
-        let file = shel.files.filter(f=>f._id==req.params.id)[0];
-        if(file!=undefined){
-            file.description=req.body.description;
+    let updFile:IFile=req.body.file;  
+    if(updFile){
+        let shel = SheltersToUpdate.filter(obj=>obj.shelter._id==updFile.shelterId)[0];
+        if(shel!=undefined){
+            let file = shel.files.filter(f=>f._id==req.params.id)[0];
+            if(file!=undefined){
+                file.contribution_type=updFile.contribution_type;
+                file.invoice_year=updFile.invoice_year;
+                file.invoice_tax=updFile.invoice_tax;
+                file.invoice_type=updFile.invoice_type;
+                file.description=updFile.description;
+                file.value=updFile.value;
+            }else{
+                let newF={
+                    _id:req.params.id,
+                    update:true,
+                    contribution_type:updFile.contribution_type,
+                    invoice_year:updFile.invoice_year,
+                    invoice_tax:updFile.invoice_tax,
+                    invoice_type:updFile.invoice_type,
+                    description:updFile.description,
+                    value:updFile.value
+                };
+                shel.files.push(newF);
+            }
         }else{
-            shel.files.push({_id:req.params.id,description:req.body.description,update:true})
+            let shelter:any={_id:updFile.shelterId};
+            let newF={
+                _id:req.params.id,
+                update:true,
+                contribution_type:updFile.contribution_type,
+                invoice_year:updFile.invoice_year,
+                invoice_tax:updFile.invoice_tax,
+                invoice_type:updFile.invoice_type,
+                description:updFile.description,
+                value:updFile.value
+            };
+    
+            SheltersToUpdate.push({
+                watchDog:new Date(Date.now()),
+                shelter:shelter,
+                files:[newF]
+            });
         }
-        
+        res.status(200).send(true);
     }else{
-        let shelter:any={_id:req.body.shelId}
-        SheltersToUpdate.push({
-            watchDog:new Date(Date.now()),
-            shelter:shelter,
-            files:[{_id:req.params.id,description:req.body.description,update:true}]
-        });
+        res.status(500).send({error:"Incorrect request"});
     }
-    res.status(200).send(true);
 })
 .delete(function(req,res){
     deleteFile(req.params.id)
@@ -1030,7 +1074,7 @@ appRoute.route("/shelters/confirm/:id")
                                     });
                                 }else{
                                     if(!file.new&&file.update!=undefined&&file.update){
-                                        updateFile(file._id,file.description)
+                                        updateFile(file._id,file)
                                         .then(value=>{
                                             j++;
                                             if(j==i){
@@ -1212,7 +1256,7 @@ var server = app.listen(appPort, function () {
 });
 
 //"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
-mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/ProvaDB",function(err){
+mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/CaiDB",function(err){
     if(err) {
         console.log("Error connection: "+err);
         server.close(()=>{

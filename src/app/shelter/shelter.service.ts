@@ -12,8 +12,8 @@ import { Enums  } from '../shared/types/enums';
 @Injectable()
 export class ShelterService {
 
-    sheltersBaseUrl: string = '/api/shelters';
-    //sheltersBaseUrl: string = 'http://localhost:27010/api/shelters';
+    //sheltersBaseUrl: string = '/api/shelters';
+    sheltersBaseUrl: string = 'http://localhost:27010/api/shelters';
     //sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
@@ -127,8 +127,8 @@ export class ShelterService {
             .catch(this.handleError);
     }
 
-    updateFile(id,shelId,description):Observable<boolean>{
-        return this.http.put(this.sheltersBaseUrl+"/file/"+id,{description:description,shelId:shelId})
+    updateFile(file:IFile):Observable<boolean>{
+        return this.http.put(this.sheltersBaseUrl+"/file/"+file._id,{file:file})
             .map((res:Response)=>res.json())
             .catch(this.handleError);
     }

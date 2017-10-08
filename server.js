@@ -1182,7 +1182,7 @@ var server = app.listen(appPort, function () {
     console.log("App now running on port", port);
 });
 //"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/ProvaDB", function (err) {
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/CaiDB", function (err) {
     if (err) {
         console.log("Error connection: " + err);
         server.close(function () {
