@@ -96,6 +96,7 @@ export class BcEconomy {
         }
         
       });
+      this.economy=this.economy.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;})
       resolve()
     });
   }

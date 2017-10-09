@@ -102,7 +102,26 @@ export class BcEconomyRevision extends RevisionBase{
     this.statusChange=true;
     this.disableSave=true;
     this.economy.find(obj=>obj.year==this.activeYear).confirm=true;
-    this.shared.onSendMaskSave();
+    let i=0;
+    let files:IFile[]=this.revenuesFiles.filter(obj=>obj.invoice_year==this.activeYear).concat(this.outgosFiles.filter(obj=>obj.invoice_year==this.activeYear))
+    if(files.length>0){
+      for(let file of files){
+        file.invoice_confirmed=true;
+        file.shelterId=this._id;
+        this.shelterService.updateFile(file).subscribe((val)=>{
+          if(val){
+            i++;
+            if(files.length==i){
+              this.shared.onSendMaskSave();
+            }
+          }
+        });
+        this.revisionService.onChildSaveFile(file);
+      }
+    }else{
+      this.shared.onSendMaskSave();
+    }
+    
   }
 
   checkPermissions(){
@@ -173,10 +192,11 @@ export class BcEconomyRevision extends RevisionBase{
     return new Promise<any>((resolve,reject)=>{
       files.forEach(file=>{
         if(!this.economy.find(obj=>obj.year==file.invoice_year)){
-          this.economy.push({year:file.invoice_year,accepted:false,confirm:false});
+          this.economy.push({year:file.invoice_year,confirm:false});
         }
         
       });
+      this.economy=this.economy.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;})
       resolve()
     });
   }
@@ -206,7 +226,7 @@ export class BcEconomyRevision extends RevisionBase{
   getEconomy(id):Promise<IShelter>{
     return new Promise<IShelter>((resolve,reject)=>{
         let revSub=this.revisionService.load$.subscribe(shelter=>{
-          if(shelter!=null&&shelter.use!=undefined){
+          if(shelter!=null&&shelter.economy!=undefined){
               if(revSub!=undefined){
                   revSub.unsubscribe();
               }
@@ -231,7 +251,7 @@ export class BcEconomyRevision extends RevisionBase{
   getContributions(id):Promise<IShelter>{
     return new Promise<IShelter>((resolve,reject)=>{
         let revSub=this.revisionService.load$.subscribe(shelter=>{
-          if(shelter!=null&&shelter.use!=undefined){
+          if(shelter!=null&&shelter.contributions!=undefined){
               if(revSub!=undefined){
                   revSub.unsubscribe();
               }

@@ -178,6 +178,7 @@ export namespace Schema {
         contribution_type:{type:Enums.Contribution_Type},
         invoice_year:Number,
         invoice_tax:Number,
+        invoice_confirmed:Boolean,
         invoice_type:{type:Enums.Invoice_Type},
         contentType:String,
         type:{type:Enums.File_Type},

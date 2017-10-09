@@ -38,7 +38,7 @@ export class BcMaskRevision {
     }); 
 
     this.maskSaveTriggerSub = this.shared.sendMaskSave$.subscribe(()=>{
-     // this.save();
+      this.save();
     });
 
     this.formValiditySub = this.maskForm.statusChanges.subscribe((value)=>{
@@ -181,6 +181,9 @@ export class BcMaskRevision {
     }
     if(this.displayErrorSub!=undefined){
       this.displayErrorSub.unsubscribe();
+    }
+    if(this.maskSaveTriggerSub!=undefined){
+      this.maskSaveTriggerSub.unsubscribe();
     }
   }
 

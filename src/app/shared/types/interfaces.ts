@@ -217,7 +217,8 @@ export interface IFile{
     data?:Buffer;
     invoice_type?:Enums.Invoice_Type;
     invoice_tax?:Number;
-    invoice_year?:Number
+    invoice_year?:Number;
+    invoice_confirmed?:Boolean;
     contribution_type?:Enums.Contribution_Type;
     contentType?:String;
     type?:Enums.File_Type;

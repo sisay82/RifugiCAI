@@ -35,6 +35,7 @@ export class BcDocRevision extends RevisionBase{
   invoiceFormValidSub:Subscription;
   hiddenTag:boolean=true;
   uploading:boolean=false;
+  disableSave:boolean=false;
   currentFileToggle:number=-1;
   sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
@@ -91,6 +92,7 @@ export class BcDocRevision extends RevisionBase{
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
         if(!this.maskError){
+          this.disableSave=true;
           if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty||this.invoicesForm.dirty||this.invoicesChange){
             this.save(true);
           }else{
@@ -175,17 +177,19 @@ export class BcDocRevision extends RevisionBase{
   }
 
   removeInvoice(index,id){
-    this.commitToFather({_id:id,type:Enums.File_Type.invoice},true);
-    let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
-      if(!value){
-        console.log(value);
-      }else{
-        (<FormArray>this.invoicesForm.controls.files).removeAt(index);
-      }
-      if(removeFileSub!=undefined){
-        removeFileSub.unsubscribe();
-      }
-    });
+    if(!(<FormArray>this.invoicesForm.controls.files).at(index).disabled){
+      this.commitToFather({_id:id,type:Enums.File_Type.invoice},true);
+      let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
+        if(!value){
+          console.log(value);
+        }else{
+          (<FormArray>this.invoicesForm.controls.files).removeAt(index);
+        }
+        if(removeFileSub!=undefined){
+          removeFileSub.unsubscribe();
+        }
+      });
+    }
   }
 
   addDoc(){
@@ -274,6 +278,9 @@ export class BcDocRevision extends RevisionBase{
   initInvoice(file:IFile){
     return this.fb.group({
       _id:[file._id],
+      contentType:[file.contentType],
+      type:[file.type],
+      description:[file.description],
       name:[file.name],
       size:[file.size],
       invoice_type:[file.invoice_type||""],
@@ -305,7 +312,7 @@ export class BcDocRevision extends RevisionBase{
             let f=file;
             f._id=id;
             this.invoicesChange=true;
-            (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(f))
+            (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(f));
             this.commitToFather(f);
           }
           this.uploading=false;
@@ -322,7 +329,9 @@ export class BcDocRevision extends RevisionBase{
   }
 
   commitToFather(file:IFile,remove?:Boolean){
-    this.revisionService.onChildSaveFile({name:file.name,size:file.size,_id:file._id,type:file.type,value:file.value,contentType:file.contentType,description:file.description},remove)
+    let f:IFile = file;
+    delete(f.data);
+    this.revisionService.onChildSaveFile(f,remove)
   }
 
   save(confirm){
@@ -354,7 +363,7 @@ export class BcDocRevision extends RevisionBase{
                 }
               }
             });
-            this.revisionService.onChildSaveFile(updFile);
+            this.commitToFather(updFile);
           }
         }
 
@@ -385,6 +394,9 @@ export class BcDocRevision extends RevisionBase{
   }
 
   ngOnDestroy() {
+    if(!this.disableSave){
+      this.save(false);
+    }
     if(this.maskSaveSub!=undefined){
       this.maskSaveSub.unsubscribe();
     }
@@ -405,7 +417,7 @@ export class BcDocRevision extends RevisionBase{
     }
   }
 
-  initData(files){
+  initData(files:IFile[]){
     for(let file of files){
       if(file.type!=undefined){
         if(file.type==Enums.File_Type.doc){
@@ -414,6 +426,9 @@ export class BcDocRevision extends RevisionBase{
           this.maps.push(file);
         }else if(file.type==Enums.File_Type.invoice){
           (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(file));
+          if(file.invoice_confirmed){
+            (<FormArray>this.invoicesForm.controls.files).controls.find(obj=>file._id==obj.value._id).disable();
+          }
         }
       }
     }
