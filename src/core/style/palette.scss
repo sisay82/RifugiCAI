@@ -1,19 +1,20 @@
 $black: #000000;
 $white: #ffffff;
-$black-87alpha: rgba(0, 0, 0, 0.87);
-$white-87alpha: rgba(255, 255, 255, 0.87);
-$black-12alpha: rgba(0, 0, 0,  0.12);
-$white-12alpha: rgba(255, 255, 255, 0.12);
-$black-6alpha: rgba(0, 0, 0, 0.06);
-$white-6alpha: rgba(255, 255, 255, 0.06);
 
 $black-4alpha: rgba(0, 0, 0, 0.04);
+$black-6alpha: rgba(0, 0, 0, 0.06);
+$black-12alpha: rgba(0, 0, 0,  0.12);
+$black-26alpha: rgba(0, 0, 0,  0.26);
 $black-38alpha: rgba(0, 0, 0,  0.38);
 $black-54alpha: rgba(0, 0, 0,  0.54);
+$black-87alpha: rgba(0, 0, 0, 0.87);
 
 $white-4alpha: rgba(255, 255, 255, 0.04);
+$white-6alpha: rgba(255, 255, 255, 0.06);
+$white-12alpha: rgba(255, 255, 255, 0.12);
 $white-30alpha: rgba(255, 255, 255, 0.3);
 $white-70alpha: rgba(255, 255, 255, 0.7);
+$white-87alpha: rgba(255, 255, 255, 0.87);
 
 $bc-grey-cai: (
   0: #ffffff,
@@ -249,7 +250,7 @@ $bc-light-theme-foreground: (
   base:            $black,
   divider:         $black-12alpha,
   dividers:        $black-12alpha,
-  disabled:        $black-38alpha,
+  disabled:        $black-26alpha,
   hint-text:       $black-38alpha,
   secondary-text:  $black-54alpha,
   icon:            $black-54alpha,

@@ -20,58 +20,48 @@ $bc-button-border-radius: 2px;
   @if ($lightness > 50) {
     $shade: #000;
   }
-  // background: bc-color($palette);
-  // color: bc-color($palette, default-contrast);
+
   background: $background;
   color: $foreground;
 
   &:hover, &:focus {
     background: mix($shade, $background, 12%);
-    //color: mix(complement($shade), $foreground, 26%);
+
   }
   &:active {
     background: mix($shade, $background, 22%);
-    //color: mix(complement($shade), $foreground, 26%);
   }
 }
 
 @mixin bc-button-theme($theme) {
-  $primary: map-get($theme, primary);
-  $accent: map-get($theme, accent);
-  $info: map-get($theme, info);
-  $success: map-get($theme, success);
-  $warn: map-get($theme, warn);
-  $danger: map-get($theme, danger);
+  $paletteTypes: primary,accent,info,success,warn,danger;
   $background: map-get($theme, background);
   $foreground: map-get($theme, foreground);
 
   .bc-button {
-    @include bc-button-color(bc-color($background, raised-button), bc-color($foreground, text));
-    box-shadow: 0px 0px 1px 0px rgba(black, 0.2),0px 1px 1px 0px rgba(black, 0.14),0px 1px 2px 0px rgba(black, 0.12);
+    &.bc-solid {
+      @include bc-button-color(bc-color($background, raised-button), bc-color($foreground, text));
+      
+      box-shadow: 0px 0px 1px 0px rgba(black, 0.2),0px 1px 1px 0px rgba(black, 0.14),0px 1px 2px 0px rgba(black, 0.12);
 
-    &.bc-primary {
-      @include bc-button-color(bc-color($primary), bc-color($primary, default-contrast));
+      &.disabled, &[disabled], &[data-disabled] {
+        background: bc-color($background, disabled);
+      }
     }
 
-    &.bc-accent {
-      @include bc-button-color(bc-color($accent), bc-color($accent, default-contrast));
+    @each $palette in $paletteTypes {
+      $paletteColorSet: map-get($theme, $palette);
+
+      &.bc-#{$palette} {
+        @include bc-button-color(transparent, bc-color($paletteColorSet));
+
+        &.bc-solid {
+          @include bc-button-color(bc-color($paletteColorSet), bc-color($paletteColorSet, default-contrast));
+        }
+      }
     }
     
-    &.bc-info {
-      @include bc-button-color(bc-color($info), bc-color($info, default-contrast));
-    }
-    &.bc-success {
-      @include bc-button-color(bc-color($success), bc-color($success, default-contrast));
-    }
-    &.bc-warn {
-      @include bc-button-color(bc-color($warn), bc-color($warn, default-contrast));
-    }
-    &.bc-danger {
-      @include bc-button-color(bc-color($danger), bc-color($danger, default-contrast));
-    }
-
-    &[disabled], &[data-disabled] {
-      background: bc-color($background, disabled);
+    &.disabled, &[disabled], &[data-disabled] {
       color: bc-color($foreground, disabled);
     }
   }
@@ -91,12 +81,16 @@ $bc-button-border-radius: 2px;
   padding: 0px $bc-button-padding-end;
 
   // Reset agent button style
-  outline:none;
+  background-color: transparent;
+  color: currentColor;
+  outline: none;
   border: none;
   border-radius: $bc-button-border-radius;
-  
+  box-shadow: none;
+
   cursor: pointer;
   
+
   @include touch-action(manipulation);
   @include user-select(none);
   
@@ -111,7 +105,6 @@ $bc-button-border-radius: 2px;
 
   text-decoration: none;
   &:hover, &:focus {
-    color: currentColor;
     text-decoration: none;
   }
   
@@ -138,23 +131,18 @@ $bc-button-border-radius: 2px;
     pointer-events: none;
   }
 
-  //Button size
+  //Button type
   &.bc-outline {
-    background-color: transparent;
     border-color: currentColor;
     border-style: solid;
     border-width: 1px;
-    color: currentColor;
   }
 
   &.bc-clear {
-    background-color: transparent;
     border-color: currentColor;
     border-style: none;
     border-width: 0px;
-    color: currentColor;
     text-transform: uppercase;
-    box-shadow: none;
   }
 
   //Button size

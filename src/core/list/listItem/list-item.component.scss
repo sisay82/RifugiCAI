@@ -249,6 +249,9 @@ $bc-list-item-heights: (
         color: bc-color($foreground, 'disabled');
         background: bc-color($background, 'disabled');
         border-color: bc-color($background, 'disabled');
+        .bc-icon {
+            color:  bc-color($foreground, 'disabled');
+        }
     }
 }
 
