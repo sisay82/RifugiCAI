@@ -22,6 +22,7 @@ interface IFileExtended extends IFile,mongoose.Document{
     _id:String;
 }
 
+(<any>mongoose.Promise)=global.Promise;
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://accesso.cai.it";
 var authUrl = "https://services.cai.it/cai-integration-ws/secured/users/";
@@ -245,7 +246,7 @@ function queryFileById(id):Promise<IFileExtended>{
 
 function queryFilesByShelterId(id):Promise<IFileExtended[]>{
     return new Promise<IFileExtended[]>((resolve,reject)=>{
-        Files.find({"shelterId":id,type:{$not:{$in:[Enums.File_Type.image]}}},"name size contentType type description value").exec((err,ris)=>{
+        Files.find({"shelterId":id,type:{$not:{$in:[Enums.File_Type.image]}}},"name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec((err,ris)=>{
             if(err){
                 reject(err);
             }else{
@@ -269,7 +270,7 @@ function queryImagesByShelterId(id):Promise<IFileExtended[]>{
 
 function queryAllFiles():Promise<IFileExtended[]>{
     return new Promise<IFileExtended[]>((resolve,reject)=>{
-        Files.find({type:{$not:{$in:[Enums.File_Type.image]}}},"name size contentType type description value").exec((err,ris)=>{
+        Files.find({type:{$not:{$in:[Enums.File_Type.image]}}},"name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec((err,ris)=>{
             if(err){
                 reject(err);
             }else{
@@ -473,9 +474,24 @@ function insertNewService(params):Promise<IServiceExtended>{
  * UPDATE
  */
 
-function updateFile(id:any,description:String):Promise<boolean>{
+function updateFile(id:any,file):Promise<boolean>{
     return new Promise<boolean>((resolve,reject)=>{
-        Files.findByIdAndUpdate(id,{$set:{description:description}}).exec((err,res)=>{
+        let query={
+            $set:{
+                contribution_type:file.contribution_type||null,
+                invoice_year:file.invoice_year||null,
+                invoice_tax:file.invoice_tax||null,
+                invoice_type:file.invoice_type||null,
+                invoice_confirmed:file.invoice_confirmed||null,
+                value:file.value||null
+            }
+        }
+
+        for(let prop in file){
+
+        }
+
+        Files.findByIdAndUpdate(id,query).exec((err,res)=>{
             if(err){
                 reject(err);
             }else{
@@ -548,9 +564,9 @@ function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributio
         try{
             if(uses!=undefined){
                 for(let use of uses){
-                    let u = shelter.use.findIndex(obj=>obj.year==use.year);
-                    if(u>-1){
-                        shelter.use.splice(u,1);
+                    let u = shelter.use.filter(obj=>obj.year==use.year)[0];
+                    if(u!=undefined){
+                        shelter.use.splice(shelter.use.indexOf(u),1);
                     }
                     shelter.use.push(use);
                     
@@ -559,18 +575,22 @@ function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributio
             
             if(economies!=undefined){
                 for(let economy of economies){
-                    let e = shelter.economy.findIndex(obj=>obj.year==economy.year);
-                    if(e>-1){
-                        shelter.economy.splice(e,1);
+                    let e = shelter.economy.filter(obj=>obj.year==economy.year)[0];
+                    if(e!=undefined){
+                        shelter.economy.splice(shelter.economy.indexOf(e),1);
                     }
                     shelter.economy.push(economy);
                     
                 }
             }
             
-        
-            //////////////// contributions
-        
+            if(contributions!=undefined){
+                shelter.contributions.concat(
+                    contributions.filter(obj=>shelter.contributions.indexOf(obj)==-1)
+                )
+                
+            }
+                
             resolve(shelter);
         }catch(e){
             reject(e);
@@ -618,19 +638,15 @@ function updateShelter(id:any,params:IShelterExtended):Promise<boolean>{
 function confirmShelter(id:any):Promise<boolean>{
     return new Promise<boolean>((resolve,reject)=>{
         let shelToUpdate=SheltersToUpdate.filter(obj=>obj.shelter._id==id)[0];
-        if(shelToUpdate.shelter.name!=null){
-            updateShelter(id,shelToUpdate.shelter)
-            .then(()=>{
-                SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToUpdate),1);
-                resolve(true);
-            })
-            .catch((err)=>{
-                reject(err);
-            });
-        }else{
+        updateShelter(id,shelToUpdate.shelter)
+        .then(()=>{
+            SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToUpdate),1);
             resolve(true);
-        }
-    })
+        })
+        .catch((err)=>{
+            reject(err);
+        });
+    });
 }
 
 function addOpening(id,opening:IOpening):Promise<boolean>{
@@ -973,24 +989,45 @@ fileRoute.route("/shelters/file/:id")
     })
 })
 .put(function(req,res){
-    let shel = SheltersToUpdate.filter(obj=>obj.shelter._id==req.body.shelId)[0];
-    if(shel!=undefined){
-        let file = shel.files.filter(f=>f._id==req.params.id)[0];
-        if(file!=undefined){
-            file.description=req.body.description;
+    try{
+        let updFile:IFile=req.body.file;  
+        if(updFile){
+            let shel = SheltersToUpdate.filter(obj=>obj.shelter._id&&(<any>obj.shelter._id)==updFile.shelterId)[0];
+            if(shel!=undefined){
+                let file = shel.files.filter(f=>f._id==req.params.id)[0];
+                if(file!=undefined){
+                    for(let prop in updFile){
+                        file[prop]=updFile[prop];
+                    }
+                    file.update=true;
+                }else{
+                    let newF:any={};
+                    for(let prop in updFile){
+                        newF[prop]=updFile[prop];
+                    }
+                    newF.update=true;
+                    shel.files.push(newF);
+                }
+            }else{
+                let shelter:any={_id:updFile.shelterId};
+                let newF:any={};
+                for(let prop in updFile){
+                    newF[prop]=updFile[prop];
+                }
+                newF.update=true;
+                SheltersToUpdate.push({
+                    watchDog:new Date(Date.now()),
+                    shelter:shelter,
+                    files:[newF]
+                });
+            }
+            res.status(200).send(true);
         }else{
-            shel.files.push({_id:req.params.id,description:req.body.description,update:true})
+            res.status(500).send({error:"Incorrect request"});
         }
-        
-    }else{
-        let shelter:any={_id:req.body.shelId}
-        SheltersToUpdate.push({
-            watchDog:new Date(Date.now()),
-            shelter:shelter,
-            files:[{_id:req.params.id,description:req.body.description,update:true}]
-        });
+    }catch(e){
+        res.status(500).send({error:e});
     }
-    res.status(200).send(true);
 })
 .delete(function(req,res){
     deleteFile(req.params.id)
@@ -1226,7 +1263,7 @@ appRoute.route("/shelters/confirm/:id")
                                     });
                                 }else{
                                     if(!file.new&&file.update!=undefined&&file.update){
-                                        updateFile(file._id,file.description)
+                                        updateFile(file._id,file)
                                         .then(value=>{
                                             j++;
                                             if(j==i){
@@ -1516,42 +1553,63 @@ app.use(bodyParser.urlencoded({
 }),bodyParser.json());
 
 app.use('/api',function(req,res,next){
+    console.log("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
+    if (req.method === 'OPTIONS') {
+        var headers = {};
+        headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+        headers["Access-Control-Allow-Headers"] = "Content-Type";
+        headers["content-type"] = 'application/json; charset=utf-8';    
+        res.writeHead(200, headers);
+        res.end();
+    } else {
+        let user=userList.find(obj=>obj.id==req.session.id);
+        if(user!=undefined&&user.checked&&user.role!=undefined&&user.code!=undefined){
+            req.body.user=user;
+            next();
+        }else{
+            res.status(500).send({error:"Unauthenticated user"});
+        }
+    }
+    /*
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('content-type', 'application/json; charset=utf-8');
-    let user=userList.find(obj=>obj.id==req.session.id);
-    if(user!=undefined&&user.checked&&user.role!=undefined&&user.code!=undefined){
-        req.body.user=user;
-        next();
-    }else{
-        res.status(500).send({error:"Unauthenticated user"});
-    }
+    */
 },fileRoute,appRoute);
 
 app.use('/',authRoute);
 
-/*
-var sslkey = fs.readFileSync('ssl-key.pem');
-var sslcert = fs.readFileSync('ssl-cert.pem')
+app.use(function(req,res,next){
+    console.log("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
+    next();
+});
 
-var options = {
-    key: sslkey,
-    cert: sslcert
-};
-
-var server = https.createServer(options, app);
-
-server.listen(process.env.PORT || appPort, function () {
-    var port = server.address().port;
-    console.log("App now running on port", port);
-});*/
+app.use('/*', function(req, res) {
+    if (req.method === 'OPTIONS') {
+        var headers = {};
+        headers["Access-Control-Allow-Headers"] = "Content-Type";
+        headers["content-type"] = 'text/html; charset=UTF-8';    
+        res.writeHead(200, headers);
+        res.end();
+    } else {
+        res.sendFile(path.join(__dirname + '/dist/index.html'));
+    }
+    /*
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');    
+    res.setHeader('content-type', 'text/html; charset=UTF-8');    
+    res.sendFile(path.join(__dirname + '/dist/index.html'));
+    */
+});
 
 var server = app.listen(process.env.PORT || appPort, function () {
     var port = server.address().port;
     console.log("App now running on port", port);
 });
 
-mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/CaiDB",function(err){
+//"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
+mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/CaiDB",{
+    useMongoClient: true
+},function(err){
     if(err) {
         console.log("Error connection: "+err);
         server.close(()=>{

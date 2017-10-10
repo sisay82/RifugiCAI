@@ -62,6 +62,12 @@ export class BcSharedService{
         this.activeOutletChangeSource.next(outlet);
     }
 
+    private sendMaskSaveSource = new Subject();
+    sendMaskSave$ = this.sendMaskSaveSource.asObservable();
+    onSendMaskSave(){
+        this.sendMaskSaveSource.next();
+    }
+
 }
 
 export class ServiceBase {

@@ -42,6 +42,14 @@ export class BcDoc {
         });
     }
 
+    getTotal(value,tax){
+        if(tax>1){
+          return (value*(tax/100))+value;
+        }else{
+          return (value*tax)+value;
+        }
+    }
+    
     getExtension(filename:String){
         var parts = filename.split('.');
         return parts[parts.length - 1];

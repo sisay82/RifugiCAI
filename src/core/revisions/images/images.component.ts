@@ -179,7 +179,8 @@ export class BcImgRevision extends RevisionBase {
       let i=0;
       for(let file of (<FormArray>this.docsForm.controls.files).controls){
         if(file.dirty){
-          this.shelterService.updateFile(file.value.id,this._id,file.value.description).subscribe((val)=>{
+          let updFile:IFile={_id:file.value.id,shelterId:this._id,description:file.value.description}
+          this.shelterService.updateFile(updFile).subscribe((val)=>{
             if(val){
               i++;
               if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
