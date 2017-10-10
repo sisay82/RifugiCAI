@@ -11,3 +11,10 @@
 .bc-doc-title{
     color:map-get($bc-teal,400);
 }
+
+.disabled
+{
+  pointer-events: none;
+  opacity: 0.5;
+  background: #CCC;
+}

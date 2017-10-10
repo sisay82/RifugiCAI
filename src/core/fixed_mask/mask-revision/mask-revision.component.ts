@@ -22,6 +22,7 @@ export class BcMaskRevision {
   @Input() shelter:IShelter;
   maskForm: FormGroup; 
   formValiditySub:Subscription;
+  maskSaveTriggerSub:Subscription;
   displayErrorSub:Subscription;
   displayError:boolean=false;
   shelterInitialized:Boolean=false;
@@ -38,6 +39,10 @@ export class BcMaskRevision {
         category:[""],
         regional_type:[""],
     }); 
+
+    this.maskSaveTriggerSub = this.shared.sendMaskSave$.subscribe(()=>{
+      this.save();
+    });
 
     this.formValiditySub = this.maskForm.statusChanges.subscribe((value)=>{
       if(value=="VALID"){
@@ -189,6 +194,9 @@ export class BcMaskRevision {
     }
     if(this.displayErrorSub!=undefined){
       this.displayErrorSub.unsubscribe();
+    }
+    if(this.maskSaveTriggerSub!=undefined){
+      this.maskSaveTriggerSub.unsubscribe();
     }
   }
 
