@@ -34,11 +34,23 @@ $bc-button-border-radius: 2px;
 }
 
 @mixin bc-button-theme($theme) {
-  $paletteTypes: primary,accent,info,success,warn,danger;
+  $color-types: primary,accent,info,success,warn,danger;
   $background: map-get($theme, background);
   $foreground: map-get($theme, foreground);
 
   .bc-button {
+    @each $color-type in $color-types {
+      $paletteColorSet: map-get($theme, $color-type);
+
+      &.bc-#{$color-type} {
+        @include bc-button-color(transparent, bc-color($paletteColorSet));
+
+        &.bc-solid {
+          @include bc-button-color(bc-color($paletteColorSet), bc-color($paletteColorSet, default-contrast));
+        }
+      }
+    }
+
     &.bc-solid {
       @include bc-button-color(bc-color($background, raised-button), bc-color($foreground, text));
       
@@ -46,18 +58,7 @@ $bc-button-border-radius: 2px;
 
       &.disabled, &[disabled], &[data-disabled] {
         background: bc-color($background, disabled);
-      }
-    }
-
-    @each $palette in $paletteTypes {
-      $paletteColorSet: map-get($theme, $palette);
-
-      &.bc-#{$palette} {
-        @include bc-button-color(transparent, bc-color($paletteColorSet));
-
-        &.bc-solid {
-          @include bc-button-color(bc-color($paletteColorSet), bc-color($paletteColorSet, default-contrast));
-        }
+        color: bc-color($foreground, disabled);
       }
     }
     
