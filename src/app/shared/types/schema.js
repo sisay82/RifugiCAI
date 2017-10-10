@@ -109,23 +109,8 @@ var Schema;
         water_availability: { type: enums_1.Enums.Water_Availability },
         droughts: { type: enums_1.Enums.Seasons }
     });
-    Schema.countingEntrySchema = new mongoose.Schema({
-        key: { type: String, required: true },
-        value: { type: Number, required: true },
-        tax: { type: Number, required: true },
-        contribution_type: { type: enums_1.Enums.Contribution_Type }
-    });
-    Schema.fileCountingSchema = new mongoose.Schema({
-        document: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Files'
-        },
-        revenues: [Schema.countingEntrySchema],
-        outgos: [Schema.countingEntrySchema]
-    });
     Schema.economySchema = new mongoose.Schema({
-        files: [Schema.fileCountingSchema],
-        year: Number,
+        year: { type: Number, required: true },
         confirm: Boolean,
         accepted: Boolean
     });
@@ -137,6 +122,17 @@ var Schema;
         transit_count_associate: Number,
         transit_count_reciprocity: Number,
         transit_count: Number
+    });
+    Schema.contributionSchema = new mongoose.Schema({
+        size: Number,
+        shelterId: { type: mongoose.Schema.Types.ObjectId },
+        uploadDate: { type: Date, "default": new Date(Date.now()) },
+        md5: String,
+        name: String,
+        data: Buffer,
+        value: Number,
+        accepted: Boolean,
+        type: { type: enums_1.Enums.Contribution_Type }
     });
     Schema.shelterSchema = new mongoose.Schema({
         name: String,
@@ -162,7 +158,7 @@ var Schema;
         drain: { type: Schema.drainSchema },
         economy: [Schema.economySchema],
         use: [Schema.useSchema],
-        contributions: [String]
+        contributions: [Schema.contributionSchema]
     });
     Schema.fileSchema = new mongoose.Schema({
         size: Number,
@@ -171,6 +167,11 @@ var Schema;
         md5: String,
         name: String,
         data: Buffer,
+        contribution_type: { type: enums_1.Enums.Contribution_Type },
+        invoice_year: Number,
+        invoice_tax: Number,
+        invoice_confirmed: Boolean,
+        invoice_type: { type: enums_1.Enums.Invoice_Type },
         contentType: String,
         type: { type: enums_1.Enums.File_Type },
         description: String,

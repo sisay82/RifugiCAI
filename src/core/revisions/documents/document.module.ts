@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BcDividerModule} from '../../divider/divider.module';
-import { BcDocRevision } from './document.component';
+import { BcDocRevision,BcDisableDivStyler } from './document.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BcFileInputModule } from '../../inputs/file/file_input.module';
@@ -12,8 +12,8 @@ import {BcButtonModule} from '../../button/button.module';
 import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
-    declarations: [BcDocRevision],
-    exports: [BcDocRevision],
+    declarations: [BcDocRevision,BcDisableDivStyler],
+    exports: [BcDocRevision,BcDisableDivStyler],
     imports:[BcIconModule,BcDividerModule,BcTextInputModule,BcSelectInputModule,CommonModule,FormsModule,ReactiveFormsModule,BcFileInputModule,BcButtonModule,PipesModule]
 })
 export class BcDocRevisionModule {

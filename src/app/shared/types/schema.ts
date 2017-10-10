@@ -135,7 +135,12 @@ export namespace Schema {
     });
 
     export var contributionSchema = new mongoose.Schema({
-        pdf:{type:fileSchema},
+        size:Number,
+        shelterId:{type:mongoose.Schema.Types.ObjectId},
+        uploadDate:{type:Date,default:new Date(Date.now())},
+        md5:String,
+        name:String,
+        data:Buffer,
         value:Number,
         accepted:Boolean,
         type:{type:Enums.Contribution_Type}

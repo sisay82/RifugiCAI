@@ -72,10 +72,10 @@
                         <div style="margin-left:1%" class="bc-body"> {{file.value.size | formatsize}}</div>
                     </div>
                 </div>
-                <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
+                <div style="flex:1;display: flex;flex-direction:row;align-items:flex-end;white-space:nowrap">
                     <bc-text-input required="true" title="Imponibile" formControlName="value" validator="numberValidator" [displayError]="displayError"></bc-text-input>    
                     <bc-text-input required="true" title="IVA" formControlName="invoice_tax" validator="numberValidator" [displayError]="displayError"></bc-text-input>   
-                    <bc-text-input required="true" title="Anno" formControlName="invoice_year" validator="numberValidator" [displayError]="displayError"></bc-text-input>   
+                    <bc-select-input required="true" [enumValues]="getEnumValues()" title="Anno" formControlName="invoice_year" [displayError]="displayError"></bc-select-input>   
                 </div>
                 <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
                     <bc-select-input required="true" title="Tipo di contributo" defaultContent="Es: FondoStabile" enumName="Contribution_Type" formControlName="contribution_type" [displayError]="displayError"></bc-select-input>
@@ -85,14 +85,14 @@
         </div>
     </div>
 </form>
-<div class="bc-body bc-file" (click)="toggleFile(2)" style="display:inline;white-space:nowrap;flex:1">
+<div class="bc-body bc-file" [disabled]="disableInvoiceGlobal" (click)="toggleFile(2)" style="display:inline;white-space:nowrap;flex:1">
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
     Aggiungi Fattura
 </div>
 <div style="margin-left:1%;display:flex;flex-direction:row;align-items:center" *ngIf="!isHiddenFile(2)">
     <form [formGroup]="newInvoiceForm">
         <div style="display:inline-block">
-            <bc-file-input [contentType]="getKeys('Invoices_Type')" [validator]="invoceFormatRegExp" formControlName="file"></bc-file-input>
+            <bc-file-input [contentType]="getKeys('Invoices_Type')" [validator]="invoiceFormatRegExp" formControlName="file"></bc-file-input>
         </div>
     </form>
     <bc-button style="margin-left:1%" [disabled]="getKeys('Invoices_Type').length==0" [button]="sendInvoiceButton"></bc-button>

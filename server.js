@@ -83,7 +83,7 @@ function queryFileById(id) {
 }
 function queryFilesByShelterId(id) {
     return new Promise(function (resolve, reject) {
-        Files.find({ "shelterId": id, type: { $not: { $in: [enums_1.Enums.File_Type.image] } } }, "name size contentType type description value").exec(function (err, ris) {
+        Files.find({ "shelterId": id, type: { $not: { $in: [enums_1.Enums.File_Type.image] } } }, "name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -107,7 +107,7 @@ function queryImagesByShelterId(id) {
 }
 function queryAllFiles() {
     return new Promise(function (resolve, reject) {
-        Files.find({ type: { $not: { $in: [enums_1.Enums.File_Type.image] } } }, "name size contentType type description value").exec(function (err, ris) {
+        Files.find({ type: { $not: { $in: [enums_1.Enums.File_Type.image] } } }, "name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -305,9 +305,21 @@ function insertNewService(params) {
 /**
  * UPDATE
  */
-function updateFile(id, description) {
+function updateFile(id, file) {
     return new Promise(function (resolve, reject) {
-        Files.findByIdAndUpdate(id, { $set: { description: description } }).exec(function (err, res) {
+        var query = {
+            $set: {
+                contribution_type: file.contribution_type || null,
+                invoice_year: file.invoice_year || null,
+                invoice_tax: file.invoice_tax || null,
+                invoice_type: file.invoice_type || null,
+                invoice_confirmed: file.invoice_confirmed || null,
+                value: file.value || null
+            }
+        };
+        for (var prop in file) {
+        }
+        Files.findByIdAndUpdate(id, query).exec(function (err, res) {
             if (err) {
                 reject(err);
             }
@@ -380,9 +392,9 @@ function resolveEconomyInShelter(shelter, uses, contributions, economies) {
         try {
             if (uses != undefined) {
                 var _loop_1 = function (use) {
-                    var u = shelter.use.findIndex(function (obj) { return obj.year == use.year; });
-                    if (u > -1) {
-                        shelter.use.splice(u, 1);
+                    var u = shelter.use.filter(function (obj) { return obj.year == use.year; })[0];
+                    if (u != undefined) {
+                        shelter.use.splice(shelter.use.indexOf(u), 1);
                     }
                     shelter.use.push(use);
                 };
@@ -393,9 +405,9 @@ function resolveEconomyInShelter(shelter, uses, contributions, economies) {
             }
             if (economies != undefined) {
                 var _loop_2 = function (economy) {
-                    var e = shelter.economy.findIndex(function (obj) { return obj.year == economy.year; });
-                    if (e > -1) {
-                        shelter.economy.splice(e, 1);
+                    var e = shelter.economy.filter(function (obj) { return obj.year == economy.year; })[0];
+                    if (e != undefined) {
+                        shelter.economy.splice(shelter.economy.indexOf(e), 1);
                     }
                     shelter.economy.push(economy);
                 };
@@ -404,7 +416,9 @@ function resolveEconomyInShelter(shelter, uses, contributions, economies) {
                     _loop_2(economy);
                 }
             }
-            //////////////// contributions
+            if (contributions != undefined) {
+                shelter.contributions.concat(contributions.filter(function (obj) { return shelter.contributions.indexOf(obj) == -1; }));
+            }
             resolve(shelter);
         }
         catch (e) {
@@ -450,18 +464,13 @@ function updateShelter(id, params) {
 function confirmShelter(id) {
     return new Promise(function (resolve, reject) {
         var shelToUpdate = SheltersToUpdate.filter(function (obj) { return obj.shelter._id == id; })[0];
-        if (shelToUpdate.shelter.name != null) {
-            updateShelter(id, shelToUpdate.shelter)
-                .then(function () {
-                SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToUpdate), 1);
-                resolve(true);
-            })["catch"](function (err) {
-                reject(err);
-            });
-        }
-        else {
+        updateShelter(id, shelToUpdate.shelter)
+            .then(function () {
+            SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToUpdate), 1);
             resolve(true);
-        }
+        })["catch"](function (err) {
+            reject(err);
+        });
     });
 }
 function addOpening(id, opening) {
@@ -751,25 +760,49 @@ fileRoute.route("/shelters/file/:id")
     });
 })
     .put(function (req, res) {
-    var shel = SheltersToUpdate.filter(function (obj) { return obj.shelter._id == req.body.shelId; })[0];
-    if (shel != undefined) {
-        var file = shel.files.filter(function (f) { return f._id == req.params.id; })[0];
-        if (file != undefined) {
-            file.description = req.body.description;
+    try {
+        var updFile_1 = req.body.file;
+        if (updFile_1) {
+            var shel = SheltersToUpdate.filter(function (obj) { return obj.shelter._id && obj.shelter._id == updFile_1.shelterId; })[0];
+            if (shel != undefined) {
+                var file = shel.files.filter(function (f) { return f._id == req.params.id; })[0];
+                if (file != undefined) {
+                    for (var prop in updFile_1) {
+                        file[prop] = updFile_1[prop];
+                    }
+                    file.update = true;
+                }
+                else {
+                    var newF = {};
+                    for (var prop in updFile_1) {
+                        newF[prop] = updFile_1[prop];
+                    }
+                    newF.update = true;
+                    shel.files.push(newF);
+                }
+            }
+            else {
+                var shelter = { _id: updFile_1.shelterId };
+                var newF = {};
+                for (var prop in updFile_1) {
+                    newF[prop] = updFile_1[prop];
+                }
+                newF.update = true;
+                SheltersToUpdate.push({
+                    watchDog: new Date(Date.now()),
+                    shelter: shelter,
+                    files: [newF]
+                });
+            }
+            res.status(200).send(true);
         }
         else {
-            shel.files.push({ _id: req.params.id, description: req.body.description, update: true });
+            res.status(500).send({ error: "Incorrect request" });
         }
     }
-    else {
-        var shelter = { _id: req.body.shelId };
-        SheltersToUpdate.push({
-            watchDog: new Date(Date.now()),
-            shelter: shelter,
-            files: [{ _id: req.params.id, description: req.body.description, update: true }]
-        });
+    catch (e) {
+        res.status(500).send({ error: e });
     }
-    res.status(200).send(true);
 })["delete"](function (req, res) {
     deleteFile(req.params.id)
         .then(function () {
@@ -1008,7 +1041,7 @@ appRoute.route("/shelters/confirm/:id")
                                 }
                                 else {
                                     if (!file["new"] && file.update != undefined && file.update) {
-                                        updateFile(file._id, file.description)
+                                        updateFile(file._id, file)
                                             .then(function (value) {
                                             j_1++;
                                             if (j_1 == i_1) {
@@ -1160,7 +1193,7 @@ app.use(bodyParser.urlencoded({
     saveUninitialized: true
 }), bodyParser.json());
 app.use(function (req, res, next) {
-    console.log("Session ID: " + req.session.id);
+    //console.log("Session ID: "+req.session.id);
     console.log(req.method + " REQUEST: " + JSON.stringify(req.query));
     console.log(req.path);
     next();

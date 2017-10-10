@@ -175,7 +175,12 @@ export interface IUse {
 }
 
 export interface IContribution {
-    pdf?:IFile;
+    size?:Number;
+    shelterId?:String;
+    uploadDate?:Date;
+    md5?:String;
+    name?:String;
+    data?:Buffer;
     value?:Number;
     accepted?:Boolean;
     type?:Enums.Contribution_Type;

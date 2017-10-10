@@ -1,8 +1,8 @@
 import {
-  Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
+  Component,Input,OnInit,OnDestroy,Directive
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
+import { IShelter, IFile, IButton,IEconomy } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
@@ -12,6 +12,16 @@ import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
 import {RevisionBase} from '../shared/revision_base';
 
+@Directive({
+selector:"div[disabled]",
+host:{
+    "[class.disabled]":"disabled"
+  }
+})
+export class BcDisableDivStyler{
+  @Input("disabled") disabled:boolean=false;
+}
+
 @Component({
   moduleId: module.id,
   selector: 'bc-doc-revision',
@@ -20,26 +30,30 @@ import {RevisionBase} from '../shared/revision_base';
   providers:[ShelterService]
 })
 export class BcDocRevision extends RevisionBase{
-  newDocForm: FormGroup;
-  newMapForm: FormGroup;
-  newInvoiceForm: FormGroup;
-  invoicesForm: FormGroup;
-  invoceFormatRegExp=<RegExp>/.+[,\/\-\\.\|_].+[,\/\-\\.\|_].+/  
-  docs:IFile[]=[];
-  maps:IFile[]=[];
-  invoicesChange:boolean=false;
+  private newDocForm: FormGroup;
+  private newMapForm: FormGroup;
+  private newInvoiceForm: FormGroup;
+  private invoicesForm: FormGroup;
+  private invalidYearsInvoice=".+";
+  private invoiceFormatBase=".+(,\/\-\\.\|_).+(,\/\-\\.\|_)";
+  invoiceFormatRegExp=/.+(,\/\-\\.\|_).+(,\/\-\\.\|_).+/
+  private docs:IFile[]=[];
+  private maps:IFile[]=[];
+  private invoicesChange:boolean=false;
   invalid:boolean=false;
-  docFormValidSub:Subscription;
-  mapFormValidSub:Subscription;
-  invoicesFormValidSub:Subscription;
-  invoiceFormValidSub:Subscription;
+  private docFormValidSub:Subscription;
+  private mapFormValidSub:Subscription;
+  private invoicesFormValidSub:Subscription;
+  private invoiceFormValidSub:Subscription;
+  private invalidYears:Number[]=[];
   hiddenTag:boolean=true;
   uploading:boolean=false;
   disableSave:boolean=false;
-  currentFileToggle:number=-1;
-  sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
-  sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"}
-  sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"}
+  private currentFileToggle:number=-1;
+  disableInvoiceGlobal:boolean=true;
+  sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"};
+  sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"};
+  sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"};
   constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
     super(shelterService,shared,revisionService);
     this.newDocForm = fb.group({
@@ -271,10 +285,6 @@ export class BcDocRevision extends RevisionBase{
     this.currentFileToggle=-1;
   }
 
-  testInvoiceName(value){
-    return true// invoceFormatRegExp.test(value);
-  }
-
   initInvoice(file:IFile){
     return this.fb.group({
       _id:[file._id],
@@ -291,8 +301,26 @@ export class BcDocRevision extends RevisionBase{
     });
   }
 
+  updateInvalidYearsInvoice(confirmedEconomies?:IEconomy[]){
+    this.invalidYears=[];
+    this.disableInvoiceGlobal=true;
+    if(confirmedEconomies&&confirmedEconomies.length>0){
+      this.invalidYearsInvoice="(?!.*(";
+      confirmedEconomies.forEach(economy => {
+        this.invalidYears.push(economy.year);
+        this.invalidYearsInvoice+=economy.year.toString()+"|"
+      });
+      this.invalidYearsInvoice=this.invalidYearsInvoice.slice(0,this.invalidYearsInvoice.length-1);    
+      this.invalidYearsInvoice+=")).+";
+    }else{
+      this.invalidYearsInvoice=".+";
+    }
+    this.invoiceFormatRegExp=new RegExp(this.invoiceFormatBase+this.invalidYearsInvoice);
+    this.disableInvoiceGlobal=false;
+  }
+
   addInvoice(){
-    if(this.newInvoiceForm.valid&&this.testInvoiceName(<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value)){
+    if(this.newInvoiceForm.valid){
       this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
@@ -334,13 +362,21 @@ export class BcDocRevision extends RevisionBase{
     this.revisionService.onChildSaveFile(f,remove)
   }
 
+  getEnumValues():String[]{
+    let currentYear=(new Date()).getFullYear();
+    return [currentYear,currentYear-1].filter(val=>{
+      return this.invalidYears.indexOf(val)==-1
+    }).map(String);
+  }
+
   save(confirm){
     if(this.invoicesForm.valid&&(!this.invoicesChange||(this.invoicesForm.dirty&&this.invoicesChange))){
       this.displayError=false;
       let i=0;
       if(this.invoicesForm.dirty){
-        for(let file of (<FormArray>this.invoicesForm.controls.files).controls){
-          if(file.dirty){
+        let filesToUpdate=(<FormArray>this.invoicesForm.controls.files).controls.filter(obj=>obj.dirty);
+        for(let file of filesToUpdate){
+          if(file.dirty&&this.invalidYears.indexOf(file.value.year)==-1){
             let updFile:IFile={
               _id:file.value._id,
               name:file.value.name,
@@ -358,7 +394,7 @@ export class BcDocRevision extends RevisionBase{
             this.shelterService.updateFile(updFile).subscribe((val)=>{
               if(val){
                 i++;
-                if((<FormArray>this.invoicesForm.controls.files).controls.length==i&&confirm){
+                if(filesToUpdate.length==i&&confirm){
                   this.shared.onMaskConfirmSave("documents");
                 }
               }
@@ -370,13 +406,12 @@ export class BcDocRevision extends RevisionBase{
       }else{
         this.displayError=false;
         if(confirm){
-            this.shared.onMaskConfirmSave("documents");
+          this.shared.onMaskConfirmSave("documents");
         }
       }
     }else{
       this.displayError=true;
     }
-    
   }
 
   downloadFile(id){
@@ -434,29 +469,64 @@ export class BcDocRevision extends RevisionBase{
     }
   }
 
-  ngOnInit() {
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this._id=params["id"];
+  getDocs(shelId):Promise<IFile[]>{
+    return new Promise<IFile[]>((resolve,reject)=>{
       let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
         if(!files){
-          let queryFileSub=this.shelterService.getFilesByShelterId(this._id).subscribe(files=>{
-            this.initData(files);
+          let queryFileSub=this.shelterService.getFilesByShelterId(shelId).subscribe(files=>{
             this.revisionService.onChildSaveFiles(files);
             if(queryFileSub!=undefined){
               queryFileSub.unsubscribe();
             }
-            if(routeSub!=undefined){
-              routeSub.unsubscribe();
-            }
+            resolve(files);
           });
         }else{
-          this.initData(files);
+          resolve(files);
         }
         if(loadServiceSub!=undefined){
           loadServiceSub.unsubscribe();
         }
       });
       this.revisionService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice]);
+    });
+  }
+
+  getEconomy(id):Promise<IShelter>{
+    return new Promise<IShelter>((resolve,reject)=>{
+        let revSub=this.revisionService.load$.subscribe(shelter=>{
+          if(shelter!=null&&shelter.economy!=undefined){
+              if(revSub!=undefined){
+                  revSub.unsubscribe();
+              }
+              resolve(shelter);
+          }else{
+              let shelSub=this.shelterService.getShelterSection(id,"economy").subscribe(shelter=>{
+                this.revisionService.onChildSave(shelter,"economy");
+                if(shelSub!=undefined){
+                    shelSub.unsubscribe();
+                }
+                if(revSub!=undefined){
+                    revSub.unsubscribe();
+                }
+                resolve(shelter);
+              });
+          }
+      });
+      this.revisionService.onChildLoadRequest("economy");
+    });
+  }
+
+  ngOnInit() {
+    let routeSub=this._route.parent.params.subscribe(params=>{
+      this._id=params["id"];
+      this.getDocs(params["id"])
+      .then(files=>{
+        this.initData(files);
+        this.getEconomy(params["id"])
+        .then(shelter=>{
+          this.updateInvalidYearsInvoice(shelter.economy.filter(obj=>obj.confirm));
+        })
+      });
     });
   }
 

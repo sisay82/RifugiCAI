@@ -193,6 +193,11 @@ var Enums;
         Region_Code[Region_Code["Sicilia"] = 46] = "Sicilia";
         Region_Code[Region_Code["Sardegna"] = 48] = "Sardegna";
     })(Region_Code = Enums.Region_Code || (Enums.Region_Code = {}));
+    var Invoice_Type;
+    (function (Invoice_Type) {
+        Invoice_Type[Invoice_Type["Attivit\u00E0"] = 0] = "Attivit\u00E0";
+        Invoice_Type[Invoice_Type["Passivit\u00E0"] = 1] = "Passivit\u00E0";
+    })(Invoice_Type = Enums.Invoice_Type || (Enums.Invoice_Type = {}));
     //tipo fonte risorsa
     var Source_Type;
     (function (Source_Type) {
