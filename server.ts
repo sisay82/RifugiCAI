@@ -20,6 +20,7 @@ interface IFileExtended extends IFile,mongoose.Document{
     _id:String;
 }
 
+(<any>mongoose.Promise)=global.Promise;
 var appPort=8000;
 var ObjectId = mongoose.Types.ObjectId;
 var Services = mongoose.model<IServiceExtended>("Services",Schema.serviceSchema);
@@ -1220,26 +1221,50 @@ app.use(bodyParser.urlencoded({
     saveUninitialized: true
 }),bodyParser.json());
 
-app.use(function(req,res,next){
-    //console.log("Session ID: "+req.session.id);
-    console.log(req.method+" REQUEST: "+JSON.stringify(req.query));
-    console.log(req.path);
-    next();
-});
+
 
 app.use('/api',function(req,res,next){
+    console.log("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
+    if (req.method === 'OPTIONS') {
+        var headers = {};
+        headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+        headers["Access-Control-Allow-Headers"] = "Content-Type";
+        headers["content-type"] = 'application/json; charset=utf-8';    
+        res.writeHead(200, headers);
+        res.end();
+    } else {
+        next();
+    }
+    /*
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('content-type', 'application/json; charset=utf-8');
-    next();
+*/
+    
 },fileRoute,appRoute);
 
 app.use(express.static(__dirname + '/dist'));
 
+app.use(function(req,res,next){
+    console.log("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
+    next();
+});
+
 app.use('/*', function(req, res) {
+    if (req.method === 'OPTIONS') {
+        var headers = {};
+        headers["Access-Control-Allow-Headers"] = "Content-Type";
+        headers["content-type"] = 'text/html; charset=UTF-8';    
+        res.writeHead(200, headers);
+        res.end();
+    } else {
+        res.sendFile(path.join(__dirname + '/dist/index.html'));
+    }
+    /*
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');    
     res.setHeader('content-type', 'text/html; charset=UTF-8');    
     res.sendFile(path.join(__dirname + '/dist/index.html'));
+    */
 });
 
 var server = app.listen(appPort, function () {
@@ -1248,7 +1273,9 @@ var server = app.listen(appPort, function () {
 });
 
 //"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
-mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/CaiDB",function(err){
+mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/CaiDB",{
+    useMongoClient: true
+},function(err){
     if(err) {
         console.log("Error connection: "+err);
         server.close(()=>{
