@@ -250,6 +250,11 @@ export namespace Enums {
         "Sardegna"=48
     }
 
+    export enum Invoice_Type {
+        "Attività",
+        "Passività"
+    }
+
     //tipo fonte risorsa
     export enum Source_Type {
         "Energetica",

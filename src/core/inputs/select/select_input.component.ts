@@ -43,6 +43,7 @@ export class BcSelectInput implements ControlValueAccessor {
     @Input() defaultContent="";
     @Input() enumName:any;
     @Input() noName:boolean=false;
+    @Input() enumValues:any[]=[];
 
     _displayError:boolean=false;
     @Input() set displayError(enable:boolean){
@@ -68,12 +69,14 @@ export class BcSelectInput implements ControlValueAccessor {
                 names.push(val);
             });
             return names;
+        }else if(this.enumValues!=undefined){
+            return this.enumValues;
         }
     }
 
-    checkEnumValue(value){
+    checkEnumValue(value){  
         if(this.value!=undefined){
-            if(this.value!=''&&this.value.toLowerCase().indexOf(value.toLowerCase())>-1){
+            if(this.value!=''&&this.value.toString().toLowerCase().indexOf(value.toString().toLowerCase())>-1){
                 return true;
             }
         }

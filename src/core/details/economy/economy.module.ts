@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { BcDividerModule} from '../../divider/divider.module';
-import { BcEconomy} from './economy.component';
-import { BcMapModule } from '../../map/map.module';
+import { BcEconomy,BcActiveTabStyler} from './economy.component';
 import { CommonModule } from '@angular/common';
 import {BcIconModule} from '../../icon/icon.module';
+import { PipesModule } from '../../pipes/pipes.module';
+import {BcListModule} from '../../list/list.module';
 @NgModule({
-    declarations: [BcEconomy],
-    exports: [BcEconomy],
-    imports:[BcIconModule,BcDividerModule,BcMapModule,CommonModule]
+    declarations: [BcEconomy,BcActiveTabStyler],
+    exports: [BcEconomy,BcActiveTabStyler],
+    imports:[BcIconModule,PipesModule,BcListModule,BcDividerModule,CommonModule]
 })
 export class BcEconomyModule { }

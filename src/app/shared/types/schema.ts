@@ -118,25 +118,8 @@ export namespace Schema {
         droughts:{type:Enums.Seasons}
     });
 
-    export var countingEntrySchema = new mongoose.Schema({
-        key:{type:String,required:true},
-        value:{type:Number,required:true},
-        tax:{type:Number,required:true},
-        contribution_type:{type:Enums.Contribution_Type}
-    })
-
-    export var fileCountingSchema = new mongoose.Schema({
-        document:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'Files'
-        },
-        revenues:[countingEntrySchema],
-        outgos:[countingEntrySchema]
-    })
-
     export var economySchema = new mongoose.Schema({
-        files:[fileCountingSchema],
-        year:Number,
+        year:{type:Number,required:true},
         confirm:Boolean,
         accepted:Boolean
     });
@@ -149,6 +132,18 @@ export namespace Schema {
         transit_count_associate:Number,
         transit_count_reciprocity:Number,
         transit_count:Number
+    });
+
+    export var contributionSchema = new mongoose.Schema({
+        size:Number,
+        shelterId:{type:mongoose.Schema.Types.ObjectId},
+        uploadDate:{type:Date,default:new Date(Date.now())},
+        md5:String,
+        name:String,
+        data:Buffer,
+        value:Number,
+        accepted:Boolean,
+        type:{type:Enums.Contribution_Type}
     });
 
     export var shelterSchema = new mongoose.Schema({
@@ -175,7 +170,7 @@ export namespace Schema {
         drain:{type:drainSchema},
         economy:[economySchema],
         use:[useSchema],
-        contributions:[String]
+        contributions:[contributionSchema]
     });
 
     export var fileSchema = new mongoose.Schema({
@@ -185,6 +180,11 @@ export namespace Schema {
         md5:String,
         name:String,
         data:Buffer,
+        contribution_type:{type:Enums.Contribution_Type},
+        invoice_year:Number,
+        invoice_tax:Number,
+        invoice_confirmed:Boolean,
+        invoice_type:{type:Enums.Invoice_Type},
         contentType:String,
         type:{type:Enums.File_Type},
         description:String,
