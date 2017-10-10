@@ -24,8 +24,8 @@ interface IFileExtended extends IFile,mongoose.Document{
 
 (<any>mongoose.Promise)=global.Promise;
 var DOMParser = xmldom.DOMParser;
-var casBaseUrl = "https://prova.cai.it";
-var authUrl = "https://prova.cai.it/cai-integration-ws/secured/users/";
+var casBaseUrl = "https://accesso.cai.it";
+var authUrl = "https://services.cai.it/cai-integration-ws/secured/users/";
 var serverUrl = "app-cai.herokuapp.com";
 var portUrl=process.env.PORT || 8080;
 var appBaseUrl = "http://"+serverUrl;
