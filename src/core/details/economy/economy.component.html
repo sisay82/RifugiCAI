@@ -16,7 +16,7 @@
   <p class="bc-h6 bc-title-economy">Contributi</p>
   <div *ngFor="let type of getEnumNames()">
     <div class="bc-body" style="display: flex;flex-direction:row">
-      <div class="bc-body">{{type}}: {{getContributionSumPerType(type)}}
+      <div class="bc-body">{{type}}: {{getContributionSumPerType(type) | formatcurrency}}
       </div>
     </div>
   </div>
@@ -25,15 +25,15 @@
     <div style="flex:1">
       <bc-list color="accent">
         <bc-list-header><span>Attività</span><span>Totale: {{revenues | formatcurrency}}</span></bc-list-header>
-        <bc-list-item *ngFor="let item of activeTab.revenues">
+        <bc-list-item *ngFor="let item of revenuesFiles">
           <div bc-line style="display:flex; flex-direction:row;">
-            <a style="flex:1; text-decoration: none;">{{item.key}}</a>
-            <span>Totale: </span><span>getTotal(item.value,item.tax) | formatcurrency</span>
+            <a style="flex:1; text-decoration: none;">{{item.name}}</a>
+            <span>Totale: </span><span>{{getTotal(item.value,item.invoice_tax) | formatcurrency}}</span>
           </div>
+          <div bc-line>Tipo contributo: {{item.contribution_type}}</div>
           <div bc-line style="display:flex; flex-direction:row;">
-            <div style="flex:1">Tipo contributo: {{item.contribution_type}}</div>
             <div style="flex:1">Imponibile: {{item.value | formatcurrency}}</div>
-            <div style="flex:1">IVA: {{item.tax}}</div>
+            <div style="flex:1">IVA: {{item.invoice_tax }}%</div>
           </div>
         </bc-list-item>
       </bc-list>
@@ -41,16 +41,16 @@
     <div style="flex:1">
       <bc-list>
         <bc-list-header><span>Passività</span><span>Totale: {{outgos | formatcurrency}}</span></bc-list-header>
-        <bc-list-item *ngFor="let item of activeTab.outgos">
+        <bc-list-item *ngFor="let item of outgosFiles">
             <div bc-line style="display:flex; flex-direction:row;">
-                <a style="flex:1; text-decoration: none;">{{item.key}}</a>
-                <span>Totale: </span><span>getTotal(item.value,item.tax) | formatcurrency</span>
-              </div>
-              <div bc-line style="display:flex; flex-direction:row;">
-                <div style="flex:1">Tipo contributo: {{item.contribution_type}}</div>
-                <div style="flex:1">Imponibile: {{item.value | formatcurrency}}</div>
-                <div style="flex:1">IVA: {{item.tax}}</div>
-              </div>
+                <a style="flex:1; text-decoration: none;">{{item.name}}</a>
+                <span>Totale: </span><span>{{getTotal(item.value,item.invoice_tax) | formatcurrency}}</span>
+            </div>
+            <div bc-line>Tipo contributo: {{item.contribution_type}}</div>
+            <div bc-line style="display:flex; flex-direction:row;">
+              <div style="flex:1">Imponibile: {{item.value | formatcurrency}}</div>
+              <div style="flex:1">IVA: {{item.invoice_tax}}%</div>
+            </div>
         </bc-list-item>
       </bc-list>
     </div>
