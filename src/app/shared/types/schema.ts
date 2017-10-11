@@ -135,6 +135,7 @@ export namespace Schema {
     });
 
     export var contributionSchema = new mongoose.Schema({
+        year:{type:Number,required:true},
         size:Number,
         shelterId:{type:mongoose.Schema.Types.ObjectId},
         uploadDate:{type:Date,default:new Date(Date.now())},
