@@ -217,6 +217,10 @@ export class BcEconomyRevision extends RevisionBase{
     return total;
   }
 
+  getFilesByYear(files:any[]):any[]{    
+    return files.filter(obj=>obj.invoice_year==this.activeYear);
+  }
+
   analyzeDocsYear(files:IFile[]):Promise<any>{
     return new Promise<any>((resolve,reject)=>{
       files.forEach(file=>{

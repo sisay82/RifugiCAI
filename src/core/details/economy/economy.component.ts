@@ -130,6 +130,10 @@ export class BcEconomy {
     });
   }
 
+  getFilesByYear(files:any[]):any[]{    
+    return files.filter(obj=>obj.invoice_year==this.activeYear);
+  }
+
   getDocs(shelId):Promise<IFile[]>{
     return new Promise<IFile[]>((resolve,reject)=>{
       let loadServiceSub=this.detailsService.loadFiles$.subscribe(files=>{

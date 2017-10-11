@@ -25,7 +25,7 @@
         <div style="flex:1">
           <bc-list color="accent">
             <bc-list-header><span>Attività</span><span>Totale: {{revenues | formatcurrency}}</span></bc-list-header>
-            <bc-list-item *ngFor="let item of revenuesFiles">
+            <bc-list-item *ngFor="let item of getFilesByYear(revenuesFiles)">
               <div bc-line style="display:flex; flex-direction:row;">
                 <a style="flex:1; text-decoration: none;">{{item.name}}</a>
                 <span>Totale: </span><span>{{getTotal(item.value,item.invoice_tax) | formatcurrency}}</span>
@@ -41,7 +41,7 @@
         <div style="flex:1">
           <bc-list>
             <bc-list-header><span>Passività</span><span>Totale: {{outgos | formatcurrency}}</span></bc-list-header>
-            <bc-list-item *ngFor="let item of outgosFiles">
+            <bc-list-item *ngFor="let item of getFilesByYear(outgosFiles)">
                 <div bc-line style="display:flex; flex-direction:row;">
                     <a style="flex:1; text-decoration: none;">{{item.name}}</a>
                     <span>Totale: </span><span>{{getTotal(item.value,item.invoice_tax) | formatcurrency}}</span>
