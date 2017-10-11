@@ -71,15 +71,44 @@ export class BcEconomy {
     }
   }
 
+  getEnumNames(){
+      let names:any[]=[];
+      const objValues = Object.keys(Enums.Contribution_Type).map(k => Enums.Contribution_Type[k]);
+      objValues.filter(v => typeof v === "string").forEach((val)=>{
+          names.push(val);
+      });
+      return names;
+  }
+
+  getContributionSumPerType(type:Enums.Contribution_Type){
+    let total:any=0;
+    this.contributions.filter(obj=>obj.type==type&&obj.year==this.activeYear).forEach((contr)=>{
+      total+=contr.value;
+    });
+    return total;
+  }
+
   setBalanceSheetByYear(year){
     let total:number=0;
     let totRevenues:number=0;
     let totOutgos:number=0;
     this.outgosFiles.filter(obj=>obj.invoice_year==year).forEach(entry=>{
-      totOutgos+=<number>entry.value;
+      let n=0;
+      if(entry.invoice_tax>1){
+        n=<any>entry.value+<any>entry.value*(<any>entry.invoice_tax/100)
+      }else{
+        n=<any>entry.value+<any>entry.value*<any>entry.invoice_tax
+      }
+      totOutgos+=<number>n;
     });
     this.revenuesFiles.filter(obj=>obj.invoice_year==year).forEach(entry=>{
-      totRevenues+=<number>entry.value;
+      let n=0;
+      if(entry.invoice_tax>1){
+        n=<any>entry.value+<any>entry.value*(<any>entry.invoice_tax/100)
+      }else{
+        n=<any>entry.value+<any>entry.value*<any>entry.invoice_tax
+      }
+      totRevenues+=<number>n;
     });
     this.outgos=totOutgos;
     this.revenues=totRevenues;
