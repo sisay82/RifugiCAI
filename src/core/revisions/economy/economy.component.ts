@@ -193,10 +193,22 @@ export class BcEconomyRevision extends RevisionBase{
     let totRevenues:number=0;
     let totOutgos:number=0;
     this.outgosFiles.filter(obj=>obj.invoice_year==year).forEach(entry=>{
-      totOutgos+=<number>entry.value;
+      let n=0;
+      if(entry.invoice_tax>1){
+        n=<any>entry.value+<any>entry.value*(<any>entry.invoice_tax/100)
+      }else{
+        n=<any>entry.value+<any>entry.value*<any>entry.invoice_tax
+      }
+      totOutgos+=<number>n;
     });
     this.revenuesFiles.filter(obj=>obj.invoice_year==year).forEach(entry=>{
-      totRevenues+=<number>entry.value;
+      let n=0;
+      if(entry.invoice_tax>1){
+        n=<any>entry.value+<any>entry.value*(<any>entry.invoice_tax/100)
+      }else{
+        n=<any>entry.value+<any>entry.value*<any>entry.invoice_tax
+      }
+      totRevenues+=<number>n;
     });
     this.outgos=totOutgos;
     this.revenues=totRevenues;
