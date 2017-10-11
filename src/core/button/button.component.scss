@@ -21,15 +21,27 @@ $bc-button-border-radius: 2px;
     $shade: #000;
   }
 
-  background: $background;
-  color: $foreground;
+  color: $background;
 
   &:hover, &:focus {
-    background: mix($shade, $background, 12%);
+    background: rgba($background, 0.12);
 
   }
   &:active {
-    background: mix($shade, $background, 22%);
+    background:rgba($background, 0.25);
+  }
+  
+  &.bc-solid {
+    background-color: $background;
+    color: $foreground;
+
+    &:hover, &:focus {
+      background: rgba($background, 0.87);
+  
+    }
+    &:active {
+      background:rgba($background, 0.75);
+    }
   }
 }
 
@@ -37,23 +49,21 @@ $bc-button-border-radius: 2px;
   $color-types: primary,accent,info,success,warn,danger;
   $background: map-get($theme, background);
   $foreground: map-get($theme, foreground);
+  $is-dark: map-get($theme, is-dark);
+  $hueContrast: if($is-dark, 100, 800);
 
   .bc-button {
     @each $color-type in $color-types {
       $paletteColorSet: map-get($theme, $color-type);
+      $backgroundColor: bc-color($paletteColorSet, $hueContrast);
+      $foregroundColor: bc-color($paletteColorSet, #{$hueContrast}-contrast);
 
       &.bc-#{$color-type} {
-        @include bc-button-color(transparent, bc-color($paletteColorSet));
-
-        &.bc-solid {
-          @include bc-button-color(bc-color($paletteColorSet), bc-color($paletteColorSet, default-contrast));
-        }
+        @include bc-button-color($backgroundColor, $foregroundColor);
       }
     }
-
-    &.bc-solid {
-      @include bc-button-color(bc-color($background, raised-button), bc-color($foreground, text));
-      
+   
+    &.bc-solid {      
       box-shadow: 0px 0px 1px 0px rgba(black, 0.2),0px 1px 1px 0px rgba(black, 0.14),0px 1px 2px 0px rgba(black, 0.12);
 
       &.disabled, &[disabled], &[data-disabled] {
