@@ -124,6 +124,7 @@ var Schema;
         transit_count: Number
     });
     Schema.contributionSchema = new mongoose.Schema({
+        year: { type: Number, required: true },
         size: Number,
         shelterId: { type: mongoose.Schema.Types.ObjectId },
         uploadDate: { type: Date, "default": new Date(Date.now()) },

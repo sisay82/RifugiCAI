@@ -13,15 +13,14 @@
     <span>{{balanceSheet | formatcurrency}}</span>
   </div>
   <bc-divider></bc-divider>
-  <div *ngIf="contributions&&contributions.length>0">
-    <p class="bc-h6 bc-title-economy">Contributi:</p>
-    <div style="display:flex; flex-direction:row;">
-      <div *ngFor="let contr of contributions; let i=index" style="flex:1" class="bc-body">
-        Contributo {{i+1}}: {{contr.value | formatcurrency}}
+  <p class="bc-h6 bc-title-economy">Contributi</p>
+  <div *ngFor="let type of getEnumNames()">
+    <div class="bc-body" style="display: flex;flex-direction:row">
+      <div class="bc-body">{{type}}: {{getContributionSumPerType(type)}}
       </div>
     </div>
-    <bc-divider></bc-divider>
   </div>
+  <bc-divider></bc-divider>  
   <div style="display:flex; flex-direction:row;">
     <div style="flex:1">
       <bc-list color="accent">
