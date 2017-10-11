@@ -175,6 +175,7 @@ export interface IUse {
 }
 
 export interface IContribution {
+    year:Number;
     size?:Number;
     shelterId?:String;
     uploadDate?:Date;

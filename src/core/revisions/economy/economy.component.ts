@@ -138,6 +138,23 @@ export class BcEconomyRevision extends RevisionBase{
     }
   }
 
+  getEnumNames(){
+    let names:any[]=[];
+    const objValues = Object.keys(Enums.Contribution_Type).map(k => Enums.Contribution_Type[k]);
+    objValues.filter(v => typeof v === "string").forEach((val)=>{
+        names.push(val);
+    });
+    return names;
+  }
+
+  getContributionSumPerType(type:Enums.Contribution_Type){
+    let total:any=0;
+    this.contributions.filter(obj=>obj.type==type&&obj.year==this.activeYear).forEach((contr)=>{
+      total+=contr.value;
+    });
+    return total;
+  }
+
   changeActiveTab(year,newTab:IEconomy){
     this.activeYear=year;
     if(newTab){
