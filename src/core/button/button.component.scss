@@ -12,35 +12,30 @@ $bc-button-height-sm: 32px;
 $bc-button-margin: 6px;
 $bc-button-padding-end: 8px;
 $bc-button-border-radius: 2px;
+$bc-button-hover-opacity: 0.12;
+$bc-button-active-opacity: 0.25;
 
 @mixin bc-button-color($background, $foreground) {
-  $lightness: lightness($background);
-  $shade: #fff;
-
-  @if ($lightness > 50) {
-    $shade: #000;
-  }
-
   color: $background;
 
-  &:hover, &:focus {
-    background: rgba($background, 0.12);
+  &:hover {
+    background: rgba($background, $bc-button-hover-opacity);
 
   }
   &:active {
-    background:rgba($background, 0.25);
+    background:rgba($background, $bc-button-active-opacity);
   }
   
   &.bc-solid {
-    background-color: $background;
+    background: $background;
     color: $foreground;
 
-    &:hover, &:focus {
-      background: rgba($background, 0.87);
+    &:hover {
+      background: mix($foreground, $background, $bc-button-hover-opacity * 100);
   
     }
     &:active {
-      background:rgba($background, 0.75);
+      background: mix($foreground, $background, $bc-button-active-opacity * 100);
     }
   }
 }
@@ -53,6 +48,8 @@ $bc-button-border-radius: 2px;
   $hueContrast: if($is-dark, 100, 800);
 
   .bc-button {
+    @include bc-button-color(bc-color($background, background), bc-color($foreground, text));
+
     @each $color-type in $color-types {
       $paletteColorSet: map-get($theme, $color-type);
       $backgroundColor: bc-color($paletteColorSet, $hueContrast);
