@@ -82,7 +82,10 @@ export class BcEconomy {
 
   getContributionSumPerType(type:Enums.Contribution_Type){
     let total:any=0;
-    this.contributions.filter(obj=>obj.type==type&&obj.year==this.activeYear).forEach((contr)=>{
+    this.revenuesFiles.filter(obj=>obj.contribution_type==type&&obj.invoice_year==this.activeYear).forEach((file)=>{
+      total+=this.getTotal(file.value,file.invoice_tax);
+    });
+    this.contributions.filter(obj=>obj.type==type&&obj.year==this.activeYear&&obj.accepted).forEach((contr)=>{
       total+=contr.value;
     });
     return total;
@@ -94,20 +97,12 @@ export class BcEconomy {
     let totOutgos:number=0;
     this.outgosFiles.filter(obj=>obj.invoice_year==year).forEach(entry=>{
       let n=0;
-      if(entry.invoice_tax>1){
-        n=<any>entry.value+<any>entry.value*(<any>entry.invoice_tax/100)
-      }else{
-        n=<any>entry.value+<any>entry.value*<any>entry.invoice_tax
-      }
+      n=this.getTotal(entry.value,entry.invoice_tax);
       totOutgos+=<number>n;
     });
     this.revenuesFiles.filter(obj=>obj.invoice_year==year).forEach(entry=>{
       let n=0;
-      if(entry.invoice_tax>1){
-        n=<any>entry.value+<any>entry.value*(<any>entry.invoice_tax/100)
-      }else{
-        n=<any>entry.value+<any>entry.value*<any>entry.invoice_tax
-      }
+      n=this.getTotal(entry.value,entry.invoice_tax);
       totRevenues+=<number>n;
     });
     this.outgos=totOutgos;
@@ -128,6 +123,10 @@ export class BcEconomy {
       this.economy=this.economy.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;})
       resolve()
     });
+  }
+
+  getFilesByYear(files:any[]):any[]{    
+    return files.filter(obj=>obj.invoice_year==this.activeYear);
   }
 
   getDocs(shelId):Promise<IFile[]>{

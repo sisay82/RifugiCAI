@@ -56,7 +56,7 @@
 </div>
 <bc-divider></bc-divider>
 <div class="bc-h6 bc-doc-title">Documentazione amministrativa</div>
-<div class="bc-body-strong" style="font-style:italic">I file vanno rinominati nel seguente modo: fornitore, numero, data</div>
+<div class="bc-body-strong" style="font-style:italic">I file vanno rinominati nel seguente modo: tipo, fornitore, numero, data</div>
 <form [formGroup]="invoicesForm">
     <div formArrayName="files">
         <div *ngFor="let file of invoicesForm.controls.files.controls;let i = index">
@@ -77,9 +77,9 @@
                     <bc-text-input required="true" title="IVA" formControlName="invoice_tax" validator="numberValidator" [displayError]="displayError"></bc-text-input>   
                     <bc-select-input required="true" [enumValues]="getEnumValues()" title="Anno" formControlName="invoice_year" [displayError]="displayError"></bc-select-input>   
                 </div>
-                <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-                    <bc-select-input required="true" title="Tipo di contributo" defaultContent="Es: FondoStabile" enumName="Contribution_Type" formControlName="contribution_type" [displayError]="displayError"></bc-select-input>
-                    <bc-select-input required="true" title="Tipo di fattura" defaultContent="Es: Attività" enumName="Invoice_Type" formControlName="invoice_type" [displayError]="displayError"></bc-select-input>    
+                <div style="flex:1;display: flex;flex-direction:row;align-items:flex-end;white-space:nowrap">
+                    <bc-select-input required="true" title="Tipo di fattura" defaultContent="Es: Attività" enumName="Invoice_Type" formControlName="invoice_type" [displayError]="displayError"></bc-select-input>                            
+                    <bc-select-input [required]="checkRequired(i)" title="Tipo di contributo" defaultContent="Es: FondoStabile" enumName="Contribution_Type" formControlName="contribution_type" [displayError]="displayError"></bc-select-input>
                 </div>
             </div>  
         </div>
