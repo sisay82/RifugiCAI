@@ -35,8 +35,8 @@ export class BcDocRevision extends RevisionBase{
   private newInvoiceForm: FormGroup;
   private invoicesForm: FormGroup;
   private invalidYearsInvoice=".+";
-  private invoiceFormatBase=".+(,\/\-\\.\|_).+(,\/\-\\.\|_)";
-  invoiceFormatRegExp=/.+(,\/\-\\.\|_).+(,\/\-\\.\|_).+/
+  private invoiceFormatBase=".+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_)";
+  invoiceFormatRegExp=/.+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+/ //tipo, fornitore, numero, data
   private docs:IFile[]=[];
   private maps:IFile[]=[];
   private invoicesChange:boolean=false;
@@ -391,6 +391,9 @@ export class BcDocRevision extends RevisionBase{
               invoice_year:file.value.invoice_year,
               contribution_type:file.value.contribution_type
             }
+            if(<any>updFile.invoice_type!="Attività"){
+              updFile.contribution_type=null;
+            }
             this.shelterService.updateFile(updFile).subscribe((val)=>{
               if(val){
                 i++;
@@ -412,6 +415,16 @@ export class BcDocRevision extends RevisionBase{
     }else{
       this.displayError=true;
     }
+  }
+
+  checkRequired(index){
+    let val=(<FormArray>this.invoicesForm.controls.files).controls[index].value.invoice_type=="Attività"
+    if(val){
+      (<FormGroup>(<FormArray>this.invoicesForm.controls.files).controls[index]).controls.contribution_type.enable();
+    }else{
+      (<FormGroup>(<FormArray>this.invoicesForm.controls.files).controls[index]).controls.contribution_type.disable();
+    }
+    return val;
   }
 
   downloadFile(id){

@@ -7,7 +7,7 @@
       </li>
   </ul>
 </div>
-<div *ngIf="activeTab!=undefined">
+<div style="margin-top:2.5%" *ngIf="activeTab!=undefined">
   <div class="bc-h6">
     <span class="bc-title-economy">Stato patrimoniale: </span>
     <span>{{balanceSheet | formatcurrency}}</span>
@@ -16,8 +16,8 @@
   <p class="bc-h6 bc-title-economy">Contributi</p>
   <div *ngFor="let type of getEnumNames()">
     <div class="bc-body" style="display: flex;flex-direction:row">
-      <div class="bc-body">{{type}}: {{getContributionSumPerType(type) | formatcurrency}}
-      </div>
+      <div class="bc-body" style="font-weight: bold">{{type}}:</div>
+      <div style="margin-left:2px">{{getContributionSumPerType(type) | formatcurrency}}</div>
     </div>
   </div>
   <bc-divider></bc-divider>  

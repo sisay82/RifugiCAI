@@ -22,7 +22,8 @@ export namespace Enums {
         "Ordinario CAI",
         "FondoStabile",
         "Contributo Pubblico",
-        "Contributo Privato"
+        "Contributo Privato",
+        "Canone d'affitto"
     }
 
     //tipo classe energetica
