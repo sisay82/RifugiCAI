@@ -123,14 +123,19 @@ var Schema;
         transit_count_reciprocity: Number,
         transit_count: Number
     });
+    Schema.fileRefSchema = new mongoose.Schema({
+        name: { type: String, required: true },
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Files',
+            required: true
+        }
+    });
     Schema.contributionSchema = new mongoose.Schema({
         year: { type: Number, required: true },
-        size: Number,
-        shelterId: { type: mongoose.Schema.Types.ObjectId },
-        uploadDate: { type: Date, "default": new Date(Date.now()) },
-        md5: String,
-        name: String,
-        data: Buffer,
+        pdf: { type: Schema.fileRefSchema },
+        data: [Schema.tagSchema],
+        attachments: [Schema.fileRefSchema],
         value: Number,
         accepted: Boolean,
         type: { type: enums_1.Enums.Contribution_Type }
