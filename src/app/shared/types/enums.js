@@ -27,6 +27,7 @@ var Enums;
         Contribution_Type[Contribution_Type["FondoStabile"] = 1] = "FondoStabile";
         Contribution_Type[Contribution_Type["Contributo Pubblico"] = 2] = "Contributo Pubblico";
         Contribution_Type[Contribution_Type["Contributo Privato"] = 3] = "Contributo Privato";
+        Contribution_Type[Contribution_Type["Canone d'affitto"] = 4] = "Canone d'affitto";
     })(Contribution_Type = Enums.Contribution_Type || (Enums.Contribution_Type = {}));
     //tipo classe energetica
     var Energy_Class_Type;

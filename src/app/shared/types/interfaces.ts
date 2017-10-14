@@ -174,14 +174,16 @@ export interface IUse {
     transit_count?:Number;
 }
 
+export interface IFileRef {
+    name:String;
+    id:String;
+}
+
 export interface IContribution {
+    pdf?:IFileRef;
     year:Number;
-    size?:Number;
-    shelterId?:String;
-    uploadDate?:Date;
-    md5?:String;
-    name?:String;
-    data?:Buffer;
+    data?:[ITag];
+    attachments?:[IFileRef];
     value?:Number;
     accepted?:Boolean;
     type?:Enums.Contribution_Type;

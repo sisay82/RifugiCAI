@@ -31,7 +31,7 @@ export class RevisionsRoutingModule {
     { path: 'documents', component: BcDocRevision,outlet:'revision' },
     { path: 'images', component: BcImgRevision,outlet:'revision' },
     { path: 'economy', component: BcEconomyRevision,outlet:'revision' },
-    { path: 'contribution', component: BcWorkingRevisionPage,outlet:'revision' },
+    { path: 'contribution', component: BcContributionRevision,outlet:'revision' },
     { path: 'use', component: BcFruitionRevision,outlet:'revision' }
   ];
 }

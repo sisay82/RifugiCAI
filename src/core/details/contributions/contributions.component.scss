@@ -2,3 +2,26 @@
 @import '../../style/palette';
 
 @include bc-typography();
+
+.bc-tab-contributions:hover{
+    color:map-get($bc-teal,400);
+    border:1px solid;
+    border-color: $black-12alpha;
+    border-radius:4px;
+}
+
+.bc-tab-active{
+    color:map-get($bc-teal,400);
+    border:1px solid;
+    border-radius:4px;
+    border-color: $black-12alpha;
+}
+
+.bc-title-contributions{
+    color:map-get($bc-teal,400);
+}
+
+.bc-icon-contribution:hover{
+    color:map-get($bc-teal,400);
+    cursor: pointer;
+}

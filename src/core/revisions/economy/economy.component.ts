@@ -338,9 +338,9 @@ export class BcEconomyRevision extends RevisionBase{
             this.contributions=shel.contributions.filter(obj=>obj.accepted) as [IContribution];
             this.analyzeDocsYear(files)
             .then(()=>{
-                if(routeSub!=undefined){
+              if(routeSub!=undefined){
                 routeSub.unsubscribe();
-                }
+              }
             })
             });
             this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
