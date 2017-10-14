@@ -32,7 +32,7 @@ export class DetailsRoutingModule {
     { path: 'documents', component: BcDoc,outlet:'content' },
     { path: 'images', component: BcImg,outlet:'content' },
     { path: 'economy', component: BcEconomy,outlet:'content' },
-    { path: 'contribution', component: BcWorkingDetailPage,outlet:'content' },
+    { path: 'contribution', component: BcContributions,outlet:'content' },
     { path: 'use', component: BcFruition,outlet:'content' }
   ];
 }

@@ -2,3 +2,12 @@
 @import '../../style/palette';
 
 @include bc-typography();
+
+.bc-title-contributions{
+    color:map-get($bc-teal,400 );
+}
+
+.bc-icon-contribution:hover{
+    color:map-get($bc-teal,400);
+    cursor: pointer;
+}
