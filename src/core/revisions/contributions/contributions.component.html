@@ -1,0 +1,54 @@
+<form style="position:relative" [formGroup]="contrForm">
+    <div class="bc-h6 bc-title-contributions">
+        Richiesta di contributi
+    </div>
+
+    <div style="max-width:40%;width:auto">
+        <bc-select-input title="Tipo" required="true" defaultContent="Selezione il tipo di contributo" enumName="Contribution_Type" formControlName="type" [displayError]="displayError"></bc-select-input>                        
+    </div>
+    <div style="display:flex; flex-direction:row">
+        <bc-list style="flex:1" color="accent" formArrayName="tags">
+            <bc-list-header><span>Contributi richiesti</span></bc-list-header>
+            <bc-list-item *ngFor="let tag of contrForm.controls.tags.controls;let i=index" [formGroupName]="i">
+                <div bc-line style="display:flex; flex-direction:row;align-items:center">
+                    <bc-icon (click)="removeTag(i)" class="bc-icon-contribution" name="times" size=s></bc-icon>                    
+                    <div style="flex: 1">{{tag.value.key}}</div>
+                    <div style="flex: 1">{{tag.value.value | formatcurrency}}</div>
+                </div>
+            </bc-list-item>
+        </bc-list>
+    
+        <bc-list style="flex:1" color="accent" formArrayName="attachments">
+            <bc-list-header><span>Allegati</span></bc-list-header>
+            <bc-list-item *ngFor="let item of contrForm.controls.attachments.controls;let i=index" [formGroupName]="i">
+                <div bc-line style="display:flex; flex-direction:row;align-items:center">
+                    <bc-icon (click)="removeAttachment(i)" class="bc-icon-contribution" name="times" size=s></bc-icon>                    
+                    <div style="flex: 1">{{item.value.value}}</div>
+                </div>
+            </bc-list-item>
+        </bc-list>
+    </div>
+    
+</form>    
+<div class="bc-h6">
+    <span class="bc-title-contributions">Richiesto:</span><span style="margin-left:3px">{{getTotal() | formatcurrency}}</span>
+</div>
+<form style="position:relative" [formGroup]="newTagForm">
+    <div class="bc-body">
+        Aggiungi chiave di contributo
+    </div>
+    <div style="display:flex; flex-direction:row;">
+        <bc-icon (click)="addNewTag()" class="bc-icon-contribution" name="plus" size=s></bc-icon>    
+        <bc-text-input placeholder="Es: Oneri di sicurezza" style="flex:1" formControlName="newKey" [displayError]="displayError"></bc-text-input>   
+        <bc-text-input placeholder="Es: 420" style="flex:1" validator="numberValidator" formControlName="newValue" [displayError]="displayError"></bc-text-input>        
+    </div>
+</form>
+<form style="position:relative" [formGroup]="newAttachmentForm">
+    <div class="bc-body">
+        Aggiungi allegato
+    </div>
+    <div style="display:flex; flex-direction:row;">
+        <bc-icon (click)="addNewAttachment()" class="bc-icon-contribution" name="plus" size=s></bc-icon>    
+        <bc-select-input defaultContent="Selezione il nome di un documento" style="flex:1" [enumValues]="filesEnum" formControlName="newValue" [displayError]="displayError"></bc-select-input>        
+    </div>
+</form>

@@ -134,14 +134,20 @@ export namespace Schema {
         transit_count:Number
     });
 
+    export var fileRefSchema = new mongoose.Schema({
+        name:{type:String,required:true},
+        id:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'Files',
+            required:true
+        }
+    })
+
     export var contributionSchema = new mongoose.Schema({
         year:{type:Number,required:true},
-        size:Number,
-        shelterId:{type:mongoose.Schema.Types.ObjectId},
-        uploadDate:{type:Date,default:new Date(Date.now())},
-        md5:String,
-        name:String,
-        data:Buffer,
+        pdf:{type:fileRefSchema},
+        data:[tagSchema],
+        attachments:[fileRefSchema],
         value:Number,
         accepted:Boolean,
         type:{type:Enums.Contribution_Type}

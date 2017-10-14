@@ -8,6 +8,7 @@ var express = require("express");
 var schema_1 = require("./src/app/shared/types/schema");
 var enums_1 = require("./src/app/shared/types/enums");
 var multer = require("multer");
+var pdf = require("html-pdf");
 mongoose.Promise = global.Promise;
 var appPort = 8000;
 var ObjectId = mongoose.Types.ObjectId;
@@ -318,8 +319,6 @@ function updateFile(id, file) {
                 value: file.value || null
             }
         };
-        for (var prop in file) {
-        }
         Files.findByIdAndUpdate(id, query).exec(function (err, res) {
             if (err) {
                 reject(err);
@@ -388,6 +387,68 @@ function resolveServicesInShelter(shelter, services) {
         }
     });
 }
+function createPDF(data) {
+    return new Promise(function (resolve, reject) {
+        var document = "<html><head></head><body>\n        <div>Richiesta di contributi di tipo " + data.type + "</div><h4>Contributi richiesti:</h4>";
+        data.data.forEach(function (tag) {
+            var content = "<div>" + tag.key + ": " + tag.value + "</div>";
+            document += content;
+        });
+        document += "<h5>Allegati:</h5>";
+        data.attachments.forEach(function (file) {
+            var content = "<div>" + file.name + "</div>";
+            document += content;
+        });
+        document += "<div>TOTALE: " + data.value + "</div>";
+        document += "</body></html>";
+        pdf.create(document, {
+            "directory": "/tmp",
+            "header": {
+                "height": "45mm",
+                "contents": '<div style="text-align: center;">Author: CAIDEV</div>'
+            },
+            "footer": {
+                "height": "28mm",
+                "contents": {
+                    first: (new Date()).toDateString(),
+                    "default": '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>',
+                    last: 'Last Page'
+                }
+            }
+        }).toStream(function (err, res) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                var bufs = [];
+                res.on('data', function (d) { bufs.push(d); });
+                res.on("end", function () {
+                    var buff = Buffer.concat(bufs);
+                    var file = {
+                        size: buff.length,
+                        shelterId: null,
+                        uploadDate: new Date(),
+                        name: data.year + "_" + data.type + "_" + data.value,
+                        data: buff,
+                        contribution_type: data.type,
+                        contentType: "application/pdf",
+                        type: null,
+                        value: data.value
+                    };
+                    insertNewFile(file)
+                        .then(function (f) {
+                        resolve({ name: f.name, id: f._id });
+                    })["catch"](function (err) {
+                        reject(err);
+                    });
+                });
+                res.on('error', function (err) {
+                    reject(err);
+                });
+            }
+        });
+    });
+}
 function resolveEconomyInShelter(shelter, uses, contributions, economies) {
     return new Promise(function (resolve, reject) {
         try {
@@ -418,9 +479,27 @@ function resolveEconomyInShelter(shelter, uses, contributions, economies) {
                 }
             }
             if (contributions != undefined) {
-                shelter.contributions.concat(contributions.filter(function (obj) { return shelter.contributions.indexOf(obj) == -1; }));
+                shelter.contributions = shelter.contributions.concat(contributions);
             }
-            resolve(shelter);
+            var i_1 = 0;
+            var filesToCreate_1 = shelter.contributions.filter(function (obj) { return obj.pdf == undefined; });
+            if (filesToCreate_1.length > 0) {
+                shelter.contributions.filter(function (obj) { return obj.pdf == undefined; }).forEach(function (contr) {
+                    createPDF(contr)
+                        .then(function (file) {
+                        i_1++;
+                        contr.pdf = file;
+                        if (i_1 == filesToCreate_1.length) {
+                            resolve(shelter);
+                        }
+                    })["catch"](function (e) {
+                        reject(e);
+                    });
+                });
+            }
+            else {
+                resolve(shelter);
+            }
         }
         catch (e) {
             reject(e);
@@ -1024,7 +1103,7 @@ appRoute.route("/shelters/confirm/:id")
                     confirmShelter(req.params.id)
                         .then(function (ris) {
                         if (shelToConfirm_1.files != null) {
-                            var i_1 = shelToConfirm_1.files.length;
+                            var i_2 = shelToConfirm_1.files.length;
                             var j_1 = 0;
                             for (var _i = 0, _a = shelToConfirm_1.files; _i < _a.length; _i++) {
                                 var file = _a[_i];
@@ -1032,7 +1111,7 @@ appRoute.route("/shelters/confirm/:id")
                                     deleteFile(file._id)
                                         .then(function () {
                                         j_1++;
-                                        if (j_1 == i_1) {
+                                        if (j_1 == i_2) {
                                             SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToConfirm_1), 1);
                                             res.status(200).send(true);
                                         }
@@ -1045,7 +1124,7 @@ appRoute.route("/shelters/confirm/:id")
                                         updateFile(file._id, file)
                                             .then(function (value) {
                                             j_1++;
-                                            if (j_1 == i_1) {
+                                            if (j_1 == i_2) {
                                                 SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToConfirm_1), 1);
                                                 res.status(200).send(true);
                                             }
@@ -1057,7 +1136,7 @@ appRoute.route("/shelters/confirm/:id")
                                         insertNewFile(file)
                                             .then(function (f) {
                                             j_1++;
-                                            if (j_1 == i_1) {
+                                            if (j_1 == i_2) {
                                                 SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToConfirm_1), 1);
                                                 res.status(200).send(true);
                                             }

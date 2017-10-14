@@ -3,12 +3,14 @@ import * as mongoose from 'mongoose';
 import * as session from 'express-session';
 import * as bodyParser from 'body-parser';
 import * as express from "express";
-import { IShelter, IService, IFile, IOpening } from "./src/app/shared/types/interfaces";
+import { IShelter, IService, IFile, IOpening,IContribution } from "./src/app/shared/types/interfaces";
 import { Schema } from "./src/app/shared/types/schema";
 import { Enums } from "./src/app/shared/types/enums";
 import https = require('https');
 import http = require('http');
 import multer = require('multer');
+import * as pdf from "html-pdf"
+import fs = require('fs');
 
 interface IServiceExtended extends IService,mongoose.Document {
     _id:String;
@@ -341,10 +343,6 @@ function updateFile(id:any,file):Promise<boolean>{
             }
         }
 
-        for(let prop in file){
-
-        }
-
         Files.findByIdAndUpdate(id,query).exec((err,res)=>{
             if(err){
                 reject(err);
@@ -413,6 +411,73 @@ function resolveServicesInShelter(shelter,services):Promise<IShelterExtended>{
     });
 }
 
+function createPDF(data:IContribution):Promise<any>{
+    return new Promise<any>((resolve,reject)=>{
+
+        
+        let document = `<html><head></head><body>
+        <div>Richiesta di contributi di tipo `+data.type+`</div><h4>Contributi richiesti:</h4>`;
+        data.data.forEach(tag=>{
+            let content="<div>"+tag.key+": "+tag.value+"</div>";
+            document+=content;
+        });
+        document+="<h5>Allegati:</h5>";
+        data.attachments.forEach(file=>{
+            let content="<div>"+file.name+"</div>";
+            document+=content;
+        });
+        document+="<div>TOTALE: "+data.value+"</div>";
+        document+="</body></html>";
+
+        pdf.create(document,{
+            "directory": "/tmp",
+            "header": {
+                "height": "45mm",
+                "contents": '<div style="text-align: center;">Author: CAIDEV</div>'
+            },
+            "footer": {
+                "height": "28mm",
+                "contents": {
+                  first: (new Date()).toDateString(),
+                  default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+                  last: 'Last Page'
+                }
+            },
+        }).toStream(function(err,res){
+            if(err){
+                console.log(err);
+            }else{
+                var bufs = [];
+                res.on('data', function(d){ bufs.push(d); });
+                res.on("end",()=>{
+                    let buff = Buffer.concat(bufs);
+                    let file={
+                        size:buff.length,
+                        shelterId:null,
+                        uploadDate:new Date(),
+                        name:data.year+"_"+data.type+"_"+data.value,
+                        data:buff,
+                        contribution_type:data.type,
+                        contentType:"application/pdf",
+                        type:null,
+                        value:data.value
+                    }
+                    insertNewFile(<any>file)
+                    .then(f=>{
+                        resolve({name:f.name,id:f._id});
+                    })
+                    .catch(err=>{
+                        reject(err);
+                    });
+                });
+                res.on('error',function(err){
+                    reject(err);
+                });
+            }
+        })
+    }); 
+}
+
 function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributions:any[],economies:any[]):Promise<IShelterExtended>{
     return new Promise<IShelterExtended>((resolve,reject)=>{
         try{
@@ -439,13 +504,29 @@ function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributio
             }
             
             if(contributions!=undefined){
-                shelter.contributions.concat(
-                    contributions.filter(obj=>shelter.contributions.indexOf(obj)==-1)
-                )
-                
+                shelter.contributions=<any>shelter.contributions.concat(contributions)
             }
                 
-            resolve(shelter);
+            let i=0;
+            let filesToCreate=shelter.contributions.filter(obj=>obj.pdf==undefined)
+            if(filesToCreate.length>0){
+                shelter.contributions.filter(obj=>obj.pdf==undefined).forEach(contr=>{
+                    createPDF(contr)
+                    .then(file=>{
+                        i++;
+                        contr.pdf=file;
+                        if(i==filesToCreate.length){
+                            resolve(shelter);
+                        }
+                    })
+                    .catch((e)=>{
+                        reject(e);
+                    });
+                });
+            }else{
+                resolve(shelter);
+            }
+            
         }catch(e){
             reject(e);
         }
