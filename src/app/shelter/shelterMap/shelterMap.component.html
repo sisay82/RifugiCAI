@@ -1,17 +1,19 @@
 <bc-content>
-    <bc-content-section *ngIf="getAuth()">
-        <div bc-navbar style="z-index: 10;position:absolute;height:55px;left:5%;padding-top:5px;display:inline-block;z-index:410">
-            <ul class="nav navbar-nav">
-                <li class="navbar-item">
-                    <a href="list" class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>
-                </li>
-                <li class="navbar-item">
-                    <a href="map" class="btn btn-default"><i class="fa fa-map" aria-hidden="true"></i>  Map View</a>
-                </li>
-            </ul>
-        </div>
-        <div style="position:relative;height:calc(100vh - 128px);width:100%">
-            <bc-map></bc-map>
-        </div>
-    </bc-content-section>
+  <bc-content-section>
+      <div style="position: absolute;z-index:1;left:5%">
+        <bc-navbar style="background:0">
+          <ul class="nav navbar-nav">
+            <li class="navbar-item">
+              <a href="/list" class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>
+            </li>
+            <li class="navbar-item">
+              <a href="/map" class="btn btn-default"><i class="fa fa-map" aria-hidden="true"></i>  Map View</a>
+            </li>
+          </ul>
+        </bc-navbar>
+      </div>
+    <div style="position:fixed;width:100%;height:calc(100vh - 128px)">
+      <bc-map></bc-map>
+    </div>
+  </bc-content-section>
 </bc-content>

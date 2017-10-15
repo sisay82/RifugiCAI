@@ -87,7 +87,6 @@ export class BcMap implements OnInit{
     ngAfterContentInit() {
         //Called after ngOnInit when the component's or directive's content has been initialized.
         //Add 'implements AfterContentInit' to the class.
-        this.map.invalidateSize();
         setTimeout(()=>{this.map.invalidateSize()}, 400);
     }
 
