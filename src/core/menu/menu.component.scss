@@ -1,35 +1,233 @@
-@import '../style/palette';
-@import '../style/constants';
-@import '../style/typography';
+// Menu
+// --------------------------------------------------
 
-$accent:map_get($bc-teal,400);
-$font-style:bc-typography-style(14px,14px,500);
-$menu-width:200px;
+// Navigation drawer types
 
-.bc-list-overlap{
+// Permanent
+      // Recommended default for desktop
+
+// Persistent
+// Mini variant
+// Temporary
+
+//Resting elevation 
+$elevation: 16 !default;
+
+//Maximum width: 
+// The maximum width of the nav drawer is 280dp on mobile and 320dp on tablet.
+// This is calculated by multiplying the standard increment by five (the standard increment is 56dp on mobile and 64dp on tablet).
+$standard-increment: 56px  !default;
+$standard-increment-gtsm: 64px  !default;
+
+$menu-padding-top: 16px  !default;
+
+/// @prop - Box shadow of the menu
+$menu-box-shadow: 0 0 10px rgba(0, 0, 0, .25) !default;
+$menu-permanent-box-shadow: 0 0 1px rgba(0, 0, 0, .25) !default;
+$menu-border-radius: 3px !default;
+
+.bc-menu {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+
+  height: 100%;
+  width: 100vw;
+  
+  z-index: 105;
+
+  pointer-events: none;
+
+  & .bc-menu-wrapper {
     position: absolute;
-    z-index: 1;
+  
+    max-width: $standard-increment * 5;
+    padding: $menu-padding-top 0px;
+    z-index: $elevation;
+  
+    background-color: white; //TODO: themeing!
+
+    box-shadow: $menu-box-shadow;
+    pointer-events: auto;
+  }
+
+  &.left{
+    .bc-menu-wrapper{
+      border-top-right-radius: $menu-border-radius;
+      border-bottom-right-radius: $menu-border-radius;
+    }
+  }
+
+  &.right {
+    .bc-menu-wrapper{
+      right:0;
+      border-top-left-radius: $menu-border-radius;
+      border-bottom-left-radius: $menu-border-radius;
+    }
+  }
+
+  &.permanent{
+    .bc-menu-wrapper{
+      box-shadow: $menu-permanent-box-shadow;
+    }
+    & bc-backdrop{
+      display:none;
+    }
+    &.left ~ * {
+      padding-left: $standard-increment * 5;
+      padding-right: 0px;
+    }
+    
+    &.right ~ * {
+      padding-left: 0px;
+      padding-right: $standard-increment * 5;
+    }
+  }
+  
 }
 
-a.disabled {
-    pointer-events: none;
-    cursor: default;
-}
+// ion-menu {
+//   @include position(0, 0, 0, 0);
 
-.bc-list-button{
-    background-color: map_get($bc-grey-cai, 0);
-    border-color: map_get($bc-grey-cai, 0);    
-    color:map_get(map_get($bc-grey-cai,contrast),A400);
-}
+//   position: absolute;
 
-.bc-list-button:hover{
-    color:$accent;
-}
+//   display: none;
 
-.bc-menu-select{
-    background: map_get($bc-light-theme-background, background);
-    display: block;
-    overflow-y: auto; 
-    overflow-x: hidden; 
-    width:$menu-width;
-}   
+//   // contain: strict;
+// }
+
+// ion-menu.show-menu {
+//   display: block;
+// }
+
+
+// .menu-inner {
+//   @include position(0, auto, 0, 0);
+//   @include transform(translate3d(-9999px, 0, 0));
+
+//   position: absolute;
+
+//   display: block;
+
+//   width: $menu-width;
+//   height: 100%;
+
+//   // contain: strict;
+// }
+
+// .menu-inner > ion-header,
+// .menu-inner > ion-content,
+// .menu-inner > ion-footer {
+//   position: absolute;
+// }
+
+// ion-menu[side=left] > .menu-inner {
+//   @include multi-dir() {
+//     // scss-lint:disable PropertySpelling
+//     right: auto;
+//     left: 0;
+//   }
+// }
+
+// ion-menu[side=right] > .menu-inner {
+//   @include multi-dir() {
+//     // scss-lint:disable PropertySpelling
+//     right: 0;
+//     left: auto;
+//   }
+// }
+
+// ion-menu[side=end] > .menu-inner {
+//   @include position-horizontal(auto, 0);
+// }
+
+// ion-menu ion-backdrop {
+//   z-index: -1;
+//   display: none;
+
+//   opacity: .01;
+// }
+
+// .menu-content {
+//   @include transform(translate3d(0, 0, 0));
+// }
+
+// .menu-content-open {
+//   cursor: pointer;
+
+//   touch-action: manipulation;
+// }
+
+// .menu-content-open ion-pane,
+// .menu-content-open ion-content,
+// .menu-content-open .toolbar {
+//   // the containing element itself should be clickable but
+//   // everything inside of it should not clickable when menu is open
+//   pointer-events: none;
+// }
+
+
+// @media all and (max-width: 340px) {
+
+//   .menu-inner {
+//     width: $menu-small-width;
+//   }
+
+// }
+
+
+// // Menu Reveal
+// // --------------------------------------------------
+// // The content slides over to reveal the menu underneath.
+// // The menu itself, which is under the content, does not move.
+
+// ion-menu[type=reveal] {
+//   z-index: 0;
+// }
+
+// ion-menu[type=reveal].show-menu .menu-inner {
+//   @include transform(translate3d(0, 0, 0));
+// }
+
+
+// // Menu Overlay
+// // --------------------------------------------------
+// // The menu slides over the content. The content
+// // itself, which is under the menu, does not move.
+
+// ion-menu[type=overlay] {
+//   z-index: $z-index-menu-overlay;
+// }
+
+// ion-menu[type=overlay] .show-backdrop {
+//   display: block;
+// }
+
+// // Material Design Menu
+// // --------------------------------------------------
+
+// /// @prop - Background of the menu
+// $menu-md-background:            $background-md-color !default;
+
+// /// @prop - Box shadow color of the menu
+// $menu-md-box-shadow-color:      rgba(0, 0, 0, .25) !default;
+
+// /// @prop - Box shadow of the menu
+// $menu-md-box-shadow:            0 0 10px $menu-md-box-shadow-color !default;
+
+
+// .md .menu-inner {
+//   background: $menu-md-background;
+// }
+
+// .md .menu-content-reveal {
+//   box-shadow: $menu-md-box-shadow;
+// }
+
+// .md .menu-content-push {
+//   box-shadow: $menu-md-box-shadow;
+// }
+
+// .md ion-menu[type=overlay] .menu-inner {
+//   box-shadow: $menu-md-box-shadow;
+// }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ShelterService } from '../shelter.service'
-import { IShelter,IButton } from '../../shared/types/interfaces';
+import { IShelter } from '../../shared/types/interfaces';
 import { Enums } from '../../shared/types/enums';
 import {BcSharedService} from '../../shared/shared.service';
 import {BcAuthService} from '../../shared/auth.service';
@@ -14,10 +14,6 @@ import { Subscription } from 'rxjs/Subscription';
     providers: [ShelterService,BcSharedService]
 })
 export class BcShelterList {
-    list_view_button:IButton={ref:'list',icon:'th-list',text:'Lista',dark_theme:false};
-    map_view_button:IButton={ref:'map',icon:'map-marker',text:'Mappa',dark_theme:false};
-    add_shelter_button:IButton={action:this.createShel,text:'Aggiungi Rifugio',ref:this,icon:"plus",dark_theme:false};
-
     filterText: string = "";
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];

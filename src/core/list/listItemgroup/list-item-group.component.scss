@@ -1,0 +1,74 @@
+@import '../../style/constants';
+@import '../../style/typography';
+@import '../listHeader/list-header.directive';
+
+
+@mixin bc-list-item-group-color($palette) {
+  background: bc-color($palette, 50);
+  color: bc-color($palette, '50-contrast');
+}
+
+@mixin bc-list-item-group-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+  .bc-list-group-header {
+    background: bc-color($background, 'background');
+    color: bc-color($foreground, 'text');
+    border-color: bc-color($foreground, divider);
+
+    &.bc-primary {
+      @include bc-list-item-group-color($primary);
+    }
+
+    &.bc-accent {
+      @include bc-list-item-group-color($accent);
+    }
+  }
+}
+
+// bc-list-header style
+@mixin bc-list-item-group-base($bc-list-header-padding-start: 16px, $bc-list-header-padding-end:0px) {
+  & .bc-list-item-group
+  {
+    & .bc-list-group-header {
+        @include flex-box;
+        position: relative;
+        overflow: hidden;
+    
+        // Positioning content style
+        // --------------------------------------------------
+        align-items: center;
+        justify-content: space-between;
+
+        // Container dimension style
+        // --------------------------------------------------
+        width: 100%;
+        min-height: 4.3rem;
+
+        // margin and padding
+        // --------------------------------------------------
+        padding: 0px $bc-list-header-padding-end 0px $bc-list-header-padding-start;
+
+        // text style
+        // --------------------------------------------------
+        &.bc-list-group-header-text{
+            white-space: nowrap;
+            @include bc-typography-scale-to-styles(bc-list-header-typographic-scale(), list-header);
+        }
+
+        border-bottom-width: 1px; 
+        border-bottom-style: solid;
+        
+    }
+
+    &:not(:last-of-type) .bc-list-group-header ~ .bc-divider {
+        display:none;
+    }
+    
+    & .bc-list-group-header:not(:first-child){
+        display:none;
+    }
+    }
+}

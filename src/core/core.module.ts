@@ -4,6 +4,7 @@ import { BcContentModule } from './content/content.module';
 import { BcBackdropModule } from './backdrop/backdrop.module';
 import { BcIconModule } from './icon/icon.module';
 import { BcAvatarModule } from './avatar/avatar.module';
+import { BcButtonModule } from './button/button.module';
 import { BcDividerModule } from './divider/divider.module';
 import { BcNavbarModule } from './navbar/navbar.module';
 import { BcListModule } from './list/list.module';
@@ -11,8 +12,6 @@ import { BcDetailsModule } from './details/details.module';
 import { BcRevisionsModule } from './revisions/revisions.module';
 import { BcMapModule } from './map/map.module';
 import { BcMaskControllerModule } from './fixed_mask/mask-controller.module';
-import { BcButtonModule } from './button/button.module';
-import { BcSelectGroupModule } from './button/selectGroup.module';
 import { BcMenuModule } from './menu/menu.module';
 // import { FilterService } from './services/filter.service';
 // import { SorterService } from './services/sorter.service';
@@ -26,6 +25,7 @@ const COMPONENTS_MODULES = [
     BcBackdropModule,
     BcIconModule,
     BcAvatarModule,
+    BcButtonModule,
     BcDividerModule,
     BcNavbarModule,
     BcListModule,
@@ -34,7 +34,6 @@ const COMPONENTS_MODULES = [
     BcRevisionsModule,
     BcMaskControllerModule,
     BcButtonModule,
-    BcSelectGroupModule,
     BcMenuModule
 ];
 
