@@ -1,0 +1,306 @@
+@import '../../style/constants';
+@import '../../style/typography';
+@import '../../style/theme';
+@import '../../style/vendor-prefixes';
+@import '../../avatar/avatar.directive';
+
+// Represents a collection of typographic scale.
+@function bc-list-item-typographic-scale(
+  $font-family: $bc-font-family,
+  $list-item: bc-typography-style($bc-font-size-base, ($bc-font-size-base+4), 500),
+  $list-item-secondary-line: bc-typography-style($bc-font-size-base, ($bc-font-size-base+4), 400)
+) {
+  @return (
+    font-family: $font-family,
+    normal: $list-item,
+    secondary: $list-item-secondary-line
+  );
+}
+$bc-list-icon-size: $bc-font-size-base+4px;
+// Represents list item heights definition.
+$bc-list-item-heights: (
+    base: 48px,
+    multiline: 100%,
+    avatar: $bc-avatar-container-height,
+    thumbnail: 80px,
+    dense:(
+        base: 40px,
+        multiline: 100%,
+        avatar: $bc-dense-avatar-container-height,
+        thumbnail: 72px
+    )
+);
+
+// Represents the desired item height.
+@function bc-item-height($heightDef, $type: base, $dense: null) {
+
+  $item-height: if($dense == null, map-get($heightDef, $type),  map-get(map-get($heightDef, dense), $type));
+
+  @return $item-height;
+}
+
+@mixin bc-list-item-theme($theme, $activeColor) {
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+
+    .bc-list-item {
+        color: bc-color($foreground, 'text');
+        background: bc-color($background, 'background');
+
+        &.list-group-item {
+            color: bc-color($foreground, 'text');
+            
+            @include bc-list-item-disable($activeColor, $background, $foreground);
+            @include bc-list-item-active($activeColor, $background, $foreground);
+
+            &:hover, &:focus {
+                @include bc-list-item-disable($activeColor, $background, $foreground);
+                @include bc-list-item-active($activeColor, $background, $foreground);
+                color: bc-color($foreground, 'text');
+                background: bc-color($background, 'hover');
+                border-color: bc-color($background, 'hover');
+            }
+        }
+
+        .bc-list-item-inner {
+            border-bottom: 1px solid bc-color($foreground, divider);
+        }
+
+        .bc-list-text{
+            .bc-line {
+                color: bc-color($foreground, 'text');
+                // all lines but the top line should have smaller text
+                &:nth-last-child(1) {
+                    color: bc-color($foreground, 'secondary-text');
+                }
+
+                &:nth-child(1) {
+                    color: bc-color($foreground, 'text');
+                }
+            }
+        }
+
+        .bc-icon {
+            color: bc-color($foreground, 'secondary-text');
+        }
+    }
+}
+
+@mixin bc-list-item-base($bc-list-item-padding-start: 16px, $bc-list-item-padding-end: 0px, $dense:null) {
+
+    & a.bc-list-item, & button.bc-list-item {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+
+        &.disabled, &[disabled] &[data-disabled] {
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+    }
+
+    .bc-list-item {
+        display: block;
+
+        // margin and padding
+        // --------------------------------------------------
+        margin: 0px;
+        padding: 0px  $bc-list-item-padding-end 0px $bc-list-item-padding-start;
+
+        border-width: 0px;
+
+        &.list-group-item {
+            transition: background-color 250ms linear;
+            &.active, &:hover, &:focus {
+                outline: none;
+            }
+        }
+
+        .bc-list-item-content {
+            @include flex-box;
+            @include flex-flow(row);
+            
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            // margin and padding
+            // --------------------------------------------------
+            margin: 0px;
+            padding: 0px; 
+            
+            // Container dimension style
+            // --------------------------------------------------
+            height: bc-item-height($bc-list-item-heights, base, $dense);
+            
+            // Content position style
+            // --------------------------------------------------
+            align-items: center;
+
+            // Font style
+            // --------------------------------------------------
+            @include bc-typography-scale-to-styles(bc-list-item-typographic-scale(), normal);
+            white-space: nowrap;
+
+            & :first-child{
+                margin-left: 0px;
+                padding-left: 0px;
+            }
+        }
+
+        // bc-list-item-inner style
+        .bc-list-item-inner {
+            @include flex-box;
+            @include flex-flow(row);
+            overflow: hidden;
+
+            // Container dimension style
+            // --------------------------------------------------
+            @include flex(1);
+            align-self: stretch;
+            min-height: inherit;
+
+            // Content position style
+            // --------------------------------------------------
+            align-items: inherit;
+
+            // margin and padding
+            // --------------------------------------------------
+            padding: 8px 0px;
+
+            & > *:not([item-end]):not([data-item-end]) {
+                @include flex(1);
+                @include truncate-line();
+                padding-right: 16px;
+            }
+            & > *:not([item-end]):not([data-item-end]):last-child {
+                padding-right: 0px;
+            }
+        }
+
+        &:nth-last-child(2) .bc-list-item-inner {
+            border-bottom: 0px;
+        }
+        
+        & .bc-list-text {
+            @include flex-box;
+            @include flex-flow;
+
+            width:100%;
+            box-sizing: border-box;
+            overflow: hidden;
+            padding: 0px;
+
+            &:empty {
+                display: none;
+            }
+
+            &:first-child {
+                padding: 0;
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
+
+            & > * {
+                margin: 0;
+                padding: 0;
+                font-weight: inherit;
+                font-size: inherit;
+            }
+                   
+            @include bc-line-base();
+        }
+
+        & .bc-icon {
+            font-size: $bc-list-icon-size;
+        }
+        & .bc-icon + .bc-list-item-inner {
+            padding-left: $bc-list-item-padding-start/2;
+        }
+    }
+
+    &.bc-list-avatar .bc-list-item .bc-list-item-content {
+        min-height: bc-item-height($bc-list-item-heights, 'avatar', $dense);
+
+        @include bc-avatar-base($dense);
+    }
+
+    &.bc-list-thumbnail .bc-list-item .bc-list-item-content {
+        min-height: bc-item-height($bc-list-item-heights, 'thumbnail', $dense);
+    }
+
+    // list items with more than 3 lines should expand to match
+    // the height of its contained text
+    & .bc-multi-line .bc-list-item-content {
+    height: bc-item-height($bc-list-item-heights, multiline, $dense);
+    }
+
+}
+
+@mixin bc-list-item-no-border(){
+    & .bc-list-item .bc-list-item-inner{
+        border-bottom: 0px;
+    }
+}
+
+@mixin bc-list-item-disable($accent, $background, $foreground){
+    &.disabled {
+        color: bc-color($foreground, 'disabled');
+        background: bc-color($background, 'disabled');
+        border-color: bc-color($background, 'disabled');
+        .bc-icon {
+            color:  bc-color($foreground, 'disabled');
+        }
+    }
+}
+
+@mixin bc-list-item-active($accent, $background, $foreground){
+    &.active {        
+        color: bc-color($accent, 700);
+        background: bc-color($background, 'focused-button');
+        border-color: bc-color($accent);
+
+        @include bc-list-item-disable($accent, $background, $foreground);
+        
+        .bc-line {
+            color: bc-color($accent, 500);
+            
+            // all lines but the top line should have smaller text
+            &:nth-last-child(1) {
+                color: bc-color($accent, 500);
+            }
+
+            &:nth-child(1) {
+                color: bc-color($accent, 500);
+            }
+        }
+        
+        .bc-icon {
+            color: bc-color($accent, 500);
+        }
+    }
+}
+
+@mixin bc-line-base() {
+  .bc-line {
+    display: block;
+    box-sizing: border-box;
+    width:100%;
+
+    @include bc-typography-scale-to-styles(bc-list-item-typographic-scale(), normal);
+
+    @include truncate-line();
+
+    // all lines but the top line should have smaller text
+    &:nth-child(n+2) {
+      @include bc-typography-scale-to-styles(bc-list-item-typographic-scale(), secondary);
+    }
+  }
+}
+
+@mixin truncate-line() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

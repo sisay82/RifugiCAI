@@ -1,0 +1,13 @@
+<ng-content select="bc-menu:not(.permanent.clipped)"></ng-content>
+<main class="bc-content-box">
+  <ng-content select="bc-content-header"></ng-content>
+  <div class="bc-content-container">
+    <ng-content select="bc-menu.permanent.clipped"></ng-content>
+    <section>
+      <ng-content select="bc-content-section"></ng-content>
+      <ng-content select="bc-content-aside.left"></ng-content>
+      <ng-content select="bc-content-aside.right"></ng-content> 
+    </section>
+  </div>
+  <ng-content select="bc-content-footer"></ng-content>
+</main>

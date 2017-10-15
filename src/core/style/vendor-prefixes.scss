@@ -1,0 +1,68 @@
+@mixin flex-box {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;  
+}
+
+@mixin flex-flow ($direction: column, $wrap: nowrap) {
+    -webkit-flex-flow: $direction $wrap;
+    flex-flow: $direction $wrap;
+}
+
+@mixin flex($values) {
+    -webkit-box-flex: $values;
+    -moz-box-flex:  $values;
+    -webkit-flex:  $values;
+    -ms-flex:  $values;
+    flex:  $values;
+}
+
+@mixin order($val) {
+    -webkit-box-ordinal-group: $val;  
+    -moz-box-ordinal-group: $val;     
+    -ms-flex-order: $val;     
+    -webkit-order: $val;  
+    order: $val;
+}
+
+@mixin touch-action($value) {
+    -ms-touch-action: $value;
+    touch-action: $value;
+}
+
+@mixin user-select($value) {
+    -webkit-user-select: $value;
+    -moz-user-select: $value;
+    -ms-user-select: $value;
+    user-select: $value;
+}
+
+@mixin input-placeholder {
+    &::placeholder {
+        @content;
+    }
+
+    &::-moz-placeholder {
+        @content;
+    }
+
+    &::-webkit-input-placeholder {
+        @content;
+    }
+
+    &:-ms-input-placeholder {
+        @content;
+    }
+}
+
+@mixin cursor-grab {
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+
+@mixin cursor-grabbing {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+}

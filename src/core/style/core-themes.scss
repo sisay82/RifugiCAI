@@ -1,9 +1,18 @@
+// Import all the components themes indipendents.
+@import '../backdrop/backdrop.directive';
+
 // Import all the components themes.
-@import '../navbar/navbar.component';
+@import '../icon/icon.component';
 @import '../divider/divider.component';
+@import '../navbar/navbar.component';
+@import '../list/list.component';
+@import '../button/button.component';
 
 // Create a full theme.
 @mixin bc-theme($theme) {
-  @include bc-navbar-theme($theme);
+  @include bc-icon-theme($theme);
   @include bc-divider-theme($theme);
+  @include bc-navbar-theme($theme);
+  @include bc-list-theme($theme);
+  @include bc-button-theme($theme);
 }
