@@ -28,7 +28,7 @@
             <div style="display: inline-block;margin-left:1%">
                 <div style="display:flex;flex-direction:row;align-items:center">
                     <bc-file-input [contentType]="getContentType()" formControlName="file"></bc-file-input>
-                    <bc-button style="margin-left:1%" [button]="sendButton"></bc-button>
+                    <div bc-button style="margin-left:1%" (click)="addDoc()"></div>
                 </div>
                 <bc-text-input [displayError]=true title="Didascalia" formControlName="description"></bc-text-input>
             </div>

@@ -1,12 +1,8 @@
-<div [@slideLeftRight]="menuState" style="width:282px;position:relative">
-    <bc-list dense no-border>
-        <bc-list-item-group *ngFor="let layer of menuElements.layers">
-            <a [bc-menu-element]="isActiveLink(item.link)" [disabled-element]="!isActiveLayer(layer.layerName)" bc-list-item *ngFor="let item of layer.elements" [routerLink]="getLink(item.link)">
-                <div style="display:flex;flex-direction:row;align-items:center">
-                    <bc-icon [name]="item.icon" data-item-start size=xs></bc-icon>
-                    <div>{{item.name}}</div>
-                </div>
-            </a>
-        </bc-list-item-group>
-    </bc-list>
-</div>
+<bc-content class="bc-menu-wrapper">
+    <bc-content-section>
+        <ng-content select="bc-list"></ng-content>
+        <ng-content></ng-content>
+    </bc-content-section>
+</bc-content>
+<bc-backdrop></bc-backdrop>
+

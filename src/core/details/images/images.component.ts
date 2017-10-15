@@ -2,7 +2,7 @@ import {
   Component,Input,OnInit,OnDestroy,Directive,ViewEncapsulation
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
+import { IShelter, IFile } from '../../../app/shared/types/interfaces';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';

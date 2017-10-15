@@ -14,16 +14,6 @@ export interface IMarker{
     optional?:any;
 }
 
-export interface IButton {
-    ref: any;
-    icon?: string;
-    icon_size?:string;
-    dark_theme?: Boolean;
-    text?: string;
-    enabled?: Boolean;
-    action?: Function;
-}
-
 export interface IMenuElement{
     name:String;
     icon:String;

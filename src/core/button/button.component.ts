@@ -1,73 +1,75 @@
-import { Component, Input, Injectable, OnInit,Optional, Directive,ViewEncapsulation } from '@angular/core';
-import {IButton} from '../../app/shared/types/interfaces';
-import { Router } from '@angular/router';
-import { Subject } from 'rxjs/Subject';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  ViewEncapsulation,
+  ElementRef,
+  Renderer2,
+} from '@angular/core';
 
-@Injectable()
-export class BcButtonService{
-    private selectSource = new Subject<string>();
-    select$ = this.selectSource.asObservable();
-    onChildSelect(){
-        this.selectSource.next();
-    }
-}
-
-@Directive({
-  selector: 'button[selected]',
-  host: {
-    '[class.bc-button-select]': 'selected'
-  }
-})
-export class BcSelectButtonStyler{
-    @Input("selected") selected:boolean=false;
-}
+import { BcStyler } from '../shared/types/bc-styler';
 
 @Component({
-    moduleId:module.id,
-    selector:'bc-button',
-    templateUrl: 'button.component.html',
-    styleUrls: ['button.component.scss'],
-    host:{
-        'class':'bc-button'
-    },
-    encapsulation:ViewEncapsulation.None
+  selector: '[bc-button],[data-bc-button]',
+  templateUrl: 'button.component.html',
+  host: {
+    'role': '_role',
+    '[class.bc-button]': 'true'
+  },
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
-export class BcButton{
-    @Input() button:IButton;
-    @Input() disabled:boolean=false;
-    @Input() pre_selected:boolean=false;
-    private selected:Boolean=false;
+export class BcButton extends BcStyler {
+  /** @hidden */
+  _role: string = 'button'; // bar-button
 
-    constructor(private router:Router,@Optional() private _button_service: BcButtonService){}
+  /** @hidden */
+  _size: string; // large/small/default
 
-    btnClick(){
-        if(this._button_service!=undefined){
-            this.selected=true
-            this._button_service.onChildSelect();
-        }
-        if(this.button.action==undefined){
-            this.router.navigateByUrl(this.button.ref);
-        }else{
-            this.button.action.call(this.button.ref);
-        }
-        
-    }
+  /** @hidden */
+  _type: string = 'default'; // outline/clear/solid
 
-    btnUncheck(){
-        this.selected=false;
-    }
+  /** @hidden */
+  _shape: string; // round/fab
 
-    checkPlatform(){
-        if(navigator.userAgent.indexOf("Win")>-1){
-            return true;
-        }else{
-            return false;
-        }
-    }
+  /** @hidden */
+  _display: string; // block/full
 
-    ngOnInit() {
-        if(this.pre_selected){
-            this.selected=true;
-        }
-    }
+  /** @hidden */
+  _decorator: string; // strong
+
+  constructor(elementRef: ElementRef, _renderer2: Renderer2) {
+    super(elementRef, _renderer2);
+  }
+
+
+  /** The size of the button. Can be sm, md, lg or default. The default value is md  */
+  @Input()
+  set size(value: string) {
+    let newClassName: string = (value != null && value != '' && value.toLowerCase() != 'default') ? `bc-${value}` : null;
+    this.updateClass("_size", newClassName);
+  }
+
+  get size(): string {
+    return this._size;
+  }
+
+  /** The type of the button. Can be outline, solid, clear or default. The default value is solid  */
+  @Input()
+  set type(value: string) {
+    let newClassName: string = (value != null && value != '' && value.toLowerCase() != 'default') ? `bc-${value}` : null;
+    this.updateClass("_type", newClassName);
+  }
+
+  /** The size of the button. Can be round or fab. The default value is squared  */
+  @Input()
+  set shape(value: string) {
+    let newClassName: string = (value != null && value != '') ? `btn-${value}` : null;
+    this.updateClass("_shape", newClassName);
+  }
+
+  get shape(): string {
+    return this._shape;
+  }
+
 }

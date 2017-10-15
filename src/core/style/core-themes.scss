@@ -6,6 +6,7 @@
 @import '../divider/divider.component';
 @import '../navbar/navbar.component';
 @import '../list/list.component';
+@import '../button/button.component';
 
 // Create a full theme.
 @mixin bc-theme($theme) {
@@ -13,4 +14,5 @@
   @include bc-divider-theme($theme);
   @include bc-navbar-theme($theme);
   @include bc-list-theme($theme);
+  @include bc-button-theme($theme);
 }

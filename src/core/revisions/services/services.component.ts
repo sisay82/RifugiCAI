@@ -2,7 +2,7 @@ import {
   Component,Input,OnInit, trigger, state, style, transition, animate,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IButton, IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
+import {  IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
