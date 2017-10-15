@@ -27,11 +27,16 @@
     order: $val;
 }
 
+@mixin touch-action($value) {
+    -ms-touch-action: $value;
+    touch-action: $value;
+}
+
 @mixin user-select($value) {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    -webkit-user-select: $value;
+    -moz-user-select: $value;
+    -ms-user-select: $value;
+    user-select: $value;
 }
 
 @mixin input-placeholder {

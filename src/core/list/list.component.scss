@@ -1,8 +1,9 @@
 @import '../style/vendor-prefixes';
 @import '../style/typography';
 
-@import './listItem/list-item.component';
 @import './listHeader/list-header.directive';
+@import './listItemGroup/list-item-group.component';
+@import './listItem/list-item.component';
 
 // Normal list variables
 $bc-list-padding-start: 16px;
@@ -12,20 +13,42 @@ $bc-list-no-border: 0px;
 
 
 @mixin bc-list-theme($theme) {
+  $background: map-get($theme, background);
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
   .bc-list {
+    background: bc-color($background, 'background');
     // bc-list-header theme
     @include bc-list-header-theme($theme);
+    // bc-list-item-group theme
+    @include bc-list-item-group-theme($theme);
     // bc-list-item theme
-    @include bc-list-item-theme($theme);
+    @include bc-list-item-theme($theme, $primary);
+    
+    &.bc-primary {
+      @include bc-list-item-theme($theme, $primary);
+    }
+
+    &.bc-accent {
+      @include bc-list-item-theme($theme, $accent);
+    }
   }
 }
 
 .bc-list {
   display: block;
   list-style-type: none;
-
+  
+  &.list-group {
+    margin-bottom: 0px;
+    padding-bottom: 20px;
+  }
   // bc-list-header style
   @include bc-list-header-base($bc-list-padding-start, $bc-list-padding-end);
+  
+  // bc-list-item-group style
+  @include bc-list-item-group-base($bc-list-padding-start, $bc-list-padding-end);
 
   // bc-list-item style
   @include bc-list-item-base($bc-list-padding-start, $bc-list-padding-end);

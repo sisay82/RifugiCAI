@@ -5,7 +5,7 @@ import { CoreModule } from '../../../core/core.module';
 
 import { ShelterRoutingModule } from './shelter-routing.module';
 
-import { BcShelter } from './shelter.component';
+import { BcShelter,BcMenuElementStyler } from './shelter.component';
 
 @NgModule({
   imports: [
@@ -13,7 +13,7 @@ import { BcShelter } from './shelter.component';
     CoreModule,
     ShelterRoutingModule
   ],
-  declarations: [BcShelter],
+  declarations: [BcShelter,BcMenuElementStyler],
   bootstrap: [BcShelter]
 })
 export class ShelterModule { }

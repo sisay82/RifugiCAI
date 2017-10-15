@@ -1,16 +1,15 @@
-import { NgModule, } from '@angular/core';
-import {BrowserAnimationsModule}from '@angular/platform-browser/animations';
-import { BcMenu,BcMenuElementStyler,BcDisabledMenuElementStyler } from './menu.component';
-import { CommonModule } from '@angular/common';
-import {BcIconModule} from '../icon/icon.module';
-import { BcListModule } from '../list/list.module';
-import {RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+
+import { BcContentModule } from '../content/content.module';
+import { BcBackdropModule } from '../backdrop/backdrop.module';
+
+import { BcMenu } from './menu.component';
 
 @NgModule({
-    imports:[RouterModule,BcListModule,BcIconModule,CommonModule,BrowserAnimationsModule],
-    declarations: [BcMenu,BcMenuElementStyler,BcDisabledMenuElementStyler],
-    exports: [BcMenu,CommonModule,BrowserAnimationsModule,BcMenuElementStyler,BcDisabledMenuElementStyler]
+    imports: [BcContentModule, BcBackdropModule],
+    declarations: [BcMenu],
+    exports: [
+        BcMenu
+    ]
 })
-export class BcMenuModule {
- 
- }
+export class BcMenuModule { }

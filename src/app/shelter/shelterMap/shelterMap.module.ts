@@ -7,13 +7,11 @@ import { ShelterMapRoutingModule } from './shelterMap-routing.module';
 import { BcShelterMap } from './shelterMap.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        CoreModule,
-        ShelterMapRoutingModule,
-    ],
-    providers: [],
-    declarations: [BcShelterMap],
-    bootstrap: [BcShelterMap]
+  imports: [
+    CoreModule,
+    ShelterMapRoutingModule
+  ],
+  declarations: [BcShelterMap],
+  exports: [CoreModule, BcShelterMap]
 })
 export class ShelterMapModule { }

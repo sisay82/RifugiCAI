@@ -4,15 +4,24 @@
         <bc-mask></bc-mask>
     </div>
   </bc-content-header>
+  <bc-content-aside class="left">
+    <div *ngIf="getAuth()" style="position:relative;width:256px;height:100%">
+      <bc-list dense no-border>
+        <bc-list-item-group *ngFor="let layer of appMenuElements.layers">
+            <a [bc-menu-element]="isActiveLink(item.link)"  bc-list-item *ngFor="let item of layer.elements" [routerLink]="getLink(item.link)">
+                <div style="display:flex;flex-direction:row;align-items:center">
+                    <bc-icon [name]="item.icon" data-item-start size=xs></bc-icon>
+                    <div>{{item.name}}</div>
+                </div>
+            </a>
+        </bc-list-item-group>
+      </bc-list>
+    </div>
+  </bc-content-aside>
   <bc-content-section>
-    <div *ngIf="getAuth()" style="display:flex;flex-direction:row;position:relative">
-      <div style="position: relative;z-index:2000">
-        <bc-menu [menuElements]="appMenuElements"></bc-menu>
-      </div>
-      <div style="position:relative;width:100%">
-          <bc-details></bc-details>
-          <bc-revisions></bc-revisions>
-      </div>
+    <div *ngIf="getAuth()" style="position:relative;width:100%">
+        <bc-details></bc-details>
+        <bc-revisions></bc-revisions>
     </div>
   </bc-content-section>
 </bc-content>

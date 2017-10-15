@@ -2,7 +2,7 @@ import {
   Component,Input,OnDestroy,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ITag,ILocation,IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
+import { ITag,ILocation,IGeographic, IShelter } from '../../../app/shared/types/interfaces'
 import { Enums } from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'

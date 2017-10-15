@@ -1,7 +1,6 @@
 import {
   Component,Input,forwardRef,ViewEncapsulation,Directive
 } from '@angular/core';
-import { IButton } from '../../../app/shared/types/interfaces'
 import { ControlValueAccessor,NG_VALUE_ACCESSOR,FormControl,NG_VALIDATORS } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { Enums } from '../../../app/shared/types/enums';
