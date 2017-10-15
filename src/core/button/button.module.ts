@@ -1,13 +1,9 @@
-import { NgModule } from '@angular/core';
-import { BcButton,BcSelectButtonStyler } from './button.component'
-import {CommonModule} from '@angular/common';
-import { BcIconModule } from '../icon/icon.module';
+import {NgModule} from '@angular/core';
+import {BcButton} from './button.component';
 
 @NgModule({
-    imports:[CommonModule,BcIconModule],
-    exports:[BcButton,BcSelectButtonStyler],
-    declarations:[BcButton,BcSelectButtonStyler]
+  declarations: [BcButton],
+  exports: [BcButton]
 })
-export class BcButtonModule{
-    
-}
+export class BcButtonModule {}
+

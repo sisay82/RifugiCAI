@@ -1,7 +1,19 @@
-import { Component,AfterViewInit,ChangeDetectorRef } from '@angular/core';
+import { Component,Directive,Input,ChangeDetectorRef } from '@angular/core';
 import {IMenu} from '../../shared/types/interfaces';
+import { BcSharedService} from '../../shared/shared.service';
 import {BcAuthService} from '../../shared/auth.service';
 import { Subscription } from 'rxjs/Subscription';
+
+@Directive({
+    selector: 'a[bc-menu-element]',
+    host: {
+        '[class.active]': 'active'
+    }
+})
+export class BcMenuElementStyler {
+   @Input('bc-menu-element') active: boolean;
+}
+
 @Component({
     moduleId: module.id,
     selector: 'bc-shelter',
@@ -10,7 +22,26 @@ import { Subscription } from 'rxjs/Subscription';
     
 })
 export class BcShelter {
-    authorization:boolean;
+    private authorization:boolean
+    constructor(private shared:BcSharedService,private authService:BcAuthService,private cd:ChangeDetectorRef){
+
+    }
+
+    getLink(link:String):any{
+        let outlet=this.shared.activeOutlet;
+        let routerLink;
+        if(outlet=="revision"){
+        routerLink = [{outlets:({'revision': [link],'content': null})}];
+        }else{
+        routerLink = [{outlets:({'content': [link],'revision': null})}];
+        }
+        return routerLink;
+    }
+
+    isActiveLink(link:string){
+        let component=this.shared.activeComponent;
+        return (component==link)
+    }
 
     appMenuElements:IMenu={
       layers:[
@@ -36,10 +67,6 @@ export class BcShelter {
             ]}
         ]
     };
-
-    constructor(private authService:BcAuthService,private cd:ChangeDetectorRef){
-        
-    }
 
     getAuth(){
         return this.authorization;

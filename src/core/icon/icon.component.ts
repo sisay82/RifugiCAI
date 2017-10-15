@@ -47,6 +47,6 @@ export class BcIcon extends BcStyler {
 
     set size(value: string) {
         let newClassName: string = (value != null && value != '') ? `bc-icon-${value}` : null;
-        this.updateClass("_color", newClassName);
+        this.updateClass("_size", newClassName);
     }
 }

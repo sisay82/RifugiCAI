@@ -2,7 +2,7 @@ import {
   Component,Input,OnDestroy,OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IDrain,IEnergy,ICatastal, IButton, IShelter } from '../../../app/shared/types/interfaces'
+import { IDrain,IEnergy,ICatastal, IShelter } from '../../../app/shared/types/interfaces'
 import {Enums} from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'

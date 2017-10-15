@@ -2,7 +2,7 @@ import {
   Component,Input,OnInit,OnDestroy,Directive
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter, IFile, IButton,IEconomy } from '../../../app/shared/types/interfaces';
+import { IShelter, IFile,IEconomy } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
@@ -52,9 +52,6 @@ export class BcDocRevision extends RevisionBase{
   disableSave:boolean=false;
   private currentFileToggle:number=-1;
   disableInvoiceGlobal:boolean=true;
-  sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"};
-  sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"};
-  sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"};
   constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
     super(shelterService,shared,revisionService,authService);
     this.newDocForm = fb.group({

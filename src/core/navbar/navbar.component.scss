@@ -88,11 +88,11 @@ $bc-navbar-row-padding: 4px !default;
 // Set the default height for the navbar.
 @include bc-navbar-height($bc-navbar-height-default);
 
-@media ($bc-gt-xsmall) {
+@media all and ($bc-gt-xsmall) {
   @include bc-navbar-height($bc-navbar-height-desktop);
 }
 
-@media ($bc-landscape) {
+@media all and ($bc-landscape) {
   @include bc-navbar-height($bc-navbar-height-landscape);
 }
 

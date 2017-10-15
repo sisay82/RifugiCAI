@@ -22,8 +22,9 @@
         <div style="display:inline-block">
             <bc-file-input [contentType]="getKeys('Docs_Type')" formControlName="file"></bc-file-input>
         </div>
-    </form>
-    <bc-button style="margin-left:1%" [disabled]="getKeys('Docs_Type').length==0" [button]="sendDocButton"></bc-button>
+    </form> 
+    <!--[disabled]="getKeys('Docs_Type').length==0" -->
+    <div bc-button style="margin-left:1%"  (click)="addDoc()">Invia</div>
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
 <bc-divider></bc-divider>
@@ -51,7 +52,8 @@
             <bc-file-input [contentType]="getKeys('Maps_Type')" formControlName="file"></bc-file-input>
         </div>
     </form>
-    <bc-button style="margin-left:1%" [disabled]="getKeys('Maps_Type').length==0" [button]="sendMapButton"></bc-button>
+    <!-- [disabled]="getKeys('Maps_Type').length==0"  -->
+    <div bc-button style="margin-left:1%" (click)="addMap()">Invia</div>
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
 <bc-divider></bc-divider>
@@ -95,6 +97,7 @@
             <bc-file-input [contentType]="getKeys('Invoices_Type')" [validator]="invoiceFormatRegExp" formControlName="file"></bc-file-input>
         </div>
     </form>
-    <bc-button style="margin-left:1%" [disabled]="getKeys('Invoices_Type').length==0" [button]="sendInvoiceButton"></bc-button>
+    <!-- [disabled]="getKeys('Invoices_Type').length==0" -->
+    <div bc-button style="margin-left:1%" (click)="addInvoice()">Invia</div>
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
