@@ -52,7 +52,11 @@ export class BcListNavItemStyler {
     }
 })
 export class BcListItemDisableStyler {
-    @Input('bc-disable-item') _DisableItem: boolean;
+    private _DisableItem: boolean;
+    @Input('bc-disable-item')
+    set disableItem(value: string) {
+        this._DisableItem = value==="true";
+    }
 }
 
 /**
@@ -98,10 +102,10 @@ export class BcListItem extends BcStyler implements OnDestroy {
     @ContentChildren(BcLineStyler) _lines: QueryList<BcListItem>;
 
     ngAfterContentInit(): void {
-        let newClassName: string = this._lines.length > 1 ? "bc-multi-line": null;
+        let newClassName: string = this._lines.length > 1 ? "bc-multi-line" : null;
         this.updateClass("_linesClass", newClassName);
         this._linesSubcription = this._lines.changes.subscribe((lines) => {
-           let newClassName: string = this._lines.length > 1 ? "bc-multi-line": null;
+            let newClassName: string = this._lines.length > 1 ? "bc-multi-line" : null;
             this.updateClass("_linesClass", newClassName);
         });
     }

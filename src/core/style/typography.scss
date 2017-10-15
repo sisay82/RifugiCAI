@@ -31,7 +31,9 @@
   $body-2:      bc-typography-style(14px, 24px, 500),
   $body-1:      bc-typography-style(14px, 20px, 400),
   $caption:     bc-typography-style(12px, 12px, 400),
-  $button:      bc-typography-style(14px, 14px, 500)
+  $button:      bc-typography-style(14px, 14px, 500),
+  $button-sm: bc-typography-style(12px, 12.25px, 500),
+  $button-lg: bc-typography-style(17px, 17.5px, 500)
 ) {
   @return (
     font-family: $font-family,
@@ -45,7 +47,9 @@
     body-2:      $body-2,
     body-1:      $body-1,
     caption:     $caption,
-    button:      $button
+    button:      $button,
+    button-sm: $button-sm,
+    button-lg: $button-lg
   );
 }
 

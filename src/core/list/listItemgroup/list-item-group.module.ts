@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
-import { BcListItemGroup } from './list-item-group.component';
+import { BcListItemGroup, BcListGroupHeader} from './list-item-group.component';
 import { BcDividerModule } from "../../divider/divider.module";
 
 @NgModule({
     imports: [ BcDividerModule ],
-    declarations: [ BcListItemGroup ],
-    exports: [ BcListItemGroup ]
+    declarations: [ BcListItemGroup, BcListGroupHeader ],
+    exports: [ BcListItemGroup, BcListGroupHeader ]
 
 })
 export class BcListItemGroupModule { }

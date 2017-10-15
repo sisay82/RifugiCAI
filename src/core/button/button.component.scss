@@ -1,58 +1,170 @@
+@import '../style/typography';
+@import '../style/vendor-prefixes';
 @import '../style/palette';
+@import '../style/theme';
 
-$button_margin: 1px 1px;
+$bc-button-min-width: 88px;
 
-@mixin BcButtonDark(){
-    &:enabled{
-        background:map-get($bc-dark-theme-background,raised-button);
+$bc-button-height-lg: 46px;
+$bc-button-height: 36px;
+$bc-button-height-sm: 32px;
+
+$bc-button-margin: 6px;
+$bc-button-padding-end: 8px;
+$bc-button-border-radius: 2px;
+
+@mixin bc-button-color($background, $foreground) {
+  $lightness: lightness($background);
+  $shade: #fff;
+
+  @if ($lightness > 50) {
+    $shade: #000;
+  }
+
+  color: $background;
+
+  &:hover, &:focus {
+    background: rgba($background, 0.12);
+
+  }
+  &:active {
+    background:rgba($background, 0.25);
+  }
+  
+  &.bc-solid {
+    background-color: $background;
+    color: $foreground;
+
+    &:hover, &:focus {
+      background: rgba($background, 0.87);
+  
     }
-
-    &:disabled{
-        background:map-get($bc-dark-theme-background,disabled-button);
+    &:active {
+      background:rgba($background, 0.75);
     }
+  }
 }
 
-@mixin BcButtonLight(){
-    &:enabled{
-        background:map-get($bc-light-theme-background,raised-button);
-    }
+@mixin bc-button-theme($theme) {
+  $color-types: primary,accent,info,success,warn,danger;
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+  $is-dark: map-get($theme, is-dark);
+  $hueContrast: if($is-dark, 100, 800);
 
-    &:disabled{
-        background:map-get($bc-light-theme-background,disabled-button);
+  .bc-button {
+    @each $color-type in $color-types {
+      $paletteColorSet: map-get($theme, $color-type);
+      $backgroundColor: bc-color($paletteColorSet, $hueContrast);
+      $foregroundColor: bc-color($paletteColorSet, #{$hueContrast}-contrast);
+
+      &.bc-#{$color-type} {
+        @include bc-button-color($backgroundColor, $foregroundColor);
+      }
     }
+   
+    &.bc-solid {      
+      box-shadow: 0px 0px 1px 0px rgba(black, 0.2),0px 1px 1px 0px rgba(black, 0.14),0px 1px 2px 0px rgba(black, 0.12);
+
+      &.disabled, &[disabled], &[data-disabled] {
+        background: bc-color($background, disabled);
+        color: bc-color($foreground, disabled);
+      }
+    }
+    
+    &.disabled, &[disabled], &[data-disabled] {
+      color: bc-color($foreground, disabled);
+    }
+  }
 }
 
-.bc-button-select{
-    color:map-get($bc-teal,400);
+// Base button styles common to all button types.
+.bc-button {
+  position: relative;
+  z-index: 0;
+  
+  display: inline-block;
+  
+  // Sizing
+  min-width: $bc-button-min-width;
+  height: $bc-button-height;
+  margin: $bc-button-margin;
+  padding: 0px $bc-button-padding-end;
+
+  // Reset agent button style
+  background-color: transparent;
+  color: currentColor;
+  outline: none;
+  border: none;
+  border-radius: $bc-button-border-radius;
+  box-shadow: none;
+
+  cursor: pointer;
+  
+
+  @include touch-action(manipulation);
+  @include user-select(none);
+  
+  // Make anchors and buttons render like the same.
+  @include bc-typography-scale-to-styles(bc-typographic-scale(), 'button');
+
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-transform: none;
+  font-kerning: none;
+
+  text-decoration: none;
+  &:hover, &:focus {
+    text-decoration: none;
+  }
+  
+  transition: all .15s ease-in-out;
+
+  & .bc-button-inner {
+    @include flex-box();
+    @include flex-flow (row);
+    
+    height:100%;
+    margin: 0px $bc-button-padding-end;
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  //Disable button
+  &[disabled], &[data-disabled] {
+    cursor: default;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  //Button type
+  &.bc-outline {
+    border-color: currentColor;
+    border-style: solid;
     border-width: 1px;
-    border-color: map-get($bc-light-theme-background,selected-button);
-    border-style:solid;
-}
+  }
 
-.bc-button{
-    border: none;
-    margin: $button_margin;
-    button{
-        outline: none;
-        border-width: 1px;
-        border-color: map-get($bc-light-theme-background,status-bar);
-        border-style:solid;
-        @include BcButtonLight();
-    }   
-    &[dark]{
-        button{
-            @include BcButtonDark();
-        }   
-    }
-    &[no-border]{
-        button{
-            border: none;
-        }
-    }
-    button:hover:enabled{
-        color:map-get($bc-teal,400);
-        border-width: 1px;
-        border-style:solid;
-        border-color:map-get($bc-teal,400);
-    }
+  &.bc-clear {
+    border-color: currentColor;
+    border-style: none;
+    border-width: 0px;
+    text-transform: uppercase;
+  }
+
+  //Button size
+  &.bc-lg {
+    height: $bc-button-height-lg;
+    @include bc-typography-scale-to-styles(bc-typographic-scale(), 'button-lg');
+    border-radius: $bc-button-border-radius+$bc-button-border-radius;
+  }
+
+  &.bc-sm {
+    height: $bc-button-height-sm;
+    @include bc-typography-scale-to-styles(bc-typographic-scale(), 'button-sm');
+  }
 }

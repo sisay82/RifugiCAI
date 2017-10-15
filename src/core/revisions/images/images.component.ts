@@ -2,7 +2,7 @@ import {
   Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
+import { IShelter, IFile } from '../../../app/shared/types/interfaces';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
@@ -29,7 +29,7 @@ export class BcImgRevision extends RevisionBase {
   newDocFormValidSub:Subscription;
   docsFormValidSub:Subscription;
   hiddenImage:boolean=true;
-  sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
+  //sendButton:IButton={action:this.addDoc,ref:this,text:"Invia"}
   constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
     super(shelterService,shared,revisionService);
     this.newDocForm = fb.group({

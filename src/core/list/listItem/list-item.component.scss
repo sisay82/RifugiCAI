@@ -16,7 +16,7 @@
     secondary: $list-item-secondary-line
   );
 }
-$bc-list-icon-size: 16px;
+$bc-list-icon-size: $bc-font-size-base+4px;
 // Represents list item heights definition.
 $bc-list-item-heights: (
     base: 48px,
@@ -39,23 +39,23 @@ $bc-list-item-heights: (
   @return $item-height;
 }
 
-@mixin bc-list-item-theme($theme) {
-    $accent: map-get($theme, accent);
+@mixin bc-list-item-theme($theme, $activeColor) {
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
 
     .bc-list-item {
         color: bc-color($foreground, 'text');
+        background: bc-color($background, 'background');
 
         &.list-group-item {
             color: bc-color($foreground, 'text');
-
-            @include bc-list-item-disable($accent, $background, $foreground);
-            @include bc-list-item-active($accent, $background, $foreground);
+            
+            @include bc-list-item-disable($activeColor, $background, $foreground);
+            @include bc-list-item-active($activeColor, $background, $foreground);
 
             &:hover, &:focus {
-                @include bc-list-item-disable($accent, $background, $foreground);
-                @include bc-list-item-active($accent, $background, $foreground);
+                @include bc-list-item-disable($activeColor, $background, $foreground);
+                @include bc-list-item-active($activeColor, $background, $foreground);
                 color: bc-color($foreground, 'text');
                 background: bc-color($background, 'hover');
                 border-color: bc-color($background, 'hover');
@@ -92,6 +92,11 @@ $bc-list-item-heights: (
         text-decoration: none;
         color: inherit;
         cursor: pointer;
+
+        &.disabled, &[disabled] &[data-disabled] {
+            pointer-events: none;
+            cursor: not-allowed;
+        }
     }
 
     .bc-list-item {
@@ -211,10 +216,7 @@ $bc-list-item-heights: (
             font-size: $bc-list-icon-size;
         }
         & .bc-icon + .bc-list-item-inner {
-            padding-left: $bc-list-item-padding-start + $bc-list-item-padding-start /2;
-        }
-        & .bc-avatar + .bc-list-item-inner {
-            padding-left: $bc-list-item-padding-start /2;
+            padding-left: $bc-list-item-padding-start/2;
         }
     }
 
@@ -244,9 +246,12 @@ $bc-list-item-heights: (
 
 @mixin bc-list-item-disable($accent, $background, $foreground){
     &.disabled {
-        color: bc-color($foreground, 'text');
-        background: bc-color($background, 'disabled-button');
-        border-color: bc-color($background, 'disabled-button');
+        color: bc-color($foreground, 'disabled');
+        background: bc-color($background, 'disabled');
+        border-color: bc-color($background, 'disabled');
+        .bc-icon {
+            color:  bc-color($foreground, 'disabled');
+        }
     }
 }
 
