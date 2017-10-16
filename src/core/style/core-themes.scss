@@ -2,6 +2,7 @@
 @import '../backdrop/backdrop.directive';
 
 // Import all the components themes.
+@import '../content/content.component';
 @import '../icon/icon.component';
 @import '../divider/divider.component';
 @import '../navbar/navbar.component';
@@ -10,6 +11,7 @@
 
 // Create a full theme.
 @mixin bc-theme($theme) {
+  @include bc-content-theme($theme);
   @include bc-icon-theme($theme);
   @include bc-divider-theme($theme);
   @include bc-navbar-theme($theme);
