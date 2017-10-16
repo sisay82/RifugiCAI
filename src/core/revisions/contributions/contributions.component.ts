@@ -1,5 +1,5 @@
 import {
-    Component,Input,OnInit,OnDestroy
+    Component,Input,OnInit,OnDestroy,AfterContentInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IShelter, IContribution, IFile,ITag,IFileRef } from '../../../app/shared/types/interfaces';
@@ -70,6 +70,10 @@ export class BcContributionRevision extends RevisionBase {
     
         shared.activeComponent="contribution";
         this.shared.onActiveOutletChange("revision");
+    }
+
+    getEnumValues(){
+        return Object.keys(Enums.Contributions).map(o=>Enums.Contribution_Type[o]);
     }
 
     initTag(key:String,value:Number){
@@ -251,6 +255,7 @@ export class BcContributionRevision extends RevisionBase {
     }
 
     ngOnDestroy(){
+        this.shared.onSendEnableMaskSave();
         if(this.statusChange||this.contrForm.dirty){
             if(!this.disableSave){
                 this.save(false);

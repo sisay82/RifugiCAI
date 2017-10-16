@@ -4,7 +4,7 @@
     </div>
 
     <div style="max-width:40%;width:auto">
-        <bc-select-input title="Tipo" required="true" defaultContent="Selezione il tipo di contributo" enumName="Contribution_Type" formControlName="type" [displayError]="displayError"></bc-select-input>                        
+        <bc-select-input title="Tipo" required="true" defaultContent="Selezione il tipo di contributo" [enumValues]="getEnumValues()" formControlName="type" [displayError]="displayError"></bc-select-input>                        
     </div>
     <div style="display:flex; flex-direction:row">
         <bc-list style="flex:1" color="accent" formArrayName="tags">
@@ -48,7 +48,9 @@
         Aggiungi allegato
     </div>
     <div style="display:flex; flex-direction:row;">
-        <bc-icon (click)="addNewAttachment()" class="bc-icon-contribution" name="plus" size=s></bc-icon>    
-        <bc-select-input defaultContent="Selezione il nome di un documento" style="flex:1" [enumValues]="filesEnum" formControlName="newValue" [displayError]="displayError"></bc-select-input>        
+        <bc-icon (click)="addNewAttachment()" class="bc-icon-contribution" name="check" size=s></bc-icon>   
+        <div style="width:auto">   
+            <bc-select-input defaultContent="Selezione il nome di un documento" style="flex:1" [enumValues]="filesEnum" formControlName="newValue" [displayError]="displayError"></bc-select-input>                    
+        </div>
     </div>
 </form>
