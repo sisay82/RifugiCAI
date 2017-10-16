@@ -15,15 +15,16 @@ $bc-button-border-radius: 2px;
 $bc-button-hover-opacity: 0.12;
 $bc-button-active-opacity: 0.25;
 
-@mixin bc-button-color($background, $foreground) {
-  color: $background;
+@mixin bc-button-color($background, $foreground, $default: true) {
+  $clearColor: if($default, $foreground, $background);
+  
+  @if not $default { color: $clearColor; }
 
   &:hover {
-    background: rgba($background, $bc-button-hover-opacity);
-
+    background: rgba($clearColor, $bc-button-hover-opacity);
   }
   &:active {
-    background:rgba($background, $bc-button-active-opacity);
+    background:rgba($clearColor, $bc-button-active-opacity);
   }
   
   &.bc-solid {
@@ -44,7 +45,7 @@ $bc-button-active-opacity: 0.25;
   $color-types: primary,accent,info,success,warn,danger;
   $background: map-get($theme, background);
   $foreground: map-get($theme, foreground);
-  $is-dark: map-get($theme, is-dark);
+  $is-dark: lightness(bc-color($background, background)) < 40;
   $hueContrast: if($is-dark, 100, 800);
 
   .bc-button {
@@ -56,7 +57,7 @@ $bc-button-active-opacity: 0.25;
       $foregroundColor: bc-color($paletteColorSet, #{$hueContrast}-contrast);
 
       &.bc-#{$color-type} {
-        @include bc-button-color($backgroundColor, $foregroundColor);
+        @include bc-button-color($backgroundColor, $foregroundColor, false);
       }
     }
    
