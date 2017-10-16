@@ -114,6 +114,8 @@ $bc-button-active-opacity: 0.25;
 
   text-decoration: none;
   &:hover, &:focus {
+    color: currentColor;
+    outline: none;
     text-decoration: none;
   }
   
