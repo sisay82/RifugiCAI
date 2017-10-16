@@ -1,11 +1,26 @@
-<bc-content>
+<bc-content *ngIf="getAuth()">
   <bc-content-header>
     <div bc-navbar style="height: 100px">
         <bc-mask></bc-mask>
     </div>
   </bc-content-header>
+  <bc-menu class="permanent clipped">
+    <div style="position:relative;width:256px;height:100%">
+      <bc-list dense no-border>
+        <bc-list-item-group *ngFor="let layer of appMenuElements.layers">
+            <a [bc-menu-element]="isActiveLink(item.link)"  bc-list-item *ngFor="let item of layer.elements" [routerLink]="getLink(item.link)">
+                <div style="display:flex;flex-direction:row;align-items:center">
+                    <bc-icon [name]="item.icon" data-item-start size=xs></bc-icon>
+                    <div>{{item.name}}</div>
+                </div>
+            </a>
+        </bc-list-item-group>
+      </bc-list>
+    </div>
+  </bc-menu>
+  <!--
   <bc-content-aside class="left">
-    <div *ngIf="getAuth()" style="position:relative;width:256px;height:100%">
+    <div style="position:relative;width:256px;height:100%">
       <bc-list dense no-border>
         <bc-list-item-group *ngFor="let layer of appMenuElements.layers">
             <a [bc-menu-element]="isActiveLink(item.link)"  bc-list-item *ngFor="let item of layer.elements" [routerLink]="getLink(item.link)">
@@ -18,8 +33,9 @@
       </bc-list>
     </div>
   </bc-content-aside>
+-->
   <bc-content-section>
-    <div *ngIf="getAuth()" style="position:relative;width:100%">
+    <div style="position:relative;width:100%">
         <bc-details></bc-details>
         <bc-revisions></bc-revisions>
     </div>

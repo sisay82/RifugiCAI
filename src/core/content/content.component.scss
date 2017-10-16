@@ -1,5 +1,15 @@
 @import '../style/vendor-prefixes';
 
+@mixin bc-content-theme($theme) {
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  .bc-content {
+    background: bc-color($background, background);
+    color: bc-color($foreground, text);
+  }
+}
+
 .bc-content {
   display: block;
   width: 100%;
