@@ -8,12 +8,12 @@
                     <bc-text-input placeholder="Es: Rifugio Capanna Gnifetti Giovanni" one-line formControlName="name" required="true" title="Nome" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
-                    <bc-text-input placeholder="Es: Capanna Gnifetti" one-line formControlName="alias" required="true" title="Nome comune" [displayError]="displayError"></bc-text-input>
+                    <bc-text-input placeholder="Es: Capanna Gnifetti" one-line formControlName="alias" title="Nome comune" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div style="display: inline;margin-left:auto;margin-right:1%;white-space:nowrap">
                     <bc-icon (click)="cancel()" class="bc-mask-icon" name="times" size=s></bc-icon>
-                    <bc-icon (click)="save()" class="bc-mask-icon" name="floppy-o" size=s></bc-icon>
-                    <bc-icon *ngIf="isCentralUser()&&!newShelter" (click)="remove()" class="bc-mask-icon" name="trash" size=s></bc-icon>
+                    <bc-icon [disabled]="disableSave" (click)="save()" class="bc-mask-icon" name="floppy-o" size=s></bc-icon>
+                    <bc-icon *ngIf="!newShelter" (click)="remove()" class="bc-mask-icon" name="trash" size=s></bc-icon>
                 </div>
             </div>
         </div>

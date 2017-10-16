@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnInit, OnDestroy,SimpleChanges,OnChanges
+  Component, Input, OnInit, OnDestroy,SimpleChanges,OnChanges, Directive
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
@@ -10,6 +10,16 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {createValidationFunction} from '../../inputs/text/text_input.component';
 import {BcAuthService} from '../../../app/shared/auth.service';
+
+@Directive({
+  selector:"[disabled]",
+  host:{
+    "[class.disabled]":"disable"
+  }
+})
+export class BcDisableStyler{
+  @Input('disabled') disable:boolean=false;
+}
 
 @Component({
     moduleId: module.id,
@@ -24,9 +34,12 @@ export class BcMaskRevision {
   formValiditySub:Subscription;
   maskSaveTriggerSub:Subscription;
   displayErrorSub:Subscription;
+  disableMaskSaveSub:Subscription;
+  enableMaskSaveSub:Subscription;
   displayError:boolean=false;
   shelterInitialized:Boolean=false;
   revisionPermission:Enums.User_Type;
+  disableSave:boolean=false;
   newShelter:boolean=false;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder,private authService:BcAuthService){
     this.maskForm = fb.group({
@@ -52,9 +65,19 @@ export class BcMaskRevision {
       }
     });
 
-    this.displayErrorSub = this.shared.displayError$.subscribe(()=>{
+   /* this.displayErrorSub = this.shared.displayError$.subscribe(()=>{
       this.displayError=true;
     });
+
+    this.disableMaskSaveSub = this.shared.sendDisableMaskSave$.subscribe(()=>{
+      this.disableSave=shared.saveDisabled;
+    });
+
+    this.enableMaskSaveSub = this.shared.sendEnableMaskSave$.subscribe(()=>{
+      this.disableSave=shared.saveDisabled;
+    });*/
+
+    
   }
 
   toggleMenu(){
@@ -86,7 +109,7 @@ export class BcMaskRevision {
   }
 
   save(){
-    if(this.revisionPermission&&(this.revisionPermission!=Enums.User_Type.central||this.maskForm.valid)){
+    if(!this.disableSave&&this.revisionPermission&&(this.revisionPermission!=Enums.User_Type.central||this.maskForm.valid)){
       let shelter:IShelter;
       if(this.revisionPermission==Enums.User_Type.central&&this.maskForm.dirty){
         shelter={
@@ -197,6 +220,12 @@ export class BcMaskRevision {
     }
     if(this.maskSaveTriggerSub!=undefined){
       this.maskSaveTriggerSub.unsubscribe();
+    }
+    if(this.disableMaskSaveSub!=undefined){
+      this.disableMaskSaveSub.unsubscribe();
+    }
+    if(this.enableMaskSaveSub!=undefined){
+      this.enableMaskSaveSub.unsubscribe();
     }
   }
 
