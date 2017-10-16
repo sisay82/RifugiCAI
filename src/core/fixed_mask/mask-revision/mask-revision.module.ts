@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BcMaskRevision } from './mask-revision.component';
+import { BcMaskRevision,BcDisableStyler } from './mask-revision.component';
 import { CommonModule } from '@angular/common';
 import { BcDividerModule } from '../../divider/divider.module';
 import { FormsModule } from '@angular/forms';
@@ -9,8 +9,8 @@ import {BcTextInputModule} from '../../inputs/text/text_input.module';
 import {BcSelectInputModule} from '../../inputs/select/select_input.module';
 
 @NgModule({
-    exports: [BcMaskRevision],
-    declarations: [BcMaskRevision],
+    exports: [BcMaskRevision,BcDisableStyler],
+    declarations: [BcMaskRevision,BcDisableStyler],
     imports:[BcSelectInputModule,BcTextInputModule,BcIconModule,CommonModule,BcDividerModule,FormsModule,ReactiveFormsModule]
 })
 export class BcMaskRevisionModule{

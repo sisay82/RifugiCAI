@@ -149,6 +149,14 @@ export class BcDocRevision extends RevisionBase{
     }
   }
 
+  checkDocName(name){
+    console.log((name&&this.docs.concat(this.maps).find(obj=>obj&&obj.name==name)==undefined&&
+    (<FormArray>this.invoicesForm.controls.files).controls.find(contr=>contr.value&&contr.value.name==name)==undefined))
+
+    return (name&&this.docs.concat(this.maps).find(obj=>obj&&obj.name==name)==undefined&&
+    (<FormArray>this.invoicesForm.controls.files).controls.find(contr=>contr.value&&contr.value.name==name)==undefined)
+  }
+
   toBuffer(ab) {
     var buf = new Buffer(ab.byteLength);
     var view = new Uint8Array(ab);
@@ -207,7 +215,8 @@ export class BcDocRevision extends RevisionBase{
   }
 
   addDoc(){
-    if(this.newDocForm.valid){
+    let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
+    if(this.newDocForm.valid&&this.checkDocName(f.name)){
       this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
@@ -243,7 +252,8 @@ export class BcDocRevision extends RevisionBase{
   }
 
   addMap(){
-    if(this.newMapForm.valid){
+    let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
+    if(this.newMapForm.valid&&this.checkDocName(f.name)){
       this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newMapForm.controls.file)).value;
@@ -320,7 +330,8 @@ export class BcDocRevision extends RevisionBase{
   }
 
   addInvoice(){
-    if(this.newInvoiceForm.valid){
+    let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
+    if(this.newInvoiceForm.valid&&this.checkDocName(f.name)){
       this.uploading=true;
       this.displayError=false;
       let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;

@@ -26,6 +26,11 @@ export namespace Enums {
         "Canone d'affitto"
     }
 
+    export var Contributions = [
+        Contribution_Type["Ordinario CAI"],
+        Contribution_Type["FondoStabile"]
+    ]
+
     //tipo classe energetica
     export enum Energy_Class_Type {
         "A+", "A", "B", "C", "D", "E", "F", "G"

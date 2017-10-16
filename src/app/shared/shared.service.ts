@@ -6,6 +6,7 @@ import { IShelter } from '../shared/types/interfaces';
 export class BcSharedService{
     activeOutlet:string;
     activeComponent:string;
+    saveDisabled:boolean=false;
 
     private displayErrorSource = new Subject<void>();
     displayError$ = this.displayErrorSource.asObservable();
@@ -66,6 +67,22 @@ export class BcSharedService{
     sendMaskSave$ = this.sendMaskSaveSource.asObservable();
     onSendMaskSave(){
         this.sendMaskSaveSource.next();
+    }
+
+    private sendDisableMaskSaveSource = new Subject();
+    sendDisableMaskSave$ = this.sendDisableMaskSaveSource.asObservable();
+    onSendDisableMaskSave(){
+        this.saveDisabled=true;
+        
+        this.sendDisableMaskSaveSource.next();
+    }
+
+    private sendEnableMaskSaveSource = new Subject();
+    sendEnableMaskSave$ = this.sendEnableMaskSaveSource.asObservable();
+    onSendEnableMaskSave(){
+        this.saveDisabled=false;
+        
+        this.sendEnableMaskSaveSource.next();
     }
 
 }
