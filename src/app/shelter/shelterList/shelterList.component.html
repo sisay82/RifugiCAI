@@ -1,17 +1,15 @@
 <bc-content>
   <bc-content-header>
     <bc-navbar>
-      <ul class="nav navbar-nav">
-        <li class="navbar-item">
-          <a href="list" data-bc-button data-type="solid"><bc-icon data-name="list"></bc-icon> Lista</a>
-        </li>
-        <li class="navbar-item">
-          <a href="map" data-bc-button data-type="solid"><bc-icon data-name="map"></bc-icon> Mappa</a>
-        </li>
-        <li class="navbar-item">
-          <a (click)="createShel()" class="btn btn-default"><i class="fa fa-plus" aria-hidden="true"></i>  Aggiungi rifugio</a>
-        </li>
-      </ul>
+      <a href="list" data-bc-button data-type="solid">
+        <bc-icon data-name="list" data-size="xs"></bc-icon> Lista
+      </a>
+      <a href="map" data-bc-button data-type="solid">
+        <bc-icon data-name="map" data-size="xs"></bc-icon> Mappa
+      </a>
+      <a (click)="createShel()" data-bc-button data-type="solid">
+        <bc-icon data-name="plus" data-size="xs"></bc-icon> Aggiungi rifugio
+      </a>
       <span class="bc-navbar-filler"></span>
       <div>
         <input type="text" name="filterList" class="form-control" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
