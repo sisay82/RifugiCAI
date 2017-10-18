@@ -714,7 +714,8 @@ function updateShelter(id, params) {
         Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
             if (err) {
                 cleanContributions()
-                    .then(function (err) {
+                    .then(function (e) {
+                    console.log(err);
                     reject(err);
                 });
             }
