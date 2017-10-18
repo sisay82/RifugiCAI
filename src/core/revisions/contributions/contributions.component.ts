@@ -249,7 +249,7 @@ export class BcContributionRevision extends RevisionBase {
                     if(queryFileSub!=undefined){
                         queryFileSub.unsubscribe();
                     }
-                    resolve(files);
+                    resolve(files.filter(obj=>obj.type!=Enums.File_Type.contribution));
                 });
                 }else{
                     resolve(files);

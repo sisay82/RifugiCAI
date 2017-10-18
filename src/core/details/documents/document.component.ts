@@ -88,6 +88,8 @@ export class BcDoc {
             }else if(this.checkExtension(this.getExtension(name),["pdf"])){
                 return "file-pdf-o"
             }else return "file-text-o";
+        }else if(type==Enums.File_Type.contribution){
+            return "file-pdf-o"
         }else{
             return "file-text-o"
         }
@@ -96,7 +98,7 @@ export class BcDoc {
     initDocs(files){
         for(let file of files){
             if(file.type!=undefined){
-                if(file.type==Enums.File_Type.doc){
+                if(file.type==Enums.File_Type.contribution||file.type==Enums.File_Type.doc){
                     this.docs.push(file);       
                 }else if(file.type==Enums.File_Type.map){
                     this.maps.push(file);
@@ -129,7 +131,7 @@ export class BcDoc {
                 loadServiceSub.unsubscribe();
               }
             });
-            this.detailsService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice]);
+            this.detailsService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice,Enums.File_Type.contribution]);
         });
     }
 }
