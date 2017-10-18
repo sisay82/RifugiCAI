@@ -29,6 +29,10 @@ var Enums;
         Contribution_Type[Contribution_Type["Contributo Privato"] = 3] = "Contributo Privato";
         Contribution_Type[Contribution_Type["Canone d'affitto"] = 4] = "Canone d'affitto";
     })(Contribution_Type = Enums.Contribution_Type || (Enums.Contribution_Type = {}));
+    Enums.Contributions = [
+        Contribution_Type["Ordinario CAI"],
+        Contribution_Type["FondoStabile"]
+    ];
     //tipo classe energetica
     var Energy_Class_Type;
     (function (Energy_Class_Type) {
@@ -120,6 +124,7 @@ var Enums;
         File_Type[File_Type["map"] = 1] = "map";
         File_Type[File_Type["invoice"] = 2] = "invoice";
         File_Type[File_Type["image"] = 3] = "image";
+        File_Type[File_Type["contribution"] = 4] = "contribution";
     })(File_Type = Enums.File_Type || (Enums.File_Type = {}));
     //tipi di documento
     var Docs_Type;
