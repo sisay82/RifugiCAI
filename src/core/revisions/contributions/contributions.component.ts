@@ -23,6 +23,7 @@ export class BcContributionRevision extends RevisionBase {
     docs:IFile[]=<any>[];
     private newAttachmentForm: FormGroup;
     private contrForm: FormGroup; 
+    private userRole:Enums.User_Type;
     private accepted:boolean;
     filesEnum:String[]=[];
     maskSaveSub:Subscription;
@@ -139,40 +140,52 @@ export class BcContributionRevision extends RevisionBase {
     }
     
     checkPermission(permissions){
-        if(permissions&&permissions.length>0){
-            if(permissions.find(obj=>obj==Enums.MenuSection.economy)>-1){
+        let authSub = this.authService.checkUserPermission().subscribe(role=>{
+            this.userRole=role;
+            if(permissions&&permissions.length>0){
+              if(permissions.find(obj=>obj==Enums.MenuSection.economy)>-1){
                 this.initialize();
-            }else{
+              }else{
                 location.href="/list";
+              }
             }
-        }
+        });
+    }
+
+    checkRole(){
+        return this.userRole==Enums.User_Type.sectional;
     }
 
     initForm(contributions:IContribution){
-        if(contributions&&!contributions.accepted){
-            this.contrForm.controls.value.setValue(contributions.value);
-            this.contrForm.controls.type.setValue(contributions.type);
-            this.contrForm.controls.handWorks.setValue(contributions.data?(contributions.data.handWorks):null);
-            this.contrForm.controls.customizedWorks.setValue(contributions.data?(contributions.data.customizedWorks):null);
-            this.contrForm.controls.safetyCharges.setValue(contributions.data?(contributions.data.safetyCharges):null);
-            this.contrForm.controls.totWorks.setValue(contributions.data?(contributions.data.totWorks):null);
-            this.contrForm.controls.surveyorsCharges.setValue(contributions.data?(contributions.data.surveyorsCharges):null);
-            this.contrForm.controls.connectionsCharges.setValue(contributions.data?(contributions.data.connectionsCharges):null);
-            this.contrForm.controls.technicalCharges.setValue(contributions.data?(contributions.data.technicalCharges):null);
-            this.contrForm.controls.testCharges.setValue(contributions.data?(contributions.data.testCharges):null);
-            this.contrForm.controls.taxes.setValue(contributions.data?(contributions.data.taxes):null);
-            this.contrForm.controls.totCharges.setValue(contributions.data?(contributions.data.totCharges):null);
-            this.contrForm.controls.IVAincluded.setValue(contributions.data?(contributions.data.IVAincluded):null);
-            this.contrForm.controls.totalProjectCost.setValue(contributions.data?(contributions.data.totalProjectCost):null);
-            this.contrForm.controls.externalFinancing.setValue(contributions.data?(contributions.data.externalFinancing):null);
-            this.contrForm.controls.selfFinancing.setValue(contributions.data?(contributions.data.selfFinancing):null);
-            this.contrForm.controls.red.setValue(contributions.data?(contributions.data.red):null);
-            if(contributions.attachments){
-                for(let att of contributions.attachments){
-                    (<FormArray>this.contrForm.controls.attachments).controls.push(this.initAttachment(att.name,att.id))
+        if(this.checkRole()){
+            if(this.checkPermission &&contributions&&!contributions.accepted){
+                this.contrForm.controls.value.setValue(contributions.value);
+                this.contrForm.controls.type.setValue(contributions.type);
+                this.contrForm.controls.handWorks.setValue(contributions.data?(contributions.data.handWorks):null);
+                this.contrForm.controls.customizedWorks.setValue(contributions.data?(contributions.data.customizedWorks):null);
+                this.contrForm.controls.safetyCharges.setValue(contributions.data?(contributions.data.safetyCharges):null);
+                this.contrForm.controls.totWorks.setValue(contributions.data?(contributions.data.totWorks):null);
+                this.contrForm.controls.surveyorsCharges.setValue(contributions.data?(contributions.data.surveyorsCharges):null);
+                this.contrForm.controls.connectionsCharges.setValue(contributions.data?(contributions.data.connectionsCharges):null);
+                this.contrForm.controls.technicalCharges.setValue(contributions.data?(contributions.data.technicalCharges):null);
+                this.contrForm.controls.testCharges.setValue(contributions.data?(contributions.data.testCharges):null);
+                this.contrForm.controls.taxes.setValue(contributions.data?(contributions.data.taxes):null);
+                this.contrForm.controls.totCharges.setValue(contributions.data?(contributions.data.totCharges):null);
+                this.contrForm.controls.IVAincluded.setValue(contributions.data?(contributions.data.IVAincluded):null);
+                this.contrForm.controls.totalProjectCost.setValue(contributions.data?(contributions.data.totalProjectCost):null);
+                this.contrForm.controls.externalFinancing.setValue(contributions.data?(contributions.data.externalFinancing):null);
+                this.contrForm.controls.selfFinancing.setValue(contributions.data?(contributions.data.selfFinancing):null);
+                this.contrForm.controls.red.setValue(contributions.data?(contributions.data.red):null);
+                if(contributions.attachments){
+                    for(let att of contributions.attachments){
+                        (<FormArray>this.contrForm.controls.attachments).controls.push(this.initAttachment(att.name,att.id))
+                    }
                 }
             }
+        }else{
+            this.contrForm.disable();
         }
+        
     }
 
     ngOnInit() {
