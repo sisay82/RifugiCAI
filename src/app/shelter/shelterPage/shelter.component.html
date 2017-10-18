@@ -5,8 +5,7 @@
     </div>
   </bc-content-header>
   <bc-menu class="permanent clipped">
-    <div style="position:relative;width:256px;height:100%">
-      <bc-list dense no-border>
+      <bc-list dense no-border  color="accent">
         <bc-list-item-group *ngFor="let layer of appMenuElements.layers">
             <a [bc-menu-element]="isActiveLink(item.link)"  bc-list-item *ngFor="let item of layer.elements" [routerLink]="getLink(item.link)">
                 <div style="display:flex;flex-direction:row;align-items:center">
@@ -16,7 +15,6 @@
             </a>
         </bc-list-item-group>
       </bc-list>
-    </div>
   </bc-menu>
   <!--
   <bc-content-aside class="left">
