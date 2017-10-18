@@ -667,14 +667,6 @@ function createPDF(shelId:any,data:IContribution):Promise<{name:String,id:any}>{
     }); 
 }
 
-function cleanContributions():Promise<any>{
-    return new Promise<any>((resolve,reject)=>{
-        Shelters.update({},{"$unset":{"contributions":""}}).exec((err,res)=>{
-            resolve(res);
-        });
-    });
-}
-
 function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributions:any,economies:any[]):Promise<IShelterExtended>{
     return new Promise<IShelterExtended>((resolve,reject)=>{
         try{
@@ -740,10 +732,7 @@ function updateShelter(id:any,params:IShelterExtended):Promise<boolean>{
         }
         Shelters.findByIdAndUpdate(id,{$set:params},options,function(err,shel){
             if(err){
-                cleanContributions()
-                .then((err)=>{
-                    reject(err);
-                });
+                reject(err);
             }else{
                 resolveServicesInShelter(shel,services)
                 .then((shelter)=>{
