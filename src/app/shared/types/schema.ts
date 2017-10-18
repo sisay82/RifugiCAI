@@ -141,12 +141,29 @@ export namespace Schema {
             ref:'Files',
             required:true
         }
-    })
+    });
+    
+    export var contributionData =new mongoose.Schema({
+        handWorks:Number,
+        customizedWorks:Number,
+        safetyCharges:Number,
+        totWorks:Number,
+        surveyorsCharges:Number,
+        connectionsCharges:Number,
+        technicalCharges:Number,
+        testCharges:Number,
+        taxes:Number,
+        totCharges:Number,
+        IVAincluded:Boolean,
+        totalProjectCost:Number,
+        externalFinancing:Number,
+        selfFinancing:Number,
+        red:Number
+    });
 
     export var contributionSchema = new mongoose.Schema({
         year:{type:Number,required:true},
-        pdf:{type:fileRefSchema},
-        data:[tagSchema],
+        data:{type:contributionData},
         attachments:[fileRefSchema],
         value:Number,
         accepted:Boolean,
@@ -177,7 +194,7 @@ export namespace Schema {
         drain:{type:drainSchema},
         economy:[economySchema],
         use:[useSchema],
-        contributions:[contributionSchema]
+        contributions:{type:contributionSchema}
     });
 
     export var fileSchema = new mongoose.Schema({

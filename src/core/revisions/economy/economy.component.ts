@@ -2,7 +2,7 @@ import {
 Component,Input,OnInit,OnDestroy,Directive
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter,IEconomy, IContribution, IFile } from '../../../app/shared/types/interfaces'
+import { IShelter,IEconomy, IFile } from '../../../app/shared/types/interfaces'
 import { Enums } from '../../../app/shared/types/enums'
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
@@ -40,16 +40,16 @@ providers:[ShelterService]
 })
 export class BcEconomyRevision extends RevisionBase{
   economy:[IEconomy]=<any>[];
-  contributions:[IContribution]=<any>[];
   activeYear;
-  maskSaveSub:Subscription;
-  name:String;
   activeTab:IEconomy;
   balanceSheet:number=0;
+  files:IFile[]=[];
   revenuesFiles:[IFile]=[] as [IFile];
   outgosFiles:[IFile]=[] as [IFile];
   revenues:number=0;
   outgos:number=0;
+  maskSaveSub:Subscription;
+  name:String;
   statusChange:boolean=false;
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private revisionService:BcRevisionsService){
     super(shelterService,shared,revisionService);
@@ -149,11 +149,10 @@ export class BcEconomyRevision extends RevisionBase{
 
   getContributionSumPerType(type:Enums.Contribution_Type){
     let total:any=0;
-    this.revenuesFiles.filter(obj=>obj.contribution_type==type&&obj.invoice_year==this.activeYear).forEach((file)=>{
+    this.revenuesFiles.concat(
+      this.files.filter(obj=>obj.type==Enums.File_Type.contribution)
+    ).filter(obj=>obj.contribution_type==type&&obj.invoice_year==this.activeYear).forEach((file)=>{
       total+=this.getTotal(file.value,file.invoice_tax);
-    });
-    this.contributions.filter(obj=>obj.type==type&&obj.year==this.activeYear&&obj.accepted).forEach((contr)=>{
-      total+=contr.value;
     });
     return total;
   }
@@ -169,11 +168,16 @@ export class BcEconomyRevision extends RevisionBase{
   }
 
   getTotal(value,tax){
-    if(tax>1){
-      return (value*(tax/100))+value;
+    if(tax){
+      if(tax>1){
+        return (value*(tax/100))+value;
+      }else{
+        return (value*tax)+value;
+      }
     }else{
-      return (value*tax)+value;
+      return value;
     }
+    
   }
 
   ngOnDestroy(){
@@ -238,16 +242,16 @@ export class BcEconomyRevision extends RevisionBase{
             if(queryFileSub!=undefined){
               queryFileSub.unsubscribe();
             }
-            resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice));
+            resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
           });
         }else{
-          resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice));
+          resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
         }
         if(loadServiceSub!=undefined){
           loadServiceSub.unsubscribe();
         }
       });
-      this.revisionService.onChildLoadFilesRequest([Enums.File_Type.invoice]);
+      this.revisionService.onChildLoadFilesRequest([Enums.File_Type.invoice,Enums.File_Type.contribution]);
     });
   }
 
@@ -276,31 +280,6 @@ export class BcEconomyRevision extends RevisionBase{
     });
   }
 
-  getContributions(id):Promise<IShelter>{
-    return new Promise<IShelter>((resolve,reject)=>{
-        let revSub=this.revisionService.load$.subscribe(shelter=>{
-          if(shelter!=null&&shelter.contributions!=undefined){
-              if(revSub!=undefined){
-                  revSub.unsubscribe();
-              }
-              resolve(shelter);
-          }else{
-              let shelSub=this.shelterService.getShelterSection(id,"contributions").subscribe(shelter=>{
-                this.revisionService.onChildSave(shelter,"contributions");
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
-                if(revSub!=undefined){
-                    revSub.unsubscribe();
-                }
-                resolve(shelter);
-              });
-          }
-      });
-      this.revisionService.onChildLoadRequest("contributions");
-    });
-  }
-
   ngOnInit(){
     let routeSub=this._route.parent.params.subscribe(params=>{
       this._id=params["id"]      
@@ -309,19 +288,16 @@ export class BcEconomyRevision extends RevisionBase{
         this.name=shelter.name;
         this.getDocs(params["id"])
         .then(files=>{
-            this.getContributions(params["id"])
-            .then(shel=>{
-            this.contributions=shel.contributions.filter(obj=>obj.accepted) as [IContribution];
-            this.analyzeDocsYear(files)
-            .then(()=>{
-              if(routeSub!=undefined){
-                routeSub.unsubscribe();
-              }
-            })
-            });
-            this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
-            this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];
-            this.setBalanceSheetByYear((new Date()).getFullYear());
+          this.analyzeDocsYear(files)
+          .then(()=>{
+            if(routeSub!=undefined){
+              routeSub.unsubscribe();
+            }
+          });
+          this.files=files;
+          this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
+          this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];
+          this.setBalanceSheetByYear((new Date()).getFullYear());
         });
         let tab;
         let year;

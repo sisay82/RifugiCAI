@@ -9,30 +9,9 @@
 </div>
 <div style="margin-top:2.5%" *ngIf="activeTab!=undefined">
     <div *ngFor="let contr of activeTab.contributions">
-        <div (click)="downloadFile(contr.pdf)" class="bc-icon-contribution" style="display: inline-block">
+        <div (click)="downloadFile(contr._id)" class="bc-icon-contribution" style="display: inline-block">
             <bc-icon name="file-pdf-o" size=s></bc-icon>
-            <div style="display:inline" class="bc-body"> {{contr.pdf?(contr.pdf.name):'----'}}</div>
+            <div style="display:inline" class="bc-body"> {{contr?(contr.name):'----'}}</div>
         </div>
-        <div class="bc-body-strong" style="display:flex; flex-direction:row;">
-            <div style="flex:1">Tipo: {{contr.type}}</div>
-            <div style="flex:1">Totale: {{contr.value | formatcurrency}}</div>
-        </div>
-        <bc-list color="accent">
-            <bc-list-header>Contributi</bc-list-header>
-            <bc-list-item *ngFor="let item of contr.data">
-                <div bc-line style="display:flex; flex-direction:row;">
-                    <div style="flex:1">{{item.key}}</div>
-                    <div style="flex:1">{{item.value | formatcurrency}}</div>
-                </div>
-            </bc-list-item>
-        </bc-list>
-        <bc-list color="accent">
-            <bc-list-header>Allegati</bc-list-header>
-            <bc-list-item *ngFor="let item of contr.attachments">
-                <div bc-line style="display:flex; flex-direction:row;">
-                    <div style="flex:1">{{item.name}}</div>
-                </div>
-            </bc-list-item>
-        </bc-list>
     </div>
 </div>

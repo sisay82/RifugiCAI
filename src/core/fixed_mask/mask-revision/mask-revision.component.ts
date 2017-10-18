@@ -33,10 +33,8 @@ export class BcMaskRevision {
   formValiditySub:Subscription;
   maskSaveTriggerSub:Subscription;
   displayErrorSub:Subscription;
-  disableMaskSaveSub:Subscription;
-  enableMaskSaveSub:Subscription;
   displayError:boolean=false;
-  disableSave:boolean=false;
+  saveDisabled:boolean=false;
   newShelter:boolean=false;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder){
     this.maskForm = fb.group({
@@ -62,19 +60,18 @@ export class BcMaskRevision {
       }
     });
 
-   /* this.displayErrorSub = this.shared.displayError$.subscribe(()=>{
+    this.displayErrorSub = this.shared.displayError$.subscribe(()=>{
       this.displayError=true;
     });
 
-    this.disableMaskSaveSub = this.shared.sendDisableMaskSave$.subscribe(()=>{
-      this.disableSave=shared.saveDisabled;
-    });
+    this.saveDisabled=(this.shared.activeComponent=="contribution");
+    this.shared.disableMaskSave$.subscribe((val)=>{
+      this.saveDisabled=val
+    })
+  }
 
-    this.enableMaskSaveSub = this.shared.sendEnableMaskSave$.subscribe(()=>{
-      this.disableSave=shared.saveDisabled;
-    });*/
-
-    
+  setMaskSaveDisabled(val){
+    this.saveDisabled=val;
   }
 
   toggleMenu(){
@@ -100,7 +97,7 @@ export class BcMaskRevision {
   }
 
   save(){
-    if(this.maskForm.valid&&!this.disableSave){
+    if(this.maskForm.valid){
       let shelter:IShelter;
       if(this.maskForm.dirty){
         shelter={
@@ -207,12 +204,6 @@ export class BcMaskRevision {
     }
     if(this.maskSaveTriggerSub!=undefined){
       this.maskSaveTriggerSub.unsubscribe();
-    }
-    if(this.disableMaskSaveSub!=undefined){
-      this.disableMaskSaveSub.unsubscribe();
-    }
-    if(this.enableMaskSaveSub!=undefined){
-      this.enableMaskSaveSub.unsubscribe();
     }
   }
 

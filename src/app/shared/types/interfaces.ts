@@ -179,10 +179,27 @@ export interface IFileRef {
     id:String;
 }
 
+export interface IContributionData{
+    handWorks?:Number;
+    customizedWorks?:Number;
+    safetyCharges?:Number;
+    totWorks?:Number;
+    surveyorsCharges?:Number;
+    connectionsCharges?:Number;
+    technicalCharges?:Number;
+    testCharges?:Number;
+    taxes?:Number;
+    totCharges?:Number;
+    IVAincluded?:Boolean;
+    totalProjectCost?:Number;
+    externalFinancing?:Number;
+    selfFinancing?:Number;
+    red?:Number;
+}
+
 export interface IContribution {
-    pdf?:IFileRef;
     year:Number;
-    data?:[ITag];
+    data?:IContributionData;
     attachments?:[IFileRef];
     value?:Number;
     accepted?:Boolean;
@@ -212,7 +229,7 @@ export interface IShelter{
     drain?:IDrain;
     economy?:[IEconomy];
     use?:[IUse];
-    contributions?:[IContribution];
+    contributions?:IContribution;
 }
 
 export interface IFile{

@@ -113,7 +113,8 @@ export namespace Enums {
         doc,
         map,
         invoice,
-        image
+        image,
+        contribution
     }
 
     //tipi di documento
