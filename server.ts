@@ -730,7 +730,7 @@ function updateShelter(id:any,params:IShelterExtended):Promise<boolean>{
         if(params.updateDate==undefined){
             params.updateDate=new Date(Date.now());
         }
-        Shelters.findByIdAndUpdate(id,{$set:params,$unset:{"contributions":""}},options,function(err,shel){
+        Shelters.findByIdAndUpdate(id,{$set:params},options,function(err,shel){
             if(err){
                 reject(err);
             }else{

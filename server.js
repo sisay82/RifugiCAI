@@ -637,13 +637,6 @@ function createPDF(shelId, data) {
         });
     });
 }
-function cleanContributions() {
-    return new Promise(function (resolve, reject) {
-        Shelters.update({}, { "$unset": { "contributions": "" } }).exec(function (err, res) {
-            resolve(res);
-        });
-    });
-}
 function resolveEconomyInShelter(shelter, uses, contributions, economies) {
     return new Promise(function (resolve, reject) {
         try {
@@ -713,11 +706,7 @@ function updateShelter(id, params) {
         }
         Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
             if (err) {
-                cleanContributions()
-                    .then(function (e) {
-                    console.log(err);
-                    reject(err);
-                });
+                reject(err);
             }
             else {
                 resolveServicesInShelter(shel, services)
