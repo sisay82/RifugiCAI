@@ -74,32 +74,32 @@ export class BcDocRevision extends RevisionBase{
 
     this.docFormValidSub = this.newDocForm.statusChanges.subscribe(value=>{
       if(value=="VALID"){
-        if(!this.maskError){
-            this.displayError=false;
+        if(!this.maskError&&this.newInvoiceForm.invalid&&this.newMapForm.invalid&&this.invoicesForm.invalid){
+          this.setDisplayError(false);
         }
       }
     });
 
     this.invoiceFormValidSub = this.newInvoiceForm.statusChanges.subscribe(value=>{
       if(value=="VALID"){
-        if(!this.maskError){
-            this.displayError=false;
+        if(!this.maskError&&this.newDocForm.invalid&&this.newMapForm.invalid&&this.invoicesForm.invalid){
+          this.setDisplayError(false);
         }
       }
     });
 
     this.invoicesFormValidSub = this.invoicesForm.statusChanges.subscribe(value=>{
       if(value=="VALID"){
-        if(!this.maskError){
-            this.displayError=false;
+        if(!this.maskError&&this.newInvoiceForm.invalid&&this.newMapForm.invalid&&this.newDocForm.invalid){
+          this.setDisplayError(false);
         }
       }
     });
 
     this.mapFormValidSub = this.newMapForm.statusChanges.subscribe(value=>{
       if(value=="VALID"){
-        if(!this.maskError){
-            this.displayError=false;
+        if(!this.maskError&&this.newInvoiceForm.invalid&&this.newDocForm.invalid&&this.invoicesForm.invalid){
+          this.setDisplayError(false);
         }
       }
     });
@@ -114,11 +114,15 @@ export class BcDocRevision extends RevisionBase{
           }
         }else{
           shared.onDisplayError();
-          this.displayError=true;
+          this.setDisplayError(true);
         }
     });
 
     shared.activeComponent="documents";
+  }
+
+  setDisplayError(value){
+    this.displayError=value;
   }
 
   checkValidForm(){
@@ -150,9 +154,6 @@ export class BcDocRevision extends RevisionBase{
   }
 
   checkDocName(name){
-    console.log((name&&this.docs.concat(this.maps).find(obj=>obj&&obj.name==name)==undefined&&
-    (<FormArray>this.invoicesForm.controls.files).controls.find(contr=>contr.value&&contr.value.name==name)==undefined))
-
     return (name&&this.docs.concat(this.maps).find(obj=>obj&&obj.name==name)==undefined&&
     (<FormArray>this.invoicesForm.controls.files).controls.find(contr=>contr.value&&contr.value.name==name)==undefined)
   }
@@ -215,10 +216,10 @@ export class BcDocRevision extends RevisionBase{
   }
 
   addDoc(){
-    let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
+    let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
     if(this.newDocForm.valid&&this.checkDocName(f.name)){
       this.uploading=true;
-      this.displayError=false;
+      this.setDisplayError(false);
       let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
       let file:IFile={
         name:f.name,
@@ -247,15 +248,15 @@ export class BcDocRevision extends RevisionBase{
       }
       fileReader.readAsArrayBuffer(f);
     }else{
-      this.displayError=true;
+      this.setDisplayError(true);
     }
   }
 
   addMap(){
-    let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
+    let f=<File>(<FormGroup>(this.newMapForm.controls.file)).value;
     if(this.newMapForm.valid&&this.checkDocName(f.name)){
       this.uploading=true;
-      this.displayError=false;
+      this.setDisplayError(false);
       let f=<File>(<FormGroup>(this.newMapForm.controls.file)).value;
       let file:IFile={
         name:f.name,
@@ -284,7 +285,7 @@ export class BcDocRevision extends RevisionBase{
       }
       fileReader.readAsArrayBuffer(f);
     }else{
-      this.displayError=true;
+      this.setDisplayError(true);
     }
   }
 
@@ -333,7 +334,7 @@ export class BcDocRevision extends RevisionBase{
     let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
     if(this.newInvoiceForm.valid&&this.checkDocName(f.name)){
       this.uploading=true;
-      this.displayError=false;
+      this.setDisplayError(false);
       let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
       let file:IFile={
         name:f.name,
@@ -363,7 +364,7 @@ export class BcDocRevision extends RevisionBase{
       }
       fileReader.readAsArrayBuffer(f);
     }else{
-      this.displayError=true;
+      this.setDisplayError(true);
     }
   }
 
@@ -382,7 +383,7 @@ export class BcDocRevision extends RevisionBase{
 
   save(confirm){
     if(this.invoicesForm.valid&&(!this.invoicesChange||(this.invoicesForm.dirty&&this.invoicesChange))){
-      this.displayError=false;
+      this.setDisplayError(false);
       let i=0;
       if(this.invoicesForm.dirty){
         let filesToUpdate=(<FormArray>this.invoicesForm.controls.files).controls.filter(obj=>obj.dirty);
@@ -418,13 +419,13 @@ export class BcDocRevision extends RevisionBase{
         }
 
       }else{
-        this.displayError=false;
+        this.setDisplayError(false);
         if(confirm){
           this.shared.onMaskConfirmSave("documents");
         }
       }
     }else{
-      this.displayError=true;
+      this.setDisplayError(true);
     }
   }
 
