@@ -2,7 +2,8 @@ import {
   Component,Input,OnInit,OnDestroy,Directive
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IShelter,IContribution,IFileRef } from '../../../app/shared/types/interfaces'
+import { IShelter,IContribution,IFileRef,IFile } from '../../../app/shared/types/interfaces';
+import {Enums } from '../../../app/shared/types/enums';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -28,8 +29,8 @@ export class BcActiveTabStyler{
 })
 export class BcContributions {
   activeYear:Number;
-  activeTab:IContribution;
-  data:{year:Number,contributions:[IContribution]}[]=<any>[];
+  activeTab:{year:Number,contributions:IFile[]};
+  data:{year:Number,contributions:IFile[]}[]=<any>[];
   
   constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private detailsService:BcDetailsService){
     shared.activeComponent="contribution";
@@ -42,60 +43,53 @@ export class BcContributions {
 
   showTab(year){
     if(year!=this.activeYear){
-      this.changeActiveTab(year,this.data.find(obj=>obj.year==year));
+      this.changeActiveTab(year);
     }
   }
 
-  changeActiveTab(year,newTab:IContribution){
+  changeActiveTab(year){
     this.activeYear=year;
-    if(newTab){
-      this.activeTab=newTab;
-    }else{
-      this.activeTab={year:year};
-    }
+    this.activeTab=this.data.find(obj=>obj.year==year);
   }
 
-  getContributions(id):Promise<IShelter>{
-    return new Promise<IShelter>((resolve,reject)=>{
-        let revSub=this.detailsService.load$.subscribe(shelter=>{
-          if(shelter!=null&&shelter.use!=undefined){
-              if(revSub!=undefined){
-                  revSub.unsubscribe();
-              }
-              resolve(shelter);
-          }else{
-              let shelSub=this.shelterService.getShelterSection(id,"contributions").subscribe(shelter=>{
-                this.detailsService.onChildSave(shelter,"contributions");
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
-                if(revSub!=undefined){
-                    revSub.unsubscribe();
-                }
-                resolve(shelter);
+  getDocs(shelId):Promise<IFile[]>{
+    return new Promise<IFile[]>((resolve,reject)=>{
+        let loadServiceSub=this.detailsService.loadFiles$.subscribe(files=>{
+            if(!files){
+              let queryFileSub=this.shelterService.getFilesByShelterId(shelId).subscribe(files=>{
+                  this.detailsService.onChildSaveFiles(files);
+                  if(queryFileSub!=undefined){
+                      queryFileSub.unsubscribe();
+                  }
+                  resolve(files.filter(obj=>obj.type==Enums.File_Type.contribution));
               });
-          }
-      });
-      this.detailsService.onChildLoadRequest("contributions");
+            }else{
+                resolve(files.filter(obj=>obj.type==Enums.File_Type.contribution));
+            }
+            if(loadServiceSub!=undefined){
+                loadServiceSub.unsubscribe();
+            }
+        });
+        this.detailsService.onChildLoadFilesRequest([Enums.File_Type.contribution]);
     });
-  }
+}
 
-  groupByYear(list:IContribution[]):{year:Number,contributions:[IContribution]}[]{
+  groupByYear(list:IFile[]):{year:Number,contributions:IFile[]}[]{
     let result = list.reduce(function (r, a) {
-      r[<any>a.year] = r[<any>a.year] || [];
-      r[<any>a.year].push(a);
+      r[<any>a.invoice_year] = r[<any>a.invoice_year] || [];
+      r[<any>a.invoice_year].push(a);
       return r;
     }, Object.create(null));
-    let ret:{year:Number,contributions:[IContribution]}[]=[];
+    let ret:{year:Number,contributions:IFile[]}[]=[];
     for(let y in result){
       ret.push({year:new Number(y),contributions:result[y]});
     }
     return ret;
   }
 
-  downloadFile(pdf:IFileRef){
-    if(pdf&&pdf.id){
-      let queryFileSub=this.shelterService.getFile(pdf.id).subscribe(file=>{
+  downloadFile(id:any){
+    if(id){
+      let queryFileSub=this.shelterService.getFile(id).subscribe(file=>{
         var e = document.createEvent('MouseEvents');
         let data=Buffer.from(file.data);
         let blob=new Blob([data],{type:"application/pdf"});
@@ -111,19 +105,12 @@ export class BcContributions {
 
   ngOnInit() {
     let routeSub=this._route.parent.params.subscribe(params=>{
-      this.getContributions(params["id"])
-      .then(shelter=>{
-        this.data=this.groupByYear(shelter.contributions);
-        let tab;
+      this.getDocs(params["id"])
+      .then(files=>{
+        this.data=this.groupByYear(files);
         let year:Number;
         year=(new Date()).getFullYear();        
-        if(shelter.contributions&&shelter.contributions.length>0){
-          tab={year:year,contributions:shelter.contributions.filter(obj=>obj.year==(new Date().getFullYear()))};   
-        }else{
-          let contr:IContribution={year:(new Date()).getFullYear()}
-          this.data=[{year:year,contributions:[contr]}];
-        }
-        this.changeActiveTab(year,tab);
+        this.changeActiveTab(year);
       });
     });
   }

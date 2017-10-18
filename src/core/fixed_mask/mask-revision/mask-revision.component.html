@@ -12,7 +12,7 @@
                 </div>
                 <div style="display: inline;margin-left:auto;margin-right:1%;white-space:nowrap">
                     <bc-icon (click)="cancel()" class="bc-mask-icon" name="times" size=s></bc-icon>
-                    <bc-icon [disabled]="disableSave" (click)="save()" class="bc-mask-icon" name="floppy-o" size=s></bc-icon>
+                    <bc-icon *ngIf="!saveDisabled" (click)="save()" class="bc-mask-icon" name="floppy-o" size=s></bc-icon>
                     <bc-icon *ngIf="!newShelter" (click)="remove()" class="bc-mask-icon" name="trash" size=s></bc-icon>
                 </div>
             </div>

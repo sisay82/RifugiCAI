@@ -30,10 +30,10 @@ export class BcActiveTabStyler{
 })
 export class BcEconomy {
   economy:[IEconomy]=<any>[];
-  contributions:[IContribution]=<any>[];
   activeYear;
   activeTab:IEconomy;
   balanceSheet:number=0;
+  files:IFile[]=[];
   revenuesFiles:[IFile]=[] as [IFile];
   outgosFiles:[IFile]=[] as [IFile];
   revenues:number=0;
@@ -53,6 +53,16 @@ export class BcEconomy {
     }
   }
 
+  getContributionSumPerType(type:Enums.Contribution_Type){
+    let total:any=0;
+    this.revenuesFiles.concat(
+      this.files.filter(obj=>obj.type==Enums.File_Type.contribution)
+    ).filter(obj=>obj.contribution_type==type&&obj.invoice_year==this.activeYear).forEach((file)=>{
+      total+=this.getTotal(file.value,file.invoice_tax);
+    });
+    return total;
+  }
+
   changeActiveTab(year,newTab:IEconomy){
     this.activeYear=year;
     if(newTab){
@@ -64,11 +74,16 @@ export class BcEconomy {
   }
 
   getTotal(value,tax){
-    if(tax>1){
-      return (value*(tax/100))+value;
+    if(tax){
+      if(tax>1){
+        return (value*(tax/100))+value;
+      }else{
+        return (value*tax)+value;
+      }
     }else{
-      return (value*tax)+value;
+      return value;
     }
+    
   }
 
   getEnumNames(){
@@ -78,17 +93,6 @@ export class BcEconomy {
           names.push(val);
       });
       return names;
-  }
-
-  getContributionSumPerType(type:Enums.Contribution_Type){
-    let total:any=0;
-    this.revenuesFiles.filter(obj=>obj.contribution_type==type&&obj.invoice_year==this.activeYear).forEach((file)=>{
-      total+=this.getTotal(file.value,file.invoice_tax);
-    });
-    this.contributions.filter(obj=>obj.type==type&&obj.year==this.activeYear&&obj.accepted).forEach((contr)=>{
-      total+=contr.value;
-    });
-    return total;
   }
 
   setBalanceSheetByYear(year){
@@ -138,16 +142,16 @@ export class BcEconomy {
             if(queryFileSub!=undefined){
               queryFileSub.unsubscribe();
             }
-            resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice));
+            resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
           });
         }else{
-          resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice));
+          resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
         }
         if(loadServiceSub!=undefined){
           loadServiceSub.unsubscribe();
         }
       });
-      this.detailsService.onChildLoadFilesRequest([Enums.File_Type.invoice]);
+      this.detailsService.onChildLoadFilesRequest([Enums.File_Type.invoice,Enums.File_Type.contribution]);
     });
   }
 
@@ -207,16 +211,10 @@ export class BcEconomy {
       .then((shelter)=>{
         this.getDocs(params["id"])
         .then(files=>{
-          this.getContributions(params["id"])
-          .then(shel=>{
-            this.contributions=shel.contributions.filter(obj=>obj.accepted) as [IContribution];
-            this.analyzeDocsYear(files)
-            .then(()=>{
-              if(routeSub!=undefined){
-                routeSub.unsubscribe();
-              }
-            })
-          });
+          if(routeSub!=undefined){
+            routeSub.unsubscribe();
+          }
+          this.files=files;
           this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
           this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];
           this.setBalanceSheetByYear((new Date()).getFullYear());

@@ -131,10 +131,26 @@ var Schema;
             required: true
         }
     });
+    Schema.contributionData = new mongoose.Schema({
+        handWorks: Number,
+        customizedWorks: Number,
+        safetyCharges: Number,
+        totWorks: Number,
+        surveyorsCharges: Number,
+        connectionsCharges: Number,
+        technicalCharges: Number,
+        testCharges: Number,
+        taxes: Number,
+        totCharges: Number,
+        IVAincluded: Boolean,
+        totalProjectCost: Number,
+        externalFinancing: Number,
+        selfFinancing: Number,
+        red: Number
+    });
     Schema.contributionSchema = new mongoose.Schema({
         year: { type: Number, required: true },
-        pdf: { type: Schema.fileRefSchema },
-        data: [Schema.tagSchema],
+        data: { type: Schema.contributionData },
         attachments: [Schema.fileRefSchema],
         value: Number,
         accepted: Boolean,
@@ -164,7 +180,7 @@ var Schema;
         drain: { type: Schema.drainSchema },
         economy: [Schema.economySchema],
         use: [Schema.useSchema],
-        contributions: [Schema.contributionSchema]
+        contributions: { type: Schema.contributionSchema }
     });
     Schema.fileSchema = new mongoose.Schema({
         size: Number,

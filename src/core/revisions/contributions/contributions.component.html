@@ -6,43 +6,69 @@
     <div style="max-width:40%;width:auto">
         <bc-select-input title="Tipo" required="true" defaultContent="Selezione il tipo di contributo" [enumValues]="getEnumValues()" formControlName="type" [displayError]="displayError"></bc-select-input>                        
     </div>
-    <div style="display:flex; flex-direction:row">
-        <bc-list style="flex:1" color="accent" formArrayName="tags">
-            <bc-list-header><span>Contributi richiesti</span></bc-list-header>
-            <bc-list-item *ngFor="let tag of contrForm.controls.tags.controls;let i=index" [formGroupName]="i">
-                <div bc-line style="display:flex; flex-direction:row;align-items:center">
-                    <bc-icon (click)="removeTag(i)" class="bc-icon-contribution" name="times" size=s></bc-icon>                    
-                    <div style="flex: 1">{{tag.value.key}}</div>
-                    <div style="flex: 1">{{tag.value.value | formatcurrency}}</div>
-                </div>
-            </bc-list-item>
-        </bc-list>
-    
-        <bc-list style="flex:1" color="accent" formArrayName="attachments">
-            <bc-list-header><span>Allegati</span></bc-list-header>
-            <bc-list-item *ngFor="let item of contrForm.controls.attachments.controls;let i=index" [formGroupName]="i">
-                <div bc-line style="display:flex; flex-direction:row;align-items:center">
-                    <bc-icon (click)="removeAttachment(i)" class="bc-icon-contribution" name="times" size=s></bc-icon>                    
-                    <div style="flex: 1">{{item.value.value}}</div>
-                </div>
-            </bc-list-item>
-        </bc-list>
+    <div style="display: flex;flex-direction:row">
+        <div style="max-width:40%;width:auto;margin-right:2%">
+            <bc-text-input title="Lavori a corpo (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="handWorks" [displayError]="displayError"></bc-text-input>                        
+        </div>
+        <div style="max-width:40%;width:auto">
+            <bc-text-input title="Lavori a misura (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="customizedWorks" [displayError]="displayError"></bc-text-input>                        
+        </div>
     </div>
-    
+    <div style="max-width:40%;width:auto">
+        <bc-text-input title="Oneri di sicurezza (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="safetyCharges" [displayError]="displayError"></bc-text-input>                        
+    </div>
+    <div style="max-width:40%;width:auto">
+        <bc-text-input title="Totale Lavori (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totWorks" [displayError]="displayError"></bc-text-input>                        
+    </div>
+    <div style="max-width:40%;width:auto">
+        <bc-text-input title="Spese per indagini, rilievi, ecc. (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="surveyorsCharges" [displayError]="displayError"></bc-text-input>                        
+    </div>
+    <div style="max-width:40%;width:auto">
+        <bc-text-input title="Spese per allacciamenti a reti di distribuzione (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="connectionsCharges" [displayError]="displayError"></bc-text-input>                        
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="max-width:40%;width:auto;margin-right:2%">
+            <bc-text-input title="Spese tecniche (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="technicalCharges" [displayError]="displayError"></bc-text-input>                        
+        </div>
+        <div style="max-width:40%;width:auto">
+            <bc-text-input title="Spese di collaudo (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="testCharges" [displayError]="displayError"></bc-text-input>                        
+        </div>
+    </div>
+    <div style="max-width:40%;width:auto">
+        <bc-text-input title="Tasse ed Oneri (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="taxes" [displayError]="displayError"></bc-text-input>                        
+    </div>
+    <div style="max-width:40%;width:auto">
+        <bc-text-input title="Totale Spese (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totCharges" [displayError]="displayError"></bc-text-input>                        
+    </div>
+    <bc-checkbox-input formControlName="IVAincluded" title="IVA compresa poiché non recuperabile"></bc-checkbox-input>                      
+    <div style="max-width:40%;width:auto">
+        <bc-text-input title="Costo totale del progetto (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totalProjectCost" [displayError]="displayError"></bc-text-input>                        
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="max-width:40%;width:auto;margin-right:2%">
+            <bc-text-input title="Finanziamento esterno (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="externalFinancing" [displayError]="displayError"></bc-text-input>                        
+        </div>
+        <div style="max-width:40%;width:auto">
+            <bc-text-input title="Autofinanziamento (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="selfFinancing" [displayError]="displayError"></bc-text-input>                        
+        </div>
+    </div>
+    <div style="max-width:40%;width:auto">
+        <bc-text-input title="Scoperto (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="red" [displayError]="displayError"></bc-text-input>                        
+    </div>
+    <div style="max-width:40%;width:auto">
+        <bc-text-input title="RICHIESTO (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="value" [displayError]="displayError"></bc-text-input>                        
+    </div>
+
+    <bc-list style="flex:1" color="accent" formArrayName="attachments">
+        <bc-list-header><span>Allegati</span></bc-list-header>
+        <bc-list-item *ngFor="let item of contrForm.controls.attachments.controls;let i=index" [formGroupName]="i">
+            <div bc-line style="display:flex; flex-direction:row;align-items:center">
+                <bc-icon (click)="removeAttachment(i)" class="bc-icon-contribution" name="times" size=s></bc-icon>                    
+                <div style="flex: 1">{{item.value.value}}</div>
+            </div>
+        </bc-list-item>
+    </bc-list>
 </form>    
-<div class="bc-h6">
-    <span class="bc-title-contributions">Richiesto:</span><span style="margin-left:3px">{{getTotal() | formatcurrency}}</span>
-</div>
-<form style="position:relative" [formGroup]="newTagForm">
-    <div class="bc-body">
-        Aggiungi chiave di contributo
-    </div>
-    <div style="display:flex; flex-direction:row;">
-        <bc-icon (click)="addNewTag()" class="bc-icon-contribution" name="plus" size=s></bc-icon>    
-        <bc-text-input placeholder="Es: Oneri di sicurezza" style="flex:1" formControlName="newKey" [displayError]="displayError"></bc-text-input>   
-        <bc-text-input placeholder="Es: 420" style="flex:1" validator="numberValidator" formControlName="newValue" [displayError]="displayError"></bc-text-input>        
-    </div>
-</form>
 <form style="position:relative" [formGroup]="newAttachmentForm">
     <div class="bc-body">
         Aggiungi allegato
@@ -54,3 +80,8 @@
         </div>
     </div>
 </form>
+
+<div style="display: flex;flex-direction:row;float:right">
+    <a (click)="accept(false)" data-bc-button data-type="solid">Salva e modifica in seguito</a>
+    <a (click)="accept(true)" data-bc-button data-type="solid">Salva e crea pdf</a>
+</div>
