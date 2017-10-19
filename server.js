@@ -11,6 +11,7 @@ var multer = require("multer");
 var request = require("request");
 var xmldom = require("xmldom");
 var pdf = require("html-pdf");
+var months = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 mongoose.Promise = global.Promise;
 var DOMParser = xmldom.DOMParser;
 var casBaseUrl = "https://accesso.cai.it";
@@ -217,18 +218,6 @@ function queryShelPage(pageNumber, pageSize) {
         });
     });
 }
-function countContributionFilesByShelter(shelID) {
-    return new Promise(function (resolve, reject) {
-        Files.count({ "shelterId": shelID, type: enums_1.Enums.File_Type.contribution }).exec(function (err, res) {
-            if (err) {
-                reject(err);
-            }
-            else {
-                resolve(res);
-            }
-        });
-    });
-}
 function queryFileById(id) {
     return new Promise(function (resolve, reject) {
         Files.findById(id).exec(function (err, ris) {
@@ -237,6 +226,18 @@ function queryFileById(id) {
             }
             else {
                 resolve(ris);
+            }
+        });
+    });
+}
+function countContributionFilesByShelter(shelID) {
+    return new Promise(function (resolve, reject) {
+        Files.count({ "shelterId": shelID, type: enums_1.Enums.File_Type.contribution }).exec(function (err, res) {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(res);
             }
         });
     });
@@ -545,95 +546,100 @@ function resolveServicesInShelter(shelter, services) {
         }
     });
 }
-function createPDF(shelId, data) {
+function createPDF(shelter) {
+    var data = shelter.contributions;
     return new Promise(function (resolve, reject) {
-        var document = "<html><head></head><body>\n        <div>Richiesta di contributi di tipo: " + data.type + "</div><h4>Contributi richiesti:</h4>";
-        data.data.handWorks ? (document += "<div>Lavori a corpo (€): " + data.data.handWorks + "</div>") : null;
-        data.data.customizedWorks ? (document += "<div>Lavori a misura (€): " + data.data.customizedWorks + "</div>") : null;
-        data.data.safetyCharges ? (document += "<div>Oneri di sicurezza (€): " + data.data.safetyCharges + "</div>") : null;
-        data.data.totWorks ? (document += "<div>Totale Lavori (€): " + data.data.totWorks + "</div>") : null;
-        data.data.surveyorsCharges ? (document += "<div>Spese per indagini, rilievi, ecc. (€): " + data.data.surveyorsCharges + "</div>") : null;
-        data.data.connectionsCharges ? (document += "<div>Spese per allacciamenti a reti di distribuzione (€): " + data.data.connectionsCharges + "</div>") : null;
-        data.data.technicalCharges ? (document += "<div>Spese tecniche (€): " + data.data.technicalCharges + "</div>") : null;
-        data.data.testCharges ? (document += "<div>Spese di collaudo (€): " + data.data.testCharges + "</div>") : null;
-        data.data.taxes ? (document += "<div>Tasse ed Oneri (€): " + data.data.taxes + "</div>") : null;
-        data.data.totCharges ? (document += "<div>Totale Spese (€): " + data.data.totCharges + "</div>") : null;
-        if (data.data.IVAincluded) {
-            document += "<div>IVA compresa poiché non recuperabile: SI</div>";
-        }
-        else {
-            document += "<div>IVA compresa poiché non recuperabile: NO</div>";
-        }
-        data.data.totalProjectCost ? (document += "<div>Costo totale del progetto (€): " + data.data.totalProjectCost + "</div>") : null;
-        data.data.externalFinancing ? (document += "<div>Finanziamento esterno (€): " + data.data.externalFinancing + "</div>") : null;
-        data.data.selfFinancing ? (document += "<div>Autofinanziamento (€): " + data.data.selfFinancing + "</div>") : null;
-        data.data.red ? (document += "<div>Scoperto (€): " + data.data.red + "</div>") : null;
-        data.value ? (document += "<div>RICHIESTO (€): " + data.value + "</div>") : null;
-        if (data.attachments && data.attachments.length > 0) {
-            document += "<h5>Allegati:</h5>";
-            data.attachments.forEach(function (file) {
-                var content = "<div>" + file.name + "</div>";
-                document += content;
-            });
-        }
-        document += "</body></html>";
-        var result = pdf.create(document, {
-            "directory": "/tmp",
-            "header": {
-                "height": "45mm",
-                "contents": '<div style="text-align: center;">Author: CAIDEV</div>'
-            },
-            "footer": {
-                "height": "28mm",
-                "contents": {
-                    first: (new Date()).toDateString(),
-                    "default": '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>',
-                    last: 'Last Page'
-                }
-            }
-        });
-        /*result.toFile("./doc.pdf",function(err,res){
-            resolve(null);
-        });*/
-        result.toStream(function (err, res) {
-            if (err) {
-                console.log(err);
+        try {
+            var document_1 = "<html><head></head><body>\n            <div><span style=\"font-weight: bold\">Richiesta di contributi di tipo: </span><span>" + data.type + "</span></div><h4 style=\"font-weight: bold\">Contributi richiesti:</h4>";
+            data.data.handWorks ? (document_1 += "<div>Lavori a corpo (€): " + data.data.handWorks + "</div>") : null;
+            data.data.customizedWorks ? (document_1 += "<div>Lavori a misura (€): " + data.data.customizedWorks + "</div>") : null;
+            data.data.safetyCharges ? (document_1 += "<div>Oneri di sicurezza (€): " + data.data.safetyCharges + "</div>") : null;
+            data.data.totWorks ? (document_1 += "<div>Totale Lavori (€): " + data.data.totWorks + "</div>") : null;
+            data.data.surveyorsCharges ? (document_1 += "<div>Spese per indagini, rilievi, ecc. (€): " + data.data.surveyorsCharges + "</div>") : null;
+            data.data.connectionsCharges ? (document_1 += "<div>Spese per allacciamenti a reti di distribuzione (€): " + data.data.connectionsCharges + "</div>") : null;
+            data.data.technicalCharges ? (document_1 += "<div>Spese tecniche (€): " + data.data.technicalCharges + "</div>") : null;
+            data.data.testCharges ? (document_1 += "<div>Spese di collaudo (€): " + data.data.testCharges + "</div>") : null;
+            data.data.taxes ? (document_1 += "<div>Tasse ed Oneri (€): " + data.data.taxes + "</div>") : null;
+            data.data.totCharges ? (document_1 += "<div>Totale Spese (€): " + data.data.totCharges + "</div>") : null;
+            if (data.data.IVAincluded) {
+                document_1 += "<div>IVA compresa poiché non recuperabile: SI</div>";
             }
             else {
-                countContributionFilesByShelter(shelId)
-                    .then(function (num) {
-                    var bufs = [];
-                    num += 1;
-                    res.on('data', function (d) { bufs.push(d); });
-                    res.on("end", function () {
-                        var buff = Buffer.concat(bufs);
-                        var file = {
-                            size: buff.length,
-                            shelterId: shelId,
-                            uploadDate: new Date(),
-                            name: data.year + "_" + data.type + "_" + num + ".pdf",
-                            data: buff,
-                            contribution_type: data.type,
-                            contentType: "application/pdf",
-                            type: enums_1.Enums.File_Type.contribution,
-                            invoice_year: data.year,
-                            value: data.value
-                        };
-                        insertNewFile(file)
-                            .then(function (f) {
-                            resolve({ name: f.name, id: f._id });
-                        })["catch"](function (err) {
-                            reject(err);
-                        });
-                    });
-                    res.on('error', function (err) {
-                        reject(err);
-                    });
-                })["catch"](function (err) {
-                    reject(err);
+                document_1 += "<div>IVA compresa poiché non recuperabile: NO</div>";
+            }
+            data.data.totalProjectCost ? (document_1 += "<div>Costo totale del progetto (€): " + data.data.totalProjectCost + "</div>") : null;
+            data.data.externalFinancing ? (document_1 += "<div>Finanziamento esterno (€): " + data.data.externalFinancing + "</div>") : null;
+            data.data.selfFinancing ? (document_1 += "<div>Autofinanziamento (€): " + data.data.selfFinancing + "</div>") : null;
+            data.data.red ? (document_1 += "<div>Scoperto (€): " + data.data.red + "</div>") : null;
+            data.value ? (document_1 += "<div>RICHIESTO (€): " + data.value + "</div>") : null;
+            if (data.attachments && data.attachments.length > 0) {
+                document_1 += "<h5>Allegati:</h5>";
+                data.attachments.forEach(function (file) {
+                    var content = "<div>" + file.name + "</div>";
+                    document_1 += content;
                 });
             }
-        });
+            document_1 += "</body></html>";
+            var footer = "";
+            if (shelter.branch) {
+                footer += '<div style="text-align: center;">Autore: ' + shelter.branch + '</div>';
+            }
+            var now = new Date(Date.now());
+            footer += '<div>' + (now.getDay() + "/" + (months[now.getMonth()]) + "/" + now.getFullYear()) + '</div>';
+            var result = pdf.create(document_1, {
+                "directory": "/tmp",
+                "border": "2cm",
+                "footer": {
+                    "height": "20mm",
+                    "contents": footer
+                }
+            });
+            /*result.toFile("./doc.pdf",function(err,res){
+                resolve(null);
+            });*/
+            result.toStream(function (err, res) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    countContributionFilesByShelter(shelter._id)
+                        .then(function (num) {
+                        var bufs = [];
+                        num += 1;
+                        res.on('data', function (d) { bufs.push(d); });
+                        res.on("end", function () {
+                            var buff = Buffer.concat(bufs);
+                            var file = {
+                                size: buff.length,
+                                shelterId: shelter._id,
+                                uploadDate: new Date(),
+                                name: data.year + "_" + data.type + "_" + num + ".pdf",
+                                data: buff,
+                                contribution_type: data.type,
+                                contentType: "application/pdf",
+                                type: enums_1.Enums.File_Type.contribution,
+                                invoice_year: data.year,
+                                value: data.value
+                            };
+                            insertNewFile(file)
+                                .then(function (f) {
+                                resolve({ name: f.name, id: f._id });
+                            })["catch"](function (err) {
+                                reject(err);
+                            });
+                        });
+                        res.on('error', function (err) {
+                            reject(err);
+                        });
+                    })["catch"](function (err) {
+                        reject(err);
+                    });
+                }
+            });
+        }
+        catch (e) {
+            reject(e);
+        }
     });
 }
 function resolveEconomyInShelter(shelter, uses, contributions, economies) {
@@ -667,7 +673,7 @@ function resolveEconomyInShelter(shelter, uses, contributions, economies) {
             }
             if (contributions != undefined) {
                 if (contributions.accepted) {
-                    createPDF(shelter._id, contributions)
+                    createPDF(shelter)
                         .then(function (file) {
                         shelter.contributions = undefined;
                         resolve(shelter);
