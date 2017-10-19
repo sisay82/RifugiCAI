@@ -7,6 +7,11 @@
   border-left: 5px solid #a94442;
 }
 
+.bc-title-text-input{
+  white-space: nowrap;
+  margin-right:1%;
+}
+
 input{
   &[disabled] {
     pointer-events: none;
@@ -21,5 +26,10 @@ input{
   &[one-line]{
     display: flex;
     flex-direction: row;
-  }
+  };
+  &[title-bold]{
+    .bc-title-text-input{
+      font-weight: bold;
+    }
+  };
 }

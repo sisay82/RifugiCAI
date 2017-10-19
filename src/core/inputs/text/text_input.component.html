@@ -1,5 +1,5 @@
 <div class="bc-body" style="display: flex;flex-direction:row;align-items:center">
-<div  style="white-space: nowrap;margin-right:1%">{{title}}</div>
+<div class="bc-title-text-input">{{title}}</div>
 <div *ngIf="required" style="display:inline;color:red;margin-right:1%">*</div>
 </div>
 <input [placeholder]="placeholder" [bc-enable-error]="invalid" [disabled]="isDisabled" type="text" style="text-overflow: ellipsis; font-style: normal; font-weight: normal; text-decoration: inherit;"
