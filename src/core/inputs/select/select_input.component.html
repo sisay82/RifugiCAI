@@ -3,6 +3,6 @@
 </div>
 <select [bc-enable-error]="invalid" [disabled]="isDisabled" (change)="onChange($event)" style="text-overflow: ellipsis; font-style: normal; font-weight: normal; text-decoration: inherit;"
     class="form-control" >
-    <option [selected]="value==undefined" value="">-- {{defaultContent || title}} --</option>
+    <option [selected]="checkEnumValue(undefined)" value="">-- {{defaultContent || title}} --</option>
     <option *ngFor="let name of getEnumNames()" [selected]="checkEnumValue(name)" [value]="name">{{name}}</option>
 </select>

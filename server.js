@@ -11,6 +11,7 @@ var multer = require("multer");
 var pdf = require("html-pdf");
 mongoose.Promise = global.Promise;
 var appPort = 8000;
+var months = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 var ObjectId = mongoose.Types.ObjectId;
 var Services = mongoose.model("Services", schema_1.Schema.serviceSchema);
 var Shelters = mongoose.model("Shelters", schema_1.Schema.shelterSchema);
@@ -79,6 +80,18 @@ function queryFileById(id) {
             }
             else {
                 resolve(ris);
+            }
+        });
+    });
+}
+function countContributionFilesByShelter(shelID) {
+    return new Promise(function (resolve, reject) {
+        Files.count({ "shelterId": shelID, type: enums_1.Enums.File_Type.contribution }).exec(function (err, res) {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(res);
             }
         });
     });
@@ -387,66 +400,100 @@ function resolveServicesInShelter(shelter, services) {
         }
     });
 }
-function createPDF(data) {
+function createPDF(shelter) {
+    var data = shelter.contributions;
     return new Promise(function (resolve, reject) {
-        var document = "<html><head></head><body>\n        <div>Richiesta di contributi di tipo " + data.type + "</div><h4>Contributi richiesti:</h4>";
-        data.data.forEach(function (tag) {
-            var content = "<div>" + tag.key + ": " + tag.value + "</div>";
-            document += content;
-        });
-        document += "<h5>Allegati:</h5>";
-        data.attachments.forEach(function (file) {
-            var content = "<div>" + file.name + "</div>";
-            document += content;
-        });
-        document += "<div>TOTALE: " + data.value + "</div>";
-        document += "</body></html>";
-        pdf.create(document, {
-            "directory": "/tmp",
-            "header": {
-                "height": "45mm",
-                "contents": '<div style="text-align: center;">Author: CAIDEV</div>'
-            },
-            "footer": {
-                "height": "28mm",
-                "contents": {
-                    first: (new Date()).toDateString(),
-                    "default": '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>',
-                    last: 'Last Page'
-                }
-            }
-        }).toStream(function (err, res) {
-            if (err) {
-                console.log(err);
+        try {
+            var document_1 = "<html><head></head><body>\n            <div><span style=\"font-weight: bold\">Richiesta di contributi di tipo: </span><span>" + data.type + "</span></div><h4 style=\"font-weight: bold\">Contributi richiesti:</h4>";
+            data.data.handWorks ? (document_1 += "<div>Lavori a corpo (€): " + data.data.handWorks + "</div>") : null;
+            data.data.customizedWorks ? (document_1 += "<div>Lavori a misura (€): " + data.data.customizedWorks + "</div>") : null;
+            data.data.safetyCharges ? (document_1 += "<div>Oneri di sicurezza (€): " + data.data.safetyCharges + "</div>") : null;
+            data.data.totWorks ? (document_1 += "<div>Totale Lavori (€): " + data.data.totWorks + "</div>") : null;
+            data.data.surveyorsCharges ? (document_1 += "<div>Spese per indagini, rilievi, ecc. (€): " + data.data.surveyorsCharges + "</div>") : null;
+            data.data.connectionsCharges ? (document_1 += "<div>Spese per allacciamenti a reti di distribuzione (€): " + data.data.connectionsCharges + "</div>") : null;
+            data.data.technicalCharges ? (document_1 += "<div>Spese tecniche (€): " + data.data.technicalCharges + "</div>") : null;
+            data.data.testCharges ? (document_1 += "<div>Spese di collaudo (€): " + data.data.testCharges + "</div>") : null;
+            data.data.taxes ? (document_1 += "<div>Tasse ed Oneri (€): " + data.data.taxes + "</div>") : null;
+            data.data.totCharges ? (document_1 += "<div>Totale Spese (€): " + data.data.totCharges + "</div>") : null;
+            if (data.data.IVAincluded) {
+                document_1 += "<div>IVA compresa poiché non recuperabile: SI</div>";
             }
             else {
-                var bufs = [];
-                res.on('data', function (d) { bufs.push(d); });
-                res.on("end", function () {
-                    var buff = Buffer.concat(bufs);
-                    var file = {
-                        size: buff.length,
-                        shelterId: null,
-                        uploadDate: new Date(),
-                        name: data.year + "_" + data.type + "_" + data.value,
-                        data: buff,
-                        contribution_type: data.type,
-                        contentType: "application/pdf",
-                        type: null,
-                        value: data.value
-                    };
-                    insertNewFile(file)
-                        .then(function (f) {
-                        resolve({ name: f.name, id: f._id });
+                document_1 += "<div>IVA compresa poiché non recuperabile: NO</div>";
+            }
+            data.data.totalProjectCost ? (document_1 += "<div>Costo totale del progetto (€): " + data.data.totalProjectCost + "</div>") : null;
+            data.data.externalFinancing ? (document_1 += "<div>Finanziamento esterno (€): " + data.data.externalFinancing + "</div>") : null;
+            data.data.selfFinancing ? (document_1 += "<div>Autofinanziamento (€): " + data.data.selfFinancing + "</div>") : null;
+            data.data.red ? (document_1 += "<div>Scoperto (€): " + data.data.red + "</div>") : null;
+            data.value ? (document_1 += "<div>RICHIESTO (€): " + data.value + "</div>") : null;
+            if (data.attachments && data.attachments.length > 0) {
+                document_1 += "<h5>Allegati:</h5>";
+                data.attachments.forEach(function (file) {
+                    var content = "<div>" + file.name + "</div>";
+                    document_1 += content;
+                });
+            }
+            document_1 += "</body></html>";
+            var footer = "";
+            if (shelter.branch) {
+                footer += '<div style="text-align: center;">Autore: ' + shelter.branch + '</div>';
+            }
+            var now = new Date(Date.now());
+            footer += '<div>' + (now.getDay() + "/" + (months[now.getMonth()]) + "/" + now.getFullYear()) + '</div>';
+            var result = pdf.create(document_1, {
+                "directory": "/tmp",
+                "border": "2cm",
+                "footer": {
+                    "height": "20mm",
+                    "contents": footer
+                }
+            });
+            /*result.toFile("./doc.pdf",function(err,res){
+                resolve(null);
+            });*/
+            result.toStream(function (err, res) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    countContributionFilesByShelter(shelter._id)
+                        .then(function (num) {
+                        var bufs = [];
+                        num += 1;
+                        res.on('data', function (d) { bufs.push(d); });
+                        res.on("end", function () {
+                            var buff = Buffer.concat(bufs);
+                            var file = {
+                                size: buff.length,
+                                shelterId: shelter._id,
+                                uploadDate: new Date(),
+                                name: data.year + "_" + data.type + "_" + num + ".pdf",
+                                data: buff,
+                                contribution_type: data.type,
+                                contentType: "application/pdf",
+                                type: enums_1.Enums.File_Type.contribution,
+                                invoice_year: data.year,
+                                value: data.value
+                            };
+                            insertNewFile(file)
+                                .then(function (f) {
+                                resolve({ name: f.name, id: f._id });
+                            })["catch"](function (err) {
+                                reject(err);
+                            });
+                        });
+                        res.on('error', function (err) {
+                            reject(err);
+                        });
                     })["catch"](function (err) {
                         reject(err);
                     });
-                });
-                res.on('error', function (err) {
-                    reject(err);
-                });
-            }
-        });
+                }
+            });
+        }
+        catch (e) {
+            reject(e);
+        }
     });
 }
 function resolveEconomyInShelter(shelter, uses, contributions, economies) {
@@ -479,23 +526,19 @@ function resolveEconomyInShelter(shelter, uses, contributions, economies) {
                 }
             }
             if (contributions != undefined) {
-                shelter.contributions = shelter.contributions.concat(contributions);
-            }
-            var i_1 = 0;
-            var filesToCreate_1 = shelter.contributions.filter(function (obj) { return obj.pdf == undefined; });
-            if (filesToCreate_1.length > 0) {
-                shelter.contributions.filter(function (obj) { return obj.pdf == undefined; }).forEach(function (contr) {
-                    createPDF(contr)
+                shelter.contributions = contributions;
+                if (contributions.accepted) {
+                    createPDF(shelter)
                         .then(function (file) {
-                        i_1++;
-                        contr.pdf = file;
-                        if (i_1 == filesToCreate_1.length) {
-                            resolve(shelter);
-                        }
+                        delete (shelter.contributions);
+                        resolve(shelter);
                     })["catch"](function (e) {
                         reject(e);
                     });
-                });
+                }
+                else {
+                    resolve(shelter);
+                }
             }
             else {
                 resolve(shelter);
@@ -515,7 +558,6 @@ function updateShelter(id, params) {
         delete (params.services);
         delete (params.use);
         delete (params.economy);
-        delete (params.contributions);
         var options = { setDefaultsOnInsert: true, upsert: true };
         if (params.updateDate == undefined) {
             params.updateDate = new Date(Date.now());
@@ -1103,7 +1145,7 @@ appRoute.route("/shelters/confirm/:id")
                     confirmShelter(req.params.id)
                         .then(function (ris) {
                         if (shelToConfirm_1.files != null) {
-                            var i_2 = shelToConfirm_1.files.length;
+                            var i_1 = shelToConfirm_1.files.length;
                             var j_1 = 0;
                             for (var _i = 0, _a = shelToConfirm_1.files; _i < _a.length; _i++) {
                                 var file = _a[_i];
@@ -1111,7 +1153,7 @@ appRoute.route("/shelters/confirm/:id")
                                     deleteFile(file._id)
                                         .then(function () {
                                         j_1++;
-                                        if (j_1 == i_2) {
+                                        if (j_1 == i_1) {
                                             SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToConfirm_1), 1);
                                             res.status(200).send(true);
                                         }
@@ -1124,7 +1166,7 @@ appRoute.route("/shelters/confirm/:id")
                                         updateFile(file._id, file)
                                             .then(function (value) {
                                             j_1++;
-                                            if (j_1 == i_2) {
+                                            if (j_1 == i_1) {
                                                 SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToConfirm_1), 1);
                                                 res.status(200).send(true);
                                             }
@@ -1136,7 +1178,7 @@ appRoute.route("/shelters/confirm/:id")
                                         insertNewFile(file)
                                             .then(function (f) {
                                             j_1++;
-                                            if (j_1 == i_2) {
+                                            if (j_1 == i_1) {
                                                 SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToConfirm_1), 1);
                                                 res.status(200).send(true);
                                             }
