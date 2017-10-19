@@ -37,6 +37,7 @@ export class BcSelectInput implements ControlValueAccessor {
     propagateChange = (_: any) => {};
     invalid:boolean=false;
     isDisabled:boolean=false;
+    disableSelect:any;
     @Input() value = "";
     @Input() required:boolean=false;
     @Input() title = "";
@@ -62,31 +63,39 @@ export class BcSelectInput implements ControlValueAccessor {
     }
 
     getEnumNames(){
-        if(this.enumName!=undefined){
-            let names:any[]=[];
-            const objValues = Object.keys(Enums[this.enumName]).map(k => Enums[this.enumName][k]);
-            objValues.filter(v => typeof v === "string").forEach((val)=>{
-                names.push(val);
-            });
-            return names;
-        }else if(this.enumValues!=undefined){
-            return this.enumValues;
+        if(this.isDisabled&&this.disableSelect){
+            return [this.disableSelect]
+        }else{
+            if(this.enumName!=undefined){
+                let names:any[]=[];
+                const objValues = Object.keys(Enums[this.enumName]).map(k => Enums[this.enumName][k]);
+                objValues.filter(v => typeof v === "string").forEach((val)=>{
+                    names.push(val);
+                });
+                return names;
+            }else if(this.enumValues!=undefined){
+                return this.enumValues;
+            }
         }
     }
 
     checkEnumValue(value){  
-        if(this.value!=undefined){
-            if(this.value!=''&&this.value.toString().toLowerCase().indexOf(value.toString().toLowerCase())>-1){
-                return true;
+        if(value){
+            if(this.value!=undefined){            
+                if(this.value!=''&&this.value.toString().toLowerCase().indexOf(value.toString().toLowerCase())>-1){
+                    return true;
+                }
             }
+            return false;
+        }else{
+            return value==this.value;
         }
-        return false;
     }
 
-    writeValue(value: any): void {
+    writeValue(value: any): void {        
         if(!this.isDisabled&&value!=undefined){
-            this.value=value;
-        }
+            this.value=value;            
+        }        
     }
 
     registerOnChange(fn: any): void {
@@ -99,6 +108,11 @@ export class BcSelectInput implements ControlValueAccessor {
 
     setDisabledState?(isDisabled: boolean): void {
         this.isDisabled=isDisabled;
+        if(isDisabled){
+            this.disableSelect=this.value;
+        }else{
+            this.disableSelect=undefined;
+        }
     }
 
     onChange(event:any) {
