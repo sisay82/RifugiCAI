@@ -211,9 +211,12 @@ export class BcEconomy {
       .then((shelter)=>{
         this.getDocs(params["id"])
         .then(files=>{
-          if(routeSub!=undefined){
-            routeSub.unsubscribe();
-          }
+          this.analyzeDocsYear(files)
+          .then(()=>{
+            if(routeSub!=undefined){
+              routeSub.unsubscribe();
+            }
+          });
           this.files=files;
           this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
           this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];

@@ -51,9 +51,6 @@ export class BcDocRevision extends RevisionBase{
   disableSave:boolean=false;
   private currentFileToggle:number=-1;
   disableInvoiceGlobal:boolean=true;
-  //sendDocButton:IButton={action:this.addDoc,ref:this,text:"Invia"};
-  //sendMapButton:IButton={action:this.addMap,ref:this,text:"Invia"};
-  //sendInvoiceButton:IButton={action:this.addInvoice,ref:this,text:"Invia"};
   constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
     super(shelterService,shared,revisionService);
     this.newDocForm = fb.group({
@@ -394,11 +391,11 @@ export class BcDocRevision extends RevisionBase{
               name:file.value.name,
               size:file.value.size,
               type:file.value.type,
-              value:file.value.value,
+              value:new Number(file.value.value),
               contentType:file.value.contentType,
               description:file.value.description,
               shelterId:this._id,
-              invoice_tax:file.value.invoice_tax,
+              invoice_tax:new Number(file.value.invoice_tax),
               invoice_type:file.value.invoice_type,
               invoice_year:file.value.invoice_year,
               contribution_type:file.value.contribution_type

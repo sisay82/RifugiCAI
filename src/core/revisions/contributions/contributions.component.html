@@ -1,6 +1,6 @@
 <form style="position:relative" [formGroup]="contrForm">
     <div class="bc-h6 bc-title-contributions">
-        Richiesta di contributi
+        Richiesta contributi
     </div>
 
     <div style="max-width:40%;width:auto">
@@ -18,7 +18,7 @@
         <bc-text-input title="Oneri di sicurezza (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="safetyCharges" [displayError]="displayError"></bc-text-input>                        
     </div>
     <div style="max-width:40%;width:auto">
-        <bc-text-input title="Totale Lavori (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totWorks" [displayError]="displayError"></bc-text-input>                        
+        <bc-text-input title-bold title="Totale lavori (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totWorks" [displayError]="displayError"></bc-text-input>                        
     </div>
     <div style="max-width:40%;width:auto">
         <bc-text-input title="Spese per indagini, rilievi, ecc. (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="surveyorsCharges" [displayError]="displayError"></bc-text-input>                        
@@ -35,14 +35,14 @@
         </div>
     </div>
     <div style="max-width:40%;width:auto">
-        <bc-text-input title="Tasse ed Oneri (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="taxes" [displayError]="displayError"></bc-text-input>                        
+        <bc-text-input title="Tasse e oneri (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="taxes" [displayError]="displayError"></bc-text-input>                        
     </div>
     <div style="max-width:40%;width:auto">
-        <bc-text-input title="Totale Spese (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totCharges" [displayError]="displayError"></bc-text-input>                        
+        <bc-text-input title-bold title="Totale spese (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totCharges" [displayError]="displayError"></bc-text-input>                        
     </div>
     <bc-checkbox-input formControlName="IVAincluded" title="IVA compresa poiché non recuperabile"></bc-checkbox-input>                      
     <div style="max-width:40%;width:auto">
-        <bc-text-input title="Costo totale del progetto (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totalProjectCost" [displayError]="displayError"></bc-text-input>                        
+        <bc-text-input title-bold title="Costo totale del progetto (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totalProjectCost" [displayError]="displayError"></bc-text-input>                        
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="max-width:40%;width:auto;margin-right:2%">
@@ -56,7 +56,7 @@
         <bc-text-input title="Scoperto (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="red" [displayError]="displayError"></bc-text-input>                        
     </div>
     <div style="max-width:40%;width:auto">
-        <bc-text-input title="RICHIESTO (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="value" [displayError]="displayError"></bc-text-input>                        
+        <bc-text-input title-bold title="RICHIESTO (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="value" [displayError]="displayError"></bc-text-input>                        
     </div>
 
     <bc-list style="flex:1" color="accent" formArrayName="attachments">
@@ -74,10 +74,10 @@
         Aggiungi allegato
     </div>
     <div style="display:flex; flex-direction:row;">
-        <bc-icon (click)="addNewAttachment()" class="bc-icon-contribution" name="check" size=s></bc-icon>   
         <div style="width:auto">   
             <bc-select-input defaultContent="Selezione il nome di un documento" style="flex:1" [enumValues]="filesEnum" formControlName="newValue" [displayError]="displayError"></bc-select-input>                    
         </div>
+        <bc-icon (click)="addNewAttachment()" class="bc-icon-contribution" name="check" size=s></bc-icon>   
     </div>
 </form>
 
