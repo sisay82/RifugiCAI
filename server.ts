@@ -691,11 +691,10 @@ function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributio
                 }
             }
             if(contributions!=undefined){
-                shelter.contributions=contributions;
                 if(contributions.accepted){
                     createPDF(shelter._id,contributions)
                     .then(file=>{
-                        delete(shelter.contributions)
+                        shelter.contributions=undefined;
                         resolve(shelter);
                     })
                     .catch((e)=>{
@@ -724,7 +723,6 @@ function updateShelter(id:any,params:IShelterExtended):Promise<boolean>{
         delete(params.services);
         delete(params.use);
         delete(params.economy);
-        delete(params.contributions);
         let options:any={setDefaultsOnInsert:true,upsert:true};
         if(params.updateDate==undefined){
             params.updateDate=new Date(Date.now());

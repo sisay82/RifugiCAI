@@ -666,11 +666,10 @@ function resolveEconomyInShelter(shelter, uses, contributions, economies) {
                 }
             }
             if (contributions != undefined) {
-                shelter.contributions = contributions;
                 if (contributions.accepted) {
                     createPDF(shelter._id, contributions)
                         .then(function (file) {
-                        delete (shelter.contributions);
+                        shelter.contributions = undefined;
                         resolve(shelter);
                     })["catch"](function (e) {
                         reject(e);
@@ -698,7 +697,6 @@ function updateShelter(id, params) {
         delete (params.services);
         delete (params.use);
         delete (params.economy);
-        delete (params.contributions);
         var options = { setDefaultsOnInsert: true, upsert: true };
         if (params.updateDate == undefined) {
             params.updateDate = new Date(Date.now());
