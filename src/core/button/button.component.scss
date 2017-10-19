@@ -1,3 +1,4 @@
+@import '../style/constants';
 @import '../style/typography';
 @import '../style/vendor-prefixes';
 @import '../style/palette';
@@ -12,6 +13,7 @@ $bc-button-height-sm: 32px;
 $bc-button-margin: 6px;
 $bc-button-padding-end: 8px;
 $bc-button-border-radius: 2px;
+
 $bc-button-hover-opacity: 0.12;
 $bc-button-active-opacity: 0.25;
 
@@ -33,7 +35,6 @@ $bc-button-active-opacity: 0.25;
 
     &:hover {
       background: mix($foreground, $background, $bc-button-hover-opacity * 100);
-  
     }
     &:active {
       background: mix($foreground, $background, $bc-button-active-opacity * 100);
@@ -62,11 +63,14 @@ $bc-button-active-opacity: 0.25;
     }
    
     &.bc-solid {      
-      box-shadow: 0px 0px 1px 0px rgba(black, 0.2),0px 1px 1px 0px rgba(black, 0.14),0px 1px 2px 0px rgba(black, 0.12);
-
+      box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0px rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
+      &:active{
+        box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0px rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+      }
       &.disabled, &[disabled], &[data-disabled] {
         background: bc-color($background, disabled);
         color: bc-color($foreground, disabled);
+        box-shadow: none;
       }
     }
     
@@ -113,13 +117,16 @@ $bc-button-active-opacity: 0.25;
   font-kerning: none;
 
   text-decoration: none;
+
   &:hover, &:focus {
     color: currentColor;
     outline: none;
     text-decoration: none;
   }
   
-  transition: all .15s ease-in-out;
+  transition:
+    box-shadow $bc-transition-duration $fast-out-slow-in-curve,
+    background-color $bc-transition-duration $fast-out-slow-in-curve;
 
   & .bc-button-inner {
     @include flex-box();
@@ -138,7 +145,6 @@ $bc-button-active-opacity: 0.25;
   //Disable button
   &[disabled], &[data-disabled] {
     cursor: default;
-    box-shadow: none;
     pointer-events: none;
   }
 

@@ -6,3 +6,27 @@ $bc-font-family: Roboto, Helvetica Neue, sans-serif !default;
 $bc-xsmall: 'max-width: 600px';
 $bc-gt-xsmall: 'min-width: 600px';
 $bc-landscape: 'max-height: 420px';
+
+// The default animation curves used by material design.
+$linear-out-slow-in-curve: cubic-bezier(0, 0, 0.2, 0.1) !default;
+$fast-out-slow-in-curve: cubic-bezier(0.4, 0, 0.2, 1) !default;
+$fast-out-linear-in-curve: cubic-bezier(0.4, 0, 1, 1) !default;
+$bc-transition-duration: 300ms !default;
+
+$ease-in-out-curve: cubic-bezier(0.35, 0, 0.25, 1) !default;
+
+$swift-ease-out-duration: 400ms !default;
+$swift-ease-out-curve: cubic-bezier(0.25, 0.8, 0.25, 1) !default;
+$swift-ease-out: all $swift-ease-out-duration $swift-ease-out-curve !default;
+
+$swift-ease-in-duration: 300ms !default;
+$swift-ease-in-curve: cubic-bezier(0.55, 0, 0.55, 0.2) !default;
+$swift-ease-in: all $swift-ease-in-duration $swift-ease-in-curve !default;
+
+$swift-ease-in-out-duration: 500ms !default;
+$swift-ease-in-out-curve: $ease-in-out-curve !default;
+$swift-ease-in-out: all $swift-ease-in-out-duration $swift-ease-in-out-curve !default;
+
+$swift-linear-duration: 80ms !default;
+$swift-linear-curve: linear !default;
+$swift-linear: all $swift-linear-duration $swift-linear-curve !default;
