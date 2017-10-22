@@ -23,29 +23,29 @@ interface IFileExtended extends IFile,mongoose.Document{
     _id:String;
 }
 
-var months=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+const months=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
 (<any>mongoose.Promise)=global.Promise;
-var DOMParser = xmldom.DOMParser;
-var casBaseUrl = "https://accesso.cai.it";
-var authUrl = "https://services.cai.it/cai-integration-ws/secured/users/";
-var serverUrl = "rifugi.cai.it";
-var appPort=8000;
-var appBaseUrl = "http://"+serverUrl;
-var app = express();
-var parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
-var userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type,redirections:number,checked:boolean}[]=[];
-var centralRole="ROLE_RIFUGI_ADMIN";
-var regionalRoleName="PGR";
-var sectionalPRoleName="Responsabile Esterno Sezione";
-var sectionalURoleName="Operatore Sezione Esteso"; 
-var ObjectId = mongoose.Types.ObjectId;
-var Services = mongoose.model<IServiceExtended>("Services",Schema.serviceSchema);
-var Shelters = mongoose.model<IShelterExtended>("Shelters",Schema.shelterSchema);
-var Files = mongoose.model<IFileExtended>("Files",Schema.fileSchema);
-var SheltersToUpdate:{watchDog:Date, shelter:IShelterExtended, files:any[]}[] = [];
-var maxTime = 1000*60*10;
-var stop:boolean=false;
-var maxImages=10;
+const DOMParser = xmldom.DOMParser;
+const casBaseUrl = "https://accesso.cai.it";
+const authUrl = "https://services.cai.it/cai-integration-ws/secured/users/";
+const serverUrl = "rifugi.cai.it";
+const appPort=8000;
+const appBaseUrl = "http://"+serverUrl;
+const app = express();
+const parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
+const userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type,redirections:number,checked:boolean}[]=[];
+const centralRole="ROLE_RIFUGI_ADMIN";
+const regionalRoleName="PGR";
+const sectionalPRoleName="Responsabile Esterno Sezione";
+const sectionalURoleName="Operatore Sezione Esteso"; 
+const ObjectId = mongoose.Types.ObjectId;
+const Services = mongoose.model<IServiceExtended>("Services",Schema.serviceSchema);
+const Shelters = mongoose.model<IShelterExtended>("Shelters",Schema.shelterSchema);
+const Files = mongoose.model<IFileExtended>("Files",Schema.fileSchema);
+const SheltersToUpdate:{watchDog:Date, shelter:IShelterExtended, files:any[]}[] = [];
+const maxTime = 1000*60*10;
+let stop:boolean=false;
+const maxImages=10;
 
 /**
  * SECTION AUTH
@@ -159,7 +159,7 @@ function validationPromise(ticket):Promise<String>{
             method:"GET"
         },function(err,response,body){
             try {
-                var el:Node=(new DOMParser()).parseFromString(body,"text/xml").firstChild;
+                const el:Node=(new DOMParser()).parseFromString(body,"text/xml").firstChild;
                 let res:boolean=false;
                 let user:String;
                 if(getChildByName(el,'authenticationSuccess')){
@@ -443,7 +443,7 @@ function insertNewShelter(params):Promise<IShelterExtended>{
     return new Promise<IShelterExtended>((resolve,reject)=>{
         let services:IServiceExtended[]=params.services;
         params.services=[];
-        var shelter=new Shelters(params);
+        let shelter=new Shelters(params);
         shelter.save(function(err,shel){
             if(err){
                 reject(err)
@@ -473,7 +473,7 @@ function insertNewShelter(params):Promise<IShelterExtended>{
 
 function insertNewService(params):Promise<IServiceExtended>{
     return new Promise<IServiceExtended>((resolve,reject)=>{
-        var shelter=new Services(params);
+        let shelter=new Services(params);
         shelter.save(function(err,serv:IServiceExtended){
             if(err){
                 reject(err)
@@ -517,7 +517,7 @@ function resolveServicesInShelter(shelter,services):Promise<IShelterExtended>{
             let count=0;
             for(let serv of services){
                 let c=0;
-                for (var k in serv) {
+                for (let k in serv) {
                     if (serv.hasOwnProperty(k)) {
                         ++c;
                     }
@@ -633,7 +633,7 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
                 }else{
                     countContributionFilesByShelter(shelter._id)
                     .then(num=>{
-                        var bufs = [];
+                        let bufs = [];
                         num+=<any>1;
                         res.on('data', function(d){ bufs.push(d); });
                         res.on("end",()=>{
@@ -874,7 +874,7 @@ function cleanSheltersToUpdate(){
     if(!stop){
         stop=true;
         SheltersToUpdate.forEach(obj=>{
-            var diff=Date.now()-obj.watchDog.valueOf();
+            let diff=Date.now()-obj.watchDog.valueOf();
             if(diff>maxTime){
                 SheltersToUpdate.splice(SheltersToUpdate.indexOf(obj),1);
             }
@@ -935,12 +935,11 @@ function checkPermissionFileAPI(req,res,next){
     }
 }
 
-var app = express();
-var appRoute = express.Router();
+const appRoute = express.Router();
 appRoute.all("*",checkPermissionAppAPI);
-var fileRoute = express.Router();
+const fileRoute = express.Router();
 fileRoute.all("*",checkPermissionFileAPI);
-var authRoute = express.Router();
+const authRoute = express.Router();
 
 setInterval(cleanSheltersToUpdate,1500);
 
@@ -950,7 +949,7 @@ setInterval(cleanSheltersToUpdate,1500);
 
 fileRoute.route("/shelters/file")
 .post(function(req,res){
-    var upload = multer().single("file")
+    const upload = multer().single("file")
     upload(req,res,function(err){
         if(err){
             res.status(500).send({error:"Error in file upload"})
@@ -995,7 +994,7 @@ fileRoute.route("/shelters/image/all")
 fileRoute.route("/shelters/file/confirm")
 .post(function(req,res){
     try{
-        var upload = multer().single("file")
+        const upload = multer().single("file")
         upload(req,res,function(err){
             if(err){
                 res.status(500).send({error:"Error in file upload"})
@@ -1678,7 +1677,7 @@ app.use(bodyParser.urlencoded({
 app.use('/api',function(req,res,next){
     console.log("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
     if (req.method === 'OPTIONS') {
-        var headers = {};
+        let headers = {};
         headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
         headers["Access-Control-Allow-Headers"] = "Content-Type";
         headers["content-type"] = 'application/json; charset=utf-8';    
@@ -1709,7 +1708,7 @@ app.use(function(req,res,next){
 
 app.use('/*', function(req, res) {
     if (req.method === 'OPTIONS') {
-        var headers = {};
+        let headers = {};
         headers["Access-Control-Allow-Headers"] = "Content-Type";
         headers["content-type"] = 'text/html; charset=UTF-8';    
         res.writeHead(200, headers);
@@ -1724,8 +1723,8 @@ app.use('/*', function(req, res) {
     */
 });
 
-var server = app.listen(process.env.PORT || appPort, function () {
-    var port = server.address().port;
+const server = app.listen(process.env.PORT || appPort, function () {
+    let port = server.address().port;
     console.log("App now running on port", port);
 });
 

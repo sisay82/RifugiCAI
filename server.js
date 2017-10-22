@@ -908,7 +908,6 @@ function checkPermissionFileAPI(req, res, next) {
         res.status(500).send({ error: "Error request" });
     }
 }
-var app = express();
 var appRoute = express.Router();
 appRoute.all("*", checkPermissionAppAPI);
 var fileRoute = express.Router();
