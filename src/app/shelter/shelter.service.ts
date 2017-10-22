@@ -12,9 +12,9 @@ import { Enums  } from '../shared/types/enums';
 @Injectable()
 export class ShelterService {
 
-    //sheltersBaseUrl: string = '/api/shelters';
-    sheltersBaseUrl: string = 'http://localhost:27010/api/shelters';
-    //sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
+    //private sheltersBaseUrl: string = '/api/shelters';
+    private sheltersBaseUrl: string = 'http://localhost:27010/api/shelters';
+    //private sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 

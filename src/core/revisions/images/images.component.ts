@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
 import {RevisionBase} from '../shared/revision_base';
 
-var maxImages:Number=10;
+const maxImages:Number=10;
 
 @Component({
   moduleId: module.id,
@@ -94,9 +94,9 @@ export class BcImgRevision extends RevisionBase {
   }
 
   toBuffer(ab) {
-    var buf = new Buffer(ab.byteLength);
-    var view = new Uint8Array(ab);
-    for (var i = 0; i < buf.length; ++i) {
+    let buf = new Buffer(ab.byteLength);
+    let view = new Uint8Array(ab);
+    for (let i = 0; i < buf.length; ++i) {
         buf[i] = view[i];
     }
     return buf;
@@ -208,7 +208,7 @@ export class BcImgRevision extends RevisionBase {
 
   downloadFile(id){
     let queryFileSub=this.shelterService.getFile(id).subscribe(file=>{
-      var e = document.createEvent('MouseEvents');
+      let e = document.createEvent('MouseEvents');
       let data=Buffer.from(file.data);
       let blob=new Blob([data],{type:<string>file.contentType});
       let a = document.createElement('a');
@@ -217,6 +217,9 @@ export class BcImgRevision extends RevisionBase {
       a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
       e.initEvent('click', true, false);
       a.dispatchEvent(e);
+      if(queryFileSub!=undefined){
+        queryFileSub.unsubscribe();
+      }
     });
   }
 
