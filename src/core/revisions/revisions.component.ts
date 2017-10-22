@@ -10,6 +10,7 @@ import {Router,RoutesRecognized} from '@angular/router';
     moduleId:module.id,
     selector:'bc-revisions',
     templateUrl: 'revisions.component.html',
+    styleUrls:['revisions.component.scss'],
     providers:[BcRevisionsService]
 })
 export class BcRevisions{

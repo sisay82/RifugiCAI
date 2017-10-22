@@ -1,15 +1,17 @@
 @import '../../style/typography';
-@import '../../style/palette';
+
+@mixin bc-service-item-detail ($theme){
+    .bc-service-title{
+        font-weight: 500;
+    }
+    
+    .bc-content-service{
+        position: relative;
+        margin-left: 1%;
+        display: flex;
+        flex-direction:row;
+    }
+    
+}
 
 @include bc-typography();
-
-.bc-service-title{
-    font-weight: 500;
-}
-
-.bc-content-service{
-    position: relative;
-    margin-left: 1%;
-    display: flex;
-    flex-direction:row;
-}

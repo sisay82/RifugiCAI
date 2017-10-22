@@ -403,12 +403,15 @@ export class BcDocRevision extends RevisionBase{
             if(<any>updFile.invoice_type!="Attività"){
               updFile.contribution_type=null;
             }
-            this.shelterService.updateFile(updFile).subscribe((val)=>{
+            let updateSub = this.shelterService.updateFile(updFile).subscribe((val)=>{
               if(val){
                 i++;
                 if(filesToUpdate.length==i&&confirm){
                   this.shared.onMaskConfirmSave("documents");
                 }
+              }
+              if(updateSub!=undefined){
+                updateSub.unsubscribe();
               }
             });
             this.commitToFather(updFile);

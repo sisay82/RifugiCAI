@@ -1,14 +1,19 @@
 @import '../../style/typography';
-@import '../../style/palette';
+@import '../../style/theme';
+
+@mixin bc-fruition-detail ($theme){
+    $accent: map-get($theme, accent);
+
+    .bc-use-title{
+        margin-bottom: 4px;
+        color:bc-color($accent);
+    }
+    
+    .bc-use-input{
+        position:relative;
+        width:auto;
+        max-width: 30%;
+    }
+}
 
 @include bc-typography();
-
-.bc-use-title{
-    margin-bottom: 4px;
-    color:map-get($bc-teal,400 );
-}
-
-.bc-use-input{
-    position:relative;
-    width:30%;
-}

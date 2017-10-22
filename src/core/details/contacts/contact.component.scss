@@ -1,13 +1,19 @@
 @import '../../style/typography';
-@import '../../style/palette';
+@import '../../style/theme';
+
+@mixin bc-contacts-detail ($theme){
+    $accent: map-get($theme, accent);
+    
+    .bc-detail-title{
+        margin-bottom: 4px;
+        color:bc-color($accent);
+    }
+
+    .bc-link{
+        &:hover{
+            cursor: pointer;
+        }
+    }
+}
 
 @include bc-typography();
-
-.bc-detail-title{
-    margin-bottom: 4px;
-    color:map-get($bc-teal,400 );
-}
-
-.bc-link:hover{
-    cursor: pointer;
-}

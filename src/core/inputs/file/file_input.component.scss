@@ -1,17 +1,42 @@
 @import '../../style/typography';
-@import '../../style/palette';
+@import '../../style/theme';
 
-@include bc-typography();
+@mixin bc-file-input-style ($theme){
+  $warn: map-get($theme, warn);
 
-.invalid{
-  border-left: 5px solid #a94442;
-}
-
-input{
-  &[disabled]{
-    input{
-      pointer-events: none;
-      cursor: default;
+  .invalid{
+    border-left: 5px solid bc-color($warn);
+  }
+  
+  input{
+    &[disabled]{
+      input{
+        pointer-events: none;
+        cursor: default;
+      }
     }
   }
+
+  .bc-file-input{
+    position: relative;
+    align-items: center;
+    width:100%;
+
+    &-title{
+      white-space: nowrap;
+      margin-right:2px;
+    };
+
+    &[one-line]{
+      display: flex;
+      flex-direction: row;
+    };
+    &[title-bold]{
+      .bc-file-input-title{
+        font-weight: bold;
+      }
+    };
+  }
 }
+
+@include bc-typography();

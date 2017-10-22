@@ -8,6 +8,7 @@ import {BcSharedService} from '../../app/shared/shared.service';
 @Component({
     moduleId:module.id,
     selector:'bc-details',
+    styleUrls: ['details.component.scss'],
     templateUrl: 'details.component.html',
     providers:[BcDetailsService]
 })
