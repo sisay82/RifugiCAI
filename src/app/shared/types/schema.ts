@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { Enums } from './enums';
 
 export namespace Schema {
-    export var locationSchema = new mongoose.Schema({
+    export const locationSchema = new mongoose.Schema({
         region:String,
         province:String,
         municipality:String,
@@ -20,30 +20,30 @@ export namespace Schema {
         site:String
     });
     
-    export var tagSchema = new mongoose.Schema({
+    export const tagSchema = new mongoose.Schema({
         key:{type:String, required:true},
         value:String
     });
     
-    export var geographicSchema = new mongoose.Schema({
+    export const geographicSchema = new mongoose.Schema({
         location:{type:locationSchema},
         tags:[tagSchema]
     });
     
-    export var serviceSchema = new mongoose.Schema({
+    export const serviceSchema = new mongoose.Schema({
         name:String,
         category:String,
         description:String,
         tags:[tagSchema]
     });
     
-    export var openingaSchema = new mongoose.Schema({
+    export const openingaSchema = new mongoose.Schema({
         startDate:Date,
         endDate:Date,
         type:String
     });
     
-    export var contactsSchema = new mongoose.Schema({
+    export const contactsSchema = new mongoose.Schema({
         name:String,
         role:String,
         fixedPhone:String,
@@ -54,7 +54,7 @@ export namespace Schema {
         webAddress:String,
     });
     
-    export var subjectSchema = new mongoose.Schema({
+    export const subjectSchema = new mongoose.Schema({
         name:String,
         surname:String,
         taxCode:String,
@@ -71,7 +71,7 @@ export namespace Schema {
         possession_type:{type:Enums.Possession_Type},
     });
     
-    export var managementSchema = new mongoose.Schema({
+    export const managementSchema = new mongoose.Schema({
         reference:String,
         webSite:String,
         valuta:{type:String,default:"Euro"},
@@ -81,7 +81,7 @@ export namespace Schema {
         subject:[subjectSchema]
     });
     
-    export var catastalSchema = new mongoose.Schema({
+    export const catastalSchema = new mongoose.Schema({
         buildingRegulation:Boolean,
         buildYear:String,
         rebuildYear:String,
@@ -96,7 +96,7 @@ export namespace Schema {
         ISO14001:Boolean
     });
 
-    export var energySchema = new mongoose.Schema({
+    export const energySchema = new mongoose.Schema({
         class:{type:Enums.Energy_Class_Type},
         energy:Number,
         greenCertification:Boolean,
@@ -107,7 +107,7 @@ export namespace Schema {
         sourceName:String
     });
 
-    export var drainSchema = new mongoose.Schema({
+    export const drainSchema = new mongoose.Schema({
         type:{type:Enums.Drain_Type},
         regulation:Boolean,
         oilSeparator:Boolean,
@@ -118,13 +118,13 @@ export namespace Schema {
         droughts:{type:Enums.Seasons}
     });
 
-    export var economySchema = new mongoose.Schema({
+    export const economySchema = new mongoose.Schema({
         year:{type:Number,required:true},
         confirm:Boolean,
         accepted:Boolean
     });
 
-    export var useSchema = new mongoose.Schema({
+    export const useSchema = new mongoose.Schema({
         year:{type:Number, required:true},
         stay_count_associate:Number,
         stay_count_reciprocity:Number,
@@ -134,7 +134,7 @@ export namespace Schema {
         transit_count:Number
     });
 
-    export var fileRefSchema = new mongoose.Schema({
+    export const fileRefSchema = new mongoose.Schema({
         name:{type:String,required:true},
         id:{
             type:mongoose.Schema.Types.ObjectId,
@@ -143,7 +143,7 @@ export namespace Schema {
         }
     });
     
-    export var contributionData =new mongoose.Schema({
+    export const contributionData =new mongoose.Schema({
         handWorks:Number,
         customizedWorks:Number,
         safetyCharges:Number,
@@ -161,7 +161,7 @@ export namespace Schema {
         red:Number
     });
 
-    export var contributionSchema = new mongoose.Schema({
+    export const contributionSchema = new mongoose.Schema({
         year:{type:Number,required:true},
         data:{type:contributionData},
         attachments:[fileRefSchema],
@@ -170,7 +170,7 @@ export namespace Schema {
         type:{type:Enums.Contribution_Type}
     });
 
-    export var shelterSchema = new mongoose.Schema({
+    export const shelterSchema = new mongoose.Schema({
         name:String,
         alias:String,
         idCai:String,
@@ -197,7 +197,7 @@ export namespace Schema {
         contributions:{type:contributionSchema}
     });
 
-    export var fileSchema = new mongoose.Schema({
+    export const fileSchema = new mongoose.Schema({
         size:Number,
         shelterId:{type:mongoose.Schema.Types.ObjectId},
         uploadDate:{type:Date,default:new Date(Date.now())},

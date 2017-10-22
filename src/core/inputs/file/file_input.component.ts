@@ -89,7 +89,7 @@ export class BcFileInput implements ControlValueAccessor {
     }
 
     getExtension(filename:String){
-        var parts = filename.split('.');
+        let parts = filename.split('.');
         return parts[parts.length - 1];
     }
 
