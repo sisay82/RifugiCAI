@@ -26,7 +26,7 @@ export namespace Enums {
         "Canone d'affitto"
     }
 
-    export var Contributions = [
+    export const Contributions = [
         Contribution_Type["Ordinario CAI"],
         Contribution_Type["FondoStabile"]
     ]

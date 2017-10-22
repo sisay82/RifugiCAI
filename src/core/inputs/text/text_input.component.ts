@@ -23,7 +23,7 @@ export function parseDate(input:String,removeYear?:boolean):Date{// dd-mm-yy | y
             if(input.indexOf("/")>-1){
                 return null;
             }else{
-                var parts = input.split('-');// yy-mm-dd
+                let parts = input.split('-');// yy-mm-dd
                 if(parts.length==3){
                     let year:string="";
                     if(parts[2].length==1){
@@ -46,7 +46,7 @@ export function parseDate(input:String,removeYear?:boolean):Date{// dd-mm-yy | y
             if(input.indexOf("-")>-1){
                 return null;
             }else{
-                var parts = input.split('/');// yy/mm/dd
+                let parts = input.split('/');// yy/mm/dd
                 if(parts.length==3){
                     let year:string="";
                     if(parts[2].length==1){

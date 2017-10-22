@@ -13,7 +13,9 @@ import { Enums  } from '../shared/types/enums';
 @Injectable()
 export class ShelterService {
 
-    sheltersBaseUrl: string = '/api/shelters';
+    private sheltersBaseUrl: string = '/api/shelters';
+    //private sheltersBaseUrl: string = 'http://localhost:27010/api/shelters';
+    //private sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 
@@ -199,21 +201,13 @@ export class ShelterService {
     handleError(error: any) {
         console.error('server error:', error);
         if (error instanceof Response) {
-            if(error.status==403){
-                //this.http.get("/")
-                /*
-                var casBaseUrl = "https://prova.cai.it";
-                var parsedUrl=encodeURIComponent("http://localhost:4200/j_spring_cas_security_check");
-                location.href=casBaseUrl+"/cai-cas/login?service="+parsedUrl;*/
-            }else{
-                let errMessage = '';
-                try {
-                    errMessage = error.json().error;
-                } catch (err) {
-                    errMessage = error.statusText;
-                }
-                return Observable.throw(errMessage);
+            let errMessage = '';
+            try {
+                errMessage = error.json().error;
+            } catch (err) {
+                errMessage = error.statusText;
             }
+            return Observable.throw(errMessage);
         }
         return Observable.throw(error || 'Node.js server error');
     }
