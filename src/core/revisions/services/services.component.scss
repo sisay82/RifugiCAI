@@ -1,29 +1,29 @@
 @import '../../style/typography';
-@import '../../style/palette';
+@import '../../style/theme';
+
+@mixin bc-services-detail ($theme){
+  $accent: map-get($theme, accent);
+
+  .bc-service-title{
+    margin-bottom: 4px;
+    color:bc-color($accent);
+  }
+  
+  .bc-add-tag{
+    font-weight: bold;
+    margin-left:1%;
+    &:hover{
+      color:bc-color($accent);
+      cursor: pointer;
+    }
+  }
+  
+  .bc-revision-services-tags{
+    width:30%;
+    margin-right:2%;
+    margin-left:4%
+  }
+ 
+}
 
 @include bc-typography();
-
-.bc-service-title{
-    margin-bottom: 4px;
-    color:map-get($bc-teal,400 );
-}
-
-.bc-add-tag{
-  font-weight: bold;
-  margin-left:1%;
-}
-
-.bc-add-tag:hover{
-  color:map-get($bc-teal,400);
-  cursor: pointer;
-}
-
-input, select{
-    font-family: inherit !important;
-}
-
-.bc-revision-services-tags{
-  width:30%;
-  margin-right:2%;
-  margin-left:4%
-}

@@ -58,7 +58,7 @@
     <div *ngIf="checkRole()" class="btn-group btn-group-justified">
         <ul class="nav navbar-nav" style="width:100%">
             <li class="navbar-item">
-                <div [disabled]="isDisabled()" (click)="confirmEconomy(activeTab.year)" style="padding:15px" class="btn bc-body bc-confirm-button">
+                <div [disabled]="isDisabled()" (click)="confirmEconomy(activeTab.year)" data-bc-button data-type="solid">
                     Convalida
                 </div>
             </li>

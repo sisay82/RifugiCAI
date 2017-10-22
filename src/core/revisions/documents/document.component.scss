@@ -1,20 +1,26 @@
 @import '../../style/typography';
-@import '../../style/palette';
+@import '../../style/theme';
+
+@mixin bc-document-detail ($theme){
+  $accent: map-get($theme, accent);
+   
+  .bc-file{
+    &:hover{
+      color:bc-color($accent);
+      cursor: pointer;
+    }
+  }
+  
+  .bc-doc-title{
+      color:bc-color($accent);
+  }
+  
+  .disabled{
+    pointer-events: none;
+    opacity: 0.5;
+    background: #CCC;
+  }
+
+}
 
 @include bc-typography();
-
-.bc-file:hover{
-  color:map-get($bc-teal,400);
-  cursor: pointer;
-}
-
-.bc-doc-title{
-    color:map-get($bc-teal,400);
-}
-
-.disabled
-{
-  pointer-events: none;
-  opacity: 0.5;
-  background: #CCC;
-}

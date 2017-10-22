@@ -18,7 +18,7 @@ function getRegionMarkerHtml(content,size){
 }
 
 function getNormalMarkerHtml(size){
-    return `<div style="font-size:`+size+`px" class="fa fa-map-marker bc-marker bc-tiny-marker"></div>`;
+    return `<div style="font-size:`+size+`px" class="fa fa-map-marker bc-marker bc-marker-tiny"></div>`;
 }
 
 function getTooltip(name,municipality,province,region){
@@ -27,7 +27,7 @@ function getTooltip(name,municipality,province,region){
         <div style="top:20%;position:relative">`+(name?(name):'---')+`</div>
     </div>
     <div class="bc-tooltip-line">
-        <div class="bc-tooltip-content-line">`+(municipality?(municipality):'---')+`, `+(province?(province):'---')+`</br>`+(region?(region):'---')+`</div>
+        <div class="bc-tooltip-line-content">`+(municipality?(municipality):'---')+`, `+(province?(province):'---')+`</br>`+(region?(region):'---')+`</div>
     </div>
 </div>`
     return tooltip;

@@ -1,22 +1,28 @@
 @import '../../style/typography';
-@import '../../style/palette';
+@import '../../style/theme';
+
+@mixin bc-economy-detail ($theme){
+    $accent: map-get($theme, accent);
+
+    .bc-tab-economy{
+        &:hover{
+            color:bc-color($accent);
+            border:1px solid;
+            border-color: $black-12alpha;
+            border-radius:4px;
+        }
+    }
+    
+    .bc-tab-active{
+        color:bc-color($accent);
+        border:1px solid;
+        border-radius:4px;
+        border-color: $black-12alpha;
+    }
+    
+    .bc-title-economy{
+        color:bc-color($accent);
+    }
+}
 
 @include bc-typography();
-
-.bc-tab-economy:hover{
-    color:map-get($bc-teal,400);
-    border:1px solid;
-    border-color: $black-12alpha;
-    border-radius:4px;
-}
-
-.bc-tab-active{
-    color:map-get($bc-teal,400);
-    border:1px solid;
-    border-radius:4px;
-    border-color: $black-12alpha;
-}
-
-.bc-title-economy{
-    color:map-get($bc-teal,400);
-}

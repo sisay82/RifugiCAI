@@ -1,13 +1,19 @@
 @import '../../style/typography';
-@import '../../style/palette';
+@import '../../style/theme';
+
+@mixin bc-contributions-detail ($theme){
+    $accent: map-get($theme, accent);
+   
+    .bc-title-contributions{
+        color:bc-color($accent);
+    }
+
+    .bc-icon-contribution{
+        &:hover{
+            color:bc-color($accent);
+            cursor: pointer;
+        }
+    }
+}
 
 @include bc-typography();
-
-.bc-title-contributions{
-    color:map-get($bc-teal,400 );
-}
-
-.bc-icon-contribution:hover{
-    color:map-get($bc-teal,400);
-    cursor: pointer;
-}
