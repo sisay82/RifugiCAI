@@ -1,0 +1,23 @@
+@import "./catastal/cat.component";
+@import "./contacts/contact.component";
+@import "./contributions/contributions.component";
+@import "./documents/document.component";
+@import "./economy/economy.component";
+@import "./fruition/fruition.component";
+@import "./geographics/geo.component";
+@import "./images/images.component";
+@import "./management/manage.component";
+@import "./services/serv.component";
+
+@mixin bc-details-theme ($theme){
+    @include bc-catastal-detail($theme);
+    @include bc-contacts-detail($theme);
+    @include bc-contributions-detail($theme);
+    @include bc-document-detail($theme);
+    @include bc-economy-detail($theme);
+    @include bc-fruition-detail($theme);
+    @include bc-geo-detail($theme);
+    @include bc-images-detail($theme);
+    @include bc-management-detail($theme);
+    @include bc-service-detail($theme);
+}

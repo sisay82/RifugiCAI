@@ -10,6 +10,10 @@
 @import '../button/button.component';
 
 @import '../map/map.component';
+@import '../details/details.component';
+@import '../revisions/revisions.component';
+@import '../inputs/inputs.component';
+
 // Create a full theme.
 @mixin bc-theme($theme) {
   @include bc-content-theme($theme);
@@ -18,5 +22,9 @@
   @include bc-navbar-theme($theme);
   @include bc-list-theme($theme);
   @include bc-button-theme($theme);
+
   @include bc-map-theme($theme);
+  @include bc-details-theme($theme);
+  @include bc-revision-theme($theme);
+  @include bc-inputs-style($theme);
 }

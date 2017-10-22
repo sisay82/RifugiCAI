@@ -1,25 +1,47 @@
 @import '../../style/typography';
-@import '../../style/palette';
+@import '../../style/theme';
+
+@mixin bc-select-input-style ($theme){
+  $warn: map-get($theme, warn);
+
+  .invalid{
+    border-left: 5px solid bc-color($warn);
+  }
+  
+  select{
+    &[disabled] {
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+  
+  .bc-select-input{
+    position: relative;
+    align-items: center;
+    width:100%;
+
+    &-title{
+      white-space: nowrap;
+      margin-right:2px;
+    };
+
+    &-required{
+      display: inline;
+      color:red;
+      margin-right:2px;
+    };
+
+    &[one-line]{
+      display: flex;
+      flex-direction: row;
+    };
+    &[title-bold]{
+      .bc-select-input-title{
+        font-weight: bold;
+      }
+    };
+  }
+
+}
 
 @include bc-typography();
-
-.invalid{
-  border-left: 5px solid #a94442;
-}
-
-select{
-  &[disabled] {
-    pointer-events: none;
-    cursor: default;
-  }
-}
-
-.bc-select-input{
-  position: relative;
-  align-items: center;
-  width:100%;
-  &[one-line]{
-    display: flex;
-    flex-direction: row;
-  }
-}

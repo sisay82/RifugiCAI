@@ -179,12 +179,15 @@ export class BcImgRevision extends RevisionBase {
       for(let file of (<FormArray>this.docsForm.controls.files).controls){
         if(file.dirty){
           let updFile:IFile={_id:file.value.id,shelterId:this._id,description:file.value.description}
-          this.shelterService.updateFile(updFile).subscribe((val)=>{
+          let updateSub = this.shelterService.updateFile(updFile).subscribe((val)=>{
             if(val){
               i++;
               if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
                 this.shared.onMaskConfirmSave("images");
               }
+            }
+            if(updateSub!=undefined){
+              updateSub.unsubscribe();
             }
           });
           let f:IFile={name:file.value.name,size:file.value.size,_id:file.value.id,type:file.value.type,value:file.value.value,contentType:file.value.contentType,description:file.value.description};
@@ -223,7 +226,7 @@ export class BcImgRevision extends RevisionBase {
   }
 
   ngOnDestroy() {
-    if(this.docsForm.valid&&this.docsForm.dirty){
+    if(!this.disableSave&&this.docsForm.valid&&this.docsForm.dirty){
       this.save(false);
     }
     if(this.permissionSub!=undefined){

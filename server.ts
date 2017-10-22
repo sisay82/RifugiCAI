@@ -496,7 +496,8 @@ function updateFile(id:any,file):Promise<boolean>{
                 invoice_tax:file.invoice_tax||null,
                 invoice_type:file.invoice_type||null,
                 invoice_confirmed:file.invoice_confirmed||null,
-                value:file.value||null
+                value:file.value||null,
+                description:file.description||null
             }
         }
 
@@ -1009,8 +1010,9 @@ fileRoute.route("/shelters/file/confirm")
                     if(file.type==Enums.File_Type.image){
                         let shelFiles=queryFilesByShelterId(id)
                         .then(files=>{
+                            const images=files.filter(obj=>obj.type==Enums.File_Type.image);
                             if(shelUpdate!=undefined&&shelUpdate.length>0){
-                                if(files.length<maxImages&&(shelUpdate[0].files==undefined||files.length+shelUpdate[0].files.length<maxImages)){
+                                if(images.length<maxImages&&(shelUpdate[0].files==undefined||images.length+shelUpdate[0].files.length<maxImages)){
                                     if(shelUpdate[0].files!=undefined){
                                         shelUpdate[0].files.push(file);
                                     }else{
@@ -1022,7 +1024,7 @@ fileRoute.route("/shelters/file/confirm")
                                     res.status(500).send({error:"Max "+maxImages+" images"});
                                 }
                             }else{
-                                if(files.length<maxImages){
+                                if(images.length<maxImages){
                                     let newShelter:any={_id:id};
                                     SheltersToUpdate.push({watchDog:new Date(Date.now()),shelter:newShelter,files:[file]});
                                     res.status(200).send(fileId);

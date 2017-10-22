@@ -1,44 +1,44 @@
 @import '../../style/typography';
-@import '../../style/palette';
+@import '../../style/theme';
+
+@mixin bc-management-detail ($theme){
+  $accent: map-get($theme, accent);
+
+  .bc-management-title{
+    margin-bottom: 4px;
+    color:bc-color($accent);
+  }
+
+  .bc-add-tag{
+    &:hover{
+      color:bc-color($accent);
+      cursor: pointer;
+    }
+    font-weight: bold;
+    margin-left:1%;
+  }
+
+  .bc-revision-management{
+    width:30%;
+    margin-right:1%
+  }
+
+  .bc-management-check{
+    position:relative;
+    margin-left:2%;
+    display: flex;
+    flex-direction: row;
+    margin-right:2%;
+    align-items: center;
+    white-space:nowrap;
+
+    &-content{
+      width:20px;
+      height:20px;
+      margin-left:1%;
+    }
+  }
+ 
+}
 
 @include bc-typography();
-
-.bc-management-title{
-    margin-bottom: 4px;
-    color:map-get($bc-teal,400 );
-}
-
-.bc-add-tag:hover{
-  color:map-get($bc-teal,400);
-  cursor: pointer;
-}
-
-.bc-add-tag{
-  font-weight: bold;
-  margin-left:1%;
-}
-
-input, select{
-    font-family: inherit !important;
-}
-
-.bc-revision-management{
-  width:30%;
-  margin-right:1%
-}
-
-.bc-management-check{
-  position:relative;
-  margin-left:2%;
-  display: flex;
-  flex-direction: row;
-  margin-right:2%;
-  align-items: center;
-  white-space:nowrap;
-}
-
-.bc-management-check-content{
-  width:20px;
-  height:20px;
-  margin-left:1%;
-}
