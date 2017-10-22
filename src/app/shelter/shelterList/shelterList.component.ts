@@ -44,7 +44,7 @@ export class BcShelterList {
     }
 
     filterChanged(event: any) {
-        var data = this.filterText;
+        let data = this.filterText;
         if (data && this.rifugiSample) {
             const props = ['name'];
             this.filteredShelter = this.rifugiSample.filter((item: any) => {

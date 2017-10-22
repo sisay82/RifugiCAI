@@ -23,17 +23,17 @@ interface IFileExtended extends IFile,mongoose.Document{
 }
 
 (<any>mongoose.Promise)=global.Promise;
-var appPort=8000;
-var months=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
-var ObjectId = mongoose.Types.ObjectId;
-var Services = mongoose.model<IServiceExtended>("Services",Schema.serviceSchema);
-var Shelters = mongoose.model<IShelterExtended>("Shelters",Schema.shelterSchema);
-var Files = mongoose.model<IFileExtended>("Files",Schema.fileSchema);
-var SheltersToUpdate:{watchDog:Date, shelter:IShelterExtended, files:any[]}[] = [];
-var Users:String[]=[];
-var maxTime = 1000*60*10;
-var stop:boolean=false;
-var maxImages=10;
+const appPort=8000;
+const months=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+const ObjectId = mongoose.Types.ObjectId;
+const Services = mongoose.model<IServiceExtended>("Services",Schema.serviceSchema);
+const Shelters = mongoose.model<IShelterExtended>("Shelters",Schema.shelterSchema);
+const Files = mongoose.model<IFileExtended>("Files",Schema.fileSchema);
+const SheltersToUpdate:{watchDog:Date, shelter:IShelterExtended, files:any[]}[] = [];
+const Users:String[]=[];
+const maxTime = 1000*60*10;
+let stop:boolean=false;
+const maxImages=10;
 
 function toTitleCase(input:string): string{
     if (!input) {
@@ -298,7 +298,7 @@ function insertNewShelter(params):Promise<IShelterExtended>{
     return new Promise<IShelterExtended>((resolve,reject)=>{
         let services:IServiceExtended[]=params.services;
         params.services=[];
-        var shelter=new Shelters(params);
+        let shelter=new Shelters(params);
         shelter.save(function(err,shel){
             if(err){
                 reject(err)
@@ -328,7 +328,7 @@ function insertNewShelter(params):Promise<IShelterExtended>{
 
 function insertNewService(params):Promise<IServiceExtended>{
     return new Promise<IServiceExtended>((resolve,reject)=>{
-        var shelter=new Services(params);
+        let shelter=new Services(params);
         shelter.save(function(err,serv:IServiceExtended){
             if(err){
                 reject(err)
@@ -372,7 +372,7 @@ function resolveServicesInShelter(shelter,services):Promise<IShelterExtended>{
             let count=0;
             for(let serv of services){
                 let c=0;
-                for (var k in serv) {
+                for (let k in serv) {
                     if (serv.hasOwnProperty(k)) {
                         ++c;
                     }
@@ -488,7 +488,7 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
                 }else{
                     countContributionFilesByShelter(shelter._id)
                     .then(num=>{
-                        var bufs = [];
+                        let bufs = [];
                         num+=<any>1;
                         res.on('data', function(d){ bufs.push(d); });
                         res.on("end",()=>{
@@ -730,7 +730,7 @@ function cleanSheltersToUpdate(){
     if(!stop){
         stop=true;
         SheltersToUpdate.forEach(obj=>{
-            var diff=Date.now()-obj.watchDog.valueOf();
+            let diff=Date.now()-obj.watchDog.valueOf();
             if(diff>maxTime){
                 SheltersToUpdate.splice(SheltersToUpdate.indexOf(obj),1);
             }
@@ -743,9 +743,9 @@ function cleanSheltersToUpdate(){
  * APP SETUP
  */
 
-var app = express();
-var appRoute = express.Router();
-var fileRoute = express.Router();
+const app = express();
+const appRoute = express.Router();
+const fileRoute = express.Router();
 
 setInterval(cleanSheltersToUpdate,1500);
 //setInterval(cleanLoggedUsers,1500);
@@ -756,7 +756,7 @@ setInterval(cleanSheltersToUpdate,1500);
 
 fileRoute.route("/shelters/file")
 .post(function(req,res){
-    var upload = multer().single("file")
+    const upload = multer().single("file")
     upload(req,res,function(err){
         if(err){
             res.status(500).send({error:"Error in file upload"})
@@ -801,7 +801,7 @@ fileRoute.route("/shelters/image/all")
 fileRoute.route("/shelters/file/confirm")
 .post(function(req,res){
     try{
-        var upload = multer().single("file")
+        const upload = multer().single("file")
         upload(req,res,function(err){
             if(err){
                 res.status(500).send({error:"Error in file upload"})
@@ -1351,7 +1351,7 @@ app.use(bodyParser.urlencoded({
 app.use('/api',function(req,res,next){
     console.log("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
     if (req.method === 'OPTIONS') {
-        var headers = {};
+        let headers = {};
         headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
         headers["Access-Control-Allow-Headers"] = "Content-Type";
         headers["content-type"] = 'application/json; charset=utf-8';    
@@ -1377,7 +1377,7 @@ app.use(function(req,res,next){
 
 app.use('/*', function(req, res) {
     if (req.method === 'OPTIONS') {
-        var headers = {};
+        let headers = {};
         headers["Access-Control-Allow-Headers"] = "Content-Type";
         headers["content-type"] = 'text/html; charset=UTF-8';    
         res.writeHead(200, headers);
@@ -1392,8 +1392,8 @@ app.use('/*', function(req, res) {
     */
 });
 
-var server = app.listen(appPort, function () {
-    var port = server.address().port;
+const server = app.listen(appPort, function () {
+    let port = server.address().port;
     console.log("App now running on port", port);
 });
 

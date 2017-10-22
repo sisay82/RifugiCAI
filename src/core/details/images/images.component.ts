@@ -42,7 +42,7 @@ export class BcImg {
 
     downloadFile(id){
         let queryFileSub=this.shelterService.getFile(id).subscribe(file=>{
-            var e = document.createEvent('MouseEvents');
+            let e = document.createEvent('MouseEvents');
             let data=Buffer.from(file.data);
             let blob=new Blob([data],{type:<string>file.contentType});
             let a = document.createElement('a');
@@ -51,6 +51,9 @@ export class BcImg {
             a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
             e.initEvent('click', true, false);
             a.dispatchEvent(e);
+            if(queryFileSub!=undefined){
+                queryFileSub.unsubscribe();
+            }
         });
     }
 
@@ -78,9 +81,9 @@ export class BcImg {
                 let queryFileSub=this.shelterService.getFile(file._id).subscribe(file=>{
                     let data=Buffer.from(file.data);
                     let blob=new Blob([data],{type:<string>file.contentType});                        
-                    var reader = new FileReader();
+                    let reader = new FileReader();
                     reader.onload = (e) => {
-                        var src = reader.result;
+                        let src = reader.result;
                         this.data.push({file:file,url:src});
                         i++;
                         if(i==j){
