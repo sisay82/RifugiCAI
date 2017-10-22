@@ -8,6 +8,7 @@
 @import '../list/list.component';
 @import '../button/button.component';
 
+@import '../map/map.component';
 // Create a full theme.
 @mixin bc-theme($theme) {
   @include bc-icon-theme($theme);
@@ -15,4 +16,5 @@
   @include bc-navbar-theme($theme);
   @include bc-list-theme($theme);
   @include bc-button-theme($theme);
+  @include bc-map-theme($theme);
 }
