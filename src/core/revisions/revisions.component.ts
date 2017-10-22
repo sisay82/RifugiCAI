@@ -11,6 +11,7 @@ import {BcAuthService} from '../../app/shared/auth.service';
     moduleId:module.id,
     selector:'bc-revisions',
     templateUrl: 'revisions.component.html',
+    styleUrls:['revisions.component.scss'],
     providers:[BcRevisionsService]
 })
 export class BcRevisions{

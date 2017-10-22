@@ -7,8 +7,8 @@
         </li>
     </ul>
 </div>
-<div style="display:inline" class="bc-h6 bc-title-contributions">Contributi richiesti</div>
-<div style="margin-top:2.5%" *ngIf="activeTab!=undefined">
+<div style="margin-top:2.5%" class="bc-h6 bc-title-contributions">Contributi richiesti</div>
+<div *ngIf="activeTab!=undefined">
     <div *ngFor="let contr of activeTab.contributions">
         <div (click)="downloadFile(contr._id)" class="bc-icon-contribution" style="display: inline-block">
             <bc-icon name="file-pdf-o" size=s></bc-icon>

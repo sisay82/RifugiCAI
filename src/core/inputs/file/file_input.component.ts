@@ -43,7 +43,6 @@ export class BcFileInput implements ControlValueAccessor {
     value:File;
     isDisabled:boolean=false;
     @Input() validator:RegExp;
-    @Input() required:boolean=false;
     @Input() title = "";
     @Input() sizeLimit:number=1024*1024*16;
     _contentType:String;
