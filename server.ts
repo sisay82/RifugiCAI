@@ -29,7 +29,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const Services = mongoose.model<IServiceExtended>("Services",Schema.serviceSchema);
 const Shelters = mongoose.model<IShelterExtended>("Shelters",Schema.shelterSchema);
 const Files = mongoose.model<IFileExtended>("Files",Schema.fileSchema);
-const SheltersToUpdate:{watchDog:Date, shelter:IShelterExtended, files:any[]}[] = [];
+const SheltersToUpdate:{watchDog:Date, shelter:IShelterExtended, files:any[], isNew?:Boolean}[] = [];
 const Users:String[]=[];
 const maxTime = 1000*60*10;
 let stop:boolean=false;
@@ -579,39 +579,55 @@ function resolveEconomyInShelter(shelter:IShelterExtended,uses:any[],contributio
     });
 }
 
-function updateShelter(id:any,params:IShelterExtended):Promise<boolean>{
+function updateShelter(id:any,params:any,isNew?:Boolean):Promise<boolean>{
     return new Promise<boolean>((resolve,reject)=>{
-        let services:any[]=params.services;
-        let use:any[]=params.use;
-        let contributions:any=params.contributions;
-        let economy:any[]=params.economy;
-        delete(params.services);
-        delete(params.use);
-        delete(params.economy);
-        let options:any={setDefaultsOnInsert:true,upsert:true};
-        if(params.updateDate==undefined){
-            params.updateDate=new Date(Date.now());
-        }
-        Shelters.findByIdAndUpdate(id,{$set:params},options,function(err,shel){
-            if(err){
-                reject(err);
-            }else{
-                resolveServicesInShelter(shel,services)
-                .then((shelter)=>{
-                    resolveEconomyInShelter(shelter,use,contributions,economy)
+        try{
+            let services:any[]=params.services;
+            let use:any[]=params.use;
+            let contributions=params.contributions;
+            let economy:any[]=params.economy;
+            delete(params.services);
+            delete(params.use);
+            delete(params.economy);
+            //delete(params.contributions);
+            let options:any={upsert:isNew||false,new:true};
+            if(params.updateDate==undefined){
+                params.updateDate=new Date(Date.now());
+            }
+            Shelters.findByIdAndUpdate(id,{$set:params},options,function(err,shel){
+                if(err){
+                    console.log(err)
+                    reject(err);
+                }else{
+                    for(let prop in shel){
+                        if(Object.getPrototypeOf(shel).hasOwnProperty(prop)){
+                            if(Object.getPrototypeOf(params).hasOwnProperty(prop)){
+                                shel[prop]=undefined;
+                            }else if(shel[prop]==null){
+                                shel[prop]=undefined;
+                            }
+                        }
+                    }
+                    
+                    resolveServicesInShelter(shel,services)
                     .then((shelter)=>{
-                        shelter.save();
-                        resolve(true);
+                        resolveEconomyInShelter(shelter,use,contributions,economy)
+                        .then((shelter)=>{
+                            shelter.save();
+                            resolve(true);
+                        })
+                        .catch((err)=>{
+                            reject(err);
+                        });
                     })
                     .catch((err)=>{
                         reject(err);
                     });
-                })
-                .catch((err)=>{
-                    reject(err);
-                });
-            }
-        })
+                }
+            })
+        }catch(e){
+            reject(e);
+        }
     });
 }
 
@@ -1140,20 +1156,21 @@ appRoute.route("/shelters/:id")
     }
 })
 .put(function(req,res){
-    let shelUpdate = SheltersToUpdate.filter(shelter=>shelter.shelter._id==req.params.id);
-    if(shelUpdate.length>0){
+    let shelUpdate = SheltersToUpdate.filter(shelter=>shelter.shelter._id==req.params.id)[0];
+    if(shelUpdate!=undefined){
         for(let param in req.body){
-            if(shelUpdate[0].shelter.hasOwnProperty(param)){
-                shelUpdate[0].shelter[param]=req.body[param];
+            if(shelUpdate.shelter.hasOwnProperty(param)){
+                shelUpdate.shelter[param]=req.body[param];
             }
         }
-        shelUpdate[0].watchDog=new Date(Date.now());
+        shelUpdate.watchDog=new Date(Date.now());
     }
-    updateShelter(req.params.id,req.body)
+    updateShelter(req.params.id,req.body,shelUpdate.isNew)
     .then(()=>{
         res.status(200).send(true);
     })
     .catch((err)=>{
+        console.log(err);
         res.status(500).send(err);
     });
 })
@@ -1235,13 +1252,19 @@ appRoute.route("/shelters/confirm/:id")
             }else{
                 res.status(200).send(true);
             }
-        }
-        if(req.body.new!=undefined){
+        }else if(req.body.new!=undefined){
             if(req.body.new){
-                res.status(200).send({id:new ObjectId()});
+                stop=true;
+                let id=new ObjectId();
+                let newShelter:any={_id:id};
+                SheltersToUpdate.push({watchDog:new Date(Date.now()),shelter:newShelter,files:null,isNew:true});
+                stop=false;
+                res.status(200).send({id:id});
             }else{
                 res.status(500).send({error:"command not found"});
             }
+        }else{
+            res.status(500).send({error:"command not found"});
         }
         
     }catch(e){
