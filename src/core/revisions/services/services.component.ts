@@ -75,6 +75,8 @@ export class BcServRevision extends RevisionBase {
                 this.displayError=true;
             }
         });
+
+        shared.activeComponent="services";
     } 
 
     checkValidForm(){

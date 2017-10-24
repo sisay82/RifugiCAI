@@ -28,9 +28,9 @@ export class BcShelter {
         let outlet=this.shared.activeOutlet;
         let routerLink;
         if(outlet=="revision"){
-        routerLink = [{outlets:({'revision': [link],'content': null})}];
+            routerLink = [{outlets:({'revision': [link],'content': null})}];
         }else{
-        routerLink = [{outlets:({'content': [link],'revision': null})}];
+            routerLink = [{outlets:({'content': [link],'revision': null})}];
         }
         return routerLink;
     }
