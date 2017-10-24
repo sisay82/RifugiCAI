@@ -154,26 +154,11 @@ export class BcTextInput implements ControlValueAccessor {
     _displayError:boolean=false;
     @Input() set displayError(enable:boolean){
         this._displayError=enable;
-        if(this.value!=null){
-            if(this.value==""){
-                if(this.required){
-                    if(this.displayError){
-                        this.invalid=true;
-                    }
-                }else{
-                    this.invalid=false;
-                }
-            }else{
-                if(this._validator(this.value)){
-                    if(this.displayError){
-                        this.invalid=true;
-                    }
-                }else{
-                    this.invalid=false;
-                }
-            }
+        if(this.validate(<any>{value:this.value})!=null){
+            this.invalid=true;
+        }else{
+            this.invalid=false;
         }
-        
     }
 
     get displayError(){

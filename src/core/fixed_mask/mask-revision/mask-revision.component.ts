@@ -123,23 +123,23 @@ export class BcMaskRevision {
         }
         let shelUpdateSub=this.shelterService.updateShelter(shelter).subscribe(value=>{
           let maskConfirmSub=this.shared.maskConfirmSave$.subscribe((component)=>{
-              let shelSub=this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
-                if(!value){
-                  console.log("Error in Confirm"); 
-                }else{
-                  this.shared.onActiveOutletChange("content");
-                  this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
-                }
-                if(shelSub!=undefined){
-                  shelSub.unsubscribe();
-                }
-                if(maskConfirmSub!=undefined){
-                  maskConfirmSub.unsubscribe();
-                }
-                if(shelUpdateSub!=undefined){
-                  shelUpdateSub.unsubscribe();
-                }
-              });
+            let shelSub=this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
+              if(!value){
+                console.log("Error in Confirm"); 
+              }else{
+                this.shared.onActiveOutletChange("content");
+                this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
+              }
+              if(shelSub!=undefined){
+                shelSub.unsubscribe();
+              }
+              if(maskConfirmSub!=undefined){
+                maskConfirmSub.unsubscribe();
+              }
+              if(shelUpdateSub!=undefined){
+                shelUpdateSub.unsubscribe();
+              }
+            });
           });
           this.shared.onMaskSave(shelter);
         });
@@ -164,7 +164,7 @@ export class BcMaskRevision {
       }
     }else{
       this.displayError=true;
-      this.shared.onMaskSave(null);
+      //this.shared.onMaskSave(null);
     }
   }
 
