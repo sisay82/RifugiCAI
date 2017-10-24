@@ -475,7 +475,8 @@ function updateFile(id, file) {
                 invoice_tax: file.invoice_tax || null,
                 invoice_type: file.invoice_type || null,
                 invoice_confirmed: file.invoice_confirmed || null,
-                value: file.value || null
+                value: file.value || null,
+                description: file.description || null
             }
         };
         Files.findByIdAndUpdate(id, query).exec(function (err, res) {
@@ -975,8 +976,9 @@ fileRoute.route("/shelters/file/confirm")
                     if (file_1.type == enums_1.Enums.File_Type.image) {
                         var shelFiles = queryFilesByShelterId(id_1)
                             .then(function (files) {
+                            var images = files.filter(function (obj) { return obj.type == enums_1.Enums.File_Type.image; });
                             if (shelUpdate_1 != undefined && shelUpdate_1.length > 0) {
-                                if (files.length < maxImages && (shelUpdate_1[0].files == undefined || files.length + shelUpdate_1[0].files.length < maxImages)) {
+                                if (images.length < maxImages && (shelUpdate_1[0].files == undefined || images.length + shelUpdate_1[0].files.length < maxImages)) {
                                     if (shelUpdate_1[0].files != undefined) {
                                         shelUpdate_1[0].files.push(file_1);
                                     }
@@ -991,7 +993,7 @@ fileRoute.route("/shelters/file/confirm")
                                 }
                             }
                             else {
-                                if (files.length < maxImages) {
+                                if (images.length < maxImages) {
                                     var newShelter = { _id: id_1 };
                                     SheltersToUpdate.push({ watchDog: new Date(Date.now()), shelter: newShelter, files: [file_1] });
                                     res.status(200).send(fileId_1);

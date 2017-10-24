@@ -51,7 +51,7 @@ export class BcFruitionRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("geographic");
+                    this.shared.onMaskConfirmSave("use");
                 }
             }else{
                 shared.onDisplayError();
@@ -84,7 +84,6 @@ export class BcFruitionRevision extends RevisionBase {
             }
             
             shelter.use=[use];
-
             this.revisionService.onChildSave(shelter,"use");
             let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"use").subscribe((returnVal)=>{
                 if(returnVal){
@@ -107,16 +106,18 @@ export class BcFruitionRevision extends RevisionBase {
 
     initForm(shelter:IShelter){
         this.name=shelter.name;
-        this.data=shelter.use.find(obj=>obj.year==(new Date()).getFullYear());
-        if(this.data==undefined){
+        if(shelter.use){
+            this.data=shelter.use.find(obj=>obj.year==(new Date()).getFullYear());
+        }
+        if(!this.data){
             this.data={year:(new Date()).getFullYear()};
         }
-        this.useForm.controls.stay_count_associate.setValue(this.data.stay_count_associate);
-        this.useForm.controls.stay_count_reciprocity.setValue(this.data.stay_count_reciprocity);
-        this.useForm.controls.stay_count.setValue(this.data.stay_count);
-        this.useForm.controls.transit_count_associate.setValue(this.data.transit_count_associate);
-        this.useForm.controls.transit_count_reciprocity.setValue(this.data.transit_count_reciprocity);
-        this.useForm.controls.transit_count.setValue(this.data.transit_count);
+        this.useForm.controls.stay_count_associate.setValue(this.data.stay_count_associate||null);
+        this.useForm.controls.stay_count_reciprocity.setValue(this.data.stay_count_reciprocity||null);
+        this.useForm.controls.stay_count.setValue(this.data.stay_count||null);
+        this.useForm.controls.transit_count_associate.setValue(this.data.transit_count_associate||null);
+        this.useForm.controls.transit_count_reciprocity.setValue(this.data.transit_count_reciprocity||null);
+        this.useForm.controls.transit_count.setValue(this.data.transit_count||null);
     }   
 
     ngOnDestroy(){
