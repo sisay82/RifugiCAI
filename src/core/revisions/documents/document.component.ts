@@ -585,7 +585,9 @@ export class BcDocRevision extends RevisionBase{
         this.initData(files);
         this.getEconomy(params["id"])
         .then(shelter=>{
-          this.updateInvalidYearsInvoice(shelter.economy.filter(obj=>obj.confirm));
+          if(shelter.economy){
+            this.updateInvalidYearsInvoice(shelter.economy.filter(obj=>obj.confirm));
+          }
         })
       });
     });

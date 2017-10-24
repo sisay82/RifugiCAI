@@ -37,7 +37,7 @@
             <div class="bc-body" *ngIf="owner==undefined||owner.webSite==undefined">----</div>
         </div>
         <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-            <div class="bc-body-strong" style="margin-right:4px">Canone annuale (€, anche stimato):</div>
+            <div class="bc-body-strong" style="margin-right:4px">Canone annuale (€, da contratto):</div>
             <div class="bc-body">{{owner?(owner.contract_fee || '----'):'----'}}</div>
         </div>
     </div>
@@ -107,7 +107,7 @@
         </div>
         <div style="display: flex;flex-direction:row">
             <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
-                <div class="bc-body-strong" style="margin-right:4px">Canone annuale (€, anche stimato):</div>
+                <div class="bc-body-strong" style="margin-right:4px">Canone annuale (€, da contratto):</div>
                 <div class="bc-body">{{manager?(manager.contract_fee || '----'):'----'}}</div>
             </div>
             <div style="align-items:center;flex:1;display:flex;flex-direction:row;white-space:nowrap">
