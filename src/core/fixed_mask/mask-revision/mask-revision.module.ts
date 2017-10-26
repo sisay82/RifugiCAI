@@ -7,11 +7,12 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {BcIconModule} from '../../icon/icon.module';
 import {BcTextInputModule} from '../../inputs/text/text_input.module';
 import {BcSelectInputModule} from '../../inputs/select/select_input.module';
+import {BcTooltipModule} from '../../tooltip/tooltip.module';
 
 @NgModule({
     exports: [BcMaskRevision,BcDisableStyler],
     declarations: [BcMaskRevision,BcDisableStyler],
-    imports:[BcSelectInputModule,BcTextInputModule,BcIconModule,CommonModule,BcDividerModule,FormsModule,ReactiveFormsModule]
+    imports:[BcSelectInputModule,BcTooltipModule,BcTextInputModule,BcIconModule,CommonModule,BcDividerModule,FormsModule,ReactiveFormsModule]
 })
 export class BcMaskRevisionModule{
 

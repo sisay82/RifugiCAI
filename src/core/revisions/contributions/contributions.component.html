@@ -77,7 +77,7 @@
         <div style="width:auto">   
             <bc-select-input defaultContent="Selezione il nome di un documento" style="flex:1" [enumValues]="filesEnum" formControlName="newValue" [displayError]="displayError"></bc-select-input>                    
         </div>
-        <bc-icon (click)="addNewAttachment()" class="bc-icon-contribution" name="check" size=s></bc-icon>   
+        <bc-icon tooltip="Aggiungi" (click)="addNewAttachment()" class="bc-icon-contribution" name="check" size=s></bc-icon>   
     </div>
 </form>
 
