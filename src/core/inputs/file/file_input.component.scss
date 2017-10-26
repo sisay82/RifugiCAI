@@ -1,7 +1,7 @@
 @import '../../style/typography';
 @import '../../style/theme';
 
-@mixin bc-file-input-style ($theme){
+@mixin bc-file-input-theme ($theme){
   $warn: map-get($theme, warn);
 
   .invalid{

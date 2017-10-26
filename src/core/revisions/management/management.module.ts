@@ -10,10 +10,11 @@ import {BcIconModule} from '../../icon/icon.module';
 import {BcTextInputModule} from '../../inputs/text/text_input.module';
 import {BcSelectInputModule} from '../../inputs/select/select_input.module';
 import {BcCheckboxInputModule} from '../../inputs/checkbox/checkbox_input.module';
+import {BcTooltipModule} from '../../tooltip/tooltip.module';
 
 @NgModule({
     declarations: [BcManagementRevision],
     exports: [BcManagementRevision],
-    imports:[BcCheckboxInputModule,BcSelectInputModule,BcTextInputModule,BcIconModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
+    imports:[BcCheckboxInputModule,BcTooltipModule,BcSelectInputModule,BcTextInputModule,BcIconModule,BcDividerModule,BcMapModule,CommonModule,FormsModule,ReactiveFormsModule,BcButtonModule]
 })
 export class BcManagementRevisionModule { }

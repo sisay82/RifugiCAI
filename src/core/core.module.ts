@@ -13,6 +13,7 @@ import { BcRevisionsModule } from './revisions/revisions.module';
 import { BcMapModule } from './map/map.module';
 import { BcMaskControllerModule } from './fixed_mask/mask-controller.module';
 import { BcMenuModule } from './menu/menu.module';
+import { BcTooltipModule } from './tooltip/tooltip.module';
 // import { FilterService } from './services/filter.service';
 // import { SorterService } from './services/sorter.service';
 // import { TrackByService } from './services/trackby.service';
@@ -34,7 +35,8 @@ const COMPONENTS_MODULES = [
     BcRevisionsModule,
     BcMaskControllerModule,
     BcButtonModule,
-    BcMenuModule
+    BcMenuModule,
+    BcTooltipModule
 ];
 
 /*const PIPES_MODULES = [
