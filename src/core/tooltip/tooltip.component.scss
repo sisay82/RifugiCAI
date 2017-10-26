@@ -22,7 +22,7 @@ $tooltip_duration:0.1s;
 @mixin bc-tooltip-theme ($theme){
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
-    .bc-tooltip{
+    .bc-tooltip-enabled{
         position: relative;
         &:after {
             opacity: 0;
