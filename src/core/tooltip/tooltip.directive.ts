@@ -4,7 +4,7 @@ import { Directive,ElementRef,OnInit } from '@angular/core';
     selector:'[tooltip]',
     host:{
         '[class.disabled-tooltip]':'_disabled',
-        '[class.bc-tooltip]':'true',
+        '[class.bc-tooltip-enabled]':'true',
         '[class.bc-tooltip-left]':'_left',
         '(click)':'onClick($event)',
         '(mouseenter)':'onMouseEnter($event)'
