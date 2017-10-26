@@ -3,10 +3,10 @@
 @import './checkbox/checkbox_input.component';
 @import './file/file_input.component';
 
-@mixin bc-inputs-style ($theme){
-    @include bc-text-input-style($theme);
-    @include bc-select-input-style($theme);
-    @include bc-checkbox-input-style($theme);
-    @include bc-file-input-style($theme);
+@mixin bc-inputs-theme ($theme){
+    @include bc-text-input-theme($theme);
+    @include bc-select-input-theme($theme);
+    @include bc-checkbox-input-theme($theme);
+    @include bc-file-input-theme($theme);
 }
 
