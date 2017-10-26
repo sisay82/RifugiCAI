@@ -12,6 +12,7 @@
 @import '../details/details.component';
 @import '../revisions/revisions.component';
 @import '../inputs/inputs.component';
+@import '../tooltip/tooltip.component';
 
 // Create a full theme.
 @mixin bc-theme($theme) {
@@ -24,5 +25,6 @@
 
   @include bc-details-theme($theme);
   @include bc-revision-theme($theme);
-  @include bc-inputs-style($theme);
+  @include bc-inputs-theme($theme);
+  @include bc-tooltip-theme($theme);
 }

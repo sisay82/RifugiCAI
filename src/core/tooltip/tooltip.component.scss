@@ -1,0 +1,41 @@
+@import '../style/theme';
+
+$attr:"tooltip";
+$tooltip_delay:1.5s;
+$tooltip_duration:0.1s;
+
+.disabled-tooltip{
+    &:after{
+        opacity: 0 !important;
+        content: "" !important;
+        border: none !important;
+    }
+
+}
+
+@mixin bc-tooltip-theme ($theme){
+    $background: map-get($theme, background);
+    $foreground: map-get($theme, foreground);
+    .bc-tooltip{
+        &:after {
+            opacity: 0;
+            content: "";
+    
+            color: bc-color($foreground, 'text');;
+            position: absolute;
+            z-index: 2;
+            margin-left:5px;
+            top: 0;
+            background: white;
+            border: 1px solid bc-color($background, 'hover');;
+            padding: 5px;
+            white-space: nowrap;
+        }
+        &:hover:after { 
+            opacity: 1;
+            transition: opacity $tooltip_duration linear $tooltip_delay;
+            content:attr(unquote($attr))
+        }
+        
+    }
+}
