@@ -1,7 +1,7 @@
 @import '../../style/typography';
 @import '../../style/theme';
 
-@mixin bc-checkbox-input-style ($theme){
+@mixin bc-checkbox-input-theme ($theme){
   $warn: map-get($theme, warn);
 
   .invalid{
