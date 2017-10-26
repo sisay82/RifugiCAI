@@ -2,7 +2,7 @@
     <form [formGroup]="maskForm" style="position:relative;height:100%;width:100%">
         <div class="bc-mask-line">
             <div class="bc-h6" style="display:flex;flex-direction:row;align-items:center;white-space:nowrap;width:100%">
-                <bc-icon (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:1%" name="arrow-left" size=s></bc-icon>
+                <bc-icon tooltip="Torna alla lista" (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:1%" name="arrow-left" size=s></bc-icon>
                 <bc-icon *ngIf="checkWinPlatform()" (click)="toggleMenu()" class="bc-mask-icon" name="bars" size=s></bc-icon>
                 <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
                     <bc-text-input placeholder="Es: Rifugio Capanna Gnifetti Giovanni" one-line formControlName="name" required="true" title="Nome" [displayError]="displayError"></bc-text-input>
@@ -11,9 +11,9 @@
                     <bc-text-input placeholder="Es: Capanna Gnifetti" one-line formControlName="alias" title="Nome comune" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div style="display: inline;margin-left:auto;margin-right:1%;white-space:nowrap">
-                    <bc-icon (click)="cancel()" class="bc-mask-icon" name="times" size=s></bc-icon>
-                    <bc-icon *ngIf="!saveDisabled" (click)="save()" class="bc-mask-icon" name="floppy-o" size=s></bc-icon>
-                    <bc-icon *ngIf="!newShelter&&isCentralUser()" (click)="remove()" class="bc-mask-icon" name="trash" size=s></bc-icon>
+                    <bc-icon tooltip="Annulla e torna indietro" (click)="cancel()" class="bc-mask-icon" name="times" size=s></bc-icon>
+                    <bc-icon tooltip="Salva le modifiche" *ngIf="!saveDisabled" (click)="save()" class="bc-mask-icon" name="floppy-o" size=s></bc-icon>
+                    <bc-icon tooltip="Elimina rifugio" *ngIf="!newShelter&&isCentralUser()" (click)="remove()" class="bc-mask-icon" name="trash" size=s></bc-icon>
                 </div>
             </div>
         </div>
