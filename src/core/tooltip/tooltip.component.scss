@@ -1,48 +1,123 @@
 @import '../style/theme';
+@import '../style/typography';
 
 $attr:"tooltip";
 $tooltip_delay:1.5s;
 $tooltip_duration:0.1s;
+$tooltip-text:bc-typographic-scale();
+$bc-tooltip-border-radius: 2px;
+$bc-tooltip-hue-contrast: 800;
+$bc-tooltip-opacity:0.965;
 
-.disabled-tooltip{
-    &:after{
-        opacity: 0 !important;
-        content: "" !important;
-        border: none !important;
+.bc-tooltip{
+    position: relative;
+    
+    &-disabled{
+        &:after{
+            opacity: 0;
+            content: "";
+            border: none;
+        }
     }
+    
+    &-enabled{
+        position: relative;
+
+        &:after{
+            position: absolute;
+            z-index: 2;
+        }
+
+        &-left{
+            &:after{
+                top:calc(100% + 14px);
+                right:0;
+                left:auto;
+            }
+        }
+
+        &-right{
+            &:after{
+                top:calc(100% + 14px);
+                left:0;
+                right:auto;
+            }
+        }
+
+        &-center{
+            &:after{
+                top:calc(100% + 14px);
+                left: 50%;
+                transform: translateX(-50%);
+                right: auto;
+            }
+        }
+
+        &-top{
+            &:after{
+                top:calc(-100% - 14px);
+                left: 50%;
+                transform: translateX(-50%);
+                right: auto;
+            }
+        }
+    }
+    
 }
 
-.bc-tooltip-left{
+
+@mixin bc-tooltip-color($foreground,$background,$paletteColorSet,$hue){
+    $backgroundColor: bc-color($paletteColorSet, $hue);
+    $foregroundColor: bc-color($paletteColorSet, #{$hue}-contrast);
+
     &:after{
-        right:20px !important;
-        left:auto !important;
+        color: $foregroundColor;  
+        background: $backgroundColor;
     }
 }
 
 @mixin bc-tooltip-theme ($theme){
     $background: map-get($theme, background);
     $foreground: map-get($theme, foreground);
-    .bc-tooltip-enabled{
-        position: relative;
-        &:after {
-            opacity: 0;
-            content: "";
+    $font-style: map-get($tooltip-text,body-1);
     
-            font-weight: normal;
-            color: bc-color($foreground, 'text');;
-            position: absolute;
-            top:-10px;
-            left:20px;
-            z-index: 2;      
-            background: white;
-            border: 1px solid bc-color($background, 'hover');;
-            padding: 5px;
-            white-space: nowrap;
-        }
-        &:hover:after { 
-            opacity: 1;
-            transition: opacity $tooltip_duration linear $tooltip_delay;
-            content:attr(unquote($attr))
+    $paletteColorSet: map-get($theme, primary);
+    $backgroundColor: bc-color($paletteColorSet, $bc-tooltip-hue-contrast);
+    $foregroundColor: bc-color($paletteColorSet, #{$bc-tooltip-hue-contrast}-contrast);
+
+    .bc-tooltip{
+
+        &-enabled{
+            
+            &[light-tooltip]{
+                @include bc-tooltip-color($foreground,$background,$paletteColorSet,100);
+            }
+    
+            &:not([light-tooltip]){
+                @include bc-tooltip-color($foreground,$background,$paletteColorSet,800);
+            }   
+    
+            &:after {
+                cursor: default;
+                pointer-events: none;
+                opacity: 0;
+                content: "";
+        
+                font-family: map-get($tooltip-text,font-family);
+                font-size: map-get($font-style,font-size);
+                font-weight: map-get($font-style,font-weight);
+                line-height: map-get($font-style,line-height);
+                box-shadow: 0px 0px 1px rgba(black, 0.2);
+                border-radius: $bc-tooltip-border-radius;
+                padding: 8px;
+            }
+            &:hover:after { 
+                opacity:$bc-tooltip-opacity;
+                transition: opacity $tooltip_duration linear $tooltip_delay;
+                content:attr(unquote($attr))
+            }
+    
+            
         }
     }
     
