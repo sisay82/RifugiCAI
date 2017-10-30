@@ -40,6 +40,7 @@ export class BcMaskRevision {
   disableSave:boolean=false;
   saveDisabled:boolean=false;
   newShelter:boolean=false;
+  private isCentral:boolean;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder,private authService:BcAuthService){
     this.maskForm = fb.group({
         name:[""],
@@ -102,9 +103,16 @@ export class BcMaskRevision {
     }
   }
 
-  isCentralUser(){
-    return (this.revisionPermission&&this.revisionPermission==Enums.User_Type.central);
-  }
+  private isCentralUser(){
+    if(this.isCentral){
+        return this.isCentral
+    }else{
+        this.authService.isCentralUser().subscribe(val=>{
+            this.isCentral=val;
+            return val;
+        });
+    }
+}
 
   save(){
     if(this.revisionPermission&&(this.revisionPermission!=Enums.User_Type.central||this.maskForm.valid)){
@@ -164,7 +172,6 @@ export class BcMaskRevision {
       }
     }else{
       this.displayError=true;
-      //this.shared.onMaskSave(null);
     }
   }
 
@@ -204,7 +211,7 @@ export class BcMaskRevision {
       this.maskForm.controls.regional_type.setValue(this.shelter.regional_type);
     }
 
-    if(permission!=Enums.User_Type.central){
+    if(permission!=Enums.User_Type.central&&permission!=Enums.User_Type.superUser){
       this.maskForm.disable();
     }
   }   
@@ -222,11 +229,7 @@ export class BcMaskRevision {
   }
 
   reviseCheck(permission?){
-    if(permission){
-      return (Enums.DetailRevisionPermission.find(obj=>obj==permission)!=null);      
-    }else{
-      return (Enums.DetailRevisionPermission.find(obj=>obj==this.revisionPermission)!=null);      
-    }
+    return this.authService.revisionCheck(permission||this.revisionPermission);
   }
 
   ngOnChanges(changes: SimpleChanges) {

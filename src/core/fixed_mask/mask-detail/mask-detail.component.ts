@@ -33,7 +33,7 @@ export class BcMask {
   }
 
   reviseCheck(){
-    return (Enums.DetailRevisionPermission.find(obj=>obj==this.revisionPermission)!=null);      
+    return this.authService.revisionCheck(this.revisionPermission);
   }
 
   revision(){

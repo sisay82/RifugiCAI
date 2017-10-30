@@ -11,6 +11,8 @@ var multer = require("multer");
 var request = require("request");
 var xmldom = require("xmldom");
 var pdf = require("html-pdf");
+var disableAuth = false;
+var disableLog = false;
 var months = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 mongoose.Promise = global.Promise;
 var DOMParser = xmldom.DOMParser;
@@ -31,9 +33,19 @@ var Services = mongoose.model("Services", schema_1.Schema.serviceSchema);
 var Shelters = mongoose.model("Shelters", schema_1.Schema.shelterSchema);
 var Files = mongoose.model("Files", schema_1.Schema.fileSchema);
 var SheltersToUpdate = [];
+var Users = [];
 var maxTime = 1000 * 60 * 10;
 var stop = false;
 var maxImages = 10;
+var logger = function (log) {
+    var other = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        other[_i - 1] = arguments[_i];
+    }
+    if (!disableLog) {
+        console.log.apply(console, [log].concat(other));
+    }
+};
 /**
  * SECTION AUTH
  */
@@ -97,75 +109,85 @@ function getRole(data) {
     }
 }
 function checkUserPromise(uuid) {
-    console.log("CHECKUSER");
+    logger("CHECKUSER");
     return new Promise(function (resolve, reject) {
-        request.get({
-            url: authUrl + uuid + '/full',
-            method: "GET",
-            headers: {
-                "Authorization": "Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc="
-            }
-        }, function (err, response, body) {
-            try {
-                var data = JSON.parse(body);
-                var role = getRole(data);
-                if (role) {
-                    var code = void 0;
-                    if (role == enums_1.Enums.User_Type.sectional) {
-                        if (data.sectionCode) {
-                            code = data.sectionCode;
-                        }
-                    }
-                    else {
-                        if (data.regionaleGroupCode) {
-                            var tmpCode = data.regionaleGroupCode;
-                            if (tmpCode) {
-                                code = tmpCode.substr(0, 2) + tmpCode.substr(5, 2) + tmpCode.substr(2, 3);
+        if (disableAuth) {
+            resolve({ role: enums_1.Enums.User_Type.superUser, code: "9999999" });
+        }
+        else {
+            request.get({
+                url: authUrl + uuid + '/full',
+                method: "GET",
+                headers: {
+                    "Authorization": "Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc="
+                }
+            }, function (err, response, body) {
+                try {
+                    var data = JSON.parse(body);
+                    var role = getRole(data);
+                    if (role) {
+                        var code = void 0;
+                        if (role == enums_1.Enums.User_Type.sectional) {
+                            if (data.sectionCode) {
+                                code = data.sectionCode;
                             }
                         }
-                    }
-                    if (code) {
-                        resolve({ role: role, code: code });
+                        else {
+                            if (data.regionaleGroupCode) {
+                                var tmpCode = data.regionaleGroupCode;
+                                if (tmpCode) {
+                                    code = tmpCode.substr(0, 2) + tmpCode.substr(5, 2) + tmpCode.substr(2, 3);
+                                }
+                            }
+                        }
+                        if (code) {
+                            resolve({ role: role, code: code });
+                        }
+                        else {
+                            reject("Error code");
+                        }
                     }
                     else {
-                        reject("Error code");
+                        reject("User not authorized");
                     }
                 }
-                else {
-                    reject("User not authorized");
+                catch (e) {
+                    reject(e);
                 }
-            }
-            catch (e) {
-                reject(e);
-            }
-        });
+            });
+        }
     });
 }
 function validationPromise(ticket) {
     return new Promise(function (resolve, reject) {
-        request.get({
-            url: casBaseUrl + "/cai-cas/serviceValidate?service=" + parsedUrl + "&ticket=" + ticket,
-            method: "GET"
-        }, function (err, response, body) {
-            try {
-                var el = (new DOMParser()).parseFromString(body, "text/xml").firstChild;
-                var res = false;
-                var user = void 0;
-                if (getChildByName(el, 'authenticationSuccess')) {
-                    res = true;
-                    user = getChildByName(el, 'uuid').textContent;
+        if (disableAuth) {
+            resolve(null);
+        }
+        else {
+            request.get({
+                url: casBaseUrl + "/cai-cas/serviceValidate?service=" + parsedUrl + "&ticket=" + ticket,
+                method: "GET"
+            }, function (err, response, body) {
+                try {
+                    var el = (new DOMParser()).parseFromString(body, "text/xml").firstChild;
+                    var res = false;
+                    var user = void 0;
+                    if (getChildByName(el, 'authenticationSuccess')) {
+                        res = true;
+                        user = getChildByName(el, 'uuid').textContent;
+                    }
+                    if (res) {
+                        resolve(user);
+                    }
+                    else {
+                        reject(null);
+                    }
                 }
-                if (res) {
-                    resolve(user);
+                catch (e) {
+                    reject(e);
                 }
-                else {
-                    reject(null);
-                }
-            }
-            catch (e) {
-                reject(e);
-            }
-        });
+            });
+        }
     });
 }
 function toTitleCase(input) {
@@ -198,7 +220,7 @@ function getAllIdsHead(region, section) {
     return new Promise(function (resolve, reject) {
         Shelters.find(query, 'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality').exec(function (err, ris) {
             if (err) {
-                console.log(err);
+                logger(err);
                 reject(err);
             }
             else {
@@ -696,38 +718,55 @@ function resolveEconomyInShelter(shelter, uses, contributions, economies) {
         }
     });
 }
-function updateShelter(id, params) {
+function updateShelter(id, params, isNew) {
     return new Promise(function (resolve, reject) {
-        var services = params.services;
-        var use = params.use;
-        var contributions = params.contributions;
-        var economy = params.economy;
-        delete (params.services);
-        delete (params.use);
-        delete (params.economy);
-        var options = { setDefaultsOnInsert: true, upsert: true };
-        if (params.updateDate == undefined) {
-            params.updateDate = new Date(Date.now());
-        }
-        Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
-            if (err) {
-                reject(err);
+        try {
+            var services_3 = params.services;
+            var use_1 = params.use;
+            var contributions_1 = params.contributions;
+            var economy_1 = params.economy;
+            delete (params.services);
+            delete (params.use);
+            delete (params.economy);
+            //delete(params.contributions);
+            var options = { upsert: isNew || false, "new": true };
+            if (params.updateDate == undefined) {
+                params.updateDate = new Date(Date.now());
             }
-            else {
-                resolveServicesInShelter(shel, services)
-                    .then(function (shelter) {
-                    resolveEconomyInShelter(shelter, use, contributions, economy)
+            Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
+                if (err) {
+                    logger(err);
+                    reject(err);
+                }
+                else {
+                    for (var prop in shel) {
+                        if (Object.getPrototypeOf(shel).hasOwnProperty(prop)) {
+                            if (Object.getPrototypeOf(params).hasOwnProperty(prop)) {
+                                shel[prop] = undefined;
+                            }
+                            else if (shel[prop] == null) {
+                                shel[prop] = undefined;
+                            }
+                        }
+                    }
+                    resolveServicesInShelter(shel, services_3)
                         .then(function (shelter) {
-                        shelter.save();
-                        resolve(true);
+                        resolveEconomyInShelter(shelter, use_1, contributions_1, economy_1)
+                            .then(function (shelter) {
+                            shelter.save();
+                            resolve(true);
+                        })["catch"](function (err) {
+                            reject(err);
+                        });
                     })["catch"](function (err) {
                         reject(err);
                     });
-                })["catch"](function (err) {
-                    reject(err);
-                });
-            }
-        });
+                }
+            });
+        }
+        catch (e) {
+            reject(e);
+        }
     });
 }
 function confirmShelter(id) {
@@ -854,35 +893,40 @@ function cleanSheltersToUpdate() {
  * APP SETUP
  */
 function checkPermissionAppAPI(req, res, next) {
-    var user = req.body.user;
-    if (user) {
-        if (req.method == "GET") {
-            next();
-        }
-        else {
-            if (req.method == "DELETE" || req.method == "POST") {
-                if (user.role == enums_1.Enums.User_Type.central) {
-                    next();
-                }
-                else {
-                    res.status(500).send({ error: "Unauthorized" });
-                }
-            }
-            else if (req.method == "PUT") {
-                if (enums_1.Enums.DetailRevisionPermission.find(function (obj) { return obj == user.role; })) {
-                    next();
-                }
-                else {
-                    res.status(500).send({ error: "Unauthorized" });
-                }
-            }
-            else {
-                res.status(501).send({ error: "Not Implemented method " + req.method });
-            }
-        }
+    if (disableAuth) {
+        next();
     }
     else {
-        res.status(500).send({ error: "Error request" });
+        var user_1 = req.body.user;
+        if (user_1) {
+            if (req.method == "GET") {
+                next();
+            }
+            else {
+                if (req.method == "DELETE" || req.method == "POST") {
+                    if (user_1.role == enums_1.Enums.User_Type.central) {
+                        next();
+                    }
+                    else {
+                        res.status(500).send({ error: "Unauthorized" });
+                    }
+                }
+                else if (req.method == "PUT") {
+                    if (enums_1.Enums.DetailRevisionPermission.find(function (obj) { return obj == user_1.role; })) {
+                        next();
+                    }
+                    else {
+                        res.status(500).send({ error: "Unauthorized" });
+                    }
+                }
+                else {
+                    res.status(501).send({ error: "Not Implemented method " + req.method });
+                }
+            }
+        }
+        else {
+            res.status(500).send({ error: "Error request" });
+        }
     }
 }
 function checkPermissionFileAPI(req, res, next) {
@@ -1259,7 +1303,7 @@ appRoute.route("/shelters/country")
                 .then(function (ris) {
                 res.status(200).send({ num: ris });
             })["catch"](function (err) {
-                console.log(err);
+                logger(err);
                 res.status(500).send(err);
             });
         }
@@ -1268,7 +1312,7 @@ appRoute.route("/shelters/country")
         }
     }
     catch (e) {
-        console.log(e);
+        logger(e);
         res.status(500).send({ error: "Error Undefined" });
     }
 });
@@ -1288,7 +1332,7 @@ appRoute.route("/shelters/point")
         }
     }
     catch (e) {
-        console.log(e);
+        logger(e);
         res.status(500).send({ error: "Error Undefined" });
     }
 });
@@ -1317,19 +1361,20 @@ appRoute.route("/shelters/:id")
     }
 })
     .put(function (req, res) {
-    var shelUpdate = SheltersToUpdate.filter(function (shelter) { return shelter.shelter._id == req.params.id; });
-    if (shelUpdate.length > 0) {
+    var shelUpdate = SheltersToUpdate.filter(function (shelter) { return shelter.shelter._id == req.params.id; })[0];
+    if (shelUpdate != undefined) {
         for (var param in req.body) {
-            if (shelUpdate[0].shelter.hasOwnProperty(param)) {
-                shelUpdate[0].shelter[param] = req.body[param];
+            if (shelUpdate.shelter.hasOwnProperty(param)) {
+                shelUpdate.shelter[param] = req.body[param];
             }
         }
-        shelUpdate[0].watchDog = new Date(Date.now());
+        shelUpdate.watchDog = new Date(Date.now());
     }
-    updateShelter(req.params.id, req.body)
+    updateShelter(req.params.id, req.body, shelUpdate.isNew)
         .then(function () {
         res.status(200).send(true);
     })["catch"](function (err) {
+        logger(err);
         res.status(500).send(err);
     });
 })["delete"](function (req, res) {
@@ -1411,13 +1456,21 @@ appRoute.route("/shelters/confirm/:id")
                 res.status(200).send(true);
             }
         }
-        if (req.body["new"] != undefined) {
+        else if (req.body["new"] != undefined) {
             if (req.body["new"]) {
-                res.status(200).send({ id: new ObjectId() });
+                stop = true;
+                var id = new ObjectId();
+                var newShelter = { _id: id };
+                SheltersToUpdate.push({ watchDog: new Date(Date.now()), shelter: newShelter, files: null, isNew: true });
+                stop = false;
+                res.status(200).send({ id: id });
             }
             else {
                 res.status(500).send({ error: "command not found" });
             }
+        }
+        else {
+            res.status(500).send({ error: "command not found" });
         }
     }
     catch (e) {
@@ -1511,53 +1564,68 @@ appRoute.route("/shelters/:id/:name")
 });
 /** AUTH INIT */
 authRoute.get('/logout', function (req, res) {
-    var user = userList.findIndex(function (obj) { return obj.id == req.session.id; });
-    console.log("Logging out");
-    if (user > -1) {
-        userList.splice(user, 1);
-    }
-    res.redirect(casBaseUrl + "/cai-cas/logout");
-});
-authRoute.get('/j_spring_cas_security_check', function (req, res) {
-    var user = userList.find(function (obj) { return obj.id == req.session.id; });
-    if (user) {
-        user.ticket = req.query.ticket;
-        res.redirect(user.resource.toString());
+    if (disableAuth) {
+        res.redirect('/list');
     }
     else {
-        console.log("Invalid user request");
-        userList.push({ id: req.session.id, resource: appBaseUrl, redirections: 0, checked: false });
-        res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+        var user = userList.findIndex(function (obj) { return obj.id == req.session.id; });
+        logger("Logging out");
+        if (user > -1) {
+            userList.splice(user, 1);
+        }
+        res.redirect(casBaseUrl + "/cai-cas/logout");
+    }
+});
+authRoute.get('/j_spring_cas_security_check', function (req, res) {
+    if (disableAuth) {
+        res.redirect("/list");
+    }
+    else {
+        var user = userList.find(function (obj) { return obj.id == req.session.id; });
+        if (user) {
+            user.ticket = req.query.ticket;
+            res.redirect(user.resource.toString());
+        }
+        else {
+            logger("Invalid user request");
+            userList.push({ id: req.session.id, resource: appBaseUrl, redirections: 0, checked: false });
+            res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+        }
     }
 });
 authRoute.get('/user', function (req, res, next) {
-    var user = userList.find(function (obj) { return obj.id == req.session.id; });
-    console.log("User permissions request (UUID): ", user.uuid);
-    if (user != undefined && user.uuid != undefined) {
-        if (user.code == undefined || user.role == undefined) {
-            if (user.checked) {
-                user.checked = false;
-                res.status(500).send({ error: "Invalid user or request" });
+    if (disableAuth) {
+        res.status(200).send({ code: "9999999", role: enums_1.Enums.User_Type.superUser });
+    }
+    else {
+        var user_2 = userList.find(function (obj) { return obj.id == req.session.id; });
+        logger("User permissions request (UUID): ", user_2.uuid);
+        if (user_2 != undefined && user_2.uuid != undefined) {
+            if (user_2.code == undefined || user_2.role == undefined) {
+                if (user_2.checked) {
+                    user_2.checked = false;
+                    res.status(500).send({ error: "Invalid user or request" });
+                }
+                else {
+                    checkUserPromise(user_2.uuid)
+                        .then(function (usr) {
+                        user_2.code = usr.code;
+                        user_2.role = usr.role;
+                        res.status(200).send(usr);
+                    })["catch"](function () {
+                        res.status(500).send({ error: "Invalid user or request" });
+                    });
+                }
             }
             else {
-                checkUserPromise(user.uuid)
-                    .then(function (usr) {
-                    user.code = usr.code;
-                    user.role = usr.role;
-                    res.status(200).send(usr);
-                })["catch"](function () {
-                    res.status(500).send({ error: "Invalid user or request" });
-                });
+                res.status(200).send({ code: user_2.code, role: user_2.role });
             }
         }
         else {
-            res.status(200).send({ code: user.code, role: user.role });
+            logger("User not logged");
+            userList.push({ id: req.session.id, resource: appBaseUrl + '/list', redirections: 0, checked: false });
+            res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
         }
-    }
-    else {
-        console.log("User not logged");
-        userList.push({ id: req.session.id, resource: appBaseUrl + '/list', redirections: 0, checked: false });
-        res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
     }
 });
 authRoute.get('/', function (req, res, next) {
@@ -1568,73 +1636,78 @@ authRoute.get('/', function (req, res, next) {
 });
 authRoute.use(express.static(__dirname + '/dist'));
 authRoute.get('/*', function (req, res) {
-    console.log(req.method + " REQUEST: " + JSON.stringify(req.query));
-    console.log(req.path);
+    logger(req.method + " REQUEST: " + JSON.stringify(req.query));
+    logger(req.path);
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('content-type', 'text/html; charset=utf-8');
-    var user = userList.find(function (obj) { return obj.id == req.session.id; });
-    if (!user) {
-        console.log("User not logged");
-        userList.push({ id: req.session.id, resource: req.path, redirections: 0, checked: false });
-        res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+    if (disableAuth) {
+        res.sendFile(path.join(__dirname + '/dist/index.html'));
     }
     else {
-        if (user.ticket) {
-            console.log("Checking ticket: ", user.ticket);
-            validationPromise(user.ticket)
-                .then(function (usr) {
-                console.log("Valid ticket");
-                user.checked = true;
-                user.redirections = 0;
-                if (user.code == undefined || user.role == undefined) {
-                    user.uuid = usr;
-                    checkUserPromise(usr)
-                        .then(function (us) {
-                        console.log("Access granted with role and code: ", enums_1.Enums.User_Type[us.role], us.code);
-                        user.code = us.code;
-                        user.role = us.role;
-                        res.sendFile(path.join(__dirname + '/dist/index.html'));
-                    })["catch"](function () {
-                        console.log("Access denied");
-                        res.sendFile(path.join(__dirname + '/dist/index.html'));
-                    });
-                }
-                else {
-                    if (user.role) {
-                        console.log("Access granted with role and code: ", user.role, user.code);
-                        res.sendFile(path.join(__dirname + '/dist/index.html'));
+        var user_3 = userList.find(function (obj) { return obj.id == req.session.id; });
+        if (!user_3) {
+            logger("User not logged");
+            userList.push({ id: req.session.id, resource: req.path, redirections: 0, checked: false });
+            res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+        }
+        else {
+            if (user_3.ticket) {
+                logger("Checking ticket: ", user_3.ticket);
+                validationPromise(user_3.ticket)
+                    .then(function (usr) {
+                    logger("Valid ticket");
+                    user_3.checked = true;
+                    user_3.redirections = 0;
+                    if (user_3.code == undefined || user_3.role == undefined) {
+                        user_3.uuid = usr;
+                        checkUserPromise(usr)
+                            .then(function (us) {
+                            logger("Access granted with role and code: ", enums_1.Enums.User_Type[us.role], us.code);
+                            user_3.code = us.code;
+                            user_3.role = us.role;
+                            res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        })["catch"](function () {
+                            logger("Access denied");
+                            res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        });
                     }
                     else {
-                        res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        if (user_3.role) {
+                            logger("Access granted with role and code: ", user_3.role, user_3.code);
+                            res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        }
+                        else {
+                            res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        }
                     }
-                }
-            })["catch"](function (err) {
-                console.log("Invalid ticket");
-                user.redirections++;
-                user.checked = false;
-                user.resource = req.path;
-                if (user.redirections >= 3) {
-                    var index = userList.findIndex(function (obj) { return obj.id == user.id; });
+                })["catch"](function (err) {
+                    logger("Invalid ticket");
+                    user_3.redirections++;
+                    user_3.checked = false;
+                    user_3.resource = req.path;
+                    if (user_3.redirections >= 3) {
+                        var index = userList.findIndex(function (obj) { return obj.id == user_3.id; });
+                        userList.splice(index, 1);
+                        res.status(500).send("Error, try logout <a href='" + casBaseUrl + "/cai-cas/logout" + "'>here</a> before try again.\n                        <br>Error info:<br><br>" + err);
+                    }
+                    else {
+                        res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
+                    }
+                });
+            }
+            else {
+                logger("Invalid user ticket");
+                user_3.resource = req.path;
+                user_3.redirections++;
+                if (user_3.redirections >= 3) {
+                    var index = userList.findIndex(function (obj) { return obj.id == user_3.id; });
                     userList.splice(index, 1);
-                    res.status(500).send("Error, try logout <a href='" + casBaseUrl + "/cai-cas/logout" + "'>here</a> before try again.\n                <br>Error info:<br><br>" + err);
+                    res.status(500).send("Error, try logout <a href='" + casBaseUrl + "/cai-cas/logout" + "'>here</a> before try again");
                 }
                 else {
                     res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
                 }
-            });
-        }
-        else {
-            console.log("Invalid user ticket");
-            user.resource = req.path;
-            user.redirections++;
-            if (user.redirections >= 3) {
-                var index = userList.findIndex(function (obj) { return obj.id == user.id; });
-                userList.splice(index, 1);
-                res.status(500).send("Error, try logout <a href='" + casBaseUrl + "/cai-cas/logout" + "'>here</a> before try again");
-            }
-            else {
-                res.redirect(casBaseUrl + "/cai-cas/login?service=" + parsedUrl);
             }
         }
     }
@@ -1650,7 +1723,7 @@ app.use(bodyParser.urlencoded({
     saveUninitialized: true
 }), bodyParser.json());
 app.use('/api', function (req, res, next) {
-    console.log("SessionID: " + req.sessionID + ", METHOD: " + req.method + ", QUERY: " + JSON.stringify(req.query) + ", PATH: " + req.path);
+    logger("SessionID: " + req.sessionID + ", METHOD: " + req.method + ", QUERY: " + JSON.stringify(req.query) + ", PATH: " + req.path);
     if (req.method === 'OPTIONS') {
         var headers = {};
         headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
@@ -1660,27 +1733,23 @@ app.use('/api', function (req, res, next) {
         res.end();
     }
     else {
-        var user = userList.find(function (obj) { return obj.id == req.session.id; });
-        if (user != undefined && user.checked && user.role != undefined && user.code != undefined) {
-            req.body.user = user;
+        if (disableAuth) {
+            req.body.user = { code: "9999999", role: enums_1.Enums.User_Type.superUser };
             next();
         }
         else {
-            res.status(500).send({ error: "Unauthenticated user" });
+            var user = userList.find(function (obj) { return obj.id == req.session.id; });
+            if (user != undefined && user.checked && user.role != undefined && user.code != undefined) {
+                req.body.user = user;
+                next();
+            }
+            else {
+                res.status(500).send({ error: "Unauthenticated user" });
+            }
         }
     }
-    /*
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('content-type', 'application/json; charset=utf-8');
-    */
 }, fileRoute, appRoute);
-app.use('/', authRoute);
-app.use(function (req, res, next) {
-    console.log("SessionID: " + req.sessionID + ", METHOD: " + req.method + ", QUERY: " + JSON.stringify(req.query) + ", PATH: " + req.path);
-    next();
-});
-app.use('/*', function (req, res) {
+app.use('/', function (req, res, next) {
     if (req.method === 'OPTIONS') {
         var headers = {};
         headers["Access-Control-Allow-Headers"] = "Content-Type";
@@ -1689,26 +1758,22 @@ app.use('/*', function (req, res) {
         res.end();
     }
     else {
-        res.sendFile(path.join(__dirname + '/dist/index.html'));
+        logger("SessionID: " + req.sessionID + ", METHOD: " + req.method + ", QUERY: " + JSON.stringify(req.query) + ", PATH: " + req.path);
+        next();
     }
-    /*
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('content-type', 'text/html; charset=UTF-8');
-    res.sendFile(path.join(__dirname + '/dist/index.html'));
-    */
-});
+}, authRoute);
 var server = app.listen(portUrl, function () {
     var port = server.address().port;
-    console.log("App now running on port", port);
+    logger("App now running on port", port);
 });
 //"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/CaiDB", {
     useMongoClient: true
 }, function (err) {
     if (err) {
-        console.log("Error connection: " + err);
+        logger("Error connection: " + err);
         server.close(function () {
-            console.log("Server Closed");
+            logger("Server Closed");
             process.exit(-1);
             return;
         });

@@ -6,7 +6,7 @@
             <bc-text-input placeholder="Es: Ghiacciaio del Garstelet" formControlName="locality" title="Località" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-geographic-input">
-            <bc-text-input placeholder="Comunità Montana o altro Ente sovracomunale" formControlName="authorityJurisdiction" title="Ente sovracomunale di competenza" [displayError]="displayError"></bc-text-input>
+            <bc-text-input placeholder="Es: Alpi Pennine" formControlName="massif" title="Gruppo montuoso" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
@@ -14,30 +14,21 @@
             <bc-text-input placeholder="Es: Gressoney la Trinitè" formControlName="municipality" title="Comune" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-geographic-input">
-            <bc-text-input placeholder="Es: Alpi Pennine" formControlName="massif" title="Gruppo montuoso" [displayError]="displayError"></bc-text-input>
+            <bc-text-input placeholder="Nome della valle" formControlName="valley" title="Valle" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
         <div class="bc-geographic-input">
-            <bc-text-input placeholder="Es: AO" formControlName="province" title="Provincia" [displayError]="displayError"></bc-text-input>
+            <bc-text-input placeholder="Es: AO" formControlName="province" title="Provincia/Città metropolitana" [displayError]="displayError"></bc-text-input>
         </div>
-        
         <div class="bc-geographic-input">
-            <bc-text-input placeholder="Nome della valle" formControlName="valley" title="Valle" [displayError]="displayError"></bc-text-input>
+            <bc-text-input placeholder="Es: 3611 (solo numeri)" formControlName="altitude" title="Quota (m slm)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
         <div class="bc-geographic-input">
             <bc-text-input placeholder="Es: Valle d'Aosta" formControlName="region" title="Regione" [displayError]="displayError"></bc-text-input>
         </div>   
-        <div class="bc-geographic-input">
-            <bc-text-input placeholder="Es: 3611 (solo numeri)" formControlName="altitude" title="Quota (m slm)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
-        </div>
-    </div>
-    <div style="display:flex;flex-direction:row">
-        <div class="bc-geographic-input">     
-            <bc-select-input defaultContent="Selezionare GR" enumName="Region_Code" formControlName="ownerRegion" title="GR (Gruppo Regionale)" [displayError]="displayError"></bc-select-input>   
-        </div>
         <div class="bc-geographic-input">
             <div class="bc-body" style="white-space: nowrap">Coordinate WGS84</div>
             <div style="display:flex;flex-direction:row">
@@ -52,7 +43,7 @@
     </div>
     <div style="display:flex;flex-direction:row">
         <div class="bc-geographic-input">     
-            <bc-text-input placeholder="Es: LPV" formControlName="regional_commission" title="Commissione regionale" [displayError]="displayError"></bc-text-input>   
+            <bc-select-input defaultContent="Selezionare GR" enumName="Region_Code" formControlName="ownerRegion" title="GR (Gruppo Regionale)" [displayError]="displayError"></bc-select-input>   
         </div>
         <div class="bc-geographic-input">     
             <bc-text-input placeholder="Nome comprensorio sciistico (se esistente)" formControlName="ski_area" title="Comprensorio sciistico" [displayError]="displayError"></bc-text-input>   
@@ -60,7 +51,15 @@
     </div>
     <div style="display:flex;flex-direction:row">
         <div class="bc-geographic-input">     
+            <bc-text-input placeholder="Es: LPV" formControlName="regional_commission" title="Commissione regionale" [displayError]="displayError"></bc-text-input>   
+        </div>
+        <div class="bc-geographic-input">     
             <bc-text-input placeholder="Parco, SIC, ZPS, ecc. (se esistente)" formControlName="protected_area" title="Zona tutelata" [displayError]="displayError"></bc-text-input>   
+        </div>
+    </div>
+    <div style="display:flex;flex-direction:row">
+        <div class="bc-geographic-input">
+            <bc-text-input placeholder="Comunità Montana o altro Ente sovracomunale" formControlName="authorityJurisdiction" title="Ente sovracomunale di competenza" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-geographic-input">     
             <bc-text-input placeholder="Breve descrizione collocazione struttura" formControlName="site" title="Sito" [displayError]="displayError"></bc-text-input>   

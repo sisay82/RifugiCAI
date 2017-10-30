@@ -34,7 +34,6 @@ const COMPONENTS_MODULES = [
     BcMapModule,
     BcRevisionsModule,
     BcMaskControllerModule,
-    BcButtonModule,
     BcMenuModule,
     BcTooltipModule
 ];

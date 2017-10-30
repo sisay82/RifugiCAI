@@ -198,17 +198,17 @@ export class BcMap implements OnInit{
 
 
     markRegions(){
-        let permissionSub = this.authService.getUserProfile().subscribe(profile=>{            
-            if(profile.role==Enums.User_Type.regional){
-                let region = this.getRegion(profile.code);
-                this.getShelterNumberForRegion(null,region,null);
-            }else if(profile.role==Enums.User_Type.sectional){
-                let section=this.getSection(profile.code);
-                let region = this.getRegion(profile.code);
-                this.getShelterNumberForRegion(null,region,section);
-            }else if(profile.role==Enums.User_Type.central){
-                for(let item of Object.keys(Enums.Region_Code)){      
-                    this.getShelterNumberForRegion(item);
+        let permissionSub = this.authService.getUserProfile().subscribe(profile=>{      
+            let processedUser = this.authService.processUserProfileCode(profile);    
+            if(processedUser){
+                if(profile.role==Enums.User_Type.regional){
+                    this.getShelterNumberForRegion(null,processedUser.region.toString(),null);
+                }else if(profile.role==Enums.User_Type.sectional){
+                    this.getShelterNumberForRegion(null,processedUser.region.toString(),processedUser.section.toString());
+                }else{
+                    for(let item of Object.keys(Enums.Region_Code)){      
+                        this.getShelterNumberForRegion(item);
+                    }
                 }
             }else{
                 return;
@@ -240,17 +240,14 @@ export class BcMap implements OnInit{
 
     setMarkersAround(point:L.LatLng){
         let permissionSub = this.authService.getUserProfile().subscribe(profile=>{            
-            let region;
-            let section;
-            if(profile.role==Enums.User_Type.regional){
-                region = this.getRegion(profile.code);
-            }else if(profile.role==Enums.User_Type.sectional){
-                section=this.getSection(profile.code);
-                region = this.getRegion(profile.code);
-            }else if(profile.role!=Enums.User_Type.central){
-                return;
+
+            let processedUser = this.authService.processUserProfileCode(profile);
+            if(!processedUser){
+                return
             }
-        
+            let region=processedUser.region;
+            let section=processedUser.section;
+            
             let sheltersAroundSub = this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom(),section,region).subscribe(shelters=>{
                 for(let shelter of shelters){
                     if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){

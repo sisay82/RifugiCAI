@@ -153,7 +153,7 @@ export class BcContributionRevision extends RevisionBase {
     }
 
     checkRole(){
-        return this.userRole==Enums.User_Type.sectional;
+        return this.userRole==Enums.User_Type.sectional||this.userRole==Enums.User_Type.superUser;
     }
 
     initForm(contributions:IContribution){
