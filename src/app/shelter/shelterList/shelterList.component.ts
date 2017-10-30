@@ -18,25 +18,18 @@ export class BcShelterList {
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
     private profile:{code:String,role:Enums.User_Type};
-
-    constructor(private shelterService: ShelterService,private shared:BcSharedService,private authService:BcAuthService) {
-        
-    }
-
-    private checkUser(code:String):any{
-        return code.substr(0,2)
-    }
-
-    private getRegion(code:String){
-        return code.substr(2,2);
-    }
-
-    private getSection(code:String){
-        return code.substr(4,3);
-    }
+    isCentral:boolean;
+    constructor(private shelterService: ShelterService,private shared:BcSharedService,private authService:BcAuthService) {}
 
     private isCentralUser(){
-        return (this.profile&&this.profile.role==Enums.User_Type.central);
+        if(this.isCentral){
+            return this.isCentral
+        }else{
+            this.authService.isCentralUser().subscribe(val=>{
+                this.isCentral=val;
+                return val;
+            });
+        }
     }
 
     getAuth(){
@@ -49,15 +42,13 @@ export class BcShelterList {
             
             let section;
             let region;
-            if(profile.role==Enums.User_Type.regional){
-                region=this.getRegion(profile.code);
-            }else if(profile.role==Enums.User_Type.sectional){
-                section=this.getSection(profile.code);
-                region=this.getRegion(profile.code);
-            }else if(profile.role!=Enums.User_Type.central){
-                console.log("Invalid User");
+            let processedProfile=this.authService.processUserProfileCode(profile);
+            if(!processedProfile){
                 return;
             }
+            section=processedProfile.section;
+            region=processedProfile.region;
+            
             let shelSub = this.shelterService.getShelters(region,section).subscribe(shelters => {
                 this.rifugiSample = shelters;
                 this.filteredShelter = shelters;
@@ -87,10 +78,6 @@ export class BcShelterList {
         }
     }
 
-    buttonAction(){
-        console.log("Button Click");
-    }
-
     filterChanged(event: any) {
         let data = this.filterText;
         if (data && this.rifugiSample) {
@@ -102,7 +89,7 @@ export class BcShelterList {
                         match = true;
                         break;
                     }
-                };
+                }
                 return match;
             });
         }

@@ -3,7 +3,7 @@ import {BcContentHeader} from './contentHeader.component';
 
 
 @NgModule({
-  exports: [BcContentHeader],
   declarations: [BcContentHeader],
+  exports: [BcContentHeader],
 })
 export class BcContentHeaderModule {}

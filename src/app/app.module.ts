@@ -10,18 +10,21 @@ import { ShelterMapModule } from './shelter/shelterMap/shelterMap.module';
 import { FormsModule } from '@angular/forms';
 import { ShelterModule } from './shelter/shelterPage/shelter.module';
 import { ShelterListModule } from './shelter/shelterList/shelterList.module';
+import { BcSharedService } from './shared/shared.service';
+import { PageNotFoundModule } from "./pageNotFound/pageNotFound.module";
 
 @NgModule({
     imports: [
-        BrowserModule,
         CoreModule,
+        BrowserModule,
         ShelterListModule,
         ShelterModule,
         ShelterMapModule,
         FormsModule,
+        PageNotFoundModule,
         AppRoutingModule
     ],
-    providers: [],
+    providers: [BcSharedService],
     declarations: [AppComponent],
     bootstrap: [AppComponent]
 })
