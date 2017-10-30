@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable()
 export class BcAuthService{
+    private _disableAuth:boolean=false;
     private userBaseUrl = '/user';
     private newShelter:boolean=false;
     private localPermissions:any[];
@@ -44,17 +45,65 @@ export class BcAuthService{
         }
     }
 
+    private getRegion(code:String){
+        return code.substr(2,2);
+    }
+
+    private getSection(code:String){
+        return code.substr(4,3);
+    }
+
+    isCentralUser():Observable<boolean>{
+        return Observable.create(observer=>{
+            this.getUserProfile().subscribe(profile=>{
+                observer.next(profile&&(profile.role==Enums.User_Type.central||profile.role==Enums.User_Type.superUser));
+                observer.complete();
+            });
+        });
+    }
+
+    processUserProfileCode(profile):{section:String,region:String}{
+        if(profile.role==Enums.User_Type.superUser){
+            return {section:null,region:null};
+        }else{
+            let section;
+            let region;
+            if(profile.role==Enums.User_Type.regional){
+                region=this.getRegion(profile.code);
+            }else if(profile.role==Enums.User_Type.sectional){
+                section=this.getSection(profile.code);
+                region=this.getRegion(profile.code);
+            }else if(profile.role!=Enums.User_Type.central){
+                return null;
+            }
+            return {section:section,region:region};
+        }
+ 
+    }
+
+    revisionCheck(permission?){
+        return permission==Enums.User_Type.superUser||(Enums.DetailRevisionPermission.find(obj=>obj==permission)!=null);
+    }
+
     private updateProfile():Observable<any>{
-        return this.http.get(this.userBaseUrl)
-        .map((res: Response) => {
-            this.routeError=false;
-            this.errorRouteSource.next(false);
-            let user=res.json();
-            user.role=(user.role?(user.role):Enums.User_Type.sectional);
-            this.userProfile=user
-            return user;
-        })
-        .catch(this.handleError.bind(this));
+        if(this._disableAuth){
+            return Observable.create(observer=>{
+                let user={role:Enums.User_Type.superUser,code:"9999999"};
+                this.userProfile=user;
+                return user;
+            })
+        }else{
+            return this.http.get(this.userBaseUrl)
+            .map((res: Response) => {
+                this.routeError=false;
+                this.errorRouteSource.next(false);
+                let user=res.json();
+                user.role=(user.role?(user.role):Enums.User_Type.sectional);
+                this.userProfile=user
+                return user;
+            })
+            .catch(this.handleError.bind(this));
+        }
     }
 
     setNewShelter(){
@@ -63,23 +112,27 @@ export class BcAuthService{
 
     private checkEnumPermission(names,shelId,profile){
         let permission:boolean=false;
-        names.forEach(name=>{
-            if(name==Enums.User_Type.central){
-                if(profile.role==Enums.User_Type.central){
-                    permission=true;
-                }
-            }else if(shelId){
-                if(name==Enums.User_Type.regional&&profile.role==Enums.User_Type.regional){
-                    if(shelId.substr(2,2)==profile.code.substr(2,2)){
+        if(profile.role==Enums.User_Type.superUser){
+            permission=true;
+        }else{
+            names.forEach(name=>{
+                if(name==Enums.User_Type.central){
+                    if(profile.role==Enums.User_Type.central){
                         permission=true;
                     }
-                }else if(name==Enums.User_Type.sectional&&profile.role==Enums.User_Type.sectional){
-                    if(shelId.substr(2,5)==profile.code.substr(2,5)){
-                        permission=true;
+                }else if(shelId){
+                    if(name==Enums.User_Type.regional&&profile.role==Enums.User_Type.regional){
+                        if(shelId.substr(2,2)==profile.code.substr(2,2)){
+                            permission=true;
+                        }
+                    }else if(name==Enums.User_Type.sectional&&profile.role==Enums.User_Type.sectional){
+                        if(shelId.substr(2,5)==profile.code.substr(2,5)){
+                            permission=true;
+                        }
                     }
                 }
-            }
-        });
+            });
+        }   
         return permission;
     }
 
@@ -136,6 +189,8 @@ export class BcAuthService{
                     }else{
                         observer.next(null);
                     }
+                }else if(profile.role==Enums.User_Type.superUser){
+                    observer.next(Enums.User_Type.superUser);
                 }
                 else observer.next(null);
                 if(sectionCodeInit!=undefined){

@@ -195,14 +195,17 @@ var Enums;
         User_Type[User_Type["central"] = 1] = "central";
         User_Type[User_Type["regional"] = 2] = "regional";
         User_Type[User_Type["sectional"] = 3] = "sectional";
+        User_Type[User_Type["superUser"] = 4] = "superUser";
     })(User_Type = Enums.User_Type || (Enums.User_Type = {}));
     //permessi per documenti rifugio
     Enums.DocRevisionPermission = [
+        User_Type.superUser,
         User_Type.central,
         User_Type.sectional
     ];
     //permessi per economia rifugio
     Enums.EconomyRevisionPermission = [
+        User_Type.superUser,
         User_Type.central,
         User_Type.sectional
     ];
@@ -212,10 +215,12 @@ var Enums;
     }).slice();
     //permessi per inserimento rifugio
     Enums.InsertShelterPermission = [
+        User_Type.superUser,
         User_Type.central
     ];
     //permessi per rimozione rifugio
     Enums.DeleteShelterPermission = [
+        User_Type.superUser,
         User_Type.central
     ];
     //sezioni del menu

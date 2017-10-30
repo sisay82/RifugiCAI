@@ -184,17 +184,20 @@ export namespace Enums {
     export enum User_Type {
         central=1,
         regional=2,
-        sectional=3
+        sectional=3,
+        superUser=4
     }
 
     //permessi per documenti rifugio
     export const DocRevisionPermission:any[] = [
+        User_Type.superUser,
         User_Type.central,
         User_Type.sectional
     ]
 
     //permessi per economia rifugio
     export const EconomyRevisionPermission:any[] = [
+        User_Type.superUser,
         User_Type.central,
         User_Type.sectional
     ]
@@ -209,11 +212,13 @@ export namespace Enums {
 
     //permessi per inserimento rifugio
     export const InsertShelterPermission:any[] = [
+        User_Type.superUser,
         User_Type.central
     ]
     
     //permessi per rimozione rifugio
     export const DeleteShelterPermission:any[] = [
+        User_Type.superUser,
         User_Type.central
     ]
 

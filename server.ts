@@ -23,6 +23,8 @@ interface IFileExtended extends IFile,mongoose.Document{
     _id:String;
 }
 
+const disableAuth:boolean=false;
+const disableLog:boolean=false;
 const months=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
 (<any>mongoose.Promise)=global.Promise;
 const DOMParser = xmldom.DOMParser;
@@ -47,6 +49,12 @@ const Users:String[]=[];
 const maxTime = 1000*60*10;
 let stop:boolean=false;
 const maxImages=10;
+
+const logger = (log?:any, ...other) => {
+    if(!disableLog){
+        console.log(log,...other);   
+    }
+}
 
 /**
  * SECTION AUTH
@@ -111,71 +119,79 @@ function getRole(data):Enums.User_Type{
 }
 
 function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
-    console.log("CHECKUSER");
+    logger("CHECKUSER");
     return new Promise<{role:Enums.User_Type,code:String}>((resolve,reject)=>{
-        request.get({
-            url:authUrl+uuid+'/full',
-            method:"GET",
-            headers:{
-                "Authorization":"Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc="
-            },
-        },function(err,response,body){
-            try{
-                let data=JSON.parse(body);     
-                let role=getRole(data); 
-
-                if(role){
-                    let code;
-                    if(role==Enums.User_Type.sectional){
-                        if(data.sectionCode){
-                            code=data.sectionCode;
-                        }   
-                    }else{
-                        if(data.regionaleGroupCode){
-                            let tmpCode = data.regionaleGroupCode;
-                            if(tmpCode){
-                                code = tmpCode.substr(0,2)+tmpCode.substr(5,2)+tmpCode.substr(2,3);                        
+        if(disableAuth){
+            resolve({role:Enums.User_Type.superUser,code:"9999999"});
+        }else{
+            request.get({
+                url:authUrl+uuid+'/full',
+                method:"GET",
+                headers:{
+                    "Authorization":"Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc="
+                },
+            },function(err,response,body){
+                try{
+                    let data=JSON.parse(body);     
+                    let role=getRole(data); 
+    
+                    if(role){
+                        let code;
+                        if(role==Enums.User_Type.sectional){
+                            if(data.sectionCode){
+                                code=data.sectionCode;
+                            }   
+                        }else{
+                            if(data.regionaleGroupCode){
+                                let tmpCode = data.regionaleGroupCode;
+                                if(tmpCode){
+                                    code = tmpCode.substr(0,2)+tmpCode.substr(5,2)+tmpCode.substr(2,3);                        
+                                }
                             }
                         }
-                    }
-                    if(code){
-                        resolve({role:role,code:code});                                                  
+                        if(code){
+                            resolve({role:role,code:code});                                                  
+                        }else{
+                            reject("Error code");
+                        }
                     }else{
-                        reject("Error code");
+                        reject("User not authorized");
                     }
-                }else{
-                    reject("User not authorized");
+                }catch(e){
+                    reject(e);
                 }
-            }catch(e){
-                reject(e);
-            }
-        });
+            });
+        }
     });
 }
 
 function validationPromise(ticket):Promise<String>{
     return new Promise((resolve,reject)=>{
-        request.get({
-            url:casBaseUrl+"/cai-cas/serviceValidate?service="+parsedUrl+"&ticket="+ticket,
-            method:"GET"
-        },function(err,response,body){
-            try {
-                const el:Node=(new DOMParser()).parseFromString(body,"text/xml").firstChild;
-                let res:boolean=false;
-                let user:String;
-                if(getChildByName(el,'authenticationSuccess')){
-                    res=true;
-                    user=getChildByName(el,'uuid').textContent;
+        if(disableAuth){
+            resolve(null)
+        }else{
+            request.get({
+                url:casBaseUrl+"/cai-cas/serviceValidate?service="+parsedUrl+"&ticket="+ticket,
+                method:"GET"
+            },function(err,response,body){
+                try {
+                    const el:Node=(new DOMParser()).parseFromString(body,"text/xml").firstChild;
+                    let res:boolean=false;
+                    let user:String;
+                    if(getChildByName(el,'authenticationSuccess')){
+                        res=true;
+                        user=getChildByName(el,'uuid').textContent;
+                    }
+                    if(res){
+                        resolve(user);
+                    }else{
+                        reject(null);
+                    }
+                } catch (e) {
+                    reject(e);
                 }
-                if(res){
-                    resolve(user);
-                }else{
-                    reject(null);
-                }
-            } catch (e) {
-                reject(e);
-            }
-        });
+            });
+        }
     });
 }
 
@@ -214,7 +230,7 @@ function getAllIdsHead(region?:String,section?:String):Promise<IShelterExtended[
     return new Promise<IShelterExtended[]>((resolve,reject)=>{
     Shelters.find(query,'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality').exec((err,ris)=>{
             if(err){
-                console.log(err);
+                logger(err);
                 reject(err);
             }else{
                 resolve(ris);
@@ -741,7 +757,7 @@ function updateShelter(id:any,params:any,isNew?:Boolean):Promise<boolean>{
             }
             Shelters.findByIdAndUpdate(id,{$set:params},options,function(err,shel){
                 if(err){
-                    console.log(err)
+                    logger(err);
                     reject(err);
                 }else{
                     for(let prop in shel){
@@ -906,30 +922,34 @@ function cleanSheltersToUpdate(){
  */
 
 function checkPermissionAppAPI(req,res,next){
-    let user=req.body.user;
-    if(user){
-        if(req.method=="GET"){
-           next(); 
-        }else{
-            if(req.method=="DELETE"||req.method=="POST"){
-                if(user.role==Enums.User_Type.central){
-                    next();
-                }else{
-                    res.status(500).send({error:"Unauthorized"});
-                }
-            }else if(req.method=="PUT"){
-                if(Enums.DetailRevisionPermission.find(obj=>obj==user.role)){
-                    next();
-                }else{
-                    res.status(500).send({error:"Unauthorized"});
-                }
-            }else{
-                res.status(501).send({error:"Not Implemented method "+req.method});
-            }
-        }
+    if(disableAuth){
+        next();
     }else{
-        res.status(500).send({error:"Error request"});
-    }
+        let user=req.body.user;
+        if(user){
+            if(req.method=="GET"){
+               next(); 
+            }else{
+                if(req.method=="DELETE"||req.method=="POST"){
+                    if(user.role==Enums.User_Type.central){
+                        next();
+                    }else{
+                        res.status(500).send({error:"Unauthorized"});
+                    }
+                }else if(req.method=="PUT"){
+                    if(Enums.DetailRevisionPermission.find(obj=>obj==user.role)){
+                        next();
+                    }else{
+                        res.status(500).send({error:"Unauthorized"});
+                    }
+                }else{
+                    res.status(501).send({error:"Not Implemented method "+req.method});
+                }
+            }
+        }else{
+            res.status(500).send({error:"Error request"});
+        }
+    }   
 }
 
 function checkPermissionFileAPI(req,res,next){
@@ -1293,7 +1313,7 @@ appRoute.route("/shelters/country")
                 res.status(200).send({num:ris});
             })
             .catch((err)=>{
-                console.log(err);
+                logger(err);
                 res.status(500).send(err);
             });
         }else{
@@ -1301,7 +1321,7 @@ appRoute.route("/shelters/country")
         }
         
     }catch(e){
-        console.log(e);
+        logger(e);
         res.status(500).send({error:"Error Undefined"});
     }
 });
@@ -1321,7 +1341,7 @@ appRoute.route("/shelters/point")
             res.status(500).send({error:"Query error, parameters not found"});
         }
     }catch(e){
-        console.log(e);
+        logger(e);
         res.status(500).send({error:"Error Undefined"});
     }
 });
@@ -1364,7 +1384,7 @@ appRoute.route("/shelters/:id")
         res.status(200).send(true);
     })
     .catch((err)=>{
-        console.log(err);
+        logger(err);
         res.status(500).send(err);
     });
 })
@@ -1556,53 +1576,65 @@ appRoute.route("/shelters/:id/:name")
 /** AUTH INIT */
 
 authRoute.get('/logout',function(req,res){
-    let user=userList.findIndex(obj=>obj.id==req.session.id);
-    console.log("Logging out");
-
-    if(user>-1){
-        userList.splice(user,1);
+    if(disableAuth){
+        res.redirect('/list');
+    }else{
+        let user=userList.findIndex(obj=>obj.id==req.session.id);
+        logger("Logging out");
+    
+        if(user>-1){
+            userList.splice(user,1);
+        }
+        res.redirect(casBaseUrl+"/cai-cas/logout");
     }
-    res.redirect(casBaseUrl+"/cai-cas/logout");
 });
 
 authRoute.get('/j_spring_cas_security_check',function(req,res){
-    let user=userList.find(obj=>obj.id==req.session.id);
-    if(user){
-        user.ticket=req.query.ticket;
-        res.redirect(user.resource.toString());
+    if(disableAuth){
+        res.redirect("/list");
     }else{
-        console.log("Invalid user request");
-        userList.push({id:req.session.id,resource:appBaseUrl,redirections:0,checked:false});
-        res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
+        let user=userList.find(obj=>obj.id==req.session.id);        
+        if(user){
+            user.ticket=req.query.ticket;
+            res.redirect(user.resource.toString());
+        }else{
+            logger("Invalid user request");
+            userList.push({id:req.session.id,resource:appBaseUrl,redirections:0,checked:false});
+            res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
+        }
     }
 });
 
 authRoute.get('/user',function(req,res,next){
-    let user=userList.find(obj=>obj.id==req.session.id);
-    console.log("User permissions request (UUID): ",user.uuid);    
-    if(user!=undefined&&user.uuid!=undefined){
-        if(user.code==undefined||user.role==undefined){
-            if(user.checked){
-                user.checked=false;
-                res.status(500).send({error:"Invalid user or request"});
-            }else{
-                checkUserPromise(user.uuid)
-                .then(usr=>{
-                    user.code=usr.code;
-                    user.role=usr.role;
-                    res.status(200).send(usr);
-                })
-                .catch(()=>{
+    if(disableAuth){
+        res.status(200).send({code:"9999999",role:Enums.User_Type.superUser});
+    }else{
+        let user=userList.find(obj=>obj.id==req.session.id);
+        logger("User permissions request (UUID): ",user.uuid);
+        if(user!=undefined&&user.uuid!=undefined){
+            if(user.code==undefined||user.role==undefined){
+                if(user.checked){
+                    user.checked=false;
                     res.status(500).send({error:"Invalid user or request"});
-                });
+                }else{
+                    checkUserPromise(user.uuid)
+                    .then(usr=>{
+                        user.code=usr.code;
+                        user.role=usr.role;
+                        res.status(200).send(usr);
+                    })
+                    .catch(()=>{
+                        res.status(500).send({error:"Invalid user or request"});
+                    });
+                }
+            }else{
+                res.status(200).send({code:user.code,role:user.role});
             }
         }else{
-            res.status(200).send({code:user.code,role:user.role});
+            logger("User not logged");
+            userList.push({id:req.session.id,resource:appBaseUrl+'/list',redirections:0,checked:false});
+            res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
         }
-    }else{
-        console.log("User not logged");
-        userList.push({id:req.session.id,resource:appBaseUrl+'/list',redirections:0,checked:false});
-        res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
     }
 })
 
@@ -1616,76 +1648,79 @@ authRoute.get('/',function(req,res,next){
 authRoute.use(express.static(__dirname + '/dist'));
   
 authRoute.get('/*', function(req, res) {
-    console.log(req.method+" REQUEST: "+JSON.stringify(req.query));
-    console.log(req.path);
+    logger(req.method+" REQUEST: "+JSON.stringify(req.query));
+    logger(req.path);
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('content-type', 'text/html; charset=utf-8');
     
-    let user=userList.find(obj=>obj.id==req.session.id);
-    if(!user){
-      console.log("User not logged");
-      userList.push({id:req.session.id,resource:req.path,redirections:0,checked:false});
-      res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
+    if(disableAuth){
+        res.sendFile(path.join(__dirname + '/dist/index.html'));
     }else{
-      if(user.ticket){
-        console.log("Checking ticket: ",user.ticket);
-        validationPromise(user.ticket)
-        .then((usr)=>{
-            console.log("Valid ticket");
-            user.checked=true;            
-            user.redirections=0;
-            if(user.code==undefined||user.role==undefined){
-                user.uuid=usr;
-                checkUserPromise(usr)
-                .then(us=>{
-                    console.log("Access granted with role and code: ",Enums.User_Type[us.role],us.code);
-                    user.code=us.code;
-                    user.role=us.role;
-                    
-                    res.sendFile(path.join(__dirname + '/dist/index.html'));                
+        let user=userList.find(obj=>obj.id==req.session.id);
+        if(!user){
+            logger("User not logged");
+            userList.push({id:req.session.id,resource:req.path,redirections:0,checked:false});
+            res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);
+        }else{
+            if(user.ticket){
+                logger("Checking ticket: ",user.ticket);
+                validationPromise(user.ticket)
+                .then((usr)=>{
+                    logger("Valid ticket");
+                    user.checked=true;            
+                    user.redirections=0;
+                    if(user.code==undefined||user.role==undefined){
+                        user.uuid=usr;
+                        checkUserPromise(usr)
+                        .then(us=>{
+                            logger("Access granted with role and code: ",Enums.User_Type[us.role],us.code);
+                            user.code=us.code;
+                            user.role=us.role;
+                            
+                            res.sendFile(path.join(__dirname + '/dist/index.html'));                
+                        })
+                        .catch(()=>{
+                            logger("Access denied");
+                            res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        });
+                    }else{
+                        if(user.role){
+                            logger("Access granted with role and code: ",user.role,user.code);
+                            res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        }else{
+                            res.sendFile(path.join(__dirname + '/dist/index.html'));
+                        }
+                    }
                 })
-                .catch(()=>{
-                    console.log("Access denied");
-                    res.sendFile(path.join(__dirname + '/dist/index.html'));
+                .catch((err)=>{
+                    logger("Invalid ticket");
+                    user.redirections++;
+                    user.checked=false;
+                    user.resource=req.path;
+                    if(user.redirections>=3){
+                        let index=userList.findIndex(obj=>obj.id==user.id);
+                        userList.splice(index,1);
+                        res.status(500).send(`Error, try logout <a href='`+casBaseUrl+"/cai-cas/logout"+`'>here</a> before try again.
+                        <br>Error info:<br><br>`+err);
+                    }else{
+                        res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);                
+                    }
                 });
             }else{
-                if(user.role){
-                    console.log("Access granted with role and code: ",user.role,user.code);
-                    res.sendFile(path.join(__dirname + '/dist/index.html'));
+                logger("Invalid user ticket");
+                user.resource=req.path;
+                user.redirections++;
+                if(user.redirections>=3){
+                    let index=userList.findIndex(obj=>obj.id==user.id);
+                    userList.splice(index,1);
+                    res.status(500).send("Error, try logout <a href='"+casBaseUrl+"/cai-cas/logout"+"'>here</a> before try again");
                 }else{
-                    res.sendFile(path.join(__dirname + '/dist/index.html'));
+                    res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);                
                 }
             }
-        })
-        .catch((err)=>{
-            console.log("Invalid ticket");
-            user.redirections++;
-            user.checked=false;
-            user.resource=req.path;
-            if(user.redirections>=3){
-                let index=userList.findIndex(obj=>obj.id==user.id);
-                userList.splice(index,1);
-                res.status(500).send(`Error, try logout <a href='`+casBaseUrl+"/cai-cas/logout"+`'>here</a> before try again.
-                <br>Error info:<br><br>`+err);
-            }else{
-                res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);                
-            }
-        });
-      }else{
-        console.log("Invalid user ticket");
-        user.resource=req.path;
-        user.redirections++;
-        if(user.redirections>=3){
-            let index=userList.findIndex(obj=>obj.id==user.id);
-            userList.splice(index,1);
-            res.status(500).send("Error, try logout <a href='"+casBaseUrl+"/cai-cas/logout"+"'>here</a> before try again");
-        }else{
-            res.redirect(casBaseUrl+"/cai-cas/login?service="+parsedUrl);                
         }
-      }
     }
-    
 });
 
 /**
@@ -1701,7 +1736,7 @@ app.use(bodyParser.urlencoded({
 }),bodyParser.json());
 
 app.use('/api',function(req,res,next){
-    console.log("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
+    logger("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
     if (req.method === 'OPTIONS') {
         let headers = {};
         headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
@@ -1710,29 +1745,22 @@ app.use('/api',function(req,res,next){
         res.writeHead(200, headers);
         res.end();
     } else {
-        let user=userList.find(obj=>obj.id==req.session.id);
-        if(user!=undefined&&user.checked&&user.role!=undefined&&user.code!=undefined){
-            req.body.user=user;
+        if(disableAuth){
+            req.body.user={code:"9999999",role:Enums.User_Type.superUser};
             next();
         }else{
-            res.status(500).send({error:"Unauthenticated user"});
+            let user=userList.find(obj=>obj.id==req.session.id);
+            if(user!=undefined&&user.checked&&user.role!=undefined&&user.code!=undefined){
+                req.body.user=user;
+                next();
+            }else{
+                res.status(500).send({error:"Unauthenticated user"});
+            }
         }
     }
-    /*
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('content-type', 'application/json; charset=utf-8');
-    */
 },fileRoute,appRoute);
 
-app.use('/',authRoute);
-
-app.use(function(req,res,next){
-    console.log("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
-    next();
-});
-
-app.use('/*', function(req, res) {
+app.use('/',function(req,res,next){
     if (req.method === 'OPTIONS') {
         let headers = {};
         headers["Access-Control-Allow-Headers"] = "Content-Type";
@@ -1740,18 +1768,14 @@ app.use('/*', function(req, res) {
         res.writeHead(200, headers);
         res.end();
     } else {
-        res.sendFile(path.join(__dirname + '/dist/index.html'));
+        logger("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
+        next();
     }
-    /*
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');    
-    res.setHeader('content-type', 'text/html; charset=UTF-8');    
-    res.sendFile(path.join(__dirname + '/dist/index.html'));
-    */
-});
+},authRoute);
 
 const server = app.listen(process.env.PORT || appPort, function () {
     let port = server.address().port;
-    console.log("App now running on port", port);
+    logger("App now running on port", port);
 });
 
 //"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
@@ -1759,9 +1783,9 @@ mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/CaiDB",{
     useMongoClient: true
 },function(err){
     if(err) {
-        console.log("Error connection: "+err);
+        logger("Error connection: "+err);
         server.close(()=>{
-            console.log("Server Closed");
+            logger("Server Closed");
             process.exit(-1);
             return;
         });

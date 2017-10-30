@@ -34,9 +34,9 @@
   ],
   "scripts": {
     "ng": "ng",
-    "postinstall": "ng build",
+    "postinstall": "ng build -prod -aot false",
     "start": "node server.js",
-    "build": "ng build",
+    "build": "ng build -prod -aot false",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
