@@ -9,24 +9,6 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { BcDetailsService } from '../details.service';
 
-@Pipe({name: 'formatdate'})
-export class FormatDate implements PipeTransform {
-    public transform(input:number): string{
-        if (!input) {
-          return '';
-        } else {
-          let year:any=0;
-          let month:any=Math.trunc(input%12);
-          year=Math.trunc(input/12);
-          if(year>0){
-            return year+" anni, "+month+" mesi";
-          }else{
-            return month+" mesi";
-          }
-        }
-    }
-}
-
 @Component({
   moduleId: module.id,
   selector: 'bc-manage',

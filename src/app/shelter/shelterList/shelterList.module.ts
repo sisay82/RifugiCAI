@@ -19,6 +19,6 @@ import { BcShelterList } from './shelterList.component';
     HttpModule
   ],
   declarations: [BcShelterList],
-  exports: [BrowserModule, CoreModule, BcShelterList]
+  /*exports: [BrowserModule, CoreModule, BcShelterList]*/
 })
 export class ShelterListModule { }
