@@ -19,6 +19,14 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
+            <bc-select-input defaultContent="Selezionare regolarità anticendio" enumName="Fire_Regulation_Type" formControlName="fireRegulation" title="Regolarità antincendio"></bc-select-input>
+        </div>
+        <div class="bc-revision-catastal">
+            <bc-select-input defaultContent="Selezionare Coerenza tipologica" enumName="Typo_consistency" formControlName="typologicalCoherence" [displayError]="displayError" title="Coerenza tipologica"></bc-select-input>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div class="bc-revision-catastal">
             <bc-text-input placeholder="Numero di vani" formControlName="mainBody" title="Consistenza corpo principale" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
@@ -26,18 +34,10 @@
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
-        <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Selezionare Coerenza tipologica" enumName="Typo_consistency" formControlName="typologicalCoherence" [displayError]="displayError" title="Coerenza tipologica"></bc-select-input>
-        </div>
-        <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Selezionare regolarità anticendio" enumName="Fire_Regulation_Type" formControlName="fireRegulation" title="Regolarità antincendio"></bc-select-input>
-        </div>
-    </div>
-    <div style="display: flex;flex-direction:row">
-        <bc-checkbox-input formControlName="ISO14001" title="ISO14001"></bc-checkbox-input>
-        <bc-checkbox-input formControlName="buildingRegulation" title="Regolarità edilizia"></bc-checkbox-input>
-        <bc-checkbox-input formControlName="matericalCoherence" title="Coerenza materica"></bc-checkbox-input>
         <bc-checkbox-input formControlName="cityPlanRegulation" title="Regolarità urbanistica"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="buildingRegulation" title="Regolarità edilizia"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="ISO14001" title="ISO14001"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="matericalCoherence" title="Coerenza materica"></bc-checkbox-input>
     </div>
 </form>
 <bc-divider></bc-divider>
@@ -50,16 +50,14 @@
         <div class="bc-revision-catastal">
             <bc-text-input placeholder="KW come da targa impianto. Es: 7500" formControlName="energy" title="Quantità (KW)" [displayError]="displayError"></bc-text-input>
         </div>
-    </div>
-    <div style="display: flex;flex-direction:row">
-        <bc-checkbox-input formControlName="greenCertification" title="Green"></bc-checkbox-input>
-        <bc-checkbox-input formControlName="powerGenerator" title="Generatore diesel"></bc-checkbox-input>
-        <bc-checkbox-input formControlName="photovoltaic" title="Fotovoltaico"></bc-checkbox-input>
-    </div>
-    <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
             <bc-select-input defaultContent="Selezionare tipo riscaldamento" enumName="Heating_Type" formControlName="heating_type" [displayError]="displayError" title="Tipo riscaldamento"></bc-select-input>
         </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <bc-checkbox-input formControlName="photovoltaic" title="Fotovoltaico"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="powerGenerator" title="Generatore diesel"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="greenCertification" title="Green"></bc-checkbox-input>
     </div>
 </form>
 <bc-divider></bc-divider>
@@ -69,17 +67,9 @@
         <div class="bc-revision-catastal">
             <bc-select-input defaultContent="Selezionare tipo scarico" enumName="Drain_Type" formControlName="type" title="Tipo di scarico" [displayError]="displayError"></bc-select-input>
         </div>
-        <div style="display: flex;flex-direction:row">
-            <bc-checkbox-input formControlName="regulation" title="Scarico a norma"></bc-checkbox-input>
-            <bc-checkbox-input formControlName="oilSeparator" title="Disoleatore"></bc-checkbox-input>
-            <bc-checkbox-input formControlName="recycling" title="Riciclo"></bc-checkbox-input>
-        </div>
-    </div>
-    <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
             <bc-select-input defaultContent="Selezionare acqua" enumName="Water_Type" formControlName="water_type" [displayError]="displayError" title="Acqua"></bc-select-input>
         </div>
-        <bc-checkbox-input formControlName="water_certification" title="Captazione certificata"></bc-checkbox-input>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
@@ -88,5 +78,11 @@
         <div class="bc-revision-catastal">
             <bc-select-input defaultContent="Seleziore periodi di siccità" enumName="Seasons" formControlName="droughts" [displayError]="displayError" title="Periodi di siccità"></bc-select-input>
         </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <bc-checkbox-input formControlName="recycling" title="Riciclo"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="regulation" title="Scarico a norma"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="oilSeparator" title="Disoleatore"></bc-checkbox-input>
+        <bc-checkbox-input formControlName="water_certification" title="Captazione certificata"></bc-checkbox-input>
     </div>
 </form>
