@@ -1,0 +1,10 @@
+@import '../../core/style/typography';
+@import '../../core/style/theme';
+
+@include bc-typography();
+
+.bc-img-not-found{
+    position: relative;
+    max-width: 50%;
+    height:auto;
+}
