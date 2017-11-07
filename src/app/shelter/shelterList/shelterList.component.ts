@@ -46,11 +46,11 @@ export class BcShelterList {
     filterChanged(event: any) {
         let data = this.filterText;
         if (data && this.rifugiSample) {
-            const props = ['name'];
+            const props = ['name','branch'];
             this.filteredShelter = this.rifugiSample.filter((item: any) => {
                 let match = false;
                 for (let prop of props) {
-                    if (item[prop].toString().toUpperCase().indexOf(data.toUpperCase()) > -1) {
+                    if (item[prop]&&item[prop].toString().toUpperCase().indexOf(data.toUpperCase()) > -1) {
                         match = true;
                         break;
                     }
