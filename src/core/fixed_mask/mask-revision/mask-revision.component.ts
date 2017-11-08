@@ -154,7 +154,7 @@ export class BcMaskRevision {
       }
     }else{
       this.displayError=true;
-      //this.shared.onMaskSave(null);
+      this.shared.onMaskSave(null);
     }
   }
 
@@ -184,7 +184,7 @@ export class BcMaskRevision {
   initForm(){
       if(this.shelter!=undefined){
         this.maskForm.controls.name.setValue(this.shelter.name);
-        this.maskForm.controls.alias.setValue(this.shelter.alias);
+        this.maskForm.controls.alias.setValue(this.shelter.alias||null);
         this.maskForm.controls.idCai.setValue(this.shelter.idCai);
         this.maskForm.controls.type.setValue(this.shelter.type);
         this.maskForm.controls.branch.setValue(this.shelter.branch);

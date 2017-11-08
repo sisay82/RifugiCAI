@@ -23,14 +23,14 @@ var Enums;
     })(Heating_Type = Enums.Heating_Type || (Enums.Heating_Type = {}));
     var Contribution_Type;
     (function (Contribution_Type) {
-        Contribution_Type[Contribution_Type["Ordinario CAI"] = 0] = "Ordinario CAI";
+        Contribution_Type[Contribution_Type["Ordinario"] = 0] = "Ordinario";
         Contribution_Type[Contribution_Type["FondoStabile"] = 1] = "FondoStabile";
         Contribution_Type[Contribution_Type["Contributo Pubblico"] = 2] = "Contributo Pubblico";
         Contribution_Type[Contribution_Type["Contributo Privato"] = 3] = "Contributo Privato";
         Contribution_Type[Contribution_Type["Canone d'affitto"] = 4] = "Canone d'affitto";
     })(Contribution_Type = Enums.Contribution_Type || (Enums.Contribution_Type = {}));
     Enums.Contributions = [
-        Contribution_Type["Ordinario CAI"],
+        Contribution_Type["Ordinario"],
         Contribution_Type["FondoStabile"]
     ];
     //tipo classe energetica
