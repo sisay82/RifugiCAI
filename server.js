@@ -1397,7 +1397,7 @@ appRoute.route("/shelters/:id")
         }
         shelUpdate.watchDog = new Date(Date.now());
     }
-    updateShelter(req.params.id, req.body, shelUpdate.isNew)
+    updateShelter(req.params.id, req.body, shelUpdate && shelUpdate.isNew)
         .then(function () {
         res.status(200).send(true);
     })["catch"](function (err) {

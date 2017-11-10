@@ -19,7 +19,7 @@ export namespace Enums {
     }
 
     export enum Contribution_Type {
-        "Ordinario CAI",
+        "Ordinario",
         "FondoStabile",
         "Contributo Pubblico",
         "Contributo Privato",
@@ -27,7 +27,7 @@ export namespace Enums {
     }
 
     export const Contributions = [
-        Contribution_Type["Ordinario CAI"],
+        Contribution_Type["Ordinario"],
         Contribution_Type["FondoStabile"]
     ]
 
