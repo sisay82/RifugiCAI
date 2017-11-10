@@ -87,7 +87,7 @@ let validators= {
     stringValidator:<RegExp>/^([A-Za-z0-99À-ÿ� ,.:/';+!?|)(_-]*)*$/,
     telephoneValidator:<RegExp>/^([+]([0-9][0-9][\s])?)?([0-9]*(\s)?[0-9]*)$/,
     mailValidator:<RegExp>/(^$|^.*@.*\..*$)/,
-    numberValidator:<RegExp>/^(-)?[0-9]+([.][0-9]*)?$/,
+    numberValidator:<RegExp>/^(-)?[0-9]*([.][0-9]*)?$/,
     urlValidator:<RegExp>/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
 }
 
@@ -151,6 +151,9 @@ export class BcTextInput implements ControlValueAccessor {
     isDisabled:boolean=false;
     @Input() minLength:number;
     @Input() maxLength:number;
+    @Input() minValue:number;
+    @Input() maxValue:number;
+    @Input() except:number;
     _displayError:boolean=false;
     @Input() set displayError(enable:boolean){
         this._displayError=enable;
@@ -192,7 +195,7 @@ export class BcTextInput implements ControlValueAccessor {
         if(!this.isDisabled){
             this.value=event.target.value;
         }
-        this.propagateChange(this.value);
+        this.propagateChange(this.value);        
     }
 
     getValue(){        
@@ -225,62 +228,24 @@ export class BcTextInput implements ControlValueAccessor {
     }
 
     validate(c:FormControl){
-        if(c.value!=null){
+        if(c.value!==null){
             this.value=c.value;
-            if(this.value==""){
-                if(this.required){
-                    if(this.displayError){
-                        this.invalid=true;
-                    }
-                    return {valid:false};
-                }else{
-                    this.invalid=false;
-                    return null
-                }
+            if(
+                (!this.required||(c.value!==undefined&&c.value!=""))&&
+                (this._validator(c.value)===null)&&
+                (!this.minLength||(c.value&&c.value.length>=this.minLength))&&
+                (!this.maxLength||(c.value&&c.value.length<=this.maxLength))&&
+                (!this.minValue||(c.value&&c.value>=this.minValue))&&
+                (!this.maxValue||(c.value&&c.value<=this.maxValue))&&
+                (!this.except||(c.value&&c.value!=this.except))
+            ){
+                this.invalid=false;
+                return null;
             }else{
-                if(this._validator(c.value)){
-                    if(this.displayError){
-                        this.invalid=true;
-                    }
-                    return {valid:false};
-                }else{
-                    if(this.minLength){
-                        if(c.value.length>=this.minLength){
-                            if(this.maxLength){
-                                if(c.value.length<=this.maxLength){
-                                    this.invalid=false;
-                                    return null;
-                                }else{
-                                    if(this.displayError){
-                                        this.invalid=true;
-                                    }
-                                    return {valid:false};
-                                }
-                            }else{
-                                this.invalid=false;
-                                return null;
-                            }
-                        }else{
-                            if(this.displayError){
-                                this.invalid=true;
-                            }
-                            return {valid:false};
-                        }
-                    }else if(this.maxLength){
-                        if(c.value.length<=this.maxLength){
-                            this.invalid=false;
-                            return null;
-                        }else{
-                            if(this.displayError){
-                                this.invalid=true;
-                            }
-                            return {valid:false};
-                        }
-                    }else{
-                        this.invalid=false;
-                        return null;
-                    }
+                if(this.displayError){
+                    this.invalid=true;
                 }
+                return {valid:false};
             }
         }
     }

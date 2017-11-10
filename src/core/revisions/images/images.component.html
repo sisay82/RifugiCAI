@@ -30,7 +30,7 @@
                     <bc-file-input [contentType]="getContentType()" formControlName="file"></bc-file-input>
                     <a (click)="addDoc()" style="margin-left:1%" data-bc-button data-type="solid">Invia</a>
                 </div>
-                <bc-text-input [displayError]=true title="Didascalia" formControlName="description"></bc-text-input>
+                <bc-text-input placeholder="Breve descrizione dell'immagine caricata." [displayError]=true title="Didascalia" formControlName="description"></bc-text-input>
             </div>
             <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
         </div>
