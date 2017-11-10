@@ -17,8 +17,8 @@
     <div style="max-width:40%;width:auto">
         <bc-text-input title="Oneri di sicurezza (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="safetyCharges" [displayError]="displayError"></bc-text-input>                        
     </div>
-    <div style="max-width:40%;width:auto">
-        <bc-text-input title-bold title="Totale lavori (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totWorks" [displayError]="displayError"></bc-text-input>                        
+    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px">
+        <div style="margin-right:4px" class="bc-body-strong">Totale lavori (€):</div> {{getTotalWorks()}}
     </div>
     <div style="max-width:40%;width:auto">
         <bc-text-input title="Spese per indagini, rilievi, ecc. (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="surveyorsCharges" [displayError]="displayError"></bc-text-input>                        
@@ -37,30 +37,29 @@
     <div style="max-width:40%;width:auto">
         <bc-text-input title="Tasse e oneri (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="taxes" [displayError]="displayError"></bc-text-input>                        
     </div>
-    <div style="max-width:40%;width:auto">
-        <bc-text-input title-bold title="Totale spese (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totCharges" [displayError]="displayError"></bc-text-input>                        
+    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px">
+        <div style="margin-right:4px" class="bc-body-strong">Totale spese (€):</div> {{getTotalCharges()}}
     </div>
     <bc-checkbox-input formControlName="IVAincluded" title="IVA compresa poiché non recuperabile"></bc-checkbox-input>                      
-    <div style="max-width:40%;width:auto">
-        <bc-text-input title-bold title="Costo totale del progetto (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="totalProjectCost" [displayError]="displayError"></bc-text-input>                        
+    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px">
+        <div style="margin-right:4px" class="bc-body-strong">"Costo totale del progetto (€):</div> {{getTotalCost()}}
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="max-width:40%;width:auto;margin-right:2%">
-            <bc-text-input title="Finanziamento esterno (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="externalFinancing" [displayError]="displayError"></bc-text-input>                        
+            <bc-text-input except="0" minValue="0" title="Finanziamento esterno (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="externalFinancing" [displayError]="displayError"></bc-text-input>                        
         </div>
         <div style="max-width:40%;width:auto">
-            <bc-text-input title="Autofinanziamento (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="selfFinancing" [displayError]="displayError"></bc-text-input>                        
+            <bc-text-input except="0" minValue="0" title="Autofinanziamento (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="selfFinancing" [displayError]="displayError"></bc-text-input>                        
         </div>
     </div>
-    <div style="max-width:40%;width:auto">
-        <bc-text-input title="Scoperto (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="red" [displayError]="displayError"></bc-text-input>                        
+    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px">
+        <div style="margin-right:4px" class="bc-body-strong">Scoperto (€):</div> {{getRedValue()}}
     </div>
-    <div style="max-width:40%;width:auto">
-        <bc-text-input title-bold title="RICHIESTO (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="value" [displayError]="displayError"></bc-text-input>                        
+    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px">
+        <div style="margin-right:4px" class="bc-body-strong">RICHIESTO (€):</div> {{roundValue(getRedValue())}}
     </div>
-
     <bc-list style="flex:1" color="accent" formArrayName="attachments">
-        <bc-list-header><span>Allegati</span></bc-list-header>
+        <bc-list-header><span class="bc-title-contributions">Allegati</span></bc-list-header>
         <bc-list-item *ngFor="let item of contrForm.controls.attachments.controls;let i=index" [formGroupName]="i">
             <div bc-line style="display:flex; flex-direction:row;align-items:center">
                 <bc-icon (click)="removeAttachment(i)" class="bc-icon-contribution" name="times" size=s></bc-icon>                    
@@ -70,8 +69,8 @@
     </bc-list>
 </form>    
 <form style="position:relative" [formGroup]="newAttachmentForm">
-    <div class="bc-body">
-        Aggiungi allegato
+    <div class="bc-body-strong" style="font-style:italic">
+        Selezionare obbligatoriamente documenti di descrizione lavori
     </div>
     <div style="display:flex; flex-direction:row;">
         <div style="width:auto">   

@@ -153,6 +153,7 @@ export class BcTextInput implements ControlValueAccessor {
     @Input() maxLength:number;
     @Input() minValue:number;
     @Input() maxValue:number;
+    @Input() except:number;
     _displayError:boolean=false;
     @Input() set displayError(enable:boolean){
         this._displayError=enable;
@@ -230,12 +231,13 @@ export class BcTextInput implements ControlValueAccessor {
         if(c.value!==null){
             this.value=c.value;
             if(
-                (!this.required||(c.value!==undefined||c.value!=""))&&
+                (!this.required||(c.value!==undefined&&c.value!=""))&&
                 (this._validator(c.value)===null)&&
                 (!this.minLength||(c.value&&c.value.length>=this.minLength))&&
                 (!this.maxLength||(c.value&&c.value.length<=this.maxLength))&&
                 (!this.minValue||(c.value&&c.value>=this.minValue))&&
-                (!this.maxValue||(c.value&&c.value<=this.maxValue))
+                (!this.maxValue||(c.value&&c.value<=this.maxValue))&&
+                (!this.except||(c.value&&c.value!=this.except))
             ){
                 this.invalid=false;
                 return null;
