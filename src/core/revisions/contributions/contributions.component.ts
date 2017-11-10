@@ -134,9 +134,52 @@ export class BcContributionRevision extends RevisionBase {
     }
 
     accept(confirm){
-        this.accepted=confirm;
-        this.statusChange=true;
-        this.shared.onSendMaskSave();
+        if(this.contrForm.valid){
+            this.accepted=confirm;
+            this.statusChange=true;
+            this.shared.onSendMaskSave();
+        }else{
+            this.displayError=true;
+        }
+    }
+
+    getNumber(val):number{
+        let n:number=<number>(new Number(val));
+        if(isNaN(n)){
+            return 0;
+        }else{
+            return n;
+        }
+    }
+
+    getTotalWorks(){
+        return (this.getNumber(this.contrForm.controls.handWorks.value)+
+            this.getNumber(this.contrForm.controls.customizedWorks.value)+
+            this.getNumber(this.contrForm.controls.safetyCharges.value));
+    }
+
+    getTotalCharges(){
+        return (this.getNumber(this.contrForm.controls.surveyorsCharges.value)+
+        this.getNumber(this.contrForm.controls.connectionsCharges.value)+
+        this.getNumber(this.contrForm.controls.technicalCharges.value)+
+        this.getNumber(this.contrForm.controls.testCharges.value)+
+        this.getNumber(this.contrForm.controls.taxes.value));
+    }
+
+    getTotalCost(){
+        return this.getTotalCharges()+this.getTotalWorks();
+    }
+
+    getRedValue(){
+        return this.getTotalCost()-(
+            this.getNumber(this.contrForm.controls.externalFinancing.value)+
+            this.getNumber(this.contrForm.controls.selfFinancing.value)
+        )
+    }
+
+    //provvisorio
+    roundValue(value){
+        return value;
     }
     
     checkPermission(permissions){
@@ -159,23 +202,23 @@ export class BcContributionRevision extends RevisionBase {
     initForm(contributions:IContribution){
         if(this.checkRole()){
             if(this.checkPermission &&contributions&&!contributions.accepted){
-                this.contrForm.controls.value.setValue(contributions.value);
                 this.contrForm.controls.type.setValue(contributions.type);
                 this.contrForm.controls.handWorks.setValue(contributions.data?(contributions.data.handWorks):null);
                 this.contrForm.controls.customizedWorks.setValue(contributions.data?(contributions.data.customizedWorks):null);
                 this.contrForm.controls.safetyCharges.setValue(contributions.data?(contributions.data.safetyCharges):null);
-                this.contrForm.controls.totWorks.setValue(contributions.data?(contributions.data.totWorks):null);
+                this.contrForm.controls.totWorks.setValue(this.getTotalWorks());
                 this.contrForm.controls.surveyorsCharges.setValue(contributions.data?(contributions.data.surveyorsCharges):null);
                 this.contrForm.controls.connectionsCharges.setValue(contributions.data?(contributions.data.connectionsCharges):null);
                 this.contrForm.controls.technicalCharges.setValue(contributions.data?(contributions.data.technicalCharges):null);
                 this.contrForm.controls.testCharges.setValue(contributions.data?(contributions.data.testCharges):null);
                 this.contrForm.controls.taxes.setValue(contributions.data?(contributions.data.taxes):null);
-                this.contrForm.controls.totCharges.setValue(contributions.data?(contributions.data.totCharges):null);
+                this.contrForm.controls.totCharges.setValue(this.getTotalCharges());
                 this.contrForm.controls.IVAincluded.setValue(contributions.data?(contributions.data.IVAincluded):null);
-                this.contrForm.controls.totalProjectCost.setValue(contributions.data?(contributions.data.totalProjectCost):null);
+                this.contrForm.controls.totalProjectCost.setValue(this.getTotalCost());
                 this.contrForm.controls.externalFinancing.setValue(contributions.data?(contributions.data.externalFinancing):null);
                 this.contrForm.controls.selfFinancing.setValue(contributions.data?(contributions.data.selfFinancing):null);
-                this.contrForm.controls.red.setValue(contributions.data?(contributions.data.red):null);
+                this.contrForm.controls.red.setValue(this.getRedValue());
+                this.contrForm.controls.value.setValue(this.roundValue(this.getRedValue()));
                 if(contributions.attachments){
                     for(let att of contributions.attachments){
                         (<FormArray>this.contrForm.controls.attachments).controls.push(this.initAttachment(att.name,att.id))
@@ -246,6 +289,7 @@ export class BcContributionRevision extends RevisionBase {
                 }
             });
         }else{
+            console.log("A")
             this.displayError=true;
         }
     }

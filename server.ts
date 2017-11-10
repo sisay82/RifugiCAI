@@ -36,10 +36,9 @@ const appBaseUrl = "http://"+serverUrl;
 const app = express();
 const parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
 const userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type,redirections:number,checked:boolean}[]=[];
-const centralRole="ROLE_RIFUGI_ADMIN";
-const regionalRoleName="PGR";
-const sectionalPRoleName="Responsabile Esterno Sezione";
-const sectionalURoleName="Operatore Sezione Esteso"; 
+const centralRole:String[]=["ROLE_RIFUGI_ADMIN"];
+const regionalRoleName:String[]=["PGR"];
+const sectionalRoleName:String[]=["ROLE_MEMBERS_VIEW","ROLE_MEMBERSHIP"/*,"Responsabile Esterno Sezione","Operatore Sezione Esteso"*/];
 const ObjectId = mongoose.Types.ObjectId;
 const Services = mongoose.model<IServiceExtended>("Services",Schema.serviceSchema);
 const Shelters = mongoose.model<IShelterExtended>("Shelters",Schema.shelterSchema);
@@ -102,13 +101,27 @@ function getTargetNodesByName(node:Node,name:String,target:String):Node[]{
     return nodes;
 }
 
+function checkInclude(source:any[],target:any[],attribute):boolean{
+    if(source){
+        return source.reduce((ret,item)=>{
+            if(target.find(obj=>obj.indexOf(item[attribute])>-1)){
+                return true;
+            }else{
+                return ret;                
+            }
+        },false);
+    }else{
+        return false;        
+    }
+}
+
 function getRole(data):Enums.User_Type{
-    if(data.aggregatedAuthorities&&data.aggregatedAuthorities.find(obj=>obj.role==centralRole)){
-        return Enums.User_Type.central;
-    }else if(data.userGroups){
-        if(data.userGroups.find(obj=>obj.name==regionalRoleName)){
+    if(data){
+        if(checkInclude(data.aggregatedAuthorities,centralRole,"role")){
+            return Enums.User_Type.central;
+        }else if(checkInclude(data.userGroups,regionalRoleName,"name")){
             return Enums.User_Type.regional;
-        }else if(data.userGroups.find(obj=>obj.name==sectionalPRoleName||obj.name==sectionalURoleName)){
+        }else if(checkInclude(data.aggregatedAuthorities,sectionalRoleName,"role")){
             return Enums.User_Type.sectional;
         }else{
             return null;
@@ -1379,7 +1392,7 @@ appRoute.route("/shelters/:id")
         }
         shelUpdate.watchDog=new Date(Date.now());
     }
-    updateShelter(req.params.id,req.body,shelUpdate.isNew)
+    updateShelter(req.params.id,req.body,shelUpdate&&shelUpdate.isNew)
     .then(()=>{
         res.status(200).send(true);
     })
