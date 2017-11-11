@@ -183,8 +183,17 @@ function validationPromise(ticket) {
                 url: casBaseUrl + "/cai-cas/serviceValidate?service=" + parsedUrl + "&ticket=" + ticket,
                 method: "GET"
             }, function (err, response, body) {
-                try {
-                    var el = (new DOMParser()).parseFromString(body, "text/xml").firstChild;
+                var parser = new DOMParser({
+                    locator: {},
+                    errorHandler: {
+                        warning: function (w) {
+                            reject(w);
+                        }
+                    }
+                });
+                var el = parser.parseFromString(body, "text/xml");
+                if (el) {
+                    var doc = el.firstChild;
                     var res = false;
                     var user = void 0;
                     if (getChildByName(el, 'authenticationSuccess')) {
@@ -195,11 +204,11 @@ function validationPromise(ticket) {
                         resolve(user);
                     }
                     else {
-                        reject(null);
+                        reject({ error: "Authentication error" });
                     }
                 }
-                catch (e) {
-                    reject(e);
+                else {
+                    reject({ error: "Document parsing error" });
                 }
             });
         }
@@ -628,7 +637,7 @@ function createPDF(shelter) {
             document += "</div><br/>";
             document += "<div style=\"font-size:" + title_1 + "\"><div>Vi richiediamo un contributo di euro (\u20AC): " + contribution_1.value + "</div><br/>\n            <div>Fiduciosi in un positivo accoglimento, con la presente ci \u00E8 gradito porgere i nostri pi\u00F9 cordiali saluti.</div></div><br/><br/>";
             var now = new Date(Date.now());
-            document += "<div style=\"font-size:" + title_1 + "\"><div style='display:inline' align='left'>" + (now.getDay() + "/" + (months[now.getMonth()]) + "/" + now.getFullYear()) + "</div>\n            <div style='display:inline;float:right'><div style=\"text-align:center\">Il Presidente della sezione di " + shelter.branch + "</div></div></div>";
+            document += "<div style=\"font-size:" + title_1 + "\"><div style='display:inline' align='left'>" + (now.getDay() + "/" + (months[now.getMonth()]) + "/" + now.getFullYear()) + "</div>\n            <div style='display:inline;float:right'><div style=\"text-align:center\">Il Presidente della Sezione di " + shelter.branch + "</div></div></div>";
             var footer = "";
             if (contribution_1.attachments && contribution_1.attachments.length > 0) {
                 footer += "<div style='font-size:" + subtitle_1 + "'><div style='font-weight:bold'>Allegati:<div>";
@@ -1716,7 +1725,7 @@ authRoute.get('/*', function (req, res) {
                         }
                     }
                 })["catch"](function (err) {
-                    logger("Invalid ticket");
+                    logger("Invalid ticket", err);
                     user_3.redirections++;
                     user_3.checked = false;
                     user_3.resource = req.path;
