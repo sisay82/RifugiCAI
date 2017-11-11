@@ -126,7 +126,8 @@ export class BcTextInputErrorStyler {
 export class BcTextInput implements ControlValueAccessor {
     propagateChange = (_: any) => {};
     invalid:boolean=false;
-    @Input() options:any;
+    @Input() removeYear:boolean=false;
+    @Input() replaceDot:boolean=false;
     @Input() value=null;
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
@@ -198,7 +199,24 @@ export class BcTextInput implements ControlValueAccessor {
         this.propagateChange(this.value);        
     }
 
-    getValue(){        
+    processYear(value){
+        if(value){
+            let date=parseDate(value);
+            if(date!=undefined){
+                if(date.toString()!="Invalid Date"){
+                    return parseDate(value,true).toLocaleDateString("it-IT",{month:'numeric',day:'numeric'})
+                }else{
+                    return value;
+                }
+            }else{
+                return value;
+            }
+        }else{
+            return value;
+        }
+    }
+
+    getValue(){      
         if(this.value===true||this.value=="true") {
             return 'si';
         }
@@ -206,21 +224,10 @@ export class BcTextInput implements ControlValueAccessor {
             return 'no'; 
         }
         else{
-            if(this.options){
-                if(this.options.removeYear){
-                    let date=parseDate(this.value);
-                    if(date!=undefined){
-                        if(date.toString()!="Invalid Date"){
-                            return parseDate(this.value,true).toLocaleDateString("it-IT",{month:'numeric',day:'numeric'})
-                        }else{
-                            return this.value;
-                        }
-                    }else{
-                        return this.value;
-                    }
-                }else{
-                    return this.value;
-                }
+            if(this.removeYear){
+                return this.processYear(this.value);
+            }else if(this.replaceDot){
+                return (<string>this.value).replace(/\,/g,'.')
             }else{
                 return this.value;
             }

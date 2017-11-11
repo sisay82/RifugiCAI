@@ -482,7 +482,7 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
 
             let now=new Date(Date.now());
             document+=`<div style="font-size:`+title+`"><div style='display:inline' align='left'>`+(now.getDay()+"/"+(months[now.getMonth()])+"/"+now.getFullYear())+`</div>
-            <div style='display:inline;float:right'><div style="text-align:center">Il Presidente della sezione di `+shelter.branch+`</div></div></div>`;
+            <div style='display:inline;float:right'><div style="text-align:center">Il Presidente della Sezione di `+shelter.branch+`</div></div></div>`;
 
             let footer="";
             if(contribution.attachments&&contribution.attachments.length>0){
