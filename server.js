@@ -11,6 +11,7 @@ var multer = require("multer");
 var request = require("request");
 var xmldom = require("xmldom");
 var pdf = require("html-pdf");
+var MongoStore = require('connect-mongo')(session);
 var disableAuth = false;
 var disableLog = false;
 var months = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
@@ -1744,10 +1745,20 @@ authRoute.get('/*', function (req, res) {
 /**
  * APP INIT
  */
+//"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
+var mongooseConnection = mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/CaiDB", {
+    useMongoClient: true
+}, function (err) {
+    if (err) {
+        logger("Error connection: " + err);
+    }
+});
 app.use(bodyParser.urlencoded({
     extended: true
 }), session({
     secret: 'ytdv6w4a2wzesdc7564uybi6n0m9pmku4esx',
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+    cookie: { maxAge: 1000 * 60 * 40 },
     resave: false,
     saveUninitialized: true
 }), bodyParser.json());
@@ -1794,17 +1805,4 @@ app.use('/', function (req, res, next) {
 var server = app.listen(process.env.PORT || appPort, function () {
     var port = server.address().port;
     logger("App now running on port", port);
-});
-//"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/CaiDB", {
-    useMongoClient: true
-}, function (err) {
-    if (err) {
-        logger("Error connection: " + err);
-        server.close(function () {
-            logger("Server Closed");
-            process.exit(-1);
-            return;
-        });
-    }
 });

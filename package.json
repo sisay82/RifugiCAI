@@ -54,6 +54,7 @@
     "@angular/platform-browser-dynamic": "^4.4.2",
     "@angular/router": "^4.4.2",
     "@angular/upgrade": "^4.4.2",
+    "connect-mongo": "^2.0.0",
     "core-js": "^2.5.1",
     "express-session": "^1.15.6",
     "html-pdf": "^2.2.0",
@@ -67,6 +68,7 @@
   "devDependencies": {
     "@angular/cli": "^1.4.2",
     "@angular/compiler-cli": "^4.4.2",
+    "@types/connect-mongo": "0.0.34",
     "@types/express-session": "^1.15.3",
     "@types/html-pdf": "^2.1.2",
     "@types/jasmine": "^2.5.47",
