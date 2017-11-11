@@ -188,8 +188,17 @@ function validationPromise(ticket):Promise<String>{
                 url:casBaseUrl+"/cai-cas/serviceValidate?service="+parsedUrl+"&ticket="+ticket,
                 method:"GET"
             },function(err,response,body){
-                try {
-                    const el:Node=(new DOMParser()).parseFromString(body,"text/xml").firstChild;
+                const parser=new DOMParser({
+                    locator:{},
+                    errorHandler:{
+                        warning:function(w){
+                            reject(w);
+                        }
+                    }
+                });
+                const el:Document=parser.parseFromString(body,"text/xml");
+                if(el){
+                    const doc=el.firstChild;
                     let res:boolean=false;
                     let user:String;
                     if(getChildByName(el,'authenticationSuccess')){
@@ -199,11 +208,12 @@ function validationPromise(ticket):Promise<String>{
                     if(res){
                         resolve(user);
                     }else{
-                        reject(null);
+                        reject({error:"Authentication error"});
                     }
-                } catch (e) {
-                    reject(e);
+                }else{
+                    reject({error:"Document parsing error"});
                 }
+                
             });
         }
     });
@@ -626,7 +636,7 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
 
             let document = `<html><head></head><body>`+header+`
             <div style="font-size:`+body+`" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div>
-            <br/><div style="font-weight: bold;font-size:`+title+`">Oggetto: Richiesta di contributi di tipo `+contribution.type+` Rifugi</div><br/>
+            <br/><div style="font-weight: bold;font-size:`+title+`">Oggetto: Richiesta di contributi di tipo `+contribution.type+` Rifugi</div><br/><br/>
             <div style="font-weight: 400;font-size:`+title+`">Con la presente vi comunico che la Sezione di `+shelter.branch+` intende svolgere nel 
             `+(<number>contribution.year+1)+` i lavori di manutenzione in seguito descritti,
             predisponendo un piano economico così suddiviso:</div><br/>`;
@@ -658,7 +668,7 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
 
             let now=new Date(Date.now());
             document+=`<div style="font-size:`+title+`"><div style='display:inline' align='left'>`+(now.getDay()+"/"+(months[now.getMonth()])+"/"+now.getFullYear())+`</div>
-            <div style='display:inline;float:right'><div style="text-align:center">Il Presidente della sezione di `+shelter.branch+`</div></div></div>`;
+            <div style='display:inline;float:right'><div style="text-align:center">Il Presidente della Sezione di `+shelter.branch+`</div></div></div>`;
 
             let footer="";
             if(contribution.attachments&&contribution.attachments.length>0){
@@ -1738,7 +1748,7 @@ authRoute.get('/*', function(req, res) {
                     }
                 })
                 .catch((err)=>{
-                    logger("Invalid ticket");
+                    logger("Invalid ticket",err);
                     user.redirections++;
                     user.checked=false;
                     user.resource=req.path;

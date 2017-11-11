@@ -183,8 +183,17 @@ function validationPromise(ticket) {
                 url: casBaseUrl + "/cai-cas/serviceValidate?service=" + parsedUrl + "&ticket=" + ticket,
                 method: "GET"
             }, function (err, response, body) {
-                try {
-                    var el = (new DOMParser()).parseFromString(body, "text/xml").firstChild;
+                var parser = new DOMParser({
+                    locator: {},
+                    errorHandler: {
+                        warning: function (w) {
+                            reject(w);
+                        }
+                    }
+                });
+                var el = parser.parseFromString(body, "text/xml");
+                if (el) {
+                    var doc = el.firstChild;
                     var res = false;
                     var user = void 0;
                     if (getChildByName(el, 'authenticationSuccess')) {
@@ -195,11 +204,11 @@ function validationPromise(ticket) {
                         resolve(user);
                     }
                     else {
-                        reject(null);
+                        reject({ error: "Authentication error" });
                     }
                 }
-                catch (e) {
-                    reject(e);
+                else {
+                    reject({ error: "Document parsing error" });
                 }
             });
         }
@@ -604,7 +613,7 @@ function createPDF(shelter) {
         return new Promise(function (resolve, reject) {
             var assestpath = path.join("file://" + __dirname + "/src/assets/images/");
             var header = "<div style=\"text-align:center\">\n            <div style=\"height:100px\"><img style=\"max-width:100%;max-height:100%\" src=\"" + assestpath + "logo_pdf.png\" /></div>\n            <div style=\"font-weight: bold;font-size:" + title_1 + "\">CLUB ALPINO ITALIANO</div>\n            </div>";
-            var document = "<html><head></head><body>" + header + "\n            <div style=\"font-size:" + body_1 + "\" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div>\n            <br/><div style=\"font-weight: bold;font-size:" + title_1 + "\">Oggetto: Richiesta di contributi di tipo " + contribution_1.type + " Rifugi</div><br/>\n            <div style=\"font-weight: 400;font-size:" + title_1 + "\">Con la presente vi comunico che la Sezione di " + shelter.branch + " intende svolgere nel \n            " + (contribution_1.year + 1) + " i lavori di manutenzione in seguito descritti,\n            predisponendo un piano economico cos\u00EC suddiviso:</div><br/>";
+            var document = "<html><head></head><body>" + header + "\n            <div style=\"font-size:" + body_1 + "\" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div>\n            <br/><div style=\"font-weight: bold;font-size:" + title_1 + "\">Oggetto: Richiesta di contributi di tipo " + contribution_1.type + " Rifugi</div><br/><br/>\n            <div style=\"font-weight: 400;font-size:" + title_1 + "\">Con la presente vi comunico che la Sezione di " + shelter.branch + " intende svolgere nel \n            " + (contribution_1.year + 1) + " i lavori di manutenzione in seguito descritti,\n            predisponendo un piano economico cos\u00EC suddiviso:</div><br/>";
             document += "<div style='font-weight:400;font-size:" + subtitle_1 + "'>";
             document += getContributionHtml("Lavori a corpo", contribution_1.data.handWorks);
             document += getContributionHtml("Lavori a misura", contribution_1.data.customizedWorks);
@@ -628,7 +637,7 @@ function createPDF(shelter) {
             document += "</div><br/>";
             document += "<div style=\"font-size:" + title_1 + "\"><div>Vi richiediamo un contributo di euro (\u20AC): " + contribution_1.value + "</div><br/>\n            <div>Fiduciosi in un positivo accoglimento, con la presente ci \u00E8 gradito porgere i nostri pi\u00F9 cordiali saluti.</div></div><br/><br/>";
             var now = new Date(Date.now());
-            document += "<div style=\"font-size:" + title_1 + "\"><div style='display:inline' align='left'>" + (now.getDay() + "/" + (months[now.getMonth()]) + "/" + now.getFullYear()) + "</div>\n            <div style='display:inline;float:right'><div style=\"text-align:center\">Il Presidente della sezione di " + shelter.branch + "</div></div></div>";
+            document += "<div style=\"font-size:" + title_1 + "\"><div style='display:inline' align='left'>" + (now.getDay() + "/" + (months[now.getMonth()]) + "/" + now.getFullYear()) + "</div>\n            <div style='display:inline;float:right'><div style=\"text-align:center\">Il Presidente della Sezione di " + shelter.branch + "</div></div></div>";
             var footer = "";
             if (contribution_1.attachments && contribution_1.attachments.length > 0) {
                 footer += "<div style='font-size:" + subtitle_1 + "'><div style='font-weight:bold'>Allegati:<div>";
@@ -1716,7 +1725,7 @@ authRoute.get('/*', function (req, res) {
                         }
                     }
                 })["catch"](function (err) {
-                    logger("Invalid ticket");
+                    logger("Invalid ticket", err);
                     user_3.redirections++;
                     user_3.checked = false;
                     user_3.resource = req.path;
