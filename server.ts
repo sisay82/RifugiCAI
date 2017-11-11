@@ -128,21 +128,6 @@ function getRole(data):Enums.User_Type{
     }else{
         return null;
     }
-
-    /*
-    if(data.aggregatedAuthorities&&data.aggregatedAuthorities.find(obj=>obj.role==centralRole)){
-        return Enums.User_Type.central;
-    }else if(data.userGroups){
-        if(data.userGroups.find(obj=>obj.name==regionalRoleName)){
-            return Enums.User_Type.regional;
-        }else if(data.userGroups.find(obj=>obj.name==sectionalPRoleName||obj.name==sectionalURoleName)){
-            return Enums.User_Type.sectional;
-        }else{
-            return null;
-        }
-    }else{
-        return null;
-    }*/
 }
 
 function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
@@ -627,7 +612,7 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
     if(shelter&&shelter.branch&&shelter.contributions&&shelter.contributions.data){
         let contribution=shelter.contributions;
         return new Promise<{name:String,id:any}>((resolve,reject)=>{
-            let assestpath=path.join("file://"+__dirname+"/");
+            let assestpath=path.join("file://"+__dirname+"/src/assets/images/");
 
             let header = `<div style="text-align:center">
             <div style="height:100px"><img style="max-width:100%;max-height:100%" src="`+assestpath +`logo_pdf.png" /></div>

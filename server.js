@@ -120,20 +120,6 @@ function getRole(data) {
     else {
         return null;
     }
-    /*
-    if(data.aggregatedAuthorities&&data.aggregatedAuthorities.find(obj=>obj.role==centralRole)){
-        return Enums.User_Type.central;
-    }else if(data.userGroups){
-        if(data.userGroups.find(obj=>obj.name==regionalRoleName)){
-            return Enums.User_Type.regional;
-        }else if(data.userGroups.find(obj=>obj.name==sectionalPRoleName||obj.name==sectionalURoleName)){
-            return Enums.User_Type.sectional;
-        }else{
-            return null;
-        }
-    }else{
-        return null;
-    }*/
 }
 function checkUserPromise(uuid) {
     logger("CHECKUSER");
@@ -611,7 +597,7 @@ function createPDF(shelter) {
     if (shelter && shelter.branch && shelter.contributions && shelter.contributions.data) {
         var contribution_1 = shelter.contributions;
         return new Promise(function (resolve, reject) {
-            var assestpath = path.join("file://" + __dirname + "/");
+            var assestpath = path.join("file://" + __dirname + "/src/assets/images/");
             var header = "<div style=\"text-align:center\">\n            <div style=\"height:100px\"><img style=\"max-width:100%;max-height:100%\" src=\"" + assestpath + "logo_pdf.png\" /></div>\n            <h2>CLUB ALPINO ITALIANO</h2>\n            </div>";
             var document = "<html><head></head><body>" + header + "\n            <h4 align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></h4>\n            <h2>Oggetto: Richiesta di contributi di tipo " + contribution_1.type + " Rifugi</h2>\n            <h2 style=\"font-weight: 400\">Con la presente vi comunico che la Sezione di " + shelter.branch + " intende svolgere nel \n            " + (contribution_1.year + 1) + " i lavori di manutenzione in seguito descritti,\n            predisponendo un piano economico cos\u00EC suddiviso:</h2>";
             document += "<h3 style='font-weight:400'>";
