@@ -149,13 +149,13 @@ export class BcContributionRevision extends RevisionBase {
         }
     }
 
-    getTotalWorks(){
+    getTotalWorks():number{
         return (this.getNumber(this.contrForm.controls.handWorks.value)+
             this.getNumber(this.contrForm.controls.customizedWorks.value)+
             this.getNumber(this.contrForm.controls.safetyCharges.value));
     }
 
-    getTotalCharges(){
+    getTotalCharges():number{
         return (this.getNumber(this.contrForm.controls.surveyorsCharges.value)+
         this.getNumber(this.contrForm.controls.connectionsCharges.value)+
         this.getNumber(this.contrForm.controls.technicalCharges.value)+
@@ -163,20 +163,19 @@ export class BcContributionRevision extends RevisionBase {
         this.getNumber(this.contrForm.controls.taxes.value));
     }
 
-    getTotalCost(){
+    getTotalCost():number{
         return this.getTotalCharges()+this.getTotalWorks();
     }
 
-    getRedValue(){
+    getRedValue():number{
         return this.getTotalCost()-(
             this.getNumber(this.contrForm.controls.externalFinancing.value)+
             this.getNumber(this.contrForm.controls.selfFinancing.value)
         )
     }
     
-    //provvisorio
-    roundValue(value){
-        return value;
+    roundValue(value:number):number{
+        return (Math.floor(value/100)*100);
     }
 
     initForm(contributions:IContribution){
