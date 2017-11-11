@@ -45,7 +45,8 @@ export class BcSelectInput implements ControlValueAccessor {
     @Input() enumName:any;
     @Input() noName:boolean=false;
     @Input() enumValues:any[]=[];
-
+    @Input() enableBlock:boolean=false;
+    @Input() errorMessage:string;
     _displayError:boolean=false;
     @Input() set displayError(enable:boolean){
         this._displayError=enable;

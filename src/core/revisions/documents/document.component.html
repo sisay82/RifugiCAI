@@ -20,7 +20,7 @@
 <div style="margin-left:1%;display:flex;flex-direction:row;align-items:center" *ngIf="!isHiddenFile(0)">
     <form [formGroup]="newDocForm">
         <div style="display:inline-block">
-            <bc-file-input [contentType]="getKeys('Docs_Type')" formControlName="file"></bc-file-input>
+            <bc-file-input enableBlock="true" optionalMessage="Caricare fino a un massimo di 16MB" errorMessage="Caricare solo file di testo" [contentType]="getKeys('Docs_Type')" formControlName="file" [displayError]="displayError"></bc-file-input>
         </div>
     </form> 
     <!--[disabled]="getKeys('Docs_Type').length==0" -->
@@ -34,7 +34,7 @@
         <bc-icon (click)="removeMap(file._id)" class="bc-file" name="times" size=s></bc-icon>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Nome:</div>
-            <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>
+            <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file.value._id)"> {{file.name}}</div>
         </div>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Dimensione:</div>
@@ -49,7 +49,7 @@
 <div style="margin-left:1%;display:flex;flex-direction:row;align-items:center" *ngIf="!isHiddenFile(1)">
     <form [formGroup]="newMapForm">
         <div style="display:inline-block">
-            <bc-file-input [contentType]="getKeys('Maps_Type')" formControlName="file"></bc-file-input>
+            <bc-file-input enableBlock="true" optionalMessage="Caricare fino a un massimo di 16MB" errorMessage="Caricare solo mappe" [contentType]="getKeys('Maps_Type')" formControlName="file" [displayError]="displayError"></bc-file-input>
         </div>
     </form>
     <!-- [disabled]="getKeys('Maps_Type').length==0"  -->
@@ -67,7 +67,7 @@
                     <bc-icon *ngIf="!invoicesForm.controls.files.at(i).disabled" (click)="removeInvoice(i,file.value._id)" class="bc-file" name="times" size=s></bc-icon>
                     <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
                         <div class="bc-body-strong">Nome:</div>
-                        <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.value.name}}</div>
+                        <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file.value._id)"> {{file.value.name}}</div>
                     </div>
                     <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
                         <div class="bc-body-strong">Dimensione:</div>
@@ -75,13 +75,13 @@
                     </div>
                 </div>
                 <div style="flex:1;display: flex;flex-direction:row;align-items:flex-end;white-space:nowrap">
-                    <bc-text-input placeholder="Es: 321 (solo numeri)" required="true" title="Imponibile" formControlName="value" validator="numberValidator" [displayError]="displayError"></bc-text-input>    
-                    <bc-text-input placeholder="Es: 21 (solo numeri)" required="true" title="IVA (in percentuale)" formControlName="invoice_tax" validator="numberValidator" [displayError]="displayError"></bc-text-input>   
-                    <bc-select-input defaultContent="Selezionare anno" required="true" [enumValues]="getEnumValues()" title="Anno" formControlName="invoice_year" [displayError]="displayError"></bc-select-input>   
+                    <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri. Campo obblicatorio." placeholder="Es: 321 (solo numeri)" required="true" title="Imponibile" formControlName="value" validator="numberValidator" [displayError]="displayError"></bc-text-input>    
+                    <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri. Campo obblicatorio." placeholder="Es: 21 (solo numeri)" required="true" title="IVA (in percentuale)" formControlName="invoice_tax" validator="numberValidator" [displayError]="displayError"></bc-text-input>   
+                    <bc-select-input enableBlock="true" errorMessage="Campo obblicatorio." defaultContent="Selezionare anno" required="true" [enumValues]="getEnumValues()" title="Anno" formControlName="invoice_year" [displayError]="displayError"></bc-select-input>   
                 </div>
                 <div style="flex:1;display: flex;flex-direction:row;align-items:flex-end;white-space:nowrap">
-                    <bc-select-input defaultContent="Selezionare tipo di fattura" required="true" title="Tipo di fattura" enumName="Invoice_Type" formControlName="invoice_type" [displayError]="displayError"></bc-select-input>                            
-                    <bc-select-input defaultContent="Selezionare tipo di contributo" [required]="checkRequired(i)" title="Tipo di contributo" enumName="Contribution_Type" formControlName="contribution_type" [displayError]="displayError"></bc-select-input>
+                    <bc-select-input enableBlock="true" errorMessage="Campo obblicatorio." defaultContent="Selezionare tipo di fattura" required="true" title="Tipo di fattura" enumName="Invoice_Type" formControlName="invoice_type" [displayError]="displayError"></bc-select-input>                            
+                    <bc-select-input enableBlock="true" errorMessage="Campo obblicatorio." defaultContent="Selezionare tipo di contributo" [required]="checkRequired(i)" title="Tipo di contributo" enumName="Contribution_Type" formControlName="contribution_type" [displayError]="displayError"></bc-select-input>
                 </div>
             </div>  
         </div>
@@ -94,7 +94,7 @@
 <div style="margin-left:1%;display:flex;flex-direction:row;align-items:center" *ngIf="!isHiddenFile(2)">
     <form [formGroup]="newInvoiceForm">
         <div style="display:inline-block">
-            <bc-file-input [contentType]="getKeys('Invoices_Type')" [validator]="invoiceFormatRegExp" formControlName="file"></bc-file-input>
+            <bc-file-input enableBlock="true" optionalMessage="Caricare fino a un massimo di 16MB" errorMessage="Caricare solo file del nome indicato" [contentType]="getKeys('Invoices_Type')" [validator]="invoiceFormatRegExp" formControlName="file" [displayError]="displayError"></bc-file-input>
         </div>
     </form>
     <!-- [disabled]="getKeys('Invoices_Type').length==0" -->
