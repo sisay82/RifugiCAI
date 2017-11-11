@@ -132,6 +132,7 @@ export class BcTextInput implements ControlValueAccessor {
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
     @Input() title = "";
+    @Input() errorMessage:string;
     private _placeholder;
     @Input() set placeholder(value){
         if(value){

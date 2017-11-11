@@ -3,10 +3,10 @@
 <form style="position:relative" [formGroup]="catastalForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-text-input placeholder="Es: 1860" formControlName="buildYear" title="Anno di costruzione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+            <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 1860" formControlName="buildYear" title="Anno di costruzione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-text-input placeholder="Es: 1982 (più recente)" formControlName="rebuildYear" title="Anno di ristrutturazione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+            <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 1982 (più recente)" formControlName="rebuildYear" title="Anno di ristrutturazione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
