@@ -612,22 +612,25 @@ function getContributionHtml(title:String,value:Number,rightTitle?:boolean):Stri
 function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
     if(shelter&&shelter.branch&&shelter.contributions&&shelter.contributions.data){
         let contribution=shelter.contributions;
+        const title="24px";
+        const subtitle="20px";
+        const body="16px";
         return new Promise<{name:String,id:any}>((resolve,reject)=>{
             let assestpath=path.join("file://"+__dirname+"/src/assets/images/");
 
             let header = `<div style="text-align:center">
             <div style="height:100px"><img style="max-width:100%;max-height:100%" src="`+assestpath +`logo_pdf.png" /></div>
-            <h2>CLUB ALPINO ITALIANO</h2>
+            <div style="font-weight: bold;font-size:`+title+`">CLUB ALPINO ITALIANO</div>
             </div>`;
 
             let document = `<html><head></head><body>`+header+`
-            <h4 align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></h4>
-            <h2>Oggetto: Richiesta di contributi di tipo `+contribution.type+` Rifugi</h2>
-            <h2 style="font-weight: 400">Con la presente vi comunico che la Sezione di `+shelter.branch+` intende svolgere nel 
+            <div style="font-size:`+body+`" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div>
+            <br/><div style="font-weight: bold;font-size:`+title+`">Oggetto: Richiesta di contributi di tipo `+contribution.type+` Rifugi</div><br/>
+            <div style="font-weight: 400;font-size:`+title+`">Con la presente vi comunico che la Sezione di `+shelter.branch+` intende svolgere nel 
             `+(<number>contribution.year+1)+` i lavori di manutenzione in seguito descritti,
-            predisponendo un piano economico così suddiviso:</h2>`;
+            predisponendo un piano economico così suddiviso:</div><br/>`;
 
-            document+="<h3 style='font-weight:400'>"
+            document+="<div style='font-weight:400;font-size:"+subtitle+"'>"
             document+=getContributionHtml("Lavori a corpo",contribution.data.handWorks);
             document+=getContributionHtml("Lavori a misura",contribution.data.customizedWorks);
             document+=getContributionHtml("Oneri di sicurezza",contribution.data.safetyCharges);
@@ -647,22 +650,22 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
             document+=getContributionHtml("Finanziamento esterno",contribution.data.externalFinancing);
             document+=getContributionHtml("Autofinanziamento",contribution.data.selfFinancing);
             document+=getContributionHtml("Scoperto",contribution.data.red);
-            document+="</h3>"
+            document+="</div><br/>"
             
-            document+=`<h2><div>Vi richiediamo un contributo di euro (€): `+contribution.value+`</div><br/>
-            <div>Fiduciosi in un positivo accoglimento, con la presente ci è gradito porgere i nostri più cordiali saluti.</div></h2>`;
+            document+=`<div style="font-size:`+title+`"><div>Vi richiediamo un contributo di euro (€): `+contribution.value+`</div><br/>
+            <div>Fiduciosi in un positivo accoglimento, con la presente ci è gradito porgere i nostri più cordiali saluti.</div></div><br/><br/>`;
 
             let now=new Date(Date.now());
-            document+=`<h2><div style='display:inline' align='left'>`+(now.getDay()+"/"+(months[now.getMonth()])+"/"+now.getFullYear())+`</div>
-            <div style='display:inline;float:right'><div style="text-align:center">Il Presidente della sezione di `+shelter.branch+`</div></div></h2>`;
+            document+=`<div style="font-size:`+title+`"><div style='display:inline' align='left'>`+(now.getDay()+"/"+(months[now.getMonth()])+"/"+now.getFullYear())+`</div>
+            <div style='display:inline;float:right'><div style="text-align:center">Il Presidente della sezione di `+shelter.branch+`</div></div></div>`;
 
             let footer="";
             if(contribution.attachments&&contribution.attachments.length>0){
-                footer+="<h3><div style='font-weight:bold'>Allegati:<div>";
+                footer+="<div style='font-size:"+subtitle+"'><div style='font-weight:bold'>Allegati:<div>";
                 contribution.attachments.forEach(file=>{
                     footer+="<div style='font-weight:400'>"+file.name+"</div>";
                 });
-                footer+="</h3>";
+                footer+="</div>";
             }
 
             document+="</body></html>";
@@ -670,10 +673,10 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
             let result = pdf.create(document,{
                 "directory": "/tmp",
                 "border":{
-                    "top":"0.25in",
-                    "left":"0.5in",
-                    "bottom":"0.25in",
-                    "right":"0.5in",
+                    "top":"0.3in",
+                    "left":"0.6in",
+                    "bottom":"0.3in",
+                    "right":"0.6in",
                 },
                 "footer":{
                     "contents":footer
