@@ -449,8 +449,8 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
             </div>`;
 
             let document = `<html><head></head><body>`+header+`
-            <div style="font-size:`+body+`" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div>
-            <br/><div style="font-weight: bold;font-size:`+title+`">Oggetto: Richiesta di contributi di tipo `+contribution.type+` Rifugi</div><br/><br/>
+            <br/><div style="font-size:`+body+`" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div><br/>
+            <div style="font-weight: bold;font-size:`+title+`">Oggetto: Richiesta di contributi di tipo `+contribution.type+` Rifugi</div><br/>
             <div style="font-weight: 400;font-size:`+title+`">Con la presente vi comunico che la Sezione di `+shelter.branch+` intende svolgere nel 
             `+(<number>contribution.year+1)+` i lavori di manutenzione in seguito descritti,
             predisponendo un piano economico così suddiviso:</div><br/>`;

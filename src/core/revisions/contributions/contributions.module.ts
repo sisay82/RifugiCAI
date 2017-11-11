@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BcContributionRevision } from './contributions.component';
+import { BcContributionRevision,BcDisableDataStyler } from './contributions.component';
 import { CommonModule } from '@angular/common';
 import { BcDividerModule} from '../../divider/divider.module';
 import { FormsModule } from '@angular/forms';
@@ -14,8 +14,8 @@ import {BcButtonModule} from '../../button/button.module';
 import {BcTooltipModule} from '../../tooltip/tooltip.module';
 
 @NgModule({
-    declarations: [BcContributionRevision],
-    exports: [BcContributionRevision],
+    declarations: [BcContributionRevision,BcDisableDataStyler],
+    exports: [BcContributionRevision,BcDisableDataStyler],
     imports:[BcTextInputModule,BcTooltipModule,BcDividerModule,BcSelectInputModule,BcButtonModule,BcCheckboxInputModule,BcIconModule,BcListModule,PipesModule,CommonModule,FormsModule,ReactiveFormsModule]
 })
 export class BcContributionRevisionModule { }

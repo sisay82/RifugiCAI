@@ -1,5 +1,5 @@
 import {
-    Component,Input,OnInit,OnDestroy
+    Component,Input,OnInit,OnDestroy,Directive
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IShelter, IContribution, IFile,IContributionData,IFileRef } from '../../../app/shared/types/interfaces';
@@ -10,6 +10,17 @@ import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {RevisionBase} from '../shared/revision_base';
+
+@Directive({
+selector:"[data-bc-button],[bc-button]",
+host:{
+    "[class.disabled]":"disable"
+    }
+})
+export class BcDisableDataStyler{
+    @Input("disabled") disable:boolean=false;
+}
+    
 @Component({
     moduleId: module.id,
     selector: 'bc-contributions-revision',
@@ -24,6 +35,7 @@ export class BcContributionRevision extends RevisionBase {
     private accepted:boolean;
     filesEnum:String[]=[];
     maskSaveSub:Subscription;
+    loading:boolean=false;
     name:String;
     contribution:IContribution;
     statusChange:boolean=false;
@@ -132,6 +144,7 @@ export class BcContributionRevision extends RevisionBase {
 
     accept(confirm){
         if(this.contrForm.valid){
+            this.loading=true;
             this.accepted=confirm;
             this.statusChange=true;
             this.shared.onSendMaskSave();
@@ -246,6 +259,7 @@ export class BcContributionRevision extends RevisionBase {
                     }
                 }else{
                     console.log("Err "+returnVal);
+                    this.loading=false;
                     this.displayError=true;
                 }
                 if(shelSub!=undefined){
@@ -253,7 +267,7 @@ export class BcContributionRevision extends RevisionBase {
                 }
             });
         }else{
-            console.log("A")
+            this.loading=false;
             this.displayError=true;
         }
     }

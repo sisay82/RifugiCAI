@@ -35,7 +35,8 @@ export class BcDocRevision extends RevisionBase{
   private newInvoiceForm: FormGroup;
   private invoicesForm: FormGroup;
   private invalidYearsInvoice=".+";
-  private invoiceFormatBase=".+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_)";
+  private initialData:IFile[]=[];
+  private invoiceFormatBase=".+(\\,|\\/|\\-|\\\\|\\.|\\||_).+(\\,|\\/|\\-|\\\\|\\.|\\||_).+(\\,|\\/|\-|\\\\|\\.|\\||_)";
   invoiceFormatRegExp=/.+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+/ //tipo, fornitore, numero, data
   private docs:IFile[]=[];
   private maps:IFile[]=[];
@@ -440,20 +441,22 @@ export class BcDocRevision extends RevisionBase{
   }
 
   downloadFile(id){
-    let queryFileSub=this.shelterService.getFile(id).subscribe(file=>{
-      let e = document.createEvent('MouseEvents');
-      let data=Buffer.from(file.data);
-      let blob=new Blob([data],{type:<string>file.contentType});
-      let a = document.createElement('a');
-      a.download = <string>file.name;
-      a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
-      e.initEvent('click', true, false);
-      a.dispatchEvent(e);
-      if(queryFileSub!=undefined){
-        queryFileSub.unsubscribe();
-      }
-    });
+    if(id&&this.initialData.findIndex(obj=>obj._id==id)>-1){
+      let queryFileSub=this.shelterService.getFile(id).subscribe(file=>{
+        let e = document.createEvent('MouseEvents');
+        let data=Buffer.from(file.data);
+        let blob=new Blob([data],{type:<string>file.contentType});
+        let a = document.createElement('a');
+        a.download = <string>file.name;
+        a.href = window.URL.createObjectURL(blob);
+        a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
+        e.initEvent('click', true, false);
+        a.dispatchEvent(e);
+        if(queryFileSub!=undefined){
+          queryFileSub.unsubscribe();
+        }
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -481,6 +484,7 @@ export class BcDocRevision extends RevisionBase{
   }
 
   initData(files:IFile[]){
+    this.initialData=files;
     for(let file of files){
       if(file.type!=undefined){
         if(file.type==Enums.File_Type.doc){
@@ -488,10 +492,11 @@ export class BcDocRevision extends RevisionBase{
         }else if(file.type==Enums.File_Type.map){
           this.maps.push(file);
         }else if(file.type==Enums.File_Type.invoice){
-          (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(file));
+          const control=this.initInvoice(file);
           if(file.invoice_confirmed){
-            (<FormArray>this.invoicesForm.controls.files).controls.find(obj=>file._id==obj.value._id).disable();
+            control.disable();
           }
+          (<FormArray>this.invoicesForm.controls.files).push(control);
         }
       }
     }
