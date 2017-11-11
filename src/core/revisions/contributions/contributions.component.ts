@@ -211,7 +211,7 @@ export class BcContributionRevision extends RevisionBase {
             let shelter:IShelter={_id:this._id};
             let contr:IContribution={
                 year:(new Date()).getFullYear(),
-                value:this.contrForm.controls.value.value||null,
+                value:this.roundValue(this.getRedValue()),
                 type:this.contrForm.value.type,
                 attachments:[] as [IFileRef],
                 accepted:this.accepted||false,
@@ -219,18 +219,18 @@ export class BcContributionRevision extends RevisionBase {
                     handWorks:this.contrForm.controls.handWorks.value||null,
                     customizedWorks:this.contrForm.controls.customizedWorks.value||null,
                     safetyCharges:this.contrForm.controls.safetyCharges.value||null,
-                    totWorks:this.contrForm.controls.totWorks.value||null,
+                    totWorks:this.getTotalWorks(),
                     surveyorsCharges:this.contrForm.controls.surveyorsCharges.value||null,
                     connectionsCharges:this.contrForm.controls.connectionsCharges.value||null,
                     technicalCharges:this.contrForm.controls.technicalCharges.value||null,
                     testCharges:this.contrForm.controls.testCharges.value||null,
                     taxes:this.contrForm.controls.taxes.value||null,
-                    totCharges:this.contrForm.controls.totCharges.value||null,
+                    totCharges:this.getTotalCharges(),
                     IVAincluded:this.contrForm.controls.IVAincluded.value||null,
-                    totalProjectCost:this.contrForm.controls.totalProjectCost.value||null,
+                    totalProjectCost:this.getTotalCost(),
                     externalFinancing:this.contrForm.controls.externalFinancing.value||null,
                     selfFinancing:this.contrForm.controls.selfFinancing.value||null,
-                    red:this.contrForm.controls.red.value||null
+                    red:this.getRedValue()
                 }
             };        
 
