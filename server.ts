@@ -613,9 +613,9 @@ function getContributionHtml(title:String,value:Number,rightTitle?:boolean):Stri
 function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
     if(shelter&&shelter.branch&&shelter.contributions&&shelter.contributions.data){
         let contribution=shelter.contributions;
-        const title="24px";
-        const subtitle="20px";
-        const body="16px";
+        const title="12px";
+        const subtitle="10px";
+        const body="9px";
         return new Promise<{name:String,id:any}>((resolve,reject)=>{
             let assestpath=path.join("file://"+__dirname+"/src/assets/images/");
 
