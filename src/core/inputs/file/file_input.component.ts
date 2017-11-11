@@ -45,6 +45,10 @@ export class BcFileInput implements ControlValueAccessor {
     @Input() validator:RegExp;
     @Input() title = "";
     @Input() sizeLimit:number=1024*1024*16;
+    @Input() errorMessage:string;
+    @Input() optionalMessage:string;
+    @Input() enableBlock:boolean=false;
+    messageBlock:string;
     _contentType:String;
     types:String[];
     @Input() set contentType(value:String[]){
@@ -55,6 +59,20 @@ export class BcFileInput implements ControlValueAccessor {
             this.types=null;
             this._contentType=null;
         }
+    }
+
+    _displayError:boolean=false;
+    @Input() set displayError(enable:boolean){
+        this._displayError=enable;
+        if(this.validate(<any>{value:this.value})!=null){
+            this.invalid=true;
+        }else{
+            this.invalid=false;
+        }
+    }
+
+    get displayError(){
+        return this._displayError;
     }
     
     getAcceptables(){
@@ -112,28 +130,29 @@ export class BcFileInput implements ControlValueAccessor {
 
     validate(c:FormControl){
         if(c.value!=undefined){
-            if(this.validator==undefined || this.testName(c.value.name)){
-                if(c.value.size>0){
-                    if(this.checkExtension(this.getExtension(c.value.name))){
-                        this.value = c.value;
-                        if(this.value.size>this.sizeLimit){
-                            this.invalid=true;
-                            return {err:"Size over limit"};
-                        }else{
-                            this.invalid=false;
-                            return null;
-                        }
-                    }else{
-                        return {err:"Invalid content type"};
+            if(
+                (this.validator==undefined || this.testName(c.value.name))&&
+                (c.value.size>0)&&
+                (this.checkExtension(this.getExtension(c.value.name)))){
+                    
+                this.value = c.value;
+                if(this.value.size>this.sizeLimit){
+                    if(this.displayError){
+                        this.invalid=true;
                     }
+                    this.messageBlock=this.optionalMessage;
+                    return {err:"Size over limit"};
                 }else{
-                    return {err:"Content Type or Size is null"};
+                    this.invalid=false;
+                    return null;
                 }
             }else{
-                return {err:"Name format not valid"};
-            }
-        }else{
-            return {err:"Value is null"};
+                if(this.displayError){
+                    this.invalid=true;
+                }
+                this.messageBlock=this.errorMessage;
+                return {err:"Invalid content"};
+            }  
         }
     }
 
