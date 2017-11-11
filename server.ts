@@ -12,6 +12,7 @@ import request = require('request');
 import xmldom = require('xmldom');
 import * as pdf from "html-pdf"
 import fs = require('fs');
+const MongoStore = require('connect-mongo')(session);
 
 interface IServiceExtended extends IService,mongoose.Document {
     _id:String;
@@ -24,7 +25,7 @@ interface IFileExtended extends IFile,mongoose.Document{
 }
 
 const disableAuth:boolean=false;
-const disableLog:boolean=false;
+const disableLog:boolean=true;
 const months=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
 (<any>mongoose.Promise)=global.Promise;
 const DOMParser = xmldom.DOMParser;
@@ -1766,13 +1767,24 @@ authRoute.get('/*', function(req, res) {
 /**
  * APP INIT
  */
+
+//"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
+const mongooseConnection = mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/CaiDB",{
+    useMongoClient: true
+},function(err){
+    if(err) {
+        logger("Error connection: "+err);
+    }
+});
   
 app.use(bodyParser.urlencoded({
     extended: true
 }),session({
-    secret: 'ytdv6w4a2wzesdc7564uybi6n0m9pmku4esx', // just a long random string
-    resave: false,
-    saveUninitialized: true
+    secret: 'ytdv6w4a2wzesdc7564uybi6n0m9pmku4esx',
+    store:new MongoStore({ mongooseConnection: mongoose.connection }),
+    cookie: { maxAge: 1000 * 60 * 40 },
+    resave:false,
+    saveUninitialized:true
 }),bodyParser.json());
 
 app.use('/api',function(req,res,next){
@@ -1816,18 +1828,4 @@ app.use('/',function(req,res,next){
 const server = app.listen(portUrl, function () {
     let port = server.address().port;
     logger("App now running on port", port);
-});
-
-//"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
-mongoose.connect(process.env.MONGODB_URI||"mongodb://localhost:27017/CaiDB",{
-    useMongoClient: true
-},function(err){
-    if(err) {
-        logger("Error connection: "+err);
-        server.close(()=>{
-            logger("Server Closed");
-            process.exit(-1);
-            return;
-        });
-    }
 });
