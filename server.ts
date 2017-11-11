@@ -613,19 +613,19 @@ function getContributionHtml(title:String,value:Number,rightTitle?:boolean):Stri
 function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
     if(shelter&&shelter.branch&&shelter.contributions&&shelter.contributions.data){
         let contribution=shelter.contributions;
-        const title="24px";
-        const subtitle="20px";
-        const body="16px";
+        const title="12px";
+        const subtitle="10px";
+        const body="9px";
         return new Promise<{name:String,id:any}>((resolve,reject)=>{
             let assestpath=path.join("file://"+__dirname+"/src/assets/images/");
 
             let header = `<div style="text-align:center">
-            <div style="height:100px"><img style="max-width:100%;max-height:100%" src="`+assestpath +`logo_pdf.png" /></div>
+            <div style="height:65px"><img style="max-width:100%;max-height:100%" src="`+assestpath +`logo_pdf.png" /></div>
             <div style="font-weight: bold;font-size:`+title+`">CLUB ALPINO ITALIANO</div>
             </div>`;
 
             let document = `<html><head></head><body>`+header+`
-            <div style="font-size:`+body+`" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div>
+            <br/><div style="font-size:`+body+`" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div><br/>
             <div style="font-weight: bold;font-size:`+title+`">Oggetto: Richiesta di contributi di tipo `+contribution.type+` Rifugi</div><br/>
             <div style="font-weight: 400;font-size:`+title+`">Con la presente vi comunico che la Sezione di `+shelter.branch+` intende svolgere nel 
             `+(<number>contribution.year+1)+` i lavori di manutenzione in seguito descritti,

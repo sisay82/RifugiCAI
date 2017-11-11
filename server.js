@@ -598,13 +598,13 @@ function getContributionHtml(title, value, rightTitle) {
 function createPDF(shelter) {
     if (shelter && shelter.branch && shelter.contributions && shelter.contributions.data) {
         var contribution_1 = shelter.contributions;
-        var title_1 = "24px";
-        var subtitle_1 = "20px";
-        var body_1 = "16px";
+        var title_1 = "12px";
+        var subtitle_1 = "10px";
+        var body_1 = "9px";
         return new Promise(function (resolve, reject) {
             var assestpath = path.join("file://" + __dirname + "/src/assets/images/");
-            var header = "<div style=\"text-align:center\">\n            <div style=\"height:100px\"><img style=\"max-width:100%;max-height:100%\" src=\"" + assestpath + "logo_pdf.png\" /></div>\n            <div style=\"font-weight: bold;font-size:" + title_1 + "\">CLUB ALPINO ITALIANO</div>\n            </div>";
-            var document = "<html><head></head><body>" + header + "\n            <div style=\"font-size:" + body_1 + "\" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div>\n            <div style=\"font-weight: bold;font-size:" + title_1 + "\">Oggetto: Richiesta di contributi di tipo " + contribution_1.type + " Rifugi</div><br/>\n            <div style=\"font-weight: 400;font-size:" + title_1 + "\">Con la presente vi comunico che la Sezione di " + shelter.branch + " intende svolgere nel \n            " + (contribution_1.year + 1) + " i lavori di manutenzione in seguito descritti,\n            predisponendo un piano economico cos\u00EC suddiviso:</div><br/>";
+            var header = "<div style=\"text-align:center\">\n            <div style=\"height:65px\"><img style=\"max-width:100%;max-height:100%\" src=\"" + assestpath + "logo_pdf.png\" /></div>\n            <div style=\"font-weight: bold;font-size:" + title_1 + "\">CLUB ALPINO ITALIANO</div>\n            </div>";
+            var document = "<html><head></head><body>" + header + "\n            <br/><div style=\"font-size:" + body_1 + "\" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div><br/>\n            <div style=\"font-weight: bold;font-size:" + title_1 + "\">Oggetto: Richiesta di contributi di tipo " + contribution_1.type + " Rifugi</div><br/>\n            <div style=\"font-weight: 400;font-size:" + title_1 + "\">Con la presente vi comunico che la Sezione di " + shelter.branch + " intende svolgere nel \n            " + (contribution_1.year + 1) + " i lavori di manutenzione in seguito descritti,\n            predisponendo un piano economico cos\u00EC suddiviso:</div><br/>";
             document += "<div style='font-weight:400;font-size:" + subtitle_1 + "'>";
             document += getContributionHtml("Lavori a corpo", contribution_1.data.handWorks);
             document += getContributionHtml("Lavori a misura", contribution_1.data.customizedWorks);
