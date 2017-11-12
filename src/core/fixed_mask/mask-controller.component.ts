@@ -14,6 +14,7 @@ import {BcAuthService} from '../../app/shared/auth.service';
     selector: 'bc-mask',
     templateUrl: 'mask-controller.component.html',
     providers:[ShelterService],
+    styleUrls:['mask-controller.component.scss'],
     encapsulation:ViewEncapsulation.None
 })
 export class BcMaskController {
