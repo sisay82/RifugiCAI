@@ -17,7 +17,6 @@
   
   .bc-text-input{
     position: relative;
-    align-items: center;
     width:100%;
 
     &-title{
@@ -32,7 +31,7 @@
     };
 
     &-content{
-      align-items: center;
+      align-items: baseline;
     }
 
     &[one-line]{
