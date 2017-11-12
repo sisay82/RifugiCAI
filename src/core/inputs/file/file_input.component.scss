@@ -3,6 +3,7 @@
 
 @mixin bc-file-input-theme ($theme){
   $warn: map-get($theme, warn);
+  $danger:map-get($theme, danger);
 
   .invalid{
     border-left: 5px solid bc-color($warn);
@@ -15,6 +16,10 @@
         cursor: default;
       }
     }
+  }
+
+  .bc-alert{
+    color:bc-color($danger);
   }
 
   .bc-file-input{
