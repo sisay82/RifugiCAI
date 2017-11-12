@@ -1,4 +1,4 @@
 <div class="bc-body bc-file-input-title">{{title}}</div>
 <input [disabled]="isDisabled||_contentType==null" [accept]="getAcceptables()" [bc-enable-error]="invalid" type="file" style="text-overflow: ellipsis; font-style: normal; font-weight: normal; text-decoration: inherit;"
     class="form-control" (change)="onChange($event)">
-<div [hidden]="!(displayError&&enableBlock&&invalid)" class="alert alert-danger">{{messageBlock||'Invalid!'}}</div>
+<div [hidden]="!(displayError&&enableBlock&&invalid)" class="bc-alert">{{messageBlock||'Invalid!'}}</div>

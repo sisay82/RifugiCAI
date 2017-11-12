@@ -25,7 +25,7 @@ interface IFileExtended extends IFile,mongoose.Document{
 }
 
 const disableAuth:boolean=false;
-const disableLog:boolean=true;
+const disableLog:boolean=!(process.env.ENABLE_LOG || false);
 const months=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
 (<any>mongoose.Promise)=global.Promise;
 const DOMParser = xmldom.DOMParser;
