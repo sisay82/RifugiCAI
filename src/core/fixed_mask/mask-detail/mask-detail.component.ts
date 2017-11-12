@@ -1,5 +1,5 @@
 import {
-  Component, Input,OnInit,OnChanges,SimpleChanges
+  Component, Input,OnInit,SimpleChanges,OnChanges,ViewEncapsulation
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
@@ -14,7 +14,11 @@ import {BcAuthService} from '../../../app/shared/auth.service';
     selector: 'bc-mask-detail',
     templateUrl: 'mask-detail.component.html',
     styleUrls: ['mask-detail.component.scss'],
-    providers:[ShelterService]
+    providers:[ShelterService],
+    host:{
+      '[class.bc-mask]':'true'
+    },
+    encapsulation:ViewEncapsulation.None
 })
 export class BcMask {
   @Input() shelter:IShelter;
@@ -48,7 +52,7 @@ export class BcMask {
     this.router.navigateByUrl("list");
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes:SimpleChanges) {
     if(!this.shelterInitialized&&this.shelter!=undefined){
       this.shelterInitialized=true;
       let permissionSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{

@@ -1,5 +1,5 @@
 import {
-  Component, Input,OnDestroy,OnInit
+  Component, Input,OnDestroy,ViewEncapsulation
 } from '@angular/core';
 import { IShelter } from '../../app/shared/types/interfaces';
 import { Enums } from '../../app/shared/types/enums';
@@ -13,7 +13,8 @@ import {BcAuthService} from '../../app/shared/auth.service';
     moduleId: module.id,
     selector: 'bc-mask',
     templateUrl: 'mask-controller.component.html',
-    providers:[ShelterService]
+    providers:[ShelterService],
+    encapsulation:ViewEncapsulation.None
 })
 export class BcMaskController {
   @Input() shelter:IShelter;
