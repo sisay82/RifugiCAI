@@ -6,4 +6,4 @@
     <option [selected]="checkEnumValue(undefined)" value="">-- {{defaultContent || title}} --</option>
     <option *ngFor="let name of getEnumNames()" [selected]="checkEnumValue(name)" [value]="name">{{name}}</option>
 </select>
-<div [hidden]="!(displayError&&enableBlock&&invalid)" class="alert alert-danger">{{errorMessage||'Invalid!'}}</div>
+<div [hidden]="!(displayError&&enableBlock&&invalid)" class="bc-alert">{{errorMessage||'Invalid!'}}</div>
