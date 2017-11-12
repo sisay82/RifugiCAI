@@ -13,40 +13,40 @@
         </div>
     </div>
     <div class="bc-mask-line" style="margin-left:10px">
-        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+        <div class="bc-mask-line-content">
             <div class="bc-mask-title bc-body-strong">ID:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.idCai || '----'}}</div>
+            <div class="bc-mask-element bc-body">{{shelter?.idCai || '----'}}</div>
         </div>
-        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+        <div class="bc-mask-line-content">
             <div class="bc-mask-title  bc-body-strong">Tipo:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.type || '----'}}</div>
+            <div class="bc-mask-element bc-body">{{shelter?.type || '----'}}</div>
         </div>
-        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+        <div class="bc-mask-line-content">
             <div class="bc-mask-title  bc-body-strong">Sezione CAI:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.branch || '----'}}</div>
+            <div class="bc-mask-element bc-body">{{shelter?.branch || '----'}}</div>
         </div>
 
-        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+        <div class="bc-mask-line-content">
             <div class="bc-mask-title  bc-body-strong">Proprietà:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.owner || '----'}}</div>
+            <div class="bc-mask-element bc-body">{{shelter?.owner || '----'}}</div>
         </div>
     </div>
     <div class="bc-mask-line" style="margin-left:15px">
-        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+        <div class="bc-mask-line-content">
             <div class="bc-mask-title  bc-body-strong">Categoria:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.category || '----'}}</div>
+            <div class="bc-mask-element bc-body">{{shelter?.category || '----'}}</div>
         </div>
-        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+        <div class="bc-mask-line-content">
             <div class="bc-mask-title  bc-body-strong">Categoria per la Regione:</div>
-            <div class="bc-mask-content bc-body">{{shelter?.regional_type||'----'}}</div>
+            <div class="bc-mask-element bc-body">{{shelter?.regional_type||'----'}}</div>
         </div>
-        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+        <div class="bc-mask-line-content">
             <div class="bc-mask-title  bc-body-strong">Inserito il:</div>
-            <div class="bc-mask-content bc-body">{{shelter?(shelter.insertDate?(shelter.insertDate | date:"dd/MM/yy"):'----'): '----'}}</div>
+            <div class="bc-mask-element bc-body">{{shelter?(shelter.insertDate?(shelter.insertDate | date:"dd/MM/yy"):'----'): '----'}}</div>
         </div>
-        <div style="flex:1;padding-left:4px;display:flex;flex-direction:row;align-items:center">
+        <div class="bc-mask-line-content">
             <div class="bc-mask-title  bc-body-strong">Aggiornato il:</div>
-            <div class="bc-mask-content bc-body">{{shelter?(shelter.updateDate?(shelter.updateDate | date:"dd/MM/yy"):'----'): '----'}}</div>
+            <div class="bc-mask-element bc-body">{{shelter?(shelter.updateDate?(shelter.updateDate | date:"dd/MM/yy"):'----'): '----'}}</div>
         </div>
     </div>
     <bc-divider style="margin:0"></bc-divider>

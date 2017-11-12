@@ -31,9 +31,15 @@
       margin-right:2px;
     };
 
+    &-content{
+      align-items: center;
+    }
+
     &[one-line]{
-      display: flex;
-      flex-direction: row;
+      .bc-text-input-content{
+        display: flex;
+        flex-direction: row;
+      }
     };
     &[title-bold]{
       .bc-text-input-title{

@@ -1,0 +1,61 @@
+@import './mask-revision/mask-revision.component';
+@import './mask-detail/mask-detail.component';
+
+@mixin bc-mask-theme ($theme){
+    $accent: map-get($theme, accent);
+    $background: map-get($theme, background);
+
+    .bc-mask{
+        &-icon{
+            font-size:20px;
+            padding-right: 10px;
+    
+            &:hover{
+                color: bc-color($accent);
+                cursor: pointer;
+            }
+        };
+
+        &-container{
+            background-color: bc-color($background, 'background');
+            font-family: $bc-font-family;
+            position:relative;
+            white-space: nowrap;
+            width: 100%;
+        };
+        
+        &-line{
+            display:flex;
+            flex-direction: row;
+            align-items: center;
+            position:relative;
+            min-height:33%;
+            height:auto;
+            white-space: nowrap;
+            
+           &-content{
+            flex:1;
+            white-space: nowrap;
+            display:flex;
+            flex-direction:row;
+            align-items:center;
+           }
+        };
+
+        &-element{
+            white-space: nowrap;
+            padding-left:4px;
+            align-items:center;
+            display: inline;
+        }
+
+        &-title{
+            align-items:center;
+            display: inline;
+        }
+    }
+
+    @include bc-mask-revision($theme);
+    @include bc-mask-detail($theme);
+}
+
