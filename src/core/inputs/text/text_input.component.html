@@ -2,9 +2,13 @@
     <div class="bc-body bc-text-input-title">{{title}}
         <div *ngIf="required" class="bc-text-input-required">*</div>
     </div>
-    <input [placeholder]="placeholder" [bc-enable-error]="invalid" [disabled]="isDisabled" type="text" style="text-overflow: ellipsis; text-decoration: inherit;"
-        class="form-control" (keyup)="onKey($event)" [value]="getValue()">
+    <div>
+        <input [placeholder]="placeholder" [bc-enable-error]="invalid" [disabled]="isDisabled" type="text" style="text-overflow: ellipsis; text-decoration: inherit;"
+            class="form-control" (keyup)="onKey($event)" [value]="getValue()">
+        <div [hidden]="!(displayError&&enableBlock&&invalid)" class="alert alert-danger">{{errorMessage||'Invalid!'}}</div>
+    </div>
+    
 </div>
-<div [hidden]="!(displayError&&enableBlock&&invalid)" class="alert alert-danger">{{errorMessage||'Invalid!'}}</div>
+
 
 
