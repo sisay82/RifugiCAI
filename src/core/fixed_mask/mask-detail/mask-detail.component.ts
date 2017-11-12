@@ -1,5 +1,5 @@
 import {
-  Component, Input,OnInit
+  Component, Input,OnInit,ViewEncapsulation
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
@@ -13,7 +13,11 @@ import { Subscription } from 'rxjs/Subscription';
     selector: 'bc-mask-detail',
     templateUrl: 'mask-detail.component.html',
     styleUrls: ['mask-detail.component.scss'],
-    providers:[ShelterService]
+    providers:[ShelterService],
+    host:{
+      '[class.bc-mask]':'true'
+    },
+    encapsulation:ViewEncapsulation.None
 })
 export class BcMask {
   @Input() shelter:IShelter;

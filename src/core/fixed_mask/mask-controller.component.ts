@@ -1,5 +1,5 @@
 import {
-  Component, Input,OnDestroy
+  Component, Input,OnDestroy,ViewEncapsulation
 } from '@angular/core';
 import { IShelter } from '../../app/shared/types/interfaces';
 import {Router,ActivatedRoute} from '@angular/router';
@@ -9,7 +9,9 @@ import { Subscription } from 'rxjs/Subscription';
 @Component({
     moduleId: module.id,
     selector: 'bc-mask',
-    templateUrl: 'mask-controller.component.html'
+    templateUrl: 'mask-controller.component.html',
+    styleUrls:['mask-controller.component.scss'],
+    encapsulation:ViewEncapsulation.None
 })
 export class BcMaskController {
   @Input() shelter:IShelter;
