@@ -1,5 +1,4 @@
 <form style="position:relative" [formGroup]="servForm">
-    <div [hidden]="!displayError" class="alert alert-danger">Invalid!</div>
     <div formArrayName="services">
         <div *ngFor="let service of servForm.controls.services.controls;let i = index">
             <div [formGroupName]="i">
