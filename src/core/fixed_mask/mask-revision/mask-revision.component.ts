@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnInit, OnDestroy,SimpleChanges,OnChanges, Directive
+  Component, Input, OnInit, OnDestroy, Directive,SimpleChanges,OnChanges,ViewEncapsulation
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
@@ -26,7 +26,11 @@ export class BcDisableStyler{
     selector: 'bc-mask-revision',
     templateUrl: 'mask-revision.component.html',
     styleUrls: ['mask-revision.component.scss'],
-    providers:[ShelterService]
+    providers:[ShelterService],
+    host:{
+      '[class.bc-mask]':'true'
+    },
+    encapsulation:ViewEncapsulation.None
 })
 export class BcMaskRevision {
   @Input() shelter:IShelter;
