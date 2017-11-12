@@ -3,7 +3,7 @@
 
 @mixin bc-text-input-theme ($theme){
   $warn: map-get($theme, warn);
-
+  $danger:map-get($theme, danger);
   .invalid{
     border-left: 5px solid bc-color($warn);
   }
@@ -13,6 +13,12 @@
       pointer-events: none;
       cursor: default;
     }
+  }
+
+  .bc-alert{
+    border: none; 
+    background: transparent;
+    color:bc-color($danger);
   }
   
   .bc-text-input{
