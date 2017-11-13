@@ -60,10 +60,10 @@
 <div class="bc-body-strong" style="font-style:italic">I file vanno rinominati nel seguente modo: tipo-fornitore-numero-data. Es: fattura-fornitorex-1-ottobre2017</div>
 <form [formGroup]="invoicesForm">
     <div formArrayName="files">
-        <div *ngFor="let file of invoicesForm.controls.files.controls;let i = index">
+        <div *ngFor="let file of invoicesForm.get('files');let i = index">
             <div [formGroupName]="i">
                 <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-                    <bc-icon *ngIf="!invoicesForm.controls.files.at(i).disabled" (click)="removeInvoice(i,file.value._id)" class="bc-file" name="times" size=s></bc-icon>
+                    <bc-icon *ngIf="!invoicesForm.get('files').at(i).disabled" (click)="removeInvoice(i,file.value._id)" class="bc-file" name="times" size=s></bc-icon>
                     <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
                         <div class="bc-body-strong">Nome:</div>
                         <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file.value._id)"> {{file.value.name}}</div>

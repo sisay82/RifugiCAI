@@ -10,7 +10,7 @@ export abstract class RevisionBase {
     protected invalid:boolean=false;
     protected disableSave=false;
     protected maskSaveSub:Subscription;
-    protected displayError:boolean=false;
+    displayError:boolean=false;
     protected maskError:boolean=false;
     protected maskInvalidSub:Subscription;
     protected maskValidSub:Subscription;

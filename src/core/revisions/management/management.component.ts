@@ -21,7 +21,7 @@ import {RevisionBase} from '../shared/revision_base';
   providers:[ShelterService]
 })
 export class BcManagementRevision extends RevisionBase{
-    private managForm: FormGroup; 
+    managForm: FormGroup; 
     private newSubjectForm: FormGroup;
     private data:IManagement;
     private property:ISubject;

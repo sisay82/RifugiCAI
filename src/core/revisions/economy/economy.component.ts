@@ -40,13 +40,13 @@ styleUrls: ['economy.component.scss'],
 providers:[ShelterService]
 })
 export class BcEconomyRevision extends RevisionBase{
-  private economy:[IEconomy]=<any>[];
+  economy:[IEconomy]=<any>[];
   private files:IFile[]=[];  
   private activeYear;
   private userRole:Enums.User_Type;
   maskSaveSub:Subscription;
   name:String;
-  private activeTab:IEconomy;
+  activeTab:IEconomy;
   private balanceSheet:number=0;
   private revenuesFiles:[IFile]=[] as [IFile];
   private outgosFiles:[IFile]=[] as [IFile];

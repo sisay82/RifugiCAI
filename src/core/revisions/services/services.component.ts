@@ -22,7 +22,7 @@ import {RevisionBase} from '../shared/revision_base';
   animations: [ Animations.slideInOut ]
 })
 export class BcServRevision extends RevisionBase {
-    private servForm: FormGroup; 
+    servForm: FormGroup; 
     private newServiceForm: FormGroup;
     private newTagForm: FormGroup;
     private serviceToRemove:String[]=[];

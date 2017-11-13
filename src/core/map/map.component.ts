@@ -67,7 +67,7 @@ export class BcMap implements OnInit{
     public static defaultCenter:L.LatLng=new L.LatLng((<any>Enums.Region_LanLng.lazio)[0],(<any>Enums.Region_LanLng.lazio)[1]);
     private normalIcon;
 
-    private expanded:boolean=false;   
+    expanded:boolean=false;   
     private markerPane= L.featureGroup();
 
     private base_url:string="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
