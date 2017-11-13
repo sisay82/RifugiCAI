@@ -24,7 +24,7 @@ const maxImages:Number=10;
 })
 export class BcImgRevision extends RevisionBase {
   private newDocForm: FormGroup;
-  private docsForm: FormGroup;
+  docsForm: FormGroup;
   private uploading:boolean=false;
   private newDocFormValidSub:Subscription;
   private docsFormValidSub:Subscription;
