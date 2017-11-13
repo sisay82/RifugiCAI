@@ -32,9 +32,9 @@ function validateDate(c:FormControl){
   providers:[ShelterService]
 })
 export class BcCatastalRevision extends RevisionBase{
-    private catastalForm: FormGroup; 
-    private energyForm: FormGroup; 
-    private drainForm: FormGroup; 
+    catastalForm: FormGroup; 
+    energyForm: FormGroup; 
+    drainForm: FormGroup; 
     private catastal:ICatastal;
     private energy:IEnergy;
     private drain:IDrain;

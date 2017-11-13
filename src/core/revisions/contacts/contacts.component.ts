@@ -21,7 +21,7 @@ import {RevisionBase} from '../shared/revision_base';
   providers:[ShelterService]
 })
 export class BcContactsRevision extends RevisionBase {
-    private contactForm: FormGroup; 
+    contactForm: FormGroup; 
     private newOpeningForm: FormGroup;
     private contacts:IContacts;
     private openings:IOpening[];

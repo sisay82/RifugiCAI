@@ -34,13 +34,13 @@ export class BcDocRevision extends RevisionBase{
   private newDocForm: FormGroup;
   private newMapForm: FormGroup;
   private newInvoiceForm: FormGroup;
-  private invoicesForm: FormGroup;
+  invoicesForm: FormGroup;
   private invalidYearsInvoice=".+";
   private initialData:IFile[]=[];
   private invoiceFormatBase=".+(\\,|\\/|\\-|\\\\|\\.|\\||_).+(\\,|\\/|\\-|\\\\|\\.|\\||_).+(\\,|\\/|\-|\\\\|\\.|\\||_)";
   invoiceFormatRegExp=/.+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+/ //tipo, fornitore, numero, data
-  private docs:IFile[]=[];
-  private maps:IFile[]=[];
+  docs:IFile[]=[];
+  maps:IFile[]=[];
   private invoicesChange:boolean=false;
   invalid:boolean=false;
   private docFormValidSub:Subscription;

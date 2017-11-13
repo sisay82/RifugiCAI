@@ -1,14 +1,14 @@
 <form style="position:relative" [formGroup]="servForm">
     <div formArrayName="services">
-        <div *ngFor="let service of servForm.controls.services.controls;let i = index">
+        <div *ngFor="let service of servForm.get('services');let i = index">
             <div [formGroupName]="i">
-                <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{service.controls.category.value | titleCase}}</div>
+                <div class="bc-h6 bc-service-title" style="white-space:nowrap;flex:1">{{service.get('category').value | titleCase}}</div>
                 <div formArrayName="tags">
-                    <div *ngFor="let tag of service.controls.tags.controls;let j = index">
+                    <div *ngFor="let tag of service.get('tags');let j = index">
                         <div [formGroupName]="j" style="display: flex;flex-direction:row;height:inherit;align-items:baseline">
-                            <div class="bc-body" style="white-space:nowrap">{{tag.controls.key.value | titleCase}}:</div>
+                            <div class="bc-body" style="white-space:nowrap">{{tagget('key').value | titleCase}}:</div>
                             <div class="bc-revision-services-tags">
-                                <bc-text-input [enableBlock]="getValidator(tag.value.type)=='numberValidator'" errorMessage="Inserire sono numeri." [placeholder]="getPlaceholder(service.controls.category.value,tag.controls.key.value)" formControlName="value" [validator]="getValidator(tag.value.type)" [displayError]="displayError"></bc-text-input>
+                                <bc-text-input [enableBlock]="getValidator(tag.value.type)=='numberValidator'" errorMessage="Inserire sono numeri." [placeholder]="getPlaceholder(service.get('category').value,tag.get('key').value)" formControlName="value" [validator]="getValidator(tag.value.type)" [displayError]="displayError"></bc-text-input>
                             </div>
                         </div>
                         <br>

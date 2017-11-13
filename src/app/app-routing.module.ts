@@ -14,7 +14,7 @@ const appRoutes: Routes = [
   imports: [
     RouterModule.forRoot(appRoutes)
   ],
-  declarations:[BcAccessDenied],
+ // declarations:[BcAccessDenied],
   exports: [
     RouterModule
   ]
