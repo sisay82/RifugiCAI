@@ -20,4 +20,4 @@ import { BcShelterMap } from './shelterMap.component';
   declarations: [BcShelterMap],
   exports: [BrowserModule, CoreModule, BcShelterMap]
 })
-export class ShelteMapModule { }
+export class ShelterMapModule { }

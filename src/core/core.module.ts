@@ -45,6 +45,6 @@ const PIPES_MODULES = [
     imports: COMPONENTS_MODULES,
     declarations: PIPES_MODULES,
     // providers: SERVICES_MODULES,
-    exports: [].concat(COMPONENTS_MODULES, PIPES_MODULES)
+    exports: COMPONENTS_MODULES
 })
 export class CoreModule { }

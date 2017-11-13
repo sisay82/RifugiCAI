@@ -12,7 +12,7 @@ const appRoutes: Routes = [
   imports: [
     RouterModule.forRoot(appRoutes)
   ],
-  declarations:[BcPageNotFound],
+  //declarations:[BcPageNotFound],
   exports: [
     RouterModule
   ]

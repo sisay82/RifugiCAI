@@ -8,14 +8,14 @@ import { AppComponent } from './app.component';
 
 import { AppRoutingModule } from './app-routing.module';
 import { ShelterListModule } from './shelter/shelterList/shelterList.module';
-import { ShelteMapModule } from './shelter/shelterMap/shelterMap.module';
+import { ShelterMapModule } from './shelter/shelterMap/shelterMap.module';
 
 @NgModule({
     imports: [
         BrowserModule,
         CoreModule,
         ShelterListModule,
-        ShelteMapModule,
+        ShelterMapModule,
         AppRoutingModule,
         HttpModule
     ],

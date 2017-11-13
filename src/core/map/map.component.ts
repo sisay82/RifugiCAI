@@ -74,7 +74,7 @@ export class BcMap implements OnInit{
 
     private normalIcon;
 
-    private expanded:boolean=false;   
+    expanded:boolean=false;   
     private markerPane= L.featureGroup();
 
     private base_url:string="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
