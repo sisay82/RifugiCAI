@@ -14,6 +14,7 @@
 @import '../inputs/inputs.component';
 @import '../tooltip/tooltip.component';
 @import '../fixed_mask/mask-controller.component';
+@import '../map/map.component';
 
 // Create a full theme.
 @mixin bc-theme($theme) {
@@ -29,4 +30,5 @@
   @include bc-inputs-theme($theme);
   @include bc-tooltip-theme($theme);
   @include bc-mask-theme($theme);
+  @include bc-map-theme($theme);
 }

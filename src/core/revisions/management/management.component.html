@@ -44,7 +44,7 @@
         </div>
         <bc-divider></bc-divider>
         <div class="bc-management-title bc-h6">Custodia e/o gestione</div>
-        <div *ngFor="let open of managForm.controls['subjects'].controls;let i = index" formArrayName="subjects">
+        <div *ngFor="let open of managForm.get('subjects');let i = index" formArrayName="subjects">
             <div [formGroupName]="i">
                 <div style="display: flex;flex-direction:row;align-items:center">
                     <div class="bc-revision-management">

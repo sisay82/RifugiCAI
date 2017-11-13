@@ -17,7 +17,7 @@ import {RevisionBase} from '../shared/revision_base';
     providers:[ShelterService]
 })
 export class BcFruitionRevision extends RevisionBase {
-    private useForm: FormGroup; 
+    useForm: FormGroup; 
     private data:IUse;
 
     constructor(private shelterService:ShelterService,private shared:BcSharedService,private revisionService:BcRevisionsService,private fb: FormBuilder,private _route:ActivatedRoute){

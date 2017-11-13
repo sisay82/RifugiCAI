@@ -15,7 +15,7 @@ function getRegionMarkerHtml(content,size){
 }
 
 function getNormalMarkerHtml(size){
-    return `<div style="font-size:`+size+`px" class="fa fa-map-marker bc-marker bc-tiny-marker"></div>`;
+    return `<div style="font-size:`+size+`px" class="fa fa-map-marker bc-marker bc-marker-tiny"></div>`;
 }
 
 function getTooltip(name,municipality,province,region){
@@ -24,7 +24,7 @@ function getTooltip(name,municipality,province,region){
         <div style="top:20%;position:relative">`+(name?(name):'---')+`</div>
     </div>
     <div class="bc-tooltip-line">
-        <div class="bc-tooltip-content-line">`+(municipality?(municipality):'---')+`, `+(province?(province):'---')+`</br>`+(region?(region):'---')+`</div>
+        <div class="bc-tooltip-line-content">`+(municipality?(municipality):'---')+`, `+(province?(province):'---')+`</br>`+(region?(region):'---')+`</div>
     </div>
 </div>`
     return tooltip;
@@ -74,10 +74,10 @@ export class BcMap implements OnInit{
 
     private normalIcon;
 
-    private expanded:boolean=false;   
+    expanded:boolean=false;   
     private markerPane= L.featureGroup();
 
-    private base_url:string="http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
+    private base_url:string="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
     private map:Map;
     private divIcon;
 
@@ -129,8 +129,8 @@ export class BcMap implements OnInit{
 
     getMapInit(mapElement:string){
         this.map = new L.Map(mapElement);
-        L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
+        L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="https://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
         }).addTo(this.map);
         this.map.on("click",function(e:any){
             e.target.eachLayer(function(layer){layer.closeTooltip()})

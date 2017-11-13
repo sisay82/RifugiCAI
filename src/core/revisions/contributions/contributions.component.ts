@@ -30,8 +30,8 @@ export class BcDisableDataStyler{
 })
 export class BcContributionRevision extends RevisionBase {
     docs:IFile[]=<any>[];
-    private newAttachmentForm: FormGroup;
-    private contrForm: FormGroup; 
+    newAttachmentForm: FormGroup;
+    contrForm: FormGroup; 
     private accepted:boolean;
     filesEnum:String[]=[];
     maskSaveSub:Subscription;

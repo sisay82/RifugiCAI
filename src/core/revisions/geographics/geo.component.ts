@@ -17,7 +17,7 @@ import {RevisionBase} from '../shared/revision_base';
   providers:[ShelterService]
 })
 export class BcGeoRevision extends RevisionBase {
-    private geoForm: FormGroup; 
+    geoForm: FormGroup; 
     private newTagForm: FormGroup;
     private data:IGeographic;
     private tagChange:boolean=false
