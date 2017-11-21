@@ -3,7 +3,7 @@
 <div class="bc-body-strong" style="font-style:italic">Possono essere inserite massimo 10 immagini</div>
 <form [formGroup]="docsForm">
     <div formArrayName="files">
-        <div *ngFor="let file of docsForm.get('files');let i = index" >
+        <div *ngFor="let file of getFormControls('files');let i = index" >
             <div [formGroupName]="i" style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
                 <bc-icon (click)="removeFile(file.value.id)" class="bc-img" name="times" size=s></bc-icon>
                 <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
