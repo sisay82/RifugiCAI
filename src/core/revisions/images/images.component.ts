@@ -74,6 +74,10 @@ export class BcImgRevision extends RevisionBase {
     shared.activeComponent="images";
   }
 
+  getFormControls(controlName){
+    return (<FormGroup>this.docsForm.controls[controlName]).controls;
+  }
+
   checkValidForm(){
     return this.docsForm.valid;
   }

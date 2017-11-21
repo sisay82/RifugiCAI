@@ -79,6 +79,18 @@ export class BcServRevision extends RevisionBase {
         shared.activeComponent="services";
     } 
 
+    getFormControls(controlName){
+        return (<FormGroup>this.servForm.controls[controlName]).controls;
+    }
+
+    getControl(control:FormGroup,controlName){
+        return control.controls[controlName];
+    }
+
+    getFormControlsByControl(control:FormGroup,controlName){
+        return (<FormGroup>this.getControl(control,controlName)).controls;
+    }
+
     checkValidForm(){
         return this.servForm.valid;
     }

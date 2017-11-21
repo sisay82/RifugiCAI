@@ -60,7 +60,7 @@
     </bc-list>
     <bc-list style="flex:1" color="accent" formArrayName="attachments">
         <bc-list-header><span class="bc-title-contributions">Allegati</span></bc-list-header>
-        <bc-list-item *ngFor="let item of contrForm.get('attachments');let i=index" [formGroupName]="i">
+        <bc-list-item *ngFor="let item of getFormControls('attachments');let i=index" [formGroupName]="i">
             <div bc-line style="display:flex; flex-direction:row;align-items:center">
                 <bc-icon (click)="removeAttachment(i)" class="bc-icon-contribution" name="times" size=s></bc-icon>                    
                 <div style="flex: 1">{{item.value.value}}</div>

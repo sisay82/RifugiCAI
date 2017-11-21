@@ -94,6 +94,10 @@ export class BcContributionRevision extends RevisionBase {
         this.shared.onSetDisableMaskSave(true);
     }
 
+    getFormControls(controlName){
+        return (<FormGroup>this.contrForm.controls[controlName]).controls;
+    }
+
     getEnumValues(){
         return Object.keys(Enums.Contributions).map(o=>Enums.Contribution_Type[o]);
     }

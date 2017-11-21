@@ -91,6 +91,10 @@ export class BcManagementRevision extends RevisionBase{
         shared.activeComponent="management";
     } 
 
+    getFormControls(controlName){
+        return (<FormGroup>this.managForm.controls[controlName]).controls;
+    }
+
     checkValidForm(){
         return this.managForm.valid;
     }
