@@ -12,6 +12,7 @@ import { ShelterModule } from './shelter/shelterPage/shelter.module';
 import { ShelterListModule } from './shelter/shelterList/shelterList.module';
 import { BcSharedService } from './shared/shared.service';
 import { PageNotFoundModule } from "./pageNotFound/pageNotFound.module";
+import { BcAccessDeniedModule} from "./accessDenied/access-denied.module";
 
 @NgModule({
     imports: [
@@ -22,7 +23,8 @@ import { PageNotFoundModule } from "./pageNotFound/pageNotFound.module";
         ShelterMapModule,
         FormsModule,
         PageNotFoundModule,
-        AppRoutingModule
+        AppRoutingModule,
+        BcAccessDeniedModule
     ],
     providers: [BcSharedService],
     declarations: [AppComponent],
