@@ -120,6 +120,10 @@ export class BcDocRevision extends RevisionBase{
     shared.activeComponent="documents";
   }
 
+  getFormControls(controlName){
+    return (<FormGroup>this.invoicesForm.controls[controlName]).controls;
+  }
+
   setDisplayError(value){
     this.displayError=value;
   }
