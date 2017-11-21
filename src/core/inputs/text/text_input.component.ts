@@ -240,16 +240,19 @@ export class BcTextInput implements ControlValueAccessor {
             this.value=c.value;
             if(
                 (!this.required||(c.value!==undefined&&c.value!=""))&&
-                (this._validator(c.value)===null)&&
-                (!this.minLength||(c.value&&c.value.length>=this.minLength))&&
-                (!this.maxLength||(c.value&&c.value.length<=this.maxLength))&&
-                (!this.minValue||(c.value&&c.value>=this.minValue))&&
-                (!this.maxValue||(c.value&&c.value<=this.maxValue))&&
-                (!this.except||(c.value&&c.value!=this.except))
+                (!this.required&&(c.value===undefined||c.value==""))||
+                (
+                    (this._validator(c.value)===null)&&
+                    (!this.minLength||(c.value&&c.value.length>=this.minLength))&&
+                    (!this.maxLength||(c.value&&c.value.length<=this.maxLength))&&
+                    (!this.minValue||(c.value&&c.value>=this.minValue))&&
+                    (!this.maxValue||(c.value&&c.value<=this.maxValue))&&
+                    (!this.except||(c.value&&c.value!=this.except))
+                )
             ){
                 this.invalid=false;
                 return null;
-            }else{
+            }else{                
                 if(this.displayError){
                     this.invalid=true;
                 }

@@ -70,6 +70,10 @@ export class BcContactsRevision extends RevisionBase {
         shared.activeComponent="contacts";
     } 
 
+    getFormControls(controlName){
+        return (<FormGroup>this.contactForm.controls[controlName]).controls;
+    }
+
     checkValidForm(){
         return this.contactForm.valid;
     }

@@ -24,7 +24,6 @@ export class BcShelterList {
     private isCentralUser(){
         this.authService.isCentralUser().subscribe(val=>{
             this.isCentral=val;
-            return val;
         });
     }
 
@@ -45,7 +44,6 @@ export class BcShelterList {
             section=processedProfile.section;
             region=processedProfile.region;
             this.isCentralUser();
-            
             let shelSub = this.shelterService.getShelters(region,section).subscribe(shelters => {
                 this.rifugiSample = shelters;
                 this.filteredShelter = shelters;

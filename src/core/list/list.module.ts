@@ -17,6 +17,7 @@ import { BcListItemModule } from './listItem/list-item.module';
         BcListAvatarStyler,
         BcListThumbnailStyler,
         BcListHeaderModule,
+        BcListThumbnailStyler,
         BcListItemGroupModule,
         BcListItemModule,
         BcDividerModule

@@ -26,7 +26,7 @@
         <br>
         <bc-divider></bc-divider>
         <div class="bc-h6 bc-contact-title">Aperture</div>
-        <div *ngFor="let open of contactForm.get('openings');let i = index" formArrayName="openings">
+        <div *ngFor="let open of getFormControls('openings');let i = index" formArrayName="openings">
             <div [formGroupName]="i" style="display: flex;flex-direction:row;align-items:center">
                 <div class="bc-revision-contact">
                     <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="startDate" title="Inizio" removeYear="true" validator="validateDate" [displayError]="displayError"></bc-text-input>
