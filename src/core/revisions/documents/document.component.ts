@@ -119,8 +119,13 @@ export class BcDocRevision extends RevisionBase{
     shared.activeComponent="documents";
   }
 
-  getFormControls(controlName){
-    return (<FormGroup>this.invoicesForm.controls[controlName]).controls;
+  getInvoicesFormControls(controlName:string,index?){
+    const control=(<FormArray>this.invoicesForm.controls[controlName]);
+    if(index){
+      return control.at(index);
+    }else{
+      return control.controls;
+    }
   }
 
   setDisplayError(value){
