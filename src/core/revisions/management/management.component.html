@@ -42,6 +42,10 @@
                 <bc-select-input defaultContent="Selezionare tipo possesso" enumName="Possession_Type" formControlName="propPossessionType" title="Tipo possesso" [displayError]="displayError"></bc-select-input>
             </div>
         </div>
+        <div style="display: flex;flex-direction:row">
+            <bc-checkbox-input formControlName="pickupKey" title="Ritiro chiavi"></bc-checkbox-input>
+            <bc-checkbox-input formControlName="self_management" title="Autogestione"></bc-checkbox-input>
+        </div>
         <bc-divider></bc-divider>
         <div class="bc-management-title bc-h6">Custodia e/o gestione</div>
         <div *ngFor="let open of getFormControls('subjects');let i = index" formArrayName="subjects">
@@ -97,10 +101,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div style="display: flex;flex-direction:row">
-            <bc-checkbox-input formControlName="pickupKey" title="Ritiro chiavi"></bc-checkbox-input>
-            <bc-checkbox-input formControlName="self_management" title="Autogestione"></bc-checkbox-input>
         </div>
         <bc-divider></bc-divider>
     </div>

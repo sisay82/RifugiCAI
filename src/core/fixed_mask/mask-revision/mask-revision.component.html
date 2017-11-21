@@ -4,7 +4,7 @@
             <bc-icon tooltip="Torna alla lista" (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:1%" name="arrow-left" size=s></bc-icon>
             <bc-icon *ngIf="checkWinPlatform()" (click)="toggleMenu()" class="bc-mask-icon" name="bars" size=s></bc-icon>
             <div class="bc-mask-revision-control" style="margin-right:1%;width:30%">
-                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio." placeholder="Es: Rifugio Capanna Gnifetti Giovanni" one-line formControlName="name" required="true" title="Nome" [displayError]="displayError"></bc-text-input>
+                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio" placeholder="Es: Rifugio Capanna Gnifetti Giovanni" one-line formControlName="name" required="true" title="Nome" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-mask-revision-control" style="margin-right:1%;width:30%">
                 <bc-text-input placeholder="Es: Capanna Gnifetti" one-line formControlName="alias" title="Nome comune" [displayError]="displayError"></bc-text-input>
@@ -17,17 +17,17 @@
         </div>
         <div class="bc-mask-line" style="margin-left:10px">
             <div class="bc-mask-revision-control">
-                <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri. Campo obbligatorio." placeholder="ID assegnato dal CAI" one-line required="true" minLength=8 maxLength=10 validator="numberValidator" formControlName="idCai" title="ID" [displayError]="displayError"></bc-text-input>
+                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio; inserire solo numeri" placeholder="ID assegnato dal CAI" one-line required="true" minLength=8 maxLength=10 validator="numberValidator" formControlName="idCai" title="ID" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-mask-revision-control">
-                <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio." defaultContent="Selezionare una tipologia" one-line required="true" [displayError]="displayError" enumName="Shelter_Type" formControlName="type" title="Tipo"></bc-select-input>
+                <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio" defaultContent="Selezionare una tipologia" one-line required="true" [displayError]="displayError" enumName="Shelter_Type" formControlName="type" title="Tipo"></bc-select-input>
             </div>
             <div class="bc-mask-revision-control">
-                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio." placeholder="Es: CAI Varallo" one-line formControlName="branch" required="true" title="Sezione CAI" [displayError]="displayError"></bc-text-input>
+                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio" placeholder="Es: CAI Varallo" one-line formControlName="branch" required="true" title="Sezione CAI" [displayError]="displayError"></bc-text-input>
             </div>
 
             <div class="bc-mask-revision-control">
-                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio." placeholder="Es: CAI" one-line formControlName="owner" required="true" title="Proprietà" [displayError]="displayError"></bc-text-input>
+                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio" placeholder="Es: CAI" one-line formControlName="owner" required="true" title="Proprietà" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div class="bc-mask-line" style="margin-left:15px">

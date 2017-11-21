@@ -187,14 +187,14 @@ export class BcMaskRevision {
 
   initForm(){
       if(this.shelter!=undefined){
-        this.maskForm.controls.name.setValue(this.shelter.name);
+        this.maskForm.controls.name.setValue(this.shelter.name||null);
         this.maskForm.controls.alias.setValue(this.shelter.alias||null);
-        this.maskForm.controls.idCai.setValue(this.shelter.idCai);
-        this.maskForm.controls.type.setValue(this.shelter.type);
-        this.maskForm.controls.branch.setValue(this.shelter.branch);
-        this.maskForm.controls.owner.setValue(this.shelter.owner);
-        this.maskForm.controls.category.setValue(this.shelter.category);
-        this.maskForm.controls.regional_type.setValue(this.shelter.regional_type);
+        this.maskForm.controls.idCai.setValue(this.shelter.idCai||null);
+        this.maskForm.controls.type.setValue(this.shelter.type||null);
+        this.maskForm.controls.branch.setValue(this.shelter.branch||null);
+        this.maskForm.controls.owner.setValue(this.shelter.owner||null);
+        this.maskForm.controls.category.setValue(this.shelter.category||null);
+        this.maskForm.controls.regional_type.setValue(this.shelter.regional_type||null);
       }
 
   }   
