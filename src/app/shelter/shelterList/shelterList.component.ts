@@ -43,6 +43,7 @@ export class BcShelterList {
             }
             section=processedProfile.section;
             region=processedProfile.region;
+            
             this.isCentralUser();
             let shelSub = this.shelterService.getShelters(region,section).subscribe(shelters => {
                 this.rifugiSample = shelters;
