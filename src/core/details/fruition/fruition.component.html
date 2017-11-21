@@ -1,7 +1,7 @@
 <div class="btn-group btn-group-justified">
     <ul class="nav navbar-nav" style="width:100%">
         <li class="navbar-item" *ngFor="let use of data">
-            <div [active]="isActive(use.year)" (click)="showTab(use.year)" style="padding:15px" class="btn bc-body bc-tab-fruition">
+            <div [active]="isActive(use.year)" (click)="showTab(use.year)" style="padding:15px" class="btn bc-body bc-fruition-tab">
                 {{use.year}}
             </div>
         </li>
@@ -9,41 +9,41 @@
 </div>
 <div *ngIf="activeTab!=undefined" class="bc-fruition-container">
     <div class="row">
-        <div class="bc-h6 col-md-3 col-md-offset-2 bc-title-fruition" align="center" style="padding:0">
+        <div class="bc-h6 col-md-3 col-md-offset-2 bc-fruition-title" align="center" style="padding:0">
             Soci CAI
         </div>
-        <div class="bc-h6 col-md-3 bc-title-fruition" align="center" style="padding:0">
+        <div class="bc-h6 col-md-3 bc-fruition-title" align="center" style="padding:0">
             Soci reciprocità     
         </div>
-        <div class="bc-h6 col-md-3 bc-title-fruition" align="center" style="padding:0">
+        <div class="bc-h6 col-md-3 bc-fruition-title" align="center" style="padding:0">
             Non soci CAI
         </div>
     </div>
     <div class="row">
-        <div class="bc-h6 col-md-2 bc-title-fruition" style="padding-right:0">
+        <div class="bc-h6 col-md-2 bc-fruition-title" style="padding-right:0">
             Passaggi e pasti
         </div>
-        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+        <div class="bc-body col-md-3 bc-fruition-body" align="center">
             {{activeTab.transit_count_associate?(activeTab.transit_count_associate):0}}                    
         </div>
-        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+        <div class="bc-body col-md-3 bc-fruition-body" align="center">
             {{activeTab.transit_count_reciprocity?(activeTab.transit_count_reciprocity):0}}
         </div>
-        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+        <div class="bc-body col-md-3 bc-fruition-body" align="center">
             {{activeTab.transit_count?(activeTab.transit_count):0}}
         </div>
     </div>
     <div class="row">
-        <div class="bc-h6 col-md-2 bc-title-fruition" style="padding-right:0">
+        <div class="bc-h6 col-md-2 bc-fruition-title" style="padding-right:0">
             Pernottamenti
         </div>
-        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+        <div class="bc-body col-md-3 bc-fruition-body" align="center">
             {{activeTab.stay_count_associate?(activeTab.stay_count_associate):0}}
         </div>
-        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+        <div class="bc-body col-md-3 bc-fruition-body" align="center">
             {{activeTab.stay_count_reciprocity?(activeTab.stay_count_reciprocity):0}}
         </div>
-        <div class="bc-body col-md-3 bc-body-fruition" align="center">
+        <div class="bc-body col-md-3 bc-fruition-body" align="center">
             {{activeTab.stay_count?(activeTab.stay_count):0}}
         </div>
     </div>
