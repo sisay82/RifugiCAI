@@ -14,7 +14,7 @@ import {RevisionBase} from '../shared/revision_base';
 @Directive({
 selector:"div[active]",
 host:{
-    "[class.bc-tab-active]":"active"
+    "[class.bc-revision-economy-tab-active]":"active"
   }
 })
 export class BcActiveTabStyler{

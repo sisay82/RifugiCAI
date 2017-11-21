@@ -1,11 +1,11 @@
 @import '../../style/typography';
 
 @mixin bc-service-item-detail ($theme){
-    .bc-service-title{
+    &-title{
         font-weight: 500;
     }
     
-    .bc-content-service{
+    &-content{
         position: relative;
         margin-left: 1%;
         display: flex;
@@ -13,5 +13,3 @@
     }
     
 }
-
-@include bc-typography();

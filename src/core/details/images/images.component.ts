@@ -15,7 +15,7 @@ import {BcDetailsService} from '../details.service';
 @Directive({
     selector:"[full-screen]",
     host:{
-        "[class.bc-img-full]":"enabled"
+        "[class.bc-detail-img-full]":"enabled"
     }
 })
 export class BcResizeImgStyler{
