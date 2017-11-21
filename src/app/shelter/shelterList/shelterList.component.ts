@@ -22,14 +22,10 @@ export class BcShelterList {
     constructor(private shelterService: ShelterService,private shared:BcSharedService,private authService:BcAuthService) {}
 
     private isCentralUser(){
-        if(this.isCentral){
-            return this.isCentral
-        }else{
-            this.authService.isCentralUser().subscribe(val=>{
-                this.isCentral=val;
-                return val;
-            });
-        }
+        this.authService.isCentralUser().subscribe(val=>{
+            this.isCentral=val;
+            return val;
+        });
     }
 
     getAuth(){
@@ -48,6 +44,7 @@ export class BcShelterList {
             }
             section=processedProfile.section;
             region=processedProfile.region;
+            this.isCentralUser();
             
             let shelSub = this.shelterService.getShelters(region,section).subscribe(shelters => {
                 this.rifugiSample = shelters;
@@ -66,7 +63,7 @@ export class BcShelterList {
     }
 
     createShel(){
-        if(this.isCentralUser()){
+        if(this.isCentral){
             let newShelSub=this.shelterService.getNewId().subscribe((obj)=>{
                 this.shared.activeOutlet="revision";
                 this.shared.activeComponent="geographic";
