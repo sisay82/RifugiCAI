@@ -188,32 +188,36 @@ function validationPromise(ticket):Promise<String>{
                 url:casBaseUrl+"/cai-cas/serviceValidate?service="+parsedUrl+"&ticket="+ticket,
                 method:"GET"
             },function(err,response,body){
-                const parser=new DOMParser({
-                    locator:{},
-                    errorHandler:{
-                        warning:function(w){
-                            reject(w);
-                        }
-                    }
-                });
-                const el:Document=parser.parseFromString(body,"text/xml");
-                if(el){
-                    const doc=el.firstChild;
-                    let res:boolean=false;
-                    let user:String;
-                    if(getChildByName(el,'authenticationSuccess')){
-                        res=true;
-                        user=getChildByName(el,'uuid').textContent;
-                    }
-                    if(res){
-                        resolve(user);
-                    }else{
-                        reject({error:"Authentication error"});
-                    }
+                if(err){
+                    logger("Error in CAS request: "+err);
+                    reject(err);
                 }else{
-                    reject({error:"Document parsing error"});
+                    const parser=new DOMParser({
+                        locator:{},
+                        errorHandler:{
+                            warning:function(w){
+                                reject(w);
+                            }
+                        }
+                    });
+                    const el:Document=parser.parseFromString(body,"text/xml");
+                    if(el){
+                        const doc=el.firstChild;
+                        let res:boolean=false;
+                        let user:String;
+                        if(getChildByName(el,'authenticationSuccess')){
+                            res=true;
+                            user=getChildByName(el,'uuid').textContent;
+                        }
+                        if(res){
+                            resolve(user);
+                        }else{
+                            reject({error:"Authentication error"});
+                        }
+                    }else{
+                        reject({error:"Document parsing error"});
+                    }
                 }
-                
             });
         }
     });
