@@ -22,8 +22,8 @@
     "url": "https://github.com/sisay82/RifugiCAI.git"
   },
   "engines": {
-    "node": "8.9.1",
-    "npm": "5.5.1"
+    "node": "6.11.1",
+    "npm": "5.2.0"
   },
   "author": "Michele Geri <sisay82@gmail.com>",
   "contributors": [
@@ -36,7 +36,7 @@
     "ng": "ng",
     "postinstall": "npm run build",
     "start": "node server.js",
-    "build": "ng build",
+    "build": "ng build --prod --aot false",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
