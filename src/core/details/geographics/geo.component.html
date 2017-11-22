@@ -1,5 +1,5 @@
 <div class="bc-body" style="display:block;margin-left:4px;background:white">
-    <div class="bc-h6 bc-detail-title">Dati geografici</div>
+    <div class="bc-h6 bc-detail-geo-title">Dati geografici</div>
     <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Località:</div> {{data?(data.location?(data.location.locality||'----'):'----'):'----'}}</div>
     <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Comune:</div> {{data?(data.location?(data.location.municipality||'----'):'----'):'----'}}</div>
     <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Provincia/Città metropolitana:</div> {{data?(data.location?(data.location.province||'----'):'----'):'----'}}</div>

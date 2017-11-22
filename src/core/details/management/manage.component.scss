@@ -4,17 +4,16 @@
 @mixin bc-management-detail ($theme){
     $accent: map-get($theme, accent);
 
-    .bc-detail-title{
-        margin-bottom: 4px;
-        color:bc-color($accent);
-    }
-    
-    .bc-link{
-        &:hover{
-            cursor: pointer;
+    &-management{
+        &-title{
+            margin-bottom: 4px;
+            color:bc-color($accent);
+        }
+        
+        &-link{
+            &:hover{
+                cursor: pointer;
+            }
         }
     }
-    
 }
-
-@include bc-typography();

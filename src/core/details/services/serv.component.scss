@@ -3,12 +3,14 @@
 @import "./serv-item.component";
 
 @mixin bc-service-detail ($theme){
-    @include bc-service-item-detail($theme);
     $accent: map-get($theme, accent);
     
-    .bc-category-title{
-        color:bc-color($accent);
+    &-service{
+        @include bc-service-item-detail($theme);
+        
+        &-title{
+            color:bc-color($accent);
+        }
     }
+    
 }
-
-@include bc-typography();

@@ -7,8 +7,6 @@ import { IService,ITag } from '../../../app/shared/types/interfaces'
   moduleId: module.id,
   selector: 'bc-serv-item',
   templateUrl: 'serv-item.component.html',
-  styleUrls: ['serv-item.component.scss'],
-
 })
 export class BcServItem {
   @Input() item:IService;

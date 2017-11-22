@@ -13,7 +13,7 @@ import {BcDetailsService} from '../details.service';
 @Directive({
   selector:"div[active]",
   host:{
-    "[class.bc-tab-active]":"active"
+    "[class.bc-detail-contributions-tab-active]":"active"
   }
 })
 export class BcActiveTabStyler{
