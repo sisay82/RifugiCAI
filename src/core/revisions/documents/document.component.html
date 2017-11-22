@@ -1,10 +1,10 @@
-<div class="bc-h6 bc-doc-title">Documenti</div>
+<div class="bc-h6 bc-revision-doc-title">Documenti</div>
 <div *ngFor="let file of docs" >
     <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-        <bc-icon (click)="removeDoc(file._id)" class="bc-file" name="times" size=s></bc-icon>
+        <bc-icon (click)="removeDoc(file._id)" class="bc-revision-doc-file" name="times" size=s></bc-icon>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Nome:</div>
-            <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>
+            <div style="margin-left:1%" class="bc-body bc-revision-doc-file" (click)="downloadFile(file._id)"> {{file.name}}</div>
         </div>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Dimensione:</div>
@@ -12,7 +12,7 @@
         </div>
     </div>
 </div>
-<div class="bc-body bc-file" (click)="toggleFile(0)" style="display:inline;white-space:nowrap;flex:1">
+<div class="bc-body bc-revision-doc-file" (click)="toggleFile(0)" style="display:inline;white-space:nowrap;flex:1">
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
     Aggiungi Documento
 </div>
@@ -22,18 +22,17 @@
             <bc-file-input enableBlock="true" optionalMessage="Caricare fino a un massimo di 16MB" errorMessage="Caricare solo file di testo" [contentType]="getKeys('Docs_Type')" formControlName="file" [displayError]="displayError"></bc-file-input>
         </div>
     </form> 
-    <!--[disabled]="getKeys('Docs_Type').length==0" -->
     <a (click)="addDoc()" style="margin-left:1%" data-bc-button data-type="solid">Invia</a>
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
 <bc-divider></bc-divider>
-<div class="bc-h6 bc-doc-title">Mappe e piante</div>
+<div class="bc-h6 bc-revision-doc-title">Mappe e piante</div>
 <div *ngFor="let file of maps" >
     <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-        <bc-icon (click)="removeMap(file._id)" class="bc-file" name="times" size=s></bc-icon>
+        <bc-icon (click)="removeMap(file._id)" class="bc-revision-doc-file" name="times" size=s></bc-icon>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Nome:</div>
-            <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file.value._id)"> {{file.name}}</div>
+            <div style="margin-left:1%" class="bc-body bc-revision-doc-file" (click)="downloadFile(file.value._id)"> {{file.name}}</div>
         </div>
         <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
             <div class="bc-body-strong">Dimensione:</div>
@@ -41,7 +40,7 @@
         </div>
     </div>
 </div>
-<div class="bc-body bc-file" (click)="toggleFile(1)" style="display:inline;white-space:nowrap;flex:1">
+<div class="bc-body bc-revision-doc-file" (click)="toggleFile(1)" style="display:inline;white-space:nowrap;flex:1">
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
     Aggiungi Mappa
 </div>
@@ -51,22 +50,21 @@
             <bc-file-input enableBlock="true" optionalMessage="Caricare fino a un massimo di 16MB" errorMessage="Caricare solo mappe" [contentType]="getKeys('Maps_Type')" formControlName="file" [displayError]="displayError"></bc-file-input>
         </div>
     </form>
-    <!-- [disabled]="getKeys('Maps_Type').length==0"  -->
     <a (click)="addMap()" style="margin-left:1%" data-bc-button data-type="solid">Invia</a>
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>
 <bc-divider></bc-divider>
-<div class="bc-h6 bc-doc-title">Documentazione amministrativa</div>
+<div class="bc-h6 bc-revision-doc-title">Documentazione amministrativa</div>
 <div class="bc-body-strong" style="font-style:italic">I file vanno rinominati nel seguente modo: tipo-fornitore-numero-data. Es: fattura-fornitorex-1-ottobre2017</div>
 <form [formGroup]="invoicesForm">
     <div formArrayName="files">
         <div *ngFor="let file of getInvoicesFormControls('files');let i = index">
             <div [formGroupName]="i">
                 <div style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-                    <bc-icon *ngIf="!getInvoicesFormControls('files',i).disabled" (click)="removeInvoice(i,file.value._id)" class="bc-file" name="times" size=s></bc-icon>
+                    <bc-icon *ngIf="!getInvoicesFormControls('files',i).disabled" (click)="removeInvoice(i,file.value._id)" class="bc-revision-doc-file" name="times" size=s></bc-icon>
                     <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
                         <div class="bc-body-strong">Nome:</div>
-                        <div style="margin-left:1%" class="bc-body bc-file" (click)="downloadFile(file.value._id)"> {{file.value.name}}</div>
+                        <div style="margin-left:1%" class="bc-body bc-revision-doc-file" (click)="downloadFile(file.value._id)"> {{file.value.name}}</div>
                     </div>
                     <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
                         <div class="bc-body-strong">Dimensione:</div>
@@ -86,7 +84,7 @@
         </div>
     </div>
 </form>
-<div class="bc-body bc-file" [disabled]="disableInvoiceGlobal" (click)="toggleFile(2)" style="display:inline;white-space:nowrap;flex:1">
+<div class="bc-body bc-revision-doc-file" [disabled]="disableInvoiceGlobal" (click)="toggleFile(2)" style="display:inline;white-space:nowrap;flex:1">
     <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
     Aggiungi Fattura
 </div>
@@ -96,7 +94,6 @@
             <bc-file-input enableBlock="true" optionalMessage="Caricare fino a un massimo di 16MB" errorMessage='Caricare documento rinominato in "Tipo-fornitore-numero-data"' [contentType]="getKeys('Invoices_Type')" [validator]="invoiceFormatRegExp" formControlName="file" [displayError]="displayError"></bc-file-input>
         </div>
     </form>
-    <!-- [disabled]="getKeys('Invoices_Type').length==0" -->
     <a (click)="addInvoice()" style="margin-left:1%" data-bc-button data-type="solid">Invia</a>
     <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
 </div>

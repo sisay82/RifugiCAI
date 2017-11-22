@@ -1,6 +1,6 @@
 <div class="bc-h6" style="display:block;margin-left:4px;background:white">
     <div *ngFor="let service of services">
-        <div class="bc-h6 bc-category-title">{{service.category | titleCase}}</div>
+        <div class="bc-h6 bc-detail-service-title">{{service.category | titleCase}}</div>
         <bc-serv-item [item]="service"></bc-serv-item>
         <bc-divider></bc-divider>
     </div>

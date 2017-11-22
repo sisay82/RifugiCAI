@@ -1,6 +1,6 @@
 <form [formGroup]="managForm">
     <div style="display:block;margin-left:4px;background:white">
-        <div class="bc-management-title bc-h6">Proprietà</div>
+        <div class="bc-revision-management-title bc-h6">Proprietà</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input placeholder="Proprietario immobile" formControlName="propName" title="Ente" [displayError]="displayError"></bc-text-input>
@@ -47,7 +47,7 @@
             <bc-checkbox-input formControlName="self_management" title="Autogestione"></bc-checkbox-input>
         </div>
         <bc-divider></bc-divider>
-        <div class="bc-management-title bc-h6">Custodia e/o gestione</div>
+        <div class="bc-revision-management-title bc-h6">Custodia e/o gestione</div>
         <div *ngFor="let open of getFormControls('subjects');let i = index" formArrayName="subjects">
             <div [formGroupName]="i">
                 <div style="display: flex;flex-direction:row;align-items:center">
@@ -60,7 +60,7 @@
                     <div class="bc-revision-management">
                         <bc-text-input placeholder="Es: +39 0522 652347" formControlName="fixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
                     </div>
-                    <bc-icon (click)="removeSubject(i)" class="bc-add-tag" name="times" size=s></bc-icon>
+                    <bc-icon (click)="removeSubject(i)" class="bc-revision-management-add-tag" name="times" size=s></bc-icon>
                 </div>
                 <div style="display: flex;flex-direction:row">
                     <div class="bc-revision-management">
@@ -105,7 +105,7 @@
         <bc-divider></bc-divider>
     </div>
  </form>
-<div (click)="toggleSubject()" class="bc-body bc-add-tag" style="white-space:nowrap;flex:1">
+<div (click)="toggleSubject()" class="bc-body bc-revision-management-add-tag" style="white-space:nowrap;flex:1">
     <bc-icon name="plus" size=s></bc-icon>
     Aggiungi custode
 </div>
@@ -121,7 +121,7 @@
             <div class="bc-revision-management">
                 <bc-text-input placeholder="Es: +39 0522 652347" formControlName="newFixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="invalid"></bc-text-input>
             </div>
-            <bc-icon tooltip="Aggiungi" (click)="addNewSubject()" class="bc-add-tag" name="check" size=s></bc-icon>
+            <bc-icon tooltip="Aggiungi" (click)="addNewSubject()" class="bc-revision-management-add-tag" name="check" size=s></bc-icon>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">

@@ -4,25 +4,25 @@
 @mixin bc-economy-detail ($theme){
     $accent: map-get($theme, accent);
 
-    .bc-tab-economy{
-        &:hover{
+    &-economy{
+        &-tab{
+            &:hover{
+                color:bc-color($accent);
+                border:1px solid;
+                border-color: $black-12alpha;
+                border-radius:4px;
+            }
+
+            &-active{
+                color:bc-color($accent);
+                border:1px solid;
+                border-radius:4px;
+                border-color: $black-12alpha;
+            }
+        }
+
+        &-title{
             color:bc-color($accent);
-            border:1px solid;
-            border-color: $black-12alpha;
-            border-radius:4px;
         }
     }
-    
-    .bc-tab-active{
-        color:bc-color($accent);
-        border:1px solid;
-        border-radius:4px;
-        border-color: $black-12alpha;
-    }
-    
-    .bc-title-economy{
-        color:bc-color($accent);
-    }
 }
-
-@include bc-typography();
