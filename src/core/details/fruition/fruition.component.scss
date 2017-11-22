@@ -1,54 +1,44 @@
 @import '../../style/typography';
 @import '../../style/theme';
 
-.bc-fruition{
-    &-title{
-        white-space: nowrap;
-    }
-
-    &-tab{
-        &:hover{
-            border:1px solid;
-            border-color: $black-12alpha;
-            border-radius:4px;
-        }
-
-        &-active{
-            border:1px solid;
-            border-radius:4px;
-            border-color: $black-12alpha;
-        }
-    }
-
-    &-body{
-        white-space:nowrap;
-        position: relative;
-        padding:0;
-    }
-
-    &-container{
-        margin-top:2.5%;
-        max-width:90%;
-        width:auto;
-        margin-left:5%;
-        margin-right:5%;
-    }
-}
-
-@mixin bc-fruition-detail ($theme){
+@mixin bc-fruition-detail($theme){
     $accent: map-get($theme, accent);
 
-    .bc-fruition-title{
-        color:bc-color($accent);   
-    }
-
-    .bc-fruition-tab{
-        color:bc-color($accent);        
-        &:hover{
-            color:bc-color($accent);            
+    &-fruition{
+        &-title{
+            font-weight: 500 !important;
+            white-space: nowrap;
+            color:bc-color($accent);
+        }
+    
+        &-tab{
+            &:hover{
+                border:1px solid;
+                color:bc-color($accent);
+                border-color: $black-12alpha;
+                border-radius:4px;
+            }
+    
+            &-active{
+                border:1px solid;
+                color:bc-color($accent);
+                border-radius:4px;
+                border-color: $black-12alpha;
+            }
+        }
+    
+        &-body{
+            white-space:nowrap;
+            position: relative;
+            padding:0;
+        }
+    
+        &-container{
+            margin-top:2.5%;
+            max-width:90%;
+            width:auto;
+            margin-left:5%;
+            margin-right:5%;
         }
     }
-    
 }
-
-@include bc-typography();

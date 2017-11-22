@@ -1,7 +1,7 @@
 <div class="btn-group btn-group-justified">
     <ul class="nav navbar-nav" style="width:100%">
         <li class="navbar-item" *ngFor="let obj of economy">
-            <div [active]="isActive(obj.year)" (click)="showTab(obj.year)" style="padding:15px" class="btn bc-body bc-tab-economy">
+            <div [active]="isActive(obj.year)" (click)="showTab(obj.year)" style="padding:15px" class="btn bc-body bc-revision-economy-tab">
                 {{obj.year}}
             </div>
         </li>
@@ -9,11 +9,11 @@
 </div>
 <div style="margin-top:2.5%" *ngIf="activeTab!=undefined">
     <div class="bc-h6">
-        <span class="bc-title-economy">Stato patrimoniale: </span>
+        <span class="bc-revision-economy-title">Stato patrimoniale: </span>
         <span>{{balanceSheet | formatcurrency}}</span>
     </div>
     <bc-divider></bc-divider>
-    <p class="bc-h6 bc-title-economy">Contributi</p>
+    <p class="bc-h6 bc-revision-economy-title">Contributi</p>
     <div *ngFor="let type of getEnumNames()">
       <div class="bc-body" style="display: flex;flex-direction:row">
         <div class="bc-body" style="font-weight: bold">{{type}}:</div>

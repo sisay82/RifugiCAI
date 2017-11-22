@@ -15,7 +15,7 @@ import {BcAuthService} from '../../../app/shared/auth.service';
 @Directive({
 selector:"div[active]",
 host:{
-    "[class.bc-tab-active]":"active"
+    "[class.bc-revision-economy-tab-active]":"active"
   }
 })
 export class BcActiveTabStyler{

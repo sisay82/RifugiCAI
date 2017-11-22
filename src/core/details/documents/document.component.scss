@@ -1,19 +1,20 @@
 @import '../../style/typography';
 @import '../../style/theme';
 
-@mixin bc-document-detail ($theme){
-    $accent: map-get($theme, accent);
-
-    .bc-file{
-      &:hover{
+@mixin bc-document-detail($theme){
+  $accent: map-get($theme, accent);
+  
+  &-doc{
+    &-file {
+      &:hover {
         color:bc-color($accent);
         cursor: pointer;
       }
     }
     
-    .bc-doc-title{
+    &-title{
       color:bc-color($accent);
     }
+  }
+  
 }
-
-@include bc-typography();

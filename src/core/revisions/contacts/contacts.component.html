@@ -1,6 +1,6 @@
 <form style="position:relative" [formGroup]="contactForm">
     <div style="display:block;margin-left:4px;background:white">
-        <div class="bc-h6 bc-contact-title">Contatti del rifugio</div>
+        <div class="bc-h6 bc-revision-contact-title">Contatti del rifugio</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-contact">
                 <bc-text-input placeholder="Es: +39 0522652347" formControlName="fixedPhone" title="Telefono" validate="stringValidator" [displayError]="displayError"></bc-text-input>
@@ -25,7 +25,7 @@
         </div>
         <br>
         <bc-divider></bc-divider>
-        <div class="bc-h6 bc-contact-title">Aperture</div>
+        <div class="bc-h6 bc-revision-contact-title">Aperture</div>
         <div *ngFor="let open of getFormControls('openings');let i = index" formArrayName="openings">
             <div [formGroupName]="i" style="display: flex;flex-direction:row;align-items:center">
                 <div class="bc-revision-contact">
@@ -37,14 +37,14 @@
                 <div class="bc-revision-contact">
                     <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="type" title="Tipo" required="true" [displayError]="displayError"></bc-text-input>
                 </div>
-                <bc-icon (click)="removeOpening(i)" class="bc-add-tag" name="times" size=s></bc-icon>
+                <bc-icon (click)="removeOpening(i)" class="bc-revision-contact-add-tag" name="times" size=s></bc-icon>
             </div>
         </div>
         <br>
     </div>
 </form>
-<div (click)="toggleOpenings()" class="bc-body bc-add-tag" style="display:inline;white-space:nowrap;flex:1">
-    <bc-icon class="bc-add-tag" name="plus" size=s></bc-icon>
+<div (click)="toggleOpenings()" class="bc-body bc-revision-contact-add-tag" style="display:inline;white-space:nowrap;flex:1">
+    <bc-icon class="bc-revision-contact-add-tag" name="plus" size=s></bc-icon>
     Aggiungi apertura
 </div>
 <div *ngIf="!isHiddenOpenings()">
@@ -59,7 +59,7 @@
             <div class="bc-revision-contact">
                 <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="newOpeningType" [displayError]="invalid"></bc-text-input>
             </div>
-            <bc-icon tooltip="Aggiungi" (click)="addNewOpening()" class="bc-add-tag" name="check" size=s></bc-icon>
+            <bc-icon tooltip="Aggiungi" (click)="addNewOpening()" class="bc-revision-contact-add-tag" name="check" size=s></bc-icon>
         </div>
     </form>
 </div>

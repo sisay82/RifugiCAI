@@ -1,29 +1,29 @@
 @import '../../style/typography';
 @import '../../style/theme';
 
-@mixin bc-services-detail ($theme){
+@mixin bc-services-revision ($theme){
   $accent: map-get($theme, accent);
 
-  .bc-service-title{
-    margin-bottom: 4px;
-    color:bc-color($accent);
-  }
-  
-  .bc-add-tag{
-    font-weight: bold;
-    margin-left:1%;
-    &:hover{
+  &-service{
+    &-title{
+      margin-bottom: 4px;
       color:bc-color($accent);
-      cursor: pointer;
     }
-  }
-  
-  .bc-revision-services-tags{
-    width:30%;
-    margin-right:2%;
-    margin-left:4%
+
+    &-add-tag{
+      font-weight: bold;
+      margin-left:1%;
+      &:hover{
+        color:bc-color($accent);
+        cursor: pointer;
+      }
+    }
+
+    &-tags{
+      width:30%;
+      margin-right:2%;
+      margin-left:4%
+    }
   }
  
 }
-
-@include bc-typography();

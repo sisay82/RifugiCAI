@@ -10,14 +10,16 @@
 @import "./services/services.component";
 
 @mixin bc-revision-theme ($theme){
-    @include bc-catastal-detail($theme);
-    @include bc-contacts-detail($theme);
-    @include bc-contributions-detail($theme);
-    @include bc-document-detail($theme);
-    @include bc-economy-detail($theme);
-    @include bc-fruition-detail($theme);
-    @include bc-geographics-detail($theme);
-    @include bc-images-detail($theme);
-    @include bc-management-detail($theme);
-    @include bc-services-detail($theme);
+    .bc-revision{
+        @include bc-catastal-revision($theme);
+        @include bc-contacts-revision($theme);
+        @include bc-contributions-revision($theme);
+        @include bc-document-revision($theme);
+        @include bc-economy-revision($theme);
+        @include bc-fruition-revision($theme);
+        @include bc-geographics-revision($theme);
+        @include bc-images-revision($theme);
+        @include bc-management-revision($theme);
+        @include bc-services-revision($theme);
+    }
 }

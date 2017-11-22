@@ -1,5 +1,5 @@
 <form style="position:relative;max-width:60%" [formGroup]="contrForm">
-    <div class="bc-h6 bc-title-contributions">
+    <div class="bc-h6 bc-revision-contributions-title">
         Richiesta contributi
     </div>
     <div style="width:auto">
@@ -59,10 +59,10 @@
         <bc-list-header><span></span><span>RICHIESTO (€): {{roundValue(getRedValue())}}</span></bc-list-header>            
     </bc-list>
     <bc-list style="flex:1" color="accent" formArrayName="attachments">
-        <bc-list-header><span class="bc-title-contributions">Allegati</span></bc-list-header>
+        <bc-list-header><span class="bc-revision-contributions-title">Allegati</span></bc-list-header>
         <bc-list-item *ngFor="let item of getFormControls('attachments');let i=index" [formGroupName]="i">
             <div bc-line style="display:flex; flex-direction:row;align-items:center">
-                <bc-icon (click)="removeAttachment(i)" class="bc-icon-contribution" name="times" size=s></bc-icon>                    
+                <bc-icon (click)="removeAttachment(i)" class="bc-revision-contributions-icon" name="times" size=s></bc-icon>                    
                 <div style="flex: 1">{{item.value.value}}</div>
             </div>
         </bc-list-item>
@@ -76,7 +76,7 @@
         <div style="width:auto">   
             <bc-select-input defaultContent="Selezione il nome di un documento" style="flex:1" [enumValues]="filesEnum" formControlName="newValue" [displayError]="displayError"></bc-select-input>                    
         </div>
-        <bc-icon tooltip="Aggiungi" (click)="addNewAttachment()" class="bc-icon-contribution" name="check" size=s></bc-icon>   
+        <bc-icon tooltip="Aggiungi" (click)="addNewAttachment()" class="bc-revision-contributions-icon" name="check" size=s></bc-icon>   
     </div>
 </form>
 <br/>
