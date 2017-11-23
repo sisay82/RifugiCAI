@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit, trigger, state, style, transition, animate//,OnDestroy
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IButton, IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
@@ -33,8 +33,8 @@ export class BcServRevision extends RevisionBase {
     newTagHidden:boolean=true;
     serviceListChange:boolean=false;
     placeholders:ServicePlaceholders;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        super(shelterService,shared,revisionService);
+    constructor(shared:BcSharedService,shelterService:ShelterService,router:Router,_route:ActivatedRoute,private fb: FormBuilder,revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,_route,router);
         this.placeholders=new ServicePlaceholders()
         this.servForm = fb.group({
             services:fb.array([])
@@ -285,7 +285,7 @@ export class BcServRevision extends RevisionBase {
     }
 
     save(confirm){
-        if(this.servForm.valid){
+        if(!confirm||this.servForm.valid){
             let shelter:any={_id:this._id,name:this.name};
             let services:IService[]=[]
 
@@ -299,13 +299,11 @@ export class BcServRevision extends RevisionBase {
                 if(serv.value.id!=undefined){
                     service._id=serv.value.id;
                 }
-                let tags:ITag[]=[];
-                for (let tag of (<FormArray>serv.controls.tags).controls){
-                    tags.push({key:tag.value.key,value:tag.value.value||null});
-                }
+                let tags:ITag[]=this.getFormArrayValues(<FormArray>serv.controls.tags).filter(val=>val.key&&val.value);
                 service.tags=tags as [ITag];
                 services.push(service);
             }
+            
             if(this.serviceToRemove){
                 this.serviceToRemove.forEach(service=>{
                     services.push({_id:service});
@@ -320,20 +318,18 @@ export class BcServRevision extends RevisionBase {
                 this.revisionService.onChildDelete("services");
             }
 
-            let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"services").subscribe((returnVal)=>{
-                if(returnVal){
-                    this.displayError=false;
-                    if(confirm){
-                        this.shared.onMaskConfirmSave("services");
-                    }
-                }else{
-                    console.log(returnVal);
-                    this.displayError=true;
+            this.processSavePromise(shelter,"services")
+            .then(()=>{
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave("services");
                 }
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
+            })
+            .catch(err=>{
+                console.log(err);
+                this.displayError=true;
             });
+
         }else{
             this.displayError=true;
         }
@@ -474,17 +470,10 @@ export class BcServRevision extends RevisionBase {
         });
     }
 
-    ngOnInit(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            this.getService(params["id"])
-            .then(shelter=>{
-                this.initForm(shelter);
-                if(routeSub!=undefined){
-                    routeSub.unsubscribe();
-                }
-            });
+    init(shelId){
+        this.getService(shelId)
+        .then(shelter=>{
+            this.initForm(shelter);
         });
-
     }
 }

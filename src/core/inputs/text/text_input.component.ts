@@ -228,7 +228,7 @@ export class BcTextInput implements ControlValueAccessor {
             if(this.removeYear){
                 return this.processYear(this.value);
             }else if(this.replaceDot){
-                return (<string>this.value).replace(/\,/g,'.')
+                return (new String(this.value)).replace(/\,/g,'.')
             }else{
                 return this.value;
             }

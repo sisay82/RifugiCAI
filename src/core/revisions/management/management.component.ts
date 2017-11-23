@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit,OnDestroy
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { Enums } from '../../../app/shared/types/enums';
 import { ISubject, IManagement, IButton, IShelter } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
@@ -9,8 +9,8 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import { parseDate } from '../../inputs/text/text_input.component';
 import {RevisionBase} from '../shared/revision_base';
+import { parseDate } from '../../inputs/text/text_input.component';
 
 @Component({
   moduleId: module.id,
@@ -26,8 +26,8 @@ export class BcManagementRevision extends RevisionBase{
     property:ISubject;
     subjectChange:boolean=false;
     hiddenSubject:boolean=true;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        super(shelterService,shared,revisionService);
+    constructor(shared:BcSharedService,shelterService:ShelterService,router:Router,_route:ActivatedRoute,private fb: FormBuilder,revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,_route,router);
         this.managForm = fb.group({
             rentType:[""],
             valuta:[""],
@@ -180,45 +180,30 @@ export class BcManagementRevision extends RevisionBase{
         });
     }
 
-    processUrl(value){
-        if(value!=null&&value!=""){
-            let wSite="http";
-            if(value.toLowerCase().indexOf("://")==-1){
-                wSite+="://"+value;
-            }else{
-                wSite=value;
-            }
-            
-            return wSite;
-        }else{
-            return null;
-        }
-    }
-
     save(confirm){
-        if(this.managForm.valid){
+        if(!confirm||this.managForm.valid){
             let shelter:IShelter={_id:this._id,name:this.name};
 
             let management:IManagement={
-                rentType:this.managForm.controls["rentType"].value||null,
-                valuta:this.managForm.controls["valuta"].value||null,
-                self_management:this.managForm.controls["self_management"].value||null,
-                pickupKey:this.managForm.controls["pickupKey"].value||null,
-                reference:this.managForm.controls["reference"].value||null
+                rentType:this.getControlValue(<FormGroup>this.managForm.controls.rentType),
+                valuta:this.getControlValue(<FormGroup>this.managForm.controls.valuta),
+                self_management:this.getControlValue(<FormGroup>this.managForm.controls.self_management),
+                pickupKey:this.getControlValue(<FormGroup>this.managForm.controls.pickupKey),
+                reference:this.getControlValue(<FormGroup>this.managForm.controls.reference)
             };
 
             let prop:ISubject={
-                name:this.managForm.controls["propName"].value||null,
-                taxCode:this.managForm.controls["propTaxCode"].value||null,
-                fixedPhone:this.managForm.controls["propFixedPhone"].value||null,
-                pec:this.managForm.controls["propPec"].value||null,
-                email:this.managForm.controls["propEmail"].value||null,
-                contract_start_date:this.managForm.controls["propContract_start_date"].value?(parseDate(this.managForm.controls["propContract_start_date"].value)||null):null,
+                name:this.getControlValue(<FormGroup>this.managForm.controls.name),
+                taxCode:this.getControlValue(<FormGroup>this.managForm.controls.taxCode),
+                fixedPhone:this.getControlValue(<FormGroup>this.managForm.controls.fixedPhone),
+                pec:this.getControlValue(<FormGroup>this.managForm.controls.pec),
+                email:this.getControlValue(<FormGroup>this.managForm.controls.email),
+                contract_start_date:this.processDate(this.managForm.controls["propContract_start_date"].value),
                 contract_end_date: this.managForm.controls["propContract_end_date"].value?(parseDate(this.managForm.controls["propContract_end_date"].value)||null):null,
-                contract_duration:this.managForm.controls["propContract_duration"].value||null,
-                contract_fee:this.managForm.controls["propContract_fee"].value||null,
-                possession_type:this.managForm.controls["propPossessionType"].value||null,
-                webSite:this.processUrl(this.managForm.controls.propWebSite.value),
+                contract_duration:this.getControlValue(<FormGroup>this.managForm.controls.contract_duration),
+                contract_fee:this.getControlValue(<FormGroup>this.managForm.controls.contract_fee),
+                possession_type:this.getControlValue(<FormGroup>this.managForm.controls.possession_type),
+                webSite:this.processUrl(<FormGroup>this.managForm.controls.propWebSite),
                 type:"Proprietario"
             }
 
@@ -232,20 +217,20 @@ export class BcManagementRevision extends RevisionBase{
             subjects.push(prop);
             for(let c of control.controls){     
                 let s={
-                    name:c.value.name||null,
-                    surname:c.value.surname||null,
-                    taxCode:c.value.taxCode||null,
-                    fixedPhone:c.value.fixedPhone||null,
-                    mobilePhone:c.value.mobilePhone||null,
-                    pec:c.value.pec||null,
-                    email:c.value.email||null,
+                    name:this.getControlValue(<FormGroup>(<FormGroup>c).controls.name),
+                    surname:this.getControlValue(<FormGroup>(<FormGroup>c).controls.surname),
+                    taxCode:this.getControlValue(<FormGroup>(<FormGroup>c).controls.taxCode),
+                    fixedPhone:this.getControlValue(<FormGroup>(<FormGroup>c).controls.fixedPhone),
+                    mobilePhone:this.getControlValue(<FormGroup>(<FormGroup>c).controls.mobilePhone),
+                    pec:this.getControlValue(<FormGroup>(<FormGroup>c).controls.pec),
+                    email:this.getControlValue(<FormGroup>(<FormGroup>c).controls.email),
                     webSite:this.processUrl(c.value.webSite),
-                    type:c.value.type||null,
-                    contract_start_date:c.value.contract_start_date?(parseDate(c.value.contract_start_date)):null,
-                    contract_end_date: c.value.contract_end_date?(parseDate(c.value.contract_end_date)):null,
-                    contract_duration:c.value.contract_duration,
-                    contract_fee:c.value.contract_fee,
-                    possession_type:c.value.possession_type
+                    type:this.getControlValue(<FormGroup>(<FormGroup>c).controls.type),
+                    contract_start_date:this.processDate(<FormGroup>(<FormGroup>c).controls.contract_start_date),
+                    contract_end_date:this.processDate(<FormGroup>(<FormGroup>c).controls.contract_end_date),
+                    contract_duration:this.getControlValue(<FormGroup>(<FormGroup>c).controls.contract_duration),
+                    contract_fee:this.getControlValue(<FormGroup>(<FormGroup>c).controls.contract_fee),
+                    possession_type:this.getControlValue(<FormGroup>(<FormGroup>c).controls.possession_type),
                 }    
                 if(s.contract_start_date>s.contract_end_date){
                     this.displayError=true;
@@ -255,30 +240,20 @@ export class BcManagementRevision extends RevisionBase{
             }
             shelter.management=management
             shelter.management.subject=subjects as [ISubject];
-            this.revisionService.onChildSave(shelter,"management");
-            if(this.managForm.valid){
-                let managSub=this.shelterService.preventiveUpdateShelter(shelter,"management").subscribe((returnVal)=>{
-                    if(returnVal){
-                        this.displayError=false;
-                        if(confirm){
-                            this.shared.onMaskConfirmSave("management");
-                        }
-                    }else{
-                        console.log(returnVal);
-                        this.displayError=true;
-                    }
-                    if(managSub!=undefined){
-                        managSub.unsubscribe();
-                    }
-                });
-            }
+            this.processSavePromise(shelter,"management")
+            .then(()=>{
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave("management");
+                }
+            })
+            .catch(err=>{
+                this.displayError=true;
+                console.log(err);
+            });
         }else{
             this.displayError=true;
         }
-    }
-
-    initDate(value){
-
     }
 
     initForm(shelter){
@@ -363,17 +338,10 @@ export class BcManagementRevision extends RevisionBase{
         });
     }
 
-    ngOnInit(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            this.getManagement(params["id"])
-            .then(shelter=>{
-                this.initForm(shelter);
-                if(routeSub!=undefined){
-                    routeSub.unsubscribe();
-                }
-            });
+    init(shelId){
+        this.getManagement(shelId)
+        .then(shelter=>{
+            this.initForm(shelter);
         });
-
     }
 }

@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit,OnDestroy,Directive
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter, IFile,IEconomy } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
@@ -52,8 +52,8 @@ export class BcDocRevision extends RevisionBase{
   disableSave:boolean=false;
   private currentFileToggle:number=-1;
   disableInvoiceGlobal:boolean=true;
-  constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-    super(shelterService,shared,revisionService);
+  constructor(shelterService:ShelterService,shared:BcSharedService,router:Router,_route:ActivatedRoute,private fb: FormBuilder,revisionService:BcRevisionsService) { 
+    super(shelterService,shared,revisionService,_route,router);
     this.newDocForm = fb.group({
       file:[]
     });
@@ -121,7 +121,7 @@ export class BcDocRevision extends RevisionBase{
 
   getInvoicesFormControls(controlName:string,index?){
     const control=(<FormArray>this.invoicesForm.controls[controlName]);
-    if(index){
+    if(index!=undefined){
       return control.at(index);
     }else{
       return control.controls;
@@ -389,7 +389,7 @@ export class BcDocRevision extends RevisionBase{
   }
 
   save(confirm){
-    if(this.invoicesForm.valid&&(!this.invoicesChange||(this.invoicesForm.dirty&&this.invoicesChange))){
+    if((!confirm||this.invoicesForm.valid)&&(!this.invoicesChange||this.invoicesForm.dirty)){
       this.setDisplayError(false);
       let i=0;
       if(this.invoicesForm.dirty){
@@ -558,19 +558,16 @@ export class BcDocRevision extends RevisionBase{
     });
   }
 
-  ngOnInit() {
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this._id=params["id"];
-      this.getDocs(params["id"])
-      .then(files=>{
-        this.initData(files);
-        this.getEconomy(params["id"])
-        .then(shelter=>{
-          if(shelter.economy){
-            this.updateInvalidYearsInvoice(shelter.economy.filter(obj=>obj.confirm));
-          }
-        })
-      });
+  init(shelId) {
+    this.getDocs(shelId)
+    .then(files=>{
+      this.initData(files);
+      this.getEconomy(shelId)
+      .then(shelter=>{
+        if(shelter.economy){
+          this.updateInvalidYearsInvoice(shelter.economy.filter(obj=>obj.confirm));
+        }
+      })
     });
   }
 

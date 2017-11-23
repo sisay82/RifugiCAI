@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit,OnDestroy
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ITag,ILocation,IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
@@ -23,8 +23,8 @@ export class BcGeoRevision extends RevisionBase {
     private tagChange:boolean=false
     private hiddenTag:boolean=true;
 
-    constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        super(shelterService,shared,revisionService);
+    constructor(shelterService:ShelterService,router:Router,shared:BcSharedService,_route:ActivatedRoute,private fb: FormBuilder,revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,_route,router);
         this.geoForm = fb.group({
             region:[""],
             province:[""],
@@ -131,46 +131,25 @@ export class BcGeoRevision extends RevisionBase {
     }
 
     save(confirm){
-        if(this.geoForm.valid){
+        if(!confirm||this.geoForm.valid){
             let shelter:IShelter={_id:this._id,name:this.name,geoData:{location:this.data.location}};
-            let location:ILocation={
-                region:this.geoForm.controls.region.value||null,
-                province:this.geoForm.controls.province.value||null,
-                municipality:this.geoForm.controls.municipality.value||null,
-                locality:this.geoForm.controls.locality.value||null,
-                ownerRegion:this.geoForm.controls.ownerRegion.value||null,
-                regional_commission:this.geoForm.controls.regional_commission.value||null,
-                authorityJurisdiction:this.geoForm.controls.authorityJurisdiction.value||null,
-                altitude:this.geoForm.controls.altitude.value||null,
-                latitude:this.geoForm.controls.latitude.value||null,
-                longitude:this.geoForm.controls.longitude.value||null,
-                massif:this.geoForm.controls.massif.value||null,
-                valley:this.geoForm.controls.valley.value||null,
-                ski_area:this.geoForm.controls.ski_area.value||null,
-                protected_area:this.geoForm.controls.protected_area.value||null,
-                site:this.geoForm.controls.site.value||null
-            }
-            const control = (<FormArray>this.geoForm.controls['tags']).controls;
-            let tags:ITag[]=[];
-            for(let c of control){
-                tags.push({key:c.value.key,value:c.value.value});
-            }
+            let location:ILocation=<ILocation>this.getFormValues(this.geoForm);
+
+            let a:any[]=this.getFormArrayValues(<FormArray>this.geoForm.controls.tags);
+            let tags:ITag[]=a.filter(val=>val.key&&val.value);
+
             shelter.geoData.tags=tags as [ITag];
             shelter.geoData.location=location;
-            this.revisionService.onChildSave(shelter,"geoData");
-            let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"geoData").subscribe((returnVal)=>{
-                if(returnVal){
-                    this.displayError=false;
-                    if(confirm){
-                        this.shared.onMaskConfirmSave("geographic");
-                    }
-                }else{
-                    console.log("Err "+returnVal);
-                    this.displayError=true;
+            this.processSavePromise(shelter,"geoData")
+            .then(()=>{
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave("geographic");
                 }
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
+            })
+            .catch(err=>{
+                this.displayError=true;
+                console.log(err);
             });
         }else{
             this.displayError=true;
@@ -245,17 +224,10 @@ export class BcGeoRevision extends RevisionBase {
         });
     }
 
-    ngOnInit(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            this.getGeoData(params["id"])
-            .then((shelter)=>{
-                this.initForm(shelter);
-                if(routeSub!=undefined){
-                    routeSub.unsubscribe();
-                }
-            });
+    init(shelId){
+        this.getGeoData(shelId)
+        .then((shelter)=>{
+            this.initForm(shelter);
         });
-
     }
 }

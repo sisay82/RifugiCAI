@@ -1,7 +1,7 @@
 import {
     Component,Input,OnInit,OnDestroy
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter,IUse } from '../../../app/shared/types/interfaces'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
@@ -20,8 +20,8 @@ export class BcFruitionRevision extends RevisionBase {
     useForm: FormGroup; 
     private data:IUse;
 
-    constructor(private shelterService:ShelterService,private shared:BcSharedService,private revisionService:BcRevisionsService,private fb: FormBuilder,private _route:ActivatedRoute){
-        super(shelterService,shared,revisionService);
+    constructor(shelterService:ShelterService,shared:BcSharedService,revisionService:BcRevisionsService,private fb: FormBuilder,_route:ActivatedRoute,router:Router){
+        super(shelterService,shared,revisionService,_route,router);
         shared.activeComponent="use";
         shared.onActiveOutletChange("revision");
 
@@ -58,33 +58,22 @@ export class BcFruitionRevision extends RevisionBase {
     }
 
     save(confirm){
-        if(this.useForm.valid){
+        if(!confirm||this.useForm.valid){
             let shelter:IShelter={_id:this._id,name:this.name};
-            let use:IUse={
-                year:this.data.year,
-                stay_count_associate:this.useForm.controls.stay_count_associate.value||null,
-                stay_count_reciprocity:this.useForm.controls.stay_count_reciprocity.value||null,
-                stay_count:this.useForm.controls.stay_count.value||null,
-                transit_count_associate:this.useForm.controls.transit_count_associate.value||null,
-                transit_count_reciprocity:this.useForm.controls.transit_count_reciprocity.value||null,
-                transit_count:this.useForm.controls.transit_count.value||null,
-            }
+            let use:IUse=<IUse>this.getFormValues(this.useForm);
+            use.year=this.data.year;
             
             shelter.use=[use];
-            this.revisionService.onChildSave(shelter,"use");
-            let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"use").subscribe((returnVal)=>{
-                if(returnVal){
-                    this.displayError=false;
-                    if(confirm){
-                        this.shared.onMaskConfirmSave("use");
-                    }
-                }else{
-                    console.log("Err "+returnVal);
-                    this.displayError=true;
+            this.processSavePromise(shelter,"use")
+            .then(()=>{
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave("use");
                 }
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
+            })
+            .catch(err=>{
+                this.displayError=true;
+                console.log(err);
             });
         }else{
             this.displayError=true;
@@ -151,18 +140,11 @@ export class BcFruitionRevision extends RevisionBase {
         });
     }
 
-    ngOnInit(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            this.getUse(params["id"])
-            .then((shelter)=>{
-                this.initForm(shelter);
-                if(routeSub!=undefined){
-                    routeSub.unsubscribe();
-                }
-            });
+    init(shelId){
+        this.getUse(shelId)
+        .then((shelter)=>{
+            this.initForm(shelter);
         });
-
     }
 
     checkValidForm(){

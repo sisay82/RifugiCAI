@@ -1,7 +1,7 @@
 import {
 Component,Input,OnInit,OnDestroy,Directive
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter,IEconomy, IFile } from '../../../app/shared/types/interfaces'
 import { Enums } from '../../../app/shared/types/enums'
 import {ShelterService} from '../../../app/shelter/shelter.service'
@@ -51,8 +51,8 @@ export class BcEconomyRevision extends RevisionBase{
   maskSaveSub:Subscription;
   name:String;
   statusChange:boolean=false;
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private revisionService:BcRevisionsService){
-    super(shelterService,shared,revisionService);
+  constructor(shelterService:ShelterService,_route:ActivatedRoute,router:Router,shared:BcSharedService,revisionService:BcRevisionsService){
+    super(shelterService,shared,revisionService,_route,router);
 
     this.maskSaveSub=shared.maskSave$.subscribe(()=>{
       this.disableSave=true;
@@ -71,20 +71,16 @@ export class BcEconomyRevision extends RevisionBase{
     if(this.statusChange){
       let shelter:IShelter={_id:this._id,name:this.name};
       shelter.economy=this.economy;
-      this.revisionService.onChildSave(shelter,"economy");
-      let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"economy").subscribe((returnVal)=>{
-          if(returnVal){
-              this.displayError=false;
-              if(confirm){
-                  this.shared.onMaskConfirmSave("economy");
-              }
-          }else{
-              console.log("Err "+returnVal);
-              this.displayError=true;
-          }
-          if(shelSub!=undefined){
-              shelSub.unsubscribe();
-          }
+      this.processSavePromise(shelter,"economy")
+      .then(()=>{
+        this.displayError=false;
+        if(confirm){
+            this.shared.onMaskConfirmSave("economy");
+        }
+      })
+      .catch(err=>{
+        this.displayError=true;
+        console.log(err);
       });
       
     }else{
@@ -280,20 +276,14 @@ export class BcEconomyRevision extends RevisionBase{
     });
   }
 
-  ngOnInit(){
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this._id=params["id"]      
-      this.getEconomy(params["id"])
+  init(shelId){
+      this.getEconomy(shelId)
       .then((shelter)=>{
         this.name=shelter.name;
-        this.getDocs(params["id"])
+        this.getDocs(shelId)
         .then(files=>{
           this.analyzeDocsYear(files)
-          .then(()=>{
-            if(routeSub!=undefined){
-              routeSub.unsubscribe();
-            }
-          });
+          .then(()=>{});
           this.files=files;
           this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
           this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];
@@ -311,6 +301,5 @@ export class BcEconomyRevision extends RevisionBase{
         }
         this.changeActiveTab(year,tab);
       });
-    });
   }
 }
