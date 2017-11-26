@@ -1,7 +1,7 @@
 import {
-  Component,Input,OnInit,OnDestroy,Directive
+  Component,Input,OnInit,Directive
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter,IContribution,IFileRef,IFile } from '../../../app/shared/types/interfaces';
 import {Enums } from '../../../app/shared/types/enums';
 import {ShelterService} from '../../../app/shelter/shelter.service'
@@ -9,6 +9,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import {BcSharedService} from '../../../app/shared/shared.service'
 import {BcDetailsService} from '../details.service';
+import { DetailBase } from '../shared/detail_base';
 
 @Directive({
   selector:"div[active]",
@@ -27,14 +28,14 @@ export class BcActiveTabStyler{
   styleUrls: ['contributions.component.scss'],
   providers:[ShelterService]
 })
-export class BcContributions {
+export class BcContributions extends DetailBase{
   activeYear:Number;
   activeTab:{year:Number,contributions:IFile[]};
   data:{year:Number,contributions:IFile[]}[]=<any>[];
   
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private detailsService:BcDetailsService){
-    shared.activeComponent="contribution";
-    this.shared.onActiveOutletChange("content");
+  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
+    super(_route,shared,router);
+    shared.activeComponent=Enums.Routed_Component.contribution;
   }
 
   isActive(year){
@@ -103,15 +104,14 @@ export class BcContributions {
     }
   }
 
-  ngOnInit() {
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this.getDocs(params["id"])
-      .then(files=>{
-        this.data=this.groupByYear(files);
-        let year:Number;
-        year=(new Date()).getFullYear();        
-        this.changeActiveTab(year);
-      });
+  init(shelId){
+    this.getDocs(shelId)
+    .then(files=>{
+      this.data=this.groupByYear(files);
+      let year:Number;
+      year=(new Date()).getFullYear();        
+      this.changeActiveTab(year);
     });
   }
+  
 }

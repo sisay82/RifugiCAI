@@ -1,13 +1,14 @@
 import {
-  Component,Input,OnInit,OnDestroy
+  Component,Input,OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IManagement,ISubject,IShelter } from '../../../app/shared/types/interfaces';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { BcDetailsService } from '../details.service';
+import { DetailBase } from '../shared/detail_base';
 
 @Component({
   moduleId: module.id,
@@ -16,17 +17,13 @@ import { BcDetailsService } from '../details.service';
   styleUrls: ['manage.component.scss'],
   providers:[ShelterService]
 })
-export class BcManage {
+export class BcManage extends DetailBase{
   data:IManagement={subject:[{name:null}]};
   owner:ISubject;
   managers:ISubject[]=[];
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private detailsService:BcDetailsService){
-    shared.activeComponent="management";
-    this.shared.onActiveOutletChange("content");
-  }
-
-  ngOnDestroy(){
-
+  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
+    super(_route,shared,router);
+    shared.activeComponent=Enums.Routed_Component.management;
   }
 
   initManagement(management:IManagement){
@@ -69,15 +66,10 @@ export class BcManage {
     });
 }
 
-  ngOnInit(){
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this.getManagement(params["id"])
-      .then(shelter=>{
-          this.initManagement(shelter.management);
-          if(routeSub!=undefined){
-              routeSub.unsubscribe();
-          }
-      });
+  init(shelId){
+    this.getManagement(shelId)
+    .then(shelter=>{
+        this.initManagement(shelter.management);
     });
   }
 
@@ -93,9 +85,7 @@ export class BcManage {
   }
 
   gotoSite(webSite:string){
-    if(webSite!=undefined){
-      location.href=webSite;
-    }
+    this.redirect(webSite);
   }
 
 }

@@ -83,12 +83,13 @@ export function createValidationFunction(validator:string){
     }
 }
 
-let validators= {
+export const validators= {
     stringValidator:<RegExp>/^([A-Za-z0-99À-ÿ� ,.:/';+!?|)(_-]*)*$/,
     telephoneValidator:<RegExp>/^([+]([0-9][0-9][\s])?)?([0-9]*(\s)?[0-9]*)$/,
     mailValidator:<RegExp>/(^$|^.*@.*\..*$)/,
     numberValidator:<RegExp>/^(-)?[0-9]*([.][0-9]*)?$/,
-    urlValidator:<RegExp>/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
+    urlValidator:<RegExp>/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+    objectID:<RegExp>/^[0-9a-fA-F]{24}$/
 }
 
 @Directive({
@@ -228,7 +229,7 @@ export class BcTextInput implements ControlValueAccessor {
             if(this.removeYear){
                 return this.processYear(this.value);
             }else if(this.replaceDot){
-                return (<string>this.value).replace(/\,/g,'.')
+                return (new String(this.value)).replace(/\,/g,'.')
             }else{
                 return this.value;
             }

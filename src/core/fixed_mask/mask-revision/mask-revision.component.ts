@@ -73,7 +73,7 @@ export class BcMaskRevision {
       this.displayError=true;
     });
 
-    this.saveDisabled=(this.shared.activeComponent=="contribution");
+    this.saveDisabled=(this.shared.activeComponent==Enums.Routed_Component.contribution);
     this.shared.disableMaskSave$.subscribe((val)=>{
       this.saveDisabled=val
     })
@@ -139,7 +139,7 @@ export class BcMaskRevision {
               if(!value){
                 console.log("Error in Confirm"); 
               }else{
-                this.shared.onActiveOutletChange("content");
+                this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
                 this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
               }
               if(shelSub!=undefined){
@@ -161,7 +161,7 @@ export class BcMaskRevision {
             if(!value){
               console.log("Error in Confirm"); 
             }else{
-              this.shared.onActiveOutletChange("content");
+              this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
               this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
             }
             if(shelSub!=undefined){
@@ -303,7 +303,7 @@ export class BcMaskRevision {
             this.router.navigateByUrl("list");
           }else{
             let component = this.shared.activeComponent;
-            this.shared.onActiveOutletChange("content");
+            this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
             this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
           }
           if(shelSub!=undefined)

@@ -1,8 +1,8 @@
 import {
   Component,Input,OnInit, trigger, state, style, transition, animate,OnDestroy
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import {  IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
+import { ActivatedRoute,Router } from '@angular/router';
+import { IShelter, IService, ITag } from '../../../app/shared/types/interfaces';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
@@ -35,8 +35,8 @@ export class BcServRevision extends RevisionBase {
     private newTagHidden:boolean=true;
     private serviceListChange:boolean=false;
     private placeholders:ServicePlaceholders;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        super(shelterService,shared,revisionService,authService);
+    constructor(shared:BcSharedService,shelterService:ShelterService,authService:BcAuthService,router:Router,_route:ActivatedRoute,private fb: FormBuilder,revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,_route,router,authService);
          this.placeholders=new ServicePlaceholders()
         this.servForm = fb.group({
             services:fb.array([])
@@ -70,7 +70,7 @@ export class BcServRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("services");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.services);
                 }
             }else{
                 shared.onDisplayError();
@@ -78,7 +78,7 @@ export class BcServRevision extends RevisionBase {
             }
         });
 
-        shared.activeComponent="services";
+        shared.activeComponent=Enums.Routed_Component.services;
     } 
 
     getFormControls(controlName){
@@ -287,7 +287,7 @@ export class BcServRevision extends RevisionBase {
     }
 
     save(confirm){
-        if(this.servForm.valid){
+        if(!confirm||this.servForm.valid){
             let shelter:any={_id:this._id,name:this.name};
             let services:IService[]=[]
 
@@ -301,13 +301,11 @@ export class BcServRevision extends RevisionBase {
                 if(serv.value.id!=undefined){
                     service._id=serv.value.id;
                 }
-                let tags:ITag[]=[];
-                for (let tag of (<FormArray>serv.controls.tags).controls){
-                    tags.push({key:tag.value.key,value:tag.value.value||null});
-                }
+                let tags:ITag[]=this.getFormArrayValues(<FormArray>serv.controls.tags).filter(val=>val.key&&val.value);
                 service.tags=tags as [ITag];
                 services.push(service);
             }
+            
             if(this.serviceToRemove){
                 this.serviceToRemove.forEach(service=>{
                     services.push({_id:service});
@@ -322,20 +320,18 @@ export class BcServRevision extends RevisionBase {
                 this.revisionService.onChildDelete("services");
             }
 
-            let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"services").subscribe((returnVal)=>{
-                if(returnVal){
-                    this.displayError=false;
-                    if(confirm){
-                        this.shared.onMaskConfirmSave("services");
-                    }
-                }else{
-                    console.log(returnVal);
-                    this.displayError=true;
+            this.processSavePromise(shelter,"services")
+            .then(()=>{
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave("services");
                 }
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
+            })
+            .catch(err=>{
+                console.log(err);
+                this.displayError=true;
             });
+
         }else{
             this.displayError=true;
         }
@@ -479,36 +475,10 @@ export class BcServRevision extends RevisionBase {
         });
     }
 
-    initialize(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            this.getService(params["id"])
-            .then(shelter=>{
-                this.initForm(shelter);
-                if(routeSub!=undefined){
-                    routeSub.unsubscribe();
-                }
-            });
+    init(shelId){
+        this.getService(shelId)
+        .then(shelter=>{
+            this.initForm(shelter);
         });
-    }
-
-    ngOnInit() {
-        let permissionSub = this.revisionService.fatherReturnPermissions$.subscribe(permissions=>{
-            this.checkPermission(permissions);
-            if(permissionSub!=undefined){
-                permissionSub.unsubscribe();
-            }
-        });
-        this.revisionService.onChildGetPermissions();         
-    }
-
-    checkPermission(permissions){
-        if(permissions&&permissions.length>0){
-            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
-                this.initialize();
-            }else{
-                location.href="/list";
-            }
-        }
     }
 }

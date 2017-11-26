@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter, IFile } from '../../../app/shared/types/interfaces';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
@@ -29,8 +29,9 @@ export class BcImgRevision extends RevisionBase {
   private newDocFormValidSub:Subscription;
   private docsFormValidSub:Subscription;
   private hiddenImage:boolean=true;
-  constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-    super(shelterService,shared,revisionService,authService);
+  constructor(shelterService:ShelterService,authService:BcAuthService,shared:BcSharedService,router:Router,_route:ActivatedRoute,private fb: FormBuilder,revisionService:BcRevisionsService) { 
+    super(shelterService,shared,revisionService,_route,router,authService);
+    this.MENU_SECTION=Enums.MenuSection.document;
     this.newDocForm = fb.group({
       file:[],
       description:[""]
@@ -62,7 +63,7 @@ export class BcImgRevision extends RevisionBase {
               this.disableSave=true;
               this.save(true);
           }else{
-              this.shared.onMaskConfirmSave("images");
+              this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
           }
       }else{
           shared.onDisplayError();
@@ -70,7 +71,7 @@ export class BcImgRevision extends RevisionBase {
       }
     });
 
-    shared.activeComponent="images";
+    shared.activeComponent=Enums.Routed_Component.images;
   }
 
   getFormControls(controlName){
@@ -158,7 +159,7 @@ export class BcImgRevision extends RevisionBase {
             this.uploading=false;
             this.cleanForm();
             if(confirm){
-                this.shared.onMaskConfirmSave("images");
+                this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
             }
             if(shelServiceSub!=undefined){
                 shelServiceSub.unsubscribe();
@@ -177,17 +178,21 @@ export class BcImgRevision extends RevisionBase {
   }
 
   save(confirm){
-    if(this.docsForm.valid){
+    if(!confirm||this.docsForm.valid){
       this.displayError=false;
       let i=0;
       for(let file of (<FormArray>this.docsForm.controls.files).controls){
         if(file.dirty){
-          let updFile:IFile={_id:file.value.id,shelterId:this._id,description:file.value.description}
+          let updFile:IFile={
+            _id:file.value.id,
+            shelterId:this._id,
+            description:this.getControlValue(<FormGroup>(<FormGroup>file).controls.description)
+          }
           let updateSub = this.shelterService.updateFile(updFile).subscribe((val)=>{
             if(val){
               i++;
               if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
-                this.shared.onMaskConfirmSave("images");
+                this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
               }
             }
             if(updateSub!=undefined){
@@ -199,7 +204,7 @@ export class BcImgRevision extends RevisionBase {
         }else{
           i++;
           if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
-            this.shared.onMaskConfirmSave("images");
+            this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
           }
         }
       }
@@ -230,7 +235,7 @@ export class BcImgRevision extends RevisionBase {
   }
 
   ngOnDestroy() {
-    if(!this.disableSave&&this.docsForm.valid&&this.docsForm.dirty){
+    if(!this.disableSave&&this.docsForm.dirty){
       this.save(false);
     }
     if(this.permissionSub!=undefined){
@@ -259,51 +264,24 @@ export class BcImgRevision extends RevisionBase {
     }
   }
 
-  initialize() {
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this._id=params["id"];
-      let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
-        if(!files){
-          let queryFileSub=this.shelterService.getImagesByShelterId(this._id).subscribe(files=>{
-            this.initForm(files);
-            this.revisionService.onChildSaveFiles(files);
-            if(queryFileSub!=undefined){
-              queryFileSub.unsubscribe();
-            }
-            if(routeSub!=undefined){
-              routeSub.unsubscribe();
-            }
-          });
-        }else{
+  init(shelId) {
+    let loadServiceSub=this.revisionService.loadFiles$.subscribe(files=>{
+      if(!files){
+        let queryFileSub=this.shelterService.getImagesByShelterId(shelId).subscribe(files=>{
           this.initForm(files);
-        }
-        if(loadServiceSub!=undefined){
-          loadServiceSub.unsubscribe();
-        }
-      });
-      this.revisionService.onChildLoadFilesRequest([Enums.File_Type.image]);
-    });
-    
-  }
-
-  ngOnInit() {
-    let permissionSub = this.revisionService.fatherReturnPermissions$.subscribe(permissions=>{
-      this.checkPermission(permissions);
-      if(permissionSub!=undefined){
-          permissionSub.unsubscribe();
-      }
-    });
-    this.revisionService.onChildGetPermissions();            
-  }
-
-  checkPermission(permissions){
-      if(permissions&&permissions.length>0){
-          if(permissions.find(obj=>obj==Enums.MenuSection.document)>-1){
-              this.initialize();
-          }else{
-              location.href="/list";
+          this.revisionService.onChildSaveFiles(files);
+          if(queryFileSub!=undefined){
+            queryFileSub.unsubscribe();
           }
+        });
+      }else{
+        this.initForm(files);
       }
+      if(loadServiceSub!=undefined){
+        loadServiceSub.unsubscribe();
+      }
+    });
+    this.revisionService.onChildLoadFilesRequest([Enums.File_Type.image]);
   }
 
 }

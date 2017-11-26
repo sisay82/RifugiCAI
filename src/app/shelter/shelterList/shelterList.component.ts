@@ -64,8 +64,8 @@ export class BcShelterList {
     createShel(){
         if(this.isCentral){
             let newShelSub=this.shelterService.getNewId().subscribe((obj)=>{
-                this.shared.activeOutlet="revision";
-                this.shared.activeComponent="geographic";
+                this.shared.activeOutlet=Enums.Routed_Outlet.revision;
+                this.shared.activeComponent=Enums.Routed_Component.geographic;
                 if(newShelSub!=undefined){
                     newShelSub.unsubscribe();
                 }

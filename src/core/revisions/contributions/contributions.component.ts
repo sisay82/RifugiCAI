@@ -1,7 +1,7 @@
 import {
     Component,Input,OnInit,OnDestroy,Directive
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter, IContribution, IFile,IContributionData,IFileRef } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
@@ -41,9 +41,9 @@ export class BcContributionRevision extends RevisionBase {
     name:String;
     contribution:IContribution;
     statusChange:boolean=false;
-    constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private authService:BcAuthService,private fb: FormBuilder,private shared:BcSharedService,private revisionService:BcRevisionsService){
-        super(shelterService,shared,revisionService,authService);
-    
+    constructor(shelterService:ShelterService,_route:ActivatedRoute,router:Router,authService:BcAuthService,private fb: FormBuilder,shared:BcSharedService,revisionService:BcRevisionsService){
+        super(shelterService,shared,revisionService,_route,router,authService);
+        this.MENU_SECTION=Enums.MenuSection.economy;
         this.contrForm=fb.group({
             handWorks:[""],
             customizedWorks:[""],
@@ -83,7 +83,7 @@ export class BcContributionRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("contribution");
+                    shared.onMaskConfirmSave(Enums.Routed_Component.contribution);
                 }
             }else{
                 shared.onDisplayError();
@@ -91,9 +91,8 @@ export class BcContributionRevision extends RevisionBase {
             }
         });
     
-        shared.activeComponent="contribution";
-        this.shared.onActiveOutletChange("revision");
-        this.shared.onSetDisableMaskSave(true);
+        shared.activeComponent=Enums.Routed_Component.contribution;
+        shared.onSetDisableMaskSave(true);
     }
 
     getFormControls(controlName){
@@ -196,19 +195,6 @@ export class BcContributionRevision extends RevisionBase {
     roundValue(value:number):number{
         return (Math.floor(value/100)*100);
     }
-    
-    checkPermission(permissions){
-        let authSub = this.authService.checkUserPermission().subscribe(role=>{
-            this.userRole=role;
-            if(permissions&&permissions.length>0){
-              if(permissions.find(obj=>obj==Enums.MenuSection.economy)>-1){
-                this.initialize();
-              }else{
-                location.href="/list";
-              }
-            }
-        });
-    }
 
     checkRole(){
         return this.userRole==Enums.User_Type.sectional||this.userRole==Enums.User_Type.superUser;
@@ -246,18 +232,8 @@ export class BcContributionRevision extends RevisionBase {
         
     }
 
-    ngOnInit() {
-        let permissionSub = this.revisionService.fatherReturnPermissions$.subscribe(permissions=>{
-            this.checkPermission(permissions);
-            if(permissionSub!=undefined){
-                permissionSub.unsubscribe();
-            }
-        });
-        this.revisionService.onChildGetPermissions();      
-    }
-
     save(confirm){
-        if(this.contrForm.valid){
+        if(!confirm||this.contrForm.valid){
             let shelter:IShelter={_id:this._id};
             let contr:IContribution={
                 year:(new Date()).getFullYear(),
@@ -266,20 +242,20 @@ export class BcContributionRevision extends RevisionBase {
                 attachments:[] as [IFileRef],
                 accepted:this.accepted||false,
                 data:{
-                    handWorks:this.contrForm.controls.handWorks.value||null,
-                    customizedWorks:this.contrForm.controls.customizedWorks.value||null,
-                    safetyCharges:this.contrForm.controls.safetyCharges.value||null,
+                    handWorks:this.getControlValue(<FormGroup>this.contrForm.controls.handWorks),
+                    customizedWorks:this.getControlValue(<FormGroup>this.contrForm.controls.customizedWorks),
+                    safetyCharges:this.getControlValue(<FormGroup>this.contrForm.controls.safetyCharges),
                     totWorks:this.getTotalWorks(),
-                    surveyorsCharges:this.contrForm.controls.surveyorsCharges.value||null,
-                    connectionsCharges:this.contrForm.controls.connectionsCharges.value||null,
-                    technicalCharges:this.contrForm.controls.technicalCharges.value||null,
-                    testCharges:this.contrForm.controls.testCharges.value||null,
-                    taxes:this.contrForm.controls.taxes.value||null,
+                    surveyorsCharges:this.getControlValue(<FormGroup>this.contrForm.controls.surveyorsCharges),
+                    connectionsCharges:this.getControlValue(<FormGroup>this.contrForm.controls.connectionsCharges),
+                    technicalCharges:this.getControlValue(<FormGroup>this.contrForm.controls.technicalCharges),
+                    testCharges:this.getControlValue(<FormGroup>this.contrForm.controls.testCharges),
+                    taxes:this.getControlValue(<FormGroup>this.contrForm.controls.taxes),
                     totCharges:this.getTotalCharges(),
-                    IVAincluded:this.contrForm.controls.IVAincluded.value||null,
+                    IVAincluded:this.getControlValue(<FormGroup>this.contrForm.controls.IVAincluded),
                     totalProjectCost:this.getTotalCost(),
-                    externalFinancing:this.contrForm.controls.externalFinancing.value||null,
-                    selfFinancing:this.contrForm.controls.selfFinancing.value||null,
+                    externalFinancing:this.getControlValue(<FormGroup>this.contrForm.controls.externalFinancing),
+                    selfFinancing:this.getControlValue(<FormGroup>this.contrForm.controls.selfFinancing),
                     red:this.getRedValue()
                 }
             };        
@@ -287,23 +263,20 @@ export class BcContributionRevision extends RevisionBase {
             (<FormArray>this.contrForm.controls.attachments).controls.forEach(item=>{
                 contr.attachments.push({name:item.value.value,id:item.value.id});
             });
-            shelter.contributions = contr;
-            this.revisionService.onChildSave(shelter,"contributions");
-            let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"contributions").subscribe((returnVal)=>{
-                if(returnVal){
-                    this.displayError=false;
-                    if(confirm){
-                        this.shared.onMaskConfirmSave("contribution");
-                    }
-                }else{
-                    console.log("Err "+returnVal);
-                    this.loading=false;
-                    this.displayError=true;
+
+            shelter.contributions = contr;            
+            this.processSavePromise(shelter,"contributions")
+            .then(()=>{
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.contribution);
                 }
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
+            })
+            .catch(err=>{
+                console.log(err);
+                this.displayError=true;
             });
+
         }else{
             this.loading=false;
             this.displayError=true;
@@ -381,28 +354,22 @@ export class BcContributionRevision extends RevisionBase {
           this.revisionService.onChildLoadRequest("contributions");
         });
     }
-    
-    initialize() {
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            this.getContribution(this._id)
-            .then((shelter)=>{
-                this.contribution=shelter.contributions;
-                this.initForm(shelter.contributions);
-                this.getDocs(this._id)
-                .then((docs)=>{
-                    this.docs=docs;
-                    docs.forEach(doc=>{
-                        if(docs.filter(obj=>obj.name==doc.name).length>1){
-                            if(doc.name.indexOf(":")==-1){
-                                this.filesEnum.push(doc.name+":"+doc._id);                            
-                            }
-                        }else{
-                            this.filesEnum.push(doc.name);
+
+    init(shelId) {
+        this.getContribution(shelId)
+        .then((shelter)=>{
+            this.contribution=shelter.contributions;
+            this.initForm(shelter.contributions);
+            this.getDocs(shelId)
+            .then((docs)=>{
+                this.docs=docs;
+                docs.forEach(doc=>{
+                    if(docs.filter(obj=>obj.name==doc.name).length>1){
+                        if(doc.name.indexOf(":")==-1){
+                            this.filesEnum.push(doc.name+":"+doc._id);                            
                         }
-                    })
-                    if(routeSub!=undefined){
-                        routeSub.unsubscribe();
+                    }else{
+                        this.filesEnum.push(doc.name);
                     }
                 });
             });

@@ -43,7 +43,7 @@ export class BcMask {
   revision(){
     if(this.reviseCheck()){
       let component = this.shared.activeComponent;
-      this.shared.onActiveOutletChange("revision");
+      this.shared.onActiveOutletChange(Enums.Routed_Outlet.revision);
       this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(revision:"+component+")");
     }
   }

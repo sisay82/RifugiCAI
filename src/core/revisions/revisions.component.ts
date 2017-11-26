@@ -31,7 +31,7 @@ export class BcRevisions{
     outletChangeSub:Subscription;
     constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService,private authService:BcAuthService){
         this.outletChangeSub=shared.activeOutletChange$.subscribe((outlet)=>{
-            if(outlet=="content"){
+            if(outlet==Enums.Routed_Outlet.content){
                 delete(this.ShelterToUpdate);
                 delete(this.Docs);
                 delete(this.Images);
