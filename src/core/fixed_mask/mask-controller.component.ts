@@ -51,7 +51,7 @@ export class BcMaskController {
 
   getRoute():Promise<any>{
     return new Promise<any>((resolve,reject)=>{
-      const sub = this._route.parent.params.subscribe(params=>{
+      const sub = this._route.params.subscribe(params=>{
             this._id=params["id"];
             if(sub){
                 sub.unsubscribe();
