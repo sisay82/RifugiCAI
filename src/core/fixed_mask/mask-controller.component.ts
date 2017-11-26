@@ -5,6 +5,7 @@ import { IShelter } from '../../app/shared/types/interfaces';
 import {Router,ActivatedRoute} from '@angular/router';
 import {BcSharedService} from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
+import { Enums } from '../../app/shared/types/enums';
 
 @Component({
     moduleId: module.id,
@@ -16,7 +17,7 @@ import { Subscription } from 'rxjs/Subscription';
 export class BcMaskController {
   @Input() shelter:IShelter;
   @Input() ref:string;
-  currentOutlet:string="";
+  currentOutlet:Enums.Routed_Outlet;
   activeOutletSub:Subscription;
   constructor(private shared:BcSharedService,private route:ActivatedRoute){
     this.currentOutlet=shared.activeOutlet;

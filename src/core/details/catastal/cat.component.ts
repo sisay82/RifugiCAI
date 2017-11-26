@@ -1,13 +1,15 @@
 import {
-  Component,Input,OnInit,OnDestroy
+  Component,Input,OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { ICatastal,IDrain,IEnergy } from '../../../app/shared/types/interfaces';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {BcDetailsService} from '../details.service';
+import { DetailBase } from '../shared/detail_base';
+
 @Component({
   moduleId: module.id,
   selector: 'bc-catastal',
@@ -15,17 +17,13 @@ import {BcDetailsService} from '../details.service';
   styleUrls: ['cat.component.scss'],
   providers:[ShelterService]
 })
-export class BcCatastal {
+export class BcCatastal extends DetailBase{
   catastal:ICatastal={};
   drain:IDrain={type:null};
   energy:IEnergy={};
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private detailsService:BcDetailsService){
-    shared.activeComponent="catastal";
-    shared.onActiveOutletChange("content");
-  }
-
-  ngOnDestroy(){
-
+  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,private detailsService:BcDetailsService,router:Router){
+    super(_route,shared,router);
+    shared.activeComponent=Enums.Routed_Component.catastal;
   }
 
   getDrain(id):Promise<void>{
@@ -112,20 +110,14 @@ getCatastal(id):Promise<void>{
     });
   }
 
-  ngOnInit(){
-
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this.getCatastal(params["id"])
-      .then(()=>{
-          this.getEnergy(params["id"])
-          .then(()=>{
-              this.getDrain(params["id"])
-              .then(()=>{
-                  if(routeSub!=undefined)
-                      routeSub.unsubscribe();
-              });
-          });
-      });
+  init(shelId){
+    this.getCatastal(shelId)
+    .then(()=>{
+        this.getEnergy(shelId)
+        .then(()=>{
+            this.getDrain(shelId)
+            .then(()=>{});
+        });
     });
   }
 

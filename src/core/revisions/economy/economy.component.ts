@@ -59,8 +59,7 @@ export class BcEconomyRevision extends RevisionBase{
       this.save(true);    
     });
 
-    shared.activeComponent="economy";
-    this.shared.onActiveOutletChange("revision");
+    shared.activeComponent=Enums.Routed_Component.economy;
   }
 
   isDisabled(){
@@ -75,7 +74,7 @@ export class BcEconomyRevision extends RevisionBase{
       .then(()=>{
         this.displayError=false;
         if(confirm){
-            this.shared.onMaskConfirmSave("economy");
+            this.shared.onMaskConfirmSave(Enums.Routed_Component.economy);
         }
       })
       .catch(err=>{
@@ -85,7 +84,7 @@ export class BcEconomyRevision extends RevisionBase{
       
     }else{
       if(confirm){
-        this.shared.onMaskConfirmSave("economy");
+        this.shared.onMaskConfirmSave(Enums.Routed_Component.economy);
       }
     }
   }

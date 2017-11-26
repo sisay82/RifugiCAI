@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ShelterService } from '../shelter.service'
 import { IShelter } from '../../shared/types/interfaces';
+import { Enums } from '../../shared/types/enums';
 import {BcSharedService} from '../../shared/shared.service';
 
 @Component({
@@ -30,8 +31,8 @@ export class BcShelterList {
 
     createShel(){
         let newShelSub=this.shelterService.getNewId().subscribe((obj)=>{
-            this.shared.activeOutlet="revision";
-            this.shared.activeComponent="geographic";
+            this.shared.activeOutlet=Enums.Routed_Outlet.revision;
+            this.shared.activeComponent=Enums.Routed_Component.geographic;
             if(newShelSub!=undefined){
                 newShelSub.unsubscribe();
             }

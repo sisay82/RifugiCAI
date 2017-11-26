@@ -165,6 +165,10 @@ export class ShelterService {
 
     handleError(error: any) {
         console.error('server error:', error);
+        if(error&&error.status==500){
+            location.href="/pageNotFound"
+        }
+
         if (error instanceof Response) {
             let errMessage = '';
             try {

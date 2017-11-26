@@ -24,7 +24,7 @@ export class BcDetails {
 
     constructor(private detailsService:BcDetailsService,private shared:BcSharedService){
         this.outletChangeSub=shared.activeOutletChange$.subscribe((outlet)=>{
-            if(outlet=="revision"){
+            if(outlet==Enums.Routed_Outlet.revision){
                 delete(this.Shelters);
                 delete(this.Docs);
                 delete(this.Images);

@@ -1,16 +1,16 @@
 import {
-  Component,Input,OnInit,OnDestroy,Directive,ViewEncapsulation
+  Component,Input,OnInit,Directive,ViewEncapsulation
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import {DomSanitizer} from '@angular/platform-browser';
 import 'rxjs/Rx';
 import {BcDetailsService} from '../details.service';
+import { DetailBase } from '../shared/detail_base';
 
 @Directive({
     selector:"[full-screen]",
@@ -30,14 +30,14 @@ export class BcResizeImgStyler{
   providers:[ShelterService],
   encapsulation:ViewEncapsulation.None
 })
-export class BcImg {
+export class BcImg extends DetailBase{
     _id:String;
     fullScreenImgId="";
     downloading:boolean=false;
     data:{file:IFile,url:any}[]=[];
-    constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private sanitizer:DomSanitizer,private detailsService:BcDetailsService) {
-        shared.activeComponent="images";
-        this.shared.onActiveOutletChange("content");
+    constructor(private shelterService:ShelterService,shared:BcSharedService,_route:ActivatedRoute,router:Router,private detailsService:BcDetailsService) {
+        super(_route,shared,router)    
+        shared.activeComponent=Enums.Routed_Component.images;
     }
 
     downloadFile(id){
@@ -98,30 +98,24 @@ export class BcImg {
         }
     }
 
-    ngOnInit() {
+    init(shelId) {
         this.downloading=true;
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            let loadServiceSub=this.detailsService.loadFiles$.subscribe(files=>{
-              if(!files){
-                let queryFileSub=this.shelterService.getImagesByShelterId(this._id).subscribe(files=>{
-                  this.initImages(files);
-                  this.detailsService.onChildSaveFiles(files);
-                  if(queryFileSub!=undefined){
-                    queryFileSub.unsubscribe();
-                  }
-                  if(routeSub!=undefined){
-                    routeSub.unsubscribe();
-                  }
+        let loadServiceSub=this.detailsService.loadFiles$.subscribe(files=>{
+            if(!files){
+                let queryFileSub=this.shelterService.getImagesByShelterId(shelId).subscribe(files=>{
+                    this.initImages(files);
+                    this.detailsService.onChildSaveFiles(files);
+                    if(queryFileSub!=undefined){
+                        queryFileSub.unsubscribe();
+                    }
                 });
-              }else{
+            }else{
                 this.initImages(files);
-              }
-              if(loadServiceSub!=undefined){
+            }
+            if(loadServiceSub!=undefined){
                 loadServiceSub.unsubscribe();
-              }
-            });
-            this.detailsService.onChildLoadFilesRequest([Enums.File_Type.image]);
+            }
         });
+        this.detailsService.onChildLoadFilesRequest([Enums.File_Type.image]);
     }
 }

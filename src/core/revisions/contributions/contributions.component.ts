@@ -81,7 +81,7 @@ export class BcContributionRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    shared.onMaskConfirmSave("contribution");
+                    shared.onMaskConfirmSave(Enums.Routed_Component.contribution);
                 }
             }else{
                 shared.onDisplayError();
@@ -89,8 +89,7 @@ export class BcContributionRevision extends RevisionBase {
             }
         });
     
-        shared.activeComponent="contribution";
-        shared.onActiveOutletChange("revision");
+        shared.activeComponent=Enums.Routed_Component.contribution;
         shared.onSetDisableMaskSave(true);
     }
 
@@ -259,7 +258,7 @@ export class BcContributionRevision extends RevisionBase {
             .then(()=>{
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave("contribution");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.contribution);
                 }
             })
             .catch(err=>{

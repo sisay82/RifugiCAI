@@ -80,7 +80,7 @@ export class BcManagementRevision extends RevisionBase{
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("management");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.management);
                 }
             }else{
                 shared.onDisplayError();
@@ -88,7 +88,7 @@ export class BcManagementRevision extends RevisionBase{
             }
         });
 
-        shared.activeComponent="management";
+        shared.activeComponent=Enums.Routed_Component.management;
     } 
 
     getFormControls(controlName){
@@ -244,7 +244,7 @@ export class BcManagementRevision extends RevisionBase{
             .then(()=>{
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave("management");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.management);
                 }
             })
             .catch(err=>{

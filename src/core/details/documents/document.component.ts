@@ -1,7 +1,7 @@
 import {
-  Component,Input,OnInit,OnDestroy,Pipe,PipeTransform
+  Component,Input,OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter, IFile, IButton } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
@@ -10,6 +10,7 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/Rx';
 import {BcDetailsService} from '../details.service';
+import { DetailBase } from '../shared/detail_base';
 
 @Component({
   moduleId: module.id,
@@ -18,14 +19,14 @@ import {BcDetailsService} from '../details.service';
   styleUrls: ['document.component.scss'],
   providers:[ShelterService]
 })
-export class BcDoc {
+export class BcDoc extends DetailBase{
     _id:String;
     docs:IFile[]=[];
     maps:IFile[]=[];
     invoices:IFile[]=[];
-    constructor(private shelterService:ShelterService,private shared:BcSharedService,private _route:ActivatedRoute,private detailsService:BcDetailsService) {
-        shared.activeComponent="documents";
-        this.shared.onActiveOutletChange("content");
+    constructor(private shelterService:ShelterService,shared:BcSharedService,_route:ActivatedRoute,router:Router,private detailsService:BcDetailsService) {
+        super(_route,shared,router);
+        shared.activeComponent=Enums.Routed_Component.documents;
     }
 
     downloadFile(id){
@@ -112,29 +113,23 @@ export class BcDoc {
         }
     }
 
-    ngOnInit() {
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            let loadServiceSub=this.detailsService.loadFiles$.subscribe(files=>{
-              if(!files){
-                let queryFileSub=this.shelterService.getFilesByShelterId(this._id).subscribe(files=>{
-                  this.initDocs(files);
-                  this.detailsService.onChildSaveFiles(files);
-                  if(queryFileSub!=undefined){
-                    queryFileSub.unsubscribe();
-                  }
-                  if(routeSub!=undefined){
-                    routeSub.unsubscribe();
-                  }
+    init(shelId) {
+        let loadServiceSub=this.detailsService.loadFiles$.subscribe(files=>{
+            if(!files){
+                let queryFileSub=this.shelterService.getFilesByShelterId(shelId).subscribe(files=>{
+                    this.initDocs(files);
+                    this.detailsService.onChildSaveFiles(files);
+                    if(queryFileSub!=undefined){
+                        queryFileSub.unsubscribe();
+                    }
                 });
-              }else{
+            }else{
                 this.initDocs(files);
-              }
-              if(loadServiceSub!=undefined){
+            }
+            if(loadServiceSub!=undefined){
                 loadServiceSub.unsubscribe();
-              }
-            });
-            this.detailsService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice,Enums.File_Type.contribution]);
+            }
         });
+        this.detailsService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice,Enums.File_Type.contribution]);
     }
 }

@@ -2,7 +2,8 @@ import {
   Component,Input,OnInit,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ITag,ILocation,IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
+import { ITag,ILocation,IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces';
+import { Enums } from '../../../app/shared/types/enums';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
@@ -63,7 +64,7 @@ export class BcGeoRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("geographic");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.geographic);
                 }
             }else{
                 shared.onDisplayError();
@@ -71,7 +72,7 @@ export class BcGeoRevision extends RevisionBase {
             }
         });
 
-        shared.activeComponent="geographic";
+        shared.activeComponent=Enums.Routed_Component.geographic;
     } 
 
     checkValidForm(){
@@ -144,7 +145,7 @@ export class BcGeoRevision extends RevisionBase {
             .then(()=>{
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave("geographic");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.geographic);
                 }
             })
             .catch(err=>{

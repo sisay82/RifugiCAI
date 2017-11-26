@@ -1,13 +1,10 @@
-import { Component,Input,OnInit,OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ITag,ILocation,IGeographic, IButton, IShelter } from '../../../app/shared/types/interfaces'
-import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
-import {ShelterService} from '../../../app/shelter/shelter.service'
-import { BcRevisionsService } from '../revisions.service';
-import {BcSharedService} from '../../../app/shared/shared.service';
+import { FormGroup, FormArray } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
-import { parseDate } from '../../inputs/text/text_input.component';
+import { parseDate,validators } from '../../inputs/text/text_input.component';
+import { Enums } from '../../../app/shared/types/enums';
+
+const validObjectIDRegExp = validators.objectID;
 
 export abstract class RevisionBase {
     protected _id:String;
@@ -24,7 +21,7 @@ export abstract class RevisionBase {
 
     constructor(protected shelterService,protected shared,protected revisionService,private _route,private router){
 
-        shared.onActiveOutletChange("revision");
+        shared.onActiveOutletChange(Enums.Routed_Outlet.revision);
 
         this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
             this.maskError=true;
@@ -53,7 +50,12 @@ export abstract class RevisionBase {
                 if(sub){
                     sub.unsubscribe();
                 }
-                resolve(params["id"]);
+                const id=params["id"];
+                if(validObjectIDRegExp.test(id)){
+                    resolve(id);
+                }else{
+                    reject({error:"Invalid ID"});
+                }
             });
         });
     }
@@ -62,6 +64,9 @@ export abstract class RevisionBase {
         let sub = this.getRoute()
         .then(id=>{
             this.init(id);
+        })
+        .catch(err=>{
+            this.redirect('/pageNotFound');
         });
     }
 

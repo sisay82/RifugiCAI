@@ -108,7 +108,7 @@ export class BcDocRevision extends RevisionBase{
           if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty||this.invoicesForm.dirty||this.invoicesChange){
             this.save(true);
           }else{
-            this.shared.onMaskConfirmSave("documents");
+            this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
           }
         }else{
           shared.onDisplayError();
@@ -116,7 +116,7 @@ export class BcDocRevision extends RevisionBase{
         }
     });
 
-    shared.activeComponent="documents";
+    shared.activeComponent=Enums.Routed_Component.documents;
   }
 
   getInvoicesFormControls(controlName:string,index?){
@@ -417,7 +417,7 @@ export class BcDocRevision extends RevisionBase{
               if(val){
                 i++;
                 if(filesToUpdate.length==i&&confirm){
-                  this.shared.onMaskConfirmSave("documents");
+                  this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
                 }
               }
               if(updateSub!=undefined){
@@ -431,7 +431,7 @@ export class BcDocRevision extends RevisionBase{
       }else{
         this.setDisplayError(false);
         if(confirm){
-          this.shared.onMaskConfirmSave("documents");
+          this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
         }
       }
     }else{

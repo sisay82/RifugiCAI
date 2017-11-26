@@ -2,13 +2,15 @@ import {
     Component,Input,OnInit,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
-import { IShelter,IUse } from '../../../app/shared/types/interfaces'
+import { IShelter,IUse } from '../../../app/shared/types/interfaces';
+import { Enums } from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {RevisionBase} from '../shared/revision_base';
+
 @Component({
     moduleId: module.id,
     selector: 'bc-fruition-revision',
@@ -22,8 +24,7 @@ export class BcFruitionRevision extends RevisionBase {
 
     constructor(shelterService:ShelterService,shared:BcSharedService,revisionService:BcRevisionsService,private fb: FormBuilder,_route:ActivatedRoute,router:Router){
         super(shelterService,shared,revisionService,_route,router);
-        shared.activeComponent="use";
-        shared.onActiveOutletChange("revision");
+        shared.activeComponent=Enums.Routed_Component.use;
 
         this.useForm = fb.group({
             stay_count_associate:[""],
@@ -48,7 +49,7 @@ export class BcFruitionRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("use");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.use);
                 }
             }else{
                 shared.onDisplayError();
@@ -68,7 +69,7 @@ export class BcFruitionRevision extends RevisionBase {
             .then(()=>{
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave("use");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.use);
                 }
             })
             .catch(err=>{

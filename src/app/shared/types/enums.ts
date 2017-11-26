@@ -1,5 +1,4 @@
 export namespace Enums {
-    //Type of section available for shelter request
     export enum ShelterSectionType {
         "geolocation",
         "contacts",
@@ -8,7 +7,6 @@ export namespace Enums {
         "catastal"
     }
 
-    //tipo riscaldamento
     export enum Heating_Type {
         "Elettrico",
         "Gas",
@@ -16,6 +14,25 @@ export namespace Enums {
         "Legna",
         "Assente",
         "Combinato"
+    }
+
+    export enum Routed_Component{
+        geographic=<any>"geographic",
+        services=<any>"services",
+        contacts=<any>"contacts",
+        management=<any>"management",
+        catastal=<any>"catastal",
+        documents=<any>"documents",
+        images=<any>"images",
+        economy=<any>"economy",
+        contribution=<any>"contribution",
+        use=<any>"use",
+        working=<any>"working"
+    }
+    
+    export enum Routed_Outlet{
+        content=<any>"content",
+        revision=<any>"revision"
     }
 
     export enum Contribution_Type {
@@ -31,19 +48,16 @@ export namespace Enums {
         Contribution_Type["FondoStabile"]
     ]
 
-    //tipo classe energetica
     export enum Energy_Class_Type {
         "A+", "A", "B", "C", "D", "E", "F", "G"
     }
 
-    //tipo di regolamentazione antincendio
     export enum Fire_Regulation_Type {
         "Sì", 
         "No", 
         "In fase di adeguamento"
     }
 
-    //tipo di possesso
     export enum Possession_Type {
         "Affitto ramo d'impresa", 
         "Affitto immobile", 
@@ -57,7 +71,6 @@ export namespace Enums {
         "Comodato"
     }
 
-    //stagioni
     export enum Seasons {
         "Primavera",
         "Estate",
@@ -65,7 +78,6 @@ export namespace Enums {
         "Inverno"
     }
 
-    //disponibilitá acqua
     export enum Water_Availability {
         "Scarsa", 
         "Costante", 
@@ -73,7 +85,6 @@ export namespace Enums {
         "Abbondante"
     }
 
-    //tipologia fonte acqua
     export enum Water_Type {
         "Assente", 
         "Acquedotto", 
@@ -82,7 +93,6 @@ export namespace Enums {
         "Nelle vicinanze"
     }
 
-    //tipo rifugio
     export enum Shelter_Type {
         "Bivacco",
         "Rifugio custodito",
@@ -91,7 +101,6 @@ export namespace Enums {
         "Punto d'appoggio"
     }
 
-    //tipo rifugio regionale
     export enum Regional_Type {
         "Escursionistico",
         "Alpinistico",
@@ -99,7 +108,6 @@ export namespace Enums {
         "Non classificabile"
     }
 
-    //categoria rifugio
     export enum Shelter_Category {
         "A",
         "B",
@@ -108,7 +116,6 @@ export namespace Enums {
         "E"
     }
 
-    //tipo di file
     export enum File_Type {
         doc,
         map,
@@ -117,7 +124,6 @@ export namespace Enums {
         contribution
     }
 
-    //tipi di documento
     export enum Docs_Type {
         txt=<any>"text/plain",
         pdf=<any>"application/pdf",
@@ -127,13 +133,11 @@ export namespace Enums {
         xlsx=<any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     }
 
-    //tipi di mappa
     export enum Maps_Type {
         dwg=<any>"application/acad, application/x-acad, application/autocad_dwg, image/x-dwg, application/dwg, application/x-dwg, application/x-autocad, image/vnd.dwg, drawing/dwg",
         pdf=<any>"application/pdf"
     }
 
-    //tipi di ricevuta
     export enum Invoices_Type {
         txt=<any>"text/plain",
         pdf=<any>"application/pdf",
@@ -149,7 +153,6 @@ export namespace Enums {
         jpg=<any>"image/jpeg"
     }
     
-    //tipologia scarico
     export enum Drain_Type {
         "IMOF fognatura",
         "IMOF pozzo perdente",
@@ -157,7 +160,6 @@ export namespace Enums {
         "IMOF trasporto a valle"
     }
 
-    //coerenza tipologica
     export enum Typo_consistency {
         "Piena",
         "Parziale",
@@ -165,7 +167,6 @@ export namespace Enums {
         "Nessuna"
     }
 
-    //Region group code for cai
     export enum Region_Code{
         "Liguria"=10,
         "Piemonte"=12,
@@ -195,7 +196,6 @@ export namespace Enums {
         "Passività"
     }
 
-    //tipo fonte risorsa
     export enum Source_Type {
         "Energetica",
         "Idrica",
@@ -209,7 +209,6 @@ export namespace Enums {
         Gestore
     }
 
-    //tipo custodia
     export enum Custody_Type {
         "Diretta",
         "Affitto a gestore",

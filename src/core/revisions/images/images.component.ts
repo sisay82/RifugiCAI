@@ -62,7 +62,7 @@ export class BcImgRevision extends RevisionBase {
               this.disableSave=true;
               this.save(true);
           }else{
-              this.shared.onMaskConfirmSave("images");
+              this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
           }
       }else{
           shared.onDisplayError();
@@ -70,7 +70,7 @@ export class BcImgRevision extends RevisionBase {
       }
     });
 
-    shared.activeComponent="images";
+    shared.activeComponent=Enums.Routed_Component.images;
   }
 
   getFormControls(controlName){
@@ -158,7 +158,7 @@ export class BcImgRevision extends RevisionBase {
             this.uploading=false;
             this.cleanForm();
             if(confirm){
-                this.shared.onMaskConfirmSave("images");
+                this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
             }
             if(shelServiceSub!=undefined){
                 shelServiceSub.unsubscribe();
@@ -191,7 +191,7 @@ export class BcImgRevision extends RevisionBase {
             if(val){
               i++;
               if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
-                this.shared.onMaskConfirmSave("images");
+                this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
               }
             }
             if(updateSub!=undefined){
@@ -203,7 +203,7 @@ export class BcImgRevision extends RevisionBase {
         }else{
           i++;
           if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
-            this.shared.onMaskConfirmSave("images");
+            this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
           }
         }
       }

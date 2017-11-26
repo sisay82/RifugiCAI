@@ -2,7 +2,8 @@ import {
   Component,Input,OnInit, trigger, state, style, transition, animate//,OnDestroy
 } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
-import { IButton, IShelter, IService, ITag } from '../../../app/shared/types/interfaces'
+import { IButton, IShelter, IService, ITag } from '../../../app/shared/types/interfaces';
+import { Enums } from '../../../app/shared/types/enums';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
@@ -68,7 +69,7 @@ export class BcServRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("services");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.services);
                 }
             }else{
                 shared.onDisplayError();
@@ -76,7 +77,7 @@ export class BcServRevision extends RevisionBase {
             }
         });
 
-        shared.activeComponent="services";
+        shared.activeComponent=Enums.Routed_Component.services;
     } 
 
     getFormControls(controlName){
