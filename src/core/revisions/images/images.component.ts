@@ -143,7 +143,7 @@ export class BcImgRevision extends RevisionBase {
           uploadDate:new Date(Date.now()),
           contentType:f.type,
           shelterId:this._id,
-          description:this.newDocForm.controls.description.value||null,
+          description:this.getControlValue(<FormGroup>(<FormGroup>this.newDocForm).controls.description),
           type:Enums.File_Type.image
       }
       let fileReader = new FileReader();
@@ -183,12 +183,12 @@ export class BcImgRevision extends RevisionBase {
       let i=0;
       for(let file of (<FormArray>this.docsForm.controls.files).controls){
         if(file.dirty){
-          let updFile:IFile={
+          const updFile:IFile={
             _id:file.value.id,
             shelterId:this._id,
             description:this.getControlValue(<FormGroup>(<FormGroup>file).controls.description)
           }
-          let updateSub = this.shelterService.updateFile(updFile).subscribe((val)=>{
+          const updateSub = this.shelterService.updateFile(updFile).subscribe((val)=>{
             if(val){
               i++;
               if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
@@ -199,7 +199,16 @@ export class BcImgRevision extends RevisionBase {
               updateSub.unsubscribe();
             }
           });
-          let f:IFile={name:file.value.name,size:file.value.size,_id:file.value.id,type:file.value.type,value:file.value.value,contentType:file.value.contentType,description:file.value.description};
+          const f:IFile={
+            name:file.value.name,
+            size:file.value.size,
+            _id:updFile._id,
+            type:file.value.type,
+            value:file.value.value,
+            contentType:file.value.contentType,
+            description:updFile.description
+          };
+
           this.revisionService.onChildSaveFile(f);
         }else{
           i++;
