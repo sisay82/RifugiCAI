@@ -18,7 +18,7 @@ function validateDate(value){
 }
 
 export function parseDate(input:String,removeYear?:boolean):Date{// dd-mm-yy | yy/mm/dd
-    if(input!=null&&input!=""){
+    if(input){
         if(input.indexOf("-")>-1){
             if(input.indexOf("/")>-1){
                 return null;

@@ -137,9 +137,14 @@ export abstract class RevisionBase {
         }
     }
 
-    protected processDate(form:FormGroup){
-        const value=this.getControlValue(form);
-        return parseDate(value)||null;
+    protected processFormDate(form:FormGroup){
+        if(form&&form.valid){
+            return parseDate(form.value)||null;
+        }else return null;
+    }
+
+    protected processSimpleDate(value){
+        return parseDate(value);
     }
 
     protected getFormValues(form:FormGroup):any{
