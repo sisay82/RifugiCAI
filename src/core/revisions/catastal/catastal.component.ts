@@ -1,7 +1,7 @@
 import {
   Component,Input,OnDestroy,OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IDrain,IEnergy,ICatastal, IShelter } from '../../../app/shared/types/interfaces'
 import {Enums} from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
@@ -41,8 +41,8 @@ export class BcCatastalRevision extends RevisionBase{
     private formCatValidSub:Subscription;
     private formEnergyValidSub:Subscription;
     private formDrainValidSub:Subscription;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        super(shelterService,shared,revisionService,authService);
+    constructor(shared:BcSharedService,shelterService:ShelterService,authService:BcAuthService,router:Router,_route:ActivatedRoute,private fb: FormBuilder,revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,_route,router,authService);
         this.catastalForm = fb.group({
             buildingRegulation:[""],
             buildYear:[""],
@@ -108,7 +108,7 @@ export class BcCatastalRevision extends RevisionBase{
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("catastal");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
                 }
             }else{
                 shared.onDisplayError();
@@ -116,120 +116,78 @@ export class BcCatastalRevision extends RevisionBase{
             }
         });
 
-        shared.activeComponent="catastal";
+        shared.activeComponent=Enums.Routed_Component.catastal;
     }
 
     checkValidForm(){
         return this.drainForm.valid&&this.catastalForm.valid&&this.energyForm.valid;
     }
 
+    processSaveForm(form:FormGroup,section:string):Promise<any>{
+        if(form.dirty){
+            let shelter:any={_id:this._id,name:this.name};
+            let obj:any=this.getFormValues(form);
+
+            shelter[section]=obj;
+            return this.processSavePromise(shelter,section);
+        }
+    }
+
+    getBooleanNumeric(obj:boolean):number{
+        return obj?1:0;
+    }
+
+    getTotalDirtyForms():number{
+        return 0+this.getBooleanNumeric(this.catastalForm.dirty)+
+            this.getBooleanNumeric(this.drainForm.dirty)+
+            this.getBooleanNumeric(this.energyForm.dirty)
+    }
+
     save(confirm){
         if(!this.catastalForm.dirty&&!this.drainForm.dirty&&!this.energyForm.dirty){
-            this.shared.onMaskConfirmSave("catastal");
+            this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
         }else{
-            if(this.catastalForm.valid&&this.drainForm.valid&&this.energyForm.valid){
-                let catastal:ICatastal;
-                let energy:IEnergy;
-                let drain:IDrain;
-                let updates:number=0;
-                if(this.catastalForm.dirty){
-                    let shelter:any={_id:this._id,name:this.name};
-                    updates++;
-                    catastal={
-                        buildingRegulation:this.catastalForm.controls["buildingRegulation"].value||null,
-                        buildYear:this.catastalForm.controls["buildYear"].value||null,
-                        rebuildYear:this.catastalForm.controls["rebuildYear"].value||null,
-                        class:this.catastalForm.controls["class"].value||null,
-                        code:this.catastalForm.controls["code"].value||null,
-                        typologicalCoherence:this.catastalForm.controls["typologicalCoherence"].value||null,
-                        matericalCoherence:this.catastalForm.controls["matericalCoherence"].value||null,
-                        cityPlanRegulation:this.catastalForm.controls["cityPlanRegulation"].value||null,
-                        mainBody:this.catastalForm.controls["mainBody"].value||null,
-                        secondaryBody:this.catastalForm.controls["secondaryBody"].value||null,
-                        fireRegulation:this.catastalForm.controls["fireRegulation"].value||null,
-                        ISO14001:this.catastalForm.controls["ISO14001"].value||null
+            if(!confirm||(this.catastalForm.valid&&this.drainForm.valid&&this.energyForm.valid)){
+                let catastal:ICatastal={};
+                let energy:IEnergy={};
+                let drain:IDrain={};
+                let updates:number=this.getTotalDirtyForms();
+
+                this.processSaveForm(this.catastalForm,"catastal")
+                .then(()=>{
+                    updates--;
+                    if(confirm&&updates==0){
+                        this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
                     }
-                    shelter.catastal=catastal;
-                    this.revisionService.onChildSave(shelter,"catastal");
-                    let catSub=this.shelterService.preventiveUpdateShelter(shelter,"catastal").subscribe((returnVal)=>{
-                        if(returnVal){
-                            this.displayError=false;
-                            updates--;
-                            if(confirm&&updates==0){
-                                this.shared.onMaskConfirmSave("catastal");
-                            }
-                            
-                        }else{
-                            console.log(returnVal);
-                            this.displayError=true;
-                        }
-                        if(catSub!=undefined){
-                            catSub.unsubscribe();
-                        }
-                    });
-                }
-                if(this.drainForm.dirty){
-                    let shelter:any={_id:this._id,name:this.name};
-                    updates++;
-                    drain={
-                        type:this.drainForm.controls["type"].value||null,
-                        regulation:this.drainForm.controls["regulation"].value||null,
-                        oilSeparator:this.drainForm.controls["oilSeparator"].value||null,
-                        recycling:this.drainForm.controls["recycling"].value||null,
-                        water_type:this.drainForm.controls["water_type"].value||null,
-                        water_availability:this.drainForm.controls["water_availability"].value||null,
-                        droughts:this.drainForm.controls["droughts"].value||null,
-                        water_certification:this.drainForm.controls["water_certification"].value||null
+                })
+                .catch(err=>{
+                    console.log(err);
+                    this.displayError=true;
+                });
+
+                this.processSaveForm(this.drainForm,"drain")
+                .then(()=>{
+                    updates--;
+                    if(confirm&&updates==0){
+                        this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
                     }
-                    shelter.drain=drain;
-                    this.revisionService.onChildSave(shelter,"drain");
-                    let drainSub=this.shelterService.preventiveUpdateShelter(shelter,"drain").subscribe((returnVal)=>{
-                        if(returnVal){
-                            this.displayError=false;
-                            updates--;
-                            if(confirm&&updates==0){
-                                this.shared.onMaskConfirmSave("catastal");
-                            }
-                        }else{
-                            console.log(returnVal);
-                            this.displayError=true;
-                        }
-                        if(drainSub!=undefined){
-                            drainSub.unsubscribe();
-                        }
-                    });
-                }
-                if(this.energyForm.dirty){
-                    let shelter:any={_id:this._id,name:this.name};
-                    updates++;
-                    energy={
-                        class:this.energyForm.controls["class"].value||null,
-                        energy:this.energyForm.controls["energy"].value||null,
-                        greenCertification:this.energyForm.controls["greenCertification"].value||null,
-                        powerGenerator:this.energyForm.controls["powerGenerator"].value||null,
-                        photovoltaic:this.energyForm.controls["photovoltaic"].value||null,
-                        sourceType:this.energyForm.controls["sourceType"].value||null,
-                        sourceName:this.energyForm.controls["sourceName"].value||null,
-                        heating_type:this.energyForm.controls["heating_type"].value||null
+                })
+                .catch(err=>{
+                    console.log(err);
+                    this.displayError=true;
+                });
+
+                this.processSaveForm(this.energyForm,"energy")
+                .then(()=>{
+                    updates--;
+                    if(confirm&&updates==0){
+                        this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
                     }
-                    shelter.energy=energy;
-                    this.revisionService.onChildSave(shelter,"energy");
-                    let energySub=this.shelterService.preventiveUpdateShelter(shelter,"energy").subscribe((returnVal)=>{
-                        if(returnVal){
-                            this.displayError=false;
-                            updates--;
-                            if(confirm&&updates==0){
-                                this.shared.onMaskConfirmSave("catastal");
-                            }
-                        }else{
-                            console.log(returnVal);
-                            this.displayError=true;
-                        }
-                        if(energySub!=undefined){
-                            energySub.unsubscribe();
-                        }
-                    });
-                }
+                })
+                .catch(err=>{
+                    console.log(err);
+                    this.displayError=true;
+                });
             }else{
                 this.displayError=true;
             }
@@ -385,40 +343,15 @@ export class BcCatastalRevision extends RevisionBase{
         });
     }
 
-    initialize(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            this.getCatastal(params["id"])
+    init(shelId){
+        this.getCatastal(shelId)
+        .then(()=>{
+            this.getEnergy(shelId)
             .then(()=>{
-                this.getEnergy(params["id"])
-                .then(()=>{
-                    this.getDrain(params["id"])
-                    .then(()=>{
-                        if(routeSub!=undefined)
-                            routeSub.unsubscribe();
-                    });
-                });
+                this.getDrain(shelId)
+                .then(()=>{});
             });
         });
     }
 
-    ngOnInit() {
-        let permissionSub = this.revisionService.fatherReturnPermissions$.subscribe(permissions=>{
-            this.checkPermission(permissions);
-            if(permissionSub!=undefined){
-                permissionSub.unsubscribe();
-            }
-        });
-        this.revisionService.onChildGetPermissions();           
-    }
-
-    checkPermission(permissions){
-        if(permissions&&permissions.length>0){
-            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
-                this.initialize();
-            }else{
-                location.href="/list";
-            }
-        }
-    }
 }

@@ -1,12 +1,14 @@
 import {
-  Component,Input,OnInit,OnDestroy
+  Component,Input,OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IContacts, IOpening } from '../../../app/shared/types/interfaces';
 import {ShelterService} from '../../../app/shelter/shelter.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {BcDetailsService} from '../details.service'
+import { Enums } from '../../../app/shared/types/enums';
+import { DetailBase } from '../shared/detail_base';
 
 @Component({
   moduleId: module.id,
@@ -15,22 +17,16 @@ import {BcDetailsService} from '../details.service'
   styleUrls: ['contact.component.scss'],
   providers:[ShelterService]
 })
-export class BcContact {
+export class BcContact extends DetailBase{
   contacts:IContacts={name:null,role:null};
   openings:IOpening[]=[];
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private detailsService:BcDetailsService){
-    shared.activeComponent="contacts";
-    this.shared.onActiveOutletChange("content");
-  }
-
-  ngOnDestroy(){
-
+  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
+    super(_route,shared,router);
+    shared.activeComponent=Enums.Routed_Component.contacts;
   }
 
   gotoSite(webSite:string){
-    if(webSite!=undefined){
-      location.href=webSite;
-    }
+    this.redirect(webSite);
   }
 
   getOpening(id):Promise<IOpening[]>{
@@ -90,18 +86,15 @@ export class BcContact {
     this.openings=openings;
   }
 
-  ngOnInit(){
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this.getContact(params["id"])
-      .then((contacts)=>{
-          this.getOpening(params["id"])
-          .then((openings)=>{
-              this.initContacts(contacts,openings);
-              if(routeSub!=undefined){
-                  routeSub.unsubscribe();
-              }
-          });
-      });
+  init(shelId){
+    this.getContact(shelId)
+    .then((contacts)=>{
+        this.getOpening(shelId)
+        .then((openings)=>{
+            this.initContacts(contacts,openings);
+
+        });
     });
   }
+
 }

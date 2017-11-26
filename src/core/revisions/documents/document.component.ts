@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit,OnDestroy,Directive
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter, IFile,IEconomy } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
@@ -53,8 +53,9 @@ export class BcDocRevision extends RevisionBase{
   disableSave:boolean=false;
   private currentFileToggle:number=-1;
   disableInvoiceGlobal:boolean=true;
-  constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-    super(shelterService,shared,revisionService,authService);
+  constructor(shelterService:ShelterService,authService:BcAuthService,shared:BcSharedService,router:Router,_route:ActivatedRoute,private fb: FormBuilder,revisionService:BcRevisionsService) { 
+    super(shelterService,shared,revisionService,_route,router,authService);
+    this.MENU_SECTION=Enums.MenuSection.document;
     this.newDocForm = fb.group({
       file:[]
     });
@@ -109,20 +110,20 @@ export class BcDocRevision extends RevisionBase{
           if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty||this.invoicesForm.dirty||this.invoicesChange){
             this.save(true);
           }else{
-            this.shared.onMaskConfirmSave("documents");
+            this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
           }
         }else{
           shared.onDisplayError();
           this.setDisplayError(true);
         }
     });
-    
-    shared.activeComponent="documents";
+
+    shared.activeComponent=Enums.Routed_Component.documents;
   }
 
   getInvoicesFormControls(controlName:string,index?){
     const control=(<FormArray>this.invoicesForm.controls[controlName]);
-    if(index){
+    if(index!=undefined){
       return control.at(index);
     }else{
       return control.controls;
@@ -390,7 +391,7 @@ export class BcDocRevision extends RevisionBase{
   }
 
   save(confirm){
-    if(this.invoicesForm.valid&&(!this.invoicesChange||(this.invoicesForm.dirty&&this.invoicesChange))){
+    if((!confirm||this.invoicesForm.valid)&&(!this.invoicesChange||this.invoicesForm.dirty)){
       this.setDisplayError(false);
       let i=0;
       if(this.invoicesForm.dirty){
@@ -418,7 +419,7 @@ export class BcDocRevision extends RevisionBase{
               if(val){
                 i++;
                 if(filesToUpdate.length==i&&confirm){
-                  this.shared.onMaskConfirmSave("documents");
+                  this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
                 }
               }
               if(updateSub!=undefined){
@@ -432,7 +433,7 @@ export class BcDocRevision extends RevisionBase{
       }else{
         this.setDisplayError(false);
         if(confirm){
-          this.shared.onMaskConfirmSave("documents");
+          this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
         }
       }
     }else{
@@ -546,26 +547,6 @@ export class BcDocRevision extends RevisionBase{
     });
   }
 
-  ngOnInit() {
-    let permissionSub = this.revisionService.fatherReturnPermissions$.subscribe(permissions=>{
-      this.checkPermission(permissions);
-      if(permissionSub!=undefined){
-          permissionSub.unsubscribe();
-      }
-    });
-    this.revisionService.onChildGetPermissions();    
-  }
-
-  checkPermission(permissions){
-    if(permissions&&permissions.length>0){
-        if(permissions.find(obj=>obj==Enums.MenuSection.document)>-1){
-            this.initialize();
-        }else{
-            location.href="/list";
-        }
-    }
-  }
-
   getEconomy(id):Promise<IShelter>{
     return new Promise<IShelter>((resolve,reject)=>{
         let revSub=this.revisionService.load$.subscribe(shelter=>{
@@ -591,19 +572,16 @@ export class BcDocRevision extends RevisionBase{
     });
   }
 
-  initialize() {
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this._id=params["id"];
-      this.getDocs(params["id"])
-      .then(files=>{
-        this.initData(files);
-        this.getEconomy(params["id"])
-        .then(shelter=>{
-          if(shelter.economy){
-            this.updateInvalidYearsInvoice(shelter.economy.filter(obj=>obj.confirm));
-          }
-        })
-      });
+  init(shelId) {
+    this.getDocs(shelId)
+    .then(files=>{
+      this.initData(files);
+      this.getEconomy(shelId)
+      .then(shelter=>{
+        if(shelter.economy){
+          this.updateInvalidYearsInvoice(shelter.economy.filter(obj=>obj.confirm));
+        }
+      })
     });
   }
 

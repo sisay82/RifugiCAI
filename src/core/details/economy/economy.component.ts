@@ -1,7 +1,7 @@
 import {
-  Component,Input,OnInit,OnDestroy,Directive
+  Component,Input,OnInit,Directive
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter,IEconomy, IContribution, IFile } from '../../../app/shared/types/interfaces'
 import { Enums } from '../../../app/shared/types/enums'
 import {ShelterService} from '../../../app/shelter/shelter.service'
@@ -9,6 +9,7 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import {BcSharedService} from '../../../app/shared/shared.service'
 import {BcDetailsService} from '../details.service';
+import { DetailBase } from '../shared/detail_base';
 
 @Directive({
   selector:"div[active]",
@@ -28,7 +29,7 @@ export class BcActiveTabStyler{
   styleUrls: ['economy.component.scss'],
   providers:[ShelterService]
 })
-export class BcEconomy {
+export class BcEconomy extends DetailBase{
   economy:[IEconomy]=<any>[];
   activeYear;
   activeTab:IEconomy;
@@ -38,9 +39,9 @@ export class BcEconomy {
   outgosFiles:[IFile]=[] as [IFile];
   revenues:number=0;
   outgos:number=0;
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private detailsService:BcDetailsService){
-    shared.activeComponent="economy";
-    this.shared.onActiveOutletChange("content");
+  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
+    super(_route,shared,router);
+    shared.activeComponent=Enums.Routed_Component.economy;
   }
 
   isActive(year){
@@ -205,35 +206,29 @@ export class BcEconomy {
     });
   }
 
-  ngOnInit(){
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this.getEconomy(params["id"])
-      .then((shelter)=>{
-        this.getDocs(params["id"])
-        .then(files=>{
-          this.analyzeDocsYear(files)
-          .then(()=>{
-            if(routeSub!=undefined){
-              routeSub.unsubscribe();
-            }
-          });
-          this.files=files;
-          this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
-          this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];
-          this.setBalanceSheetByYear((new Date()).getFullYear());
-        });
-        let tab;
-        let year;
-        year=(new Date()).getFullYear();        
-        if(shelter.economy&&shelter.economy.length>0){
-          this.economy = shelter.economy.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;});       
-          tab=shelter.economy.find(obj=>obj.year==(new Date().getFullYear()));     
-        }else{
-          let economy:IEconomy={year:(new Date()).getFullYear()}
-          this.economy=[economy];
-        }
-        this.changeActiveTab(year,tab);
+  init(shelId){
+    this.getEconomy(shelId)
+    .then((shelter)=>{
+      this.getDocs(shelId)
+      .then(files=>{
+        this.analyzeDocsYear(files)
+        .then(()=>{});
+        this.files=files;
+        this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
+        this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];
+        this.setBalanceSheetByYear((new Date()).getFullYear());
       });
+      let tab;
+      let year;
+      year=(new Date()).getFullYear();        
+      if(shelter.economy&&shelter.economy.length>0){
+        this.economy = shelter.economy.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;});       
+        tab=shelter.economy.find(obj=>obj.year==(new Date().getFullYear()));     
+      }else{
+        let economy:IEconomy={year:(new Date()).getFullYear()}
+        this.economy=[economy];
+      }
+      this.changeActiveTab(year,tab);
     });
   }
 }

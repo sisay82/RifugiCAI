@@ -1,7 +1,7 @@
 import {
   Component,Input,OnInit,OnDestroy
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IOpening, IContacts, IShelter } from '../../../app/shared/types/interfaces'
 import {Enums} from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
@@ -27,8 +27,8 @@ export class BcContactsRevision extends RevisionBase {
     private openings:IOpening[];
     private openingChange:boolean=false;
     private hiddenOpening:boolean=true;
-    constructor(private shared:BcSharedService,private shelterService:ShelterService,private authService:BcAuthService,private _route:ActivatedRoute,private fb: FormBuilder,private revisionService:BcRevisionsService) { 
-        super(shelterService,shared,revisionService,authService);
+    constructor(shared:BcSharedService,shelterService:ShelterService,authService:BcAuthService,router:Router,_route:ActivatedRoute,private fb: FormBuilder,revisionService:BcRevisionsService) { 
+        super(shelterService,shared,revisionService,_route,router,authService);
         this.contactForm = fb.group({
             fixedPhone:[""],
             mobilePhone:[""],
@@ -59,7 +59,7 @@ export class BcContactsRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("contacts");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.contacts);
                 }
             }else{
                 shared.onDisplayError();
@@ -67,7 +67,7 @@ export class BcContactsRevision extends RevisionBase {
             }
         });
 
-        shared.activeComponent="contacts";
+        shared.activeComponent=Enums.Routed_Component.contacts;
     } 
 
     getFormControls(controlName){
@@ -140,75 +140,45 @@ export class BcContactsRevision extends RevisionBase {
         });
     }
 
-    processUrl(value){
-        if(value!=null&&value!=""){
-            let wSite="http";
-            if(value.toLowerCase().indexOf("://")==-1){
-                wSite+="://"+value;
-            }else{
-                wSite=value;
-            }
-            
-            return wSite;
-        }else{
-            return null;
-        }
-    }
-
     save(confirm){
-        if(this.contactForm.valid){
+        if(!confirm||this.contactForm.valid){
             let shelter:any={_id:this._id,name:this.name};
 
-            let contacts:IContacts={
-                fixedPhone:this.contactForm.controls.fixedPhone.value || null,
-                mobilePhone:this.contactForm.controls.mobilePhone.value || null,
-                role:this.contactForm.controls.role.value || null,
-                emailAddress:this.contactForm.controls.emailAddress.value || null,
-                prenotation_link:this.processUrl(this.contactForm.controls.prenotation_link.value),
-                webAddress:this.processUrl(this.contactForm.controls.webAddress.value)
+            const contacts:IContacts={
+                fixedPhone:this.getControlValue(<FormGroup>this.contactForm.controls.fixedPhone),
+                mobilePhone:this.getControlValue(<FormGroup>this.contactForm.controls.mobilePhone),
+                role:this.getControlValue(<FormGroup>this.contactForm.controls.role),
+                emailAddress:this.getControlValue(<FormGroup>this.contactForm.controls.emailAddress),
+                prenotation_link:this.processUrl(<FormGroup>this.contactForm.controls.prenotation_link),
+                webAddress:this.processUrl(<FormGroup>this.contactForm.controls.webAddress)
             }
-            const control = <FormArray>this.contactForm.controls['openings'];
-            let openings:IOpening[]=[];
-            for(let c of control.controls){
-                openings.push({
-                    startDate:c.value.startDate?(parseDate(c.value.startDate)||null):null,
-                    endDate:c.value.endDate?(parseDate(c.value.endDate)||null):null,
-                    type:c.value.type||null
-                });
-            }
-            shelter.openingTime=openings;
-            this.revisionService.onChildSave(shelter,"openingTime");
-            let openSub=this.shelterService.preventiveUpdateShelter(shelter,"openingTime").subscribe((returnVal)=>{
-                if(returnVal){
-                    shelter.contacts=contacts;
-                    this.revisionService.onChildSave(shelter,"contacts");
-                    let contSub=this.shelterService.preventiveUpdateShelter(shelter,"contacts").subscribe((returnVal)=>{
-                        if(returnVal){
-                            this.displayError=false;
-                            if(confirm){
-                                this.shared.onMaskConfirmSave("contacts");
-                            }
-                            //location.reload();
-                        }else{
-                            console.log(returnVal);
-                            this.displayError=true;
-                        }
-                        if(contSub!=undefined){
-                            contSub.unsubscribe();
-                        }
-                        if(openSub!=undefined){
-                            openSub.unsubscribe();
-                        }
-                    });
 
-                }else{
-                    console.log(returnVal);
-                    this.displayError=true;
-                    if(openSub!=undefined){
-                        openSub.unsubscribe();
+            const op=this.getFormArrayValues(<FormArray>this.contactForm.controls.openings);
+            const openings = op.map(val=>{
+                if(val){
+                    if(val.startDate){
+                        val.startDate=this.processDate(val.startDate);
+                    }
+                    if(val.endDate){
+                        val.endDate=this.processDate(val.endDate);
                     }
                 }
-                
+                return val;
+            });
+
+            shelter.openingTime=openings;
+            shelter.contacts=contacts;
+            this.processSavePromise(shelter,"openingTime")
+            .then(()=>this.processSavePromise(shelter,"contacts"))
+            .then(()=>{
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.contacts);
+                }
+            })
+            .catch((err)=>{
+                this.displayError=true;
+                console.log(err);
             });
         }else{
             this.displayError=true;
@@ -312,40 +282,14 @@ export class BcContactsRevision extends RevisionBase {
         });
      }
 
-    initialize(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            this.getContact(params["id"])
-            .then((contacts)=>{
-                this.getOpening(params["id"])
-                .then((openings)=>{
-                    let shelter={_id:params["id"],contacts:contacts,openingTime:openings};
-                    this.initForm(shelter);
-                    if(routeSub!=undefined){
-                        routeSub.unsubscribe();
-                    }
-                });
+    init(shelId){
+        this.getContact(shelId)
+        .then((contacts)=>{
+            this.getOpening(shelId)
+            .then((openings)=>{
+                let shelter={_id:shelId,contacts:contacts,openingTime:openings};
+                this.initForm(shelter);
             });
         });
-    }
-
-    ngOnInit() {
-        let permissionSub = this.revisionService.fatherReturnPermissions$.subscribe(permissions=>{
-            this.checkPermission(permissions);
-            if(permissionSub!=undefined){
-                permissionSub.unsubscribe();
-            }
-        });
-        this.revisionService.onChildGetPermissions();           
-    }
-
-    checkPermission(permissions){
-        if(permissions&&permissions.length>0){
-            if(permissions.find(obj=>obj==Enums.MenuSection.detail)>-1){
-                this.initialize();
-            }else{
-                location.href="/list";
-            }
-        }
     }
 }
