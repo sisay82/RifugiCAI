@@ -29,13 +29,13 @@
         <div *ngFor="let open of getFormControls('openings');let i = index" formArrayName="openings">
             <div [formGroupName]="i" style="display: flex;flex-direction:row;align-items:center">
                 <div class="bc-revision-contact">
+                    <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="type" title="Tipo" [displayError]="displayError"></bc-text-input>
+                </div>
+                <div class="bc-revision-contact">
                     <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="startDate" title="Inizio" removeYear="true" validator="validateDate" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div class="bc-revision-contact">
                     <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="endDate" title="Fine" removeYear="true" validator="validateDate" [displayError]="displayError"></bc-text-input>
-                </div>
-                <div class="bc-revision-contact">
-                    <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="type" title="Tipo" required="true" [displayError]="displayError"></bc-text-input>
                 </div>
                 <bc-icon (click)="removeOpening(i)" class="bc-revision-contact-add-tag" name="times" size=s></bc-icon>
             </div>
@@ -49,15 +49,15 @@
 </div>
 <div *ngIf="!isHiddenOpenings()">
     <form [formGroup]="newOpeningForm">
-        <div style="display:flex;flex-direction:row;align-items:center">    
+        <div style="display:flex;flex-direction:row;align-items:center">
+            <div class="bc-revision-contact">
+                <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="newOpeningType" [displayError]="invalid"></bc-text-input>
+            </div>    
             <div class="bc-revision-contact">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="newOpeningStartDate" removeYear="true" validator="validateDate" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="newOpeningEndDate" removeYear="true" validator="validateDate" [displayError]="invalid"></bc-text-input>
-            </div>
-            <div class="bc-revision-contact">
-                <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="newOpeningType" [displayError]="invalid"></bc-text-input>
             </div>
             <bc-icon tooltip="Aggiungi" (click)="addNewOpening()" class="bc-revision-contact-add-tag" name="check" size=s></bc-icon>
         </div>

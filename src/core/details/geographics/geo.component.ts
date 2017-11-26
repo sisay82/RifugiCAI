@@ -1,7 +1,7 @@
 import {
-  Component,Input,OnInit,OnDestroy
+  Component,Input,OnInit
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IGeographic,IShelter,ITag } from '../../../app/shared/types/interfaces'
 import {BcMap} from '../../map/map.component';
 import {ShelterService} from '../../../app/shelter/shelter.service'
@@ -10,6 +10,9 @@ import * as L from 'leaflet';
 import { Subscription } from 'rxjs/Subscription';
 import {BcSharedService} from '../../../app/shared/shared.service'
 import {BcDetailsService} from '../details.service';
+import { Enums } from '../../../app/shared/types/enums'
+import { DetailBase } from '../shared/detail_base';
+
 @Component({
   moduleId: module.id,
   selector: 'bc-geo',
@@ -17,12 +20,12 @@ import {BcDetailsService} from '../details.service';
   styleUrls: ['geo.component.scss'],
   providers:[ShelterService]
 })
-export class BcGeo {
+export class BcGeo extends DetailBase{
   data:IGeographic={location:{longitude:null,latitude:null}};
   center:Subject<L.LatLng|L.LatLngExpression>=new Subject();
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private detailsService:BcDetailsService){
-    shared.activeComponent="geographic";
-    this.shared.onActiveOutletChange("content");
+  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
+    super(_route,shared,router);
+    shared.activeComponent=Enums.Routed_Component.geographic;
   }
 
   getCenter(){
@@ -40,10 +43,6 @@ export class BcGeo {
     }else{
       return 6;//default
     }
-  }
-
-  ngOnDestroy(){
-
   }
 
   getGeoData(id):Promise<IShelter>{
@@ -79,17 +78,12 @@ export class BcGeo {
     }
   }
 
-  ngOnInit(){
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this.getGeoData(params["id"])
-      .then((shelter)=>{
-          this.initGeographic(shelter.geoData);
-          if(routeSub!=undefined){
-              routeSub.unsubscribe();
-          }
-      });
+  init(shelId){
+    this.getGeoData(shelId)
+    .then((shelter)=>{
+        this.initGeographic(shelter.geoData);
     });
-  }
+  }    
 
   getTag(key:String){
     if(this.data!=undefined && this.data.tags!=undefined){

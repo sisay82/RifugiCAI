@@ -2,7 +2,6 @@
 exports.__esModule = true;
 var Enums;
 (function (Enums) {
-    //Type of section available for shelter request
     var ShelterSectionType;
     (function (ShelterSectionType) {
         ShelterSectionType[ShelterSectionType["geolocation"] = 0] = "geolocation";
@@ -11,7 +10,6 @@ var Enums;
         ShelterSectionType[ShelterSectionType["management"] = 3] = "management";
         ShelterSectionType[ShelterSectionType["catastal"] = 4] = "catastal";
     })(ShelterSectionType = Enums.ShelterSectionType || (Enums.ShelterSectionType = {}));
-    //tipo riscaldamento
     var Heating_Type;
     (function (Heating_Type) {
         Heating_Type[Heating_Type["Elettrico"] = 0] = "Elettrico";
@@ -21,6 +19,25 @@ var Enums;
         Heating_Type[Heating_Type["Assente"] = 4] = "Assente";
         Heating_Type[Heating_Type["Combinato"] = 5] = "Combinato";
     })(Heating_Type = Enums.Heating_Type || (Enums.Heating_Type = {}));
+    var Routed_Component;
+    (function (Routed_Component) {
+        Routed_Component[Routed_Component["geographic"] = "geographic"] = "geographic";
+        Routed_Component[Routed_Component["services"] = "services"] = "services";
+        Routed_Component[Routed_Component["contacts"] = "contacts"] = "contacts";
+        Routed_Component[Routed_Component["management"] = "management"] = "management";
+        Routed_Component[Routed_Component["catastal"] = "catastal"] = "catastal";
+        Routed_Component[Routed_Component["documents"] = "documents"] = "documents";
+        Routed_Component[Routed_Component["images"] = "images"] = "images";
+        Routed_Component[Routed_Component["economy"] = "economy"] = "economy";
+        Routed_Component[Routed_Component["contribution"] = "contribution"] = "contribution";
+        Routed_Component[Routed_Component["use"] = "use"] = "use";
+        Routed_Component[Routed_Component["working"] = "working"] = "working";
+    })(Routed_Component = Enums.Routed_Component || (Enums.Routed_Component = {}));
+    var Routed_Outlet;
+    (function (Routed_Outlet) {
+        Routed_Outlet[Routed_Outlet["content"] = "content"] = "content";
+        Routed_Outlet[Routed_Outlet["revision"] = "revision"] = "revision";
+    })(Routed_Outlet = Enums.Routed_Outlet || (Enums.Routed_Outlet = {}));
     var Contribution_Type;
     (function (Contribution_Type) {
         Contribution_Type[Contribution_Type["Ordinario"] = 0] = "Ordinario";
@@ -33,7 +50,6 @@ var Enums;
         Contribution_Type["Ordinario"],
         Contribution_Type["FondoStabile"]
     ];
-    //tipo classe energetica
     var Energy_Class_Type;
     (function (Energy_Class_Type) {
         Energy_Class_Type[Energy_Class_Type["A+"] = 0] = "A+";
@@ -45,14 +61,12 @@ var Enums;
         Energy_Class_Type[Energy_Class_Type["F"] = 6] = "F";
         Energy_Class_Type[Energy_Class_Type["G"] = 7] = "G";
     })(Energy_Class_Type = Enums.Energy_Class_Type || (Enums.Energy_Class_Type = {}));
-    //tipo di regolamentazione antincendio
     var Fire_Regulation_Type;
     (function (Fire_Regulation_Type) {
         Fire_Regulation_Type[Fire_Regulation_Type["S\u00EC"] = 0] = "S\u00EC";
         Fire_Regulation_Type[Fire_Regulation_Type["No"] = 1] = "No";
         Fire_Regulation_Type[Fire_Regulation_Type["In fase di adeguamento"] = 2] = "In fase di adeguamento";
     })(Fire_Regulation_Type = Enums.Fire_Regulation_Type || (Enums.Fire_Regulation_Type = {}));
-    //tipo di possesso
     var Possession_Type;
     (function (Possession_Type) {
         Possession_Type[Possession_Type["Affitto ramo d'impresa"] = 0] = "Affitto ramo d'impresa";
@@ -66,7 +80,6 @@ var Enums;
         Possession_Type[Possession_Type["Concessione"] = 8] = "Concessione";
         Possession_Type[Possession_Type["Comodato"] = 9] = "Comodato";
     })(Possession_Type = Enums.Possession_Type || (Enums.Possession_Type = {}));
-    //stagioni
     var Seasons;
     (function (Seasons) {
         Seasons[Seasons["Primavera"] = 0] = "Primavera";
@@ -74,7 +87,6 @@ var Enums;
         Seasons[Seasons["Autunno"] = 2] = "Autunno";
         Seasons[Seasons["Inverno"] = 3] = "Inverno";
     })(Seasons = Enums.Seasons || (Enums.Seasons = {}));
-    //disponibilitá acqua
     var Water_Availability;
     (function (Water_Availability) {
         Water_Availability[Water_Availability["Scarsa"] = 0] = "Scarsa";
@@ -82,7 +94,6 @@ var Enums;
         Water_Availability[Water_Availability["Media"] = 2] = "Media";
         Water_Availability[Water_Availability["Abbondante"] = 3] = "Abbondante";
     })(Water_Availability = Enums.Water_Availability || (Enums.Water_Availability = {}));
-    //tipologia fonte acqua
     var Water_Type;
     (function (Water_Type) {
         Water_Type[Water_Type["Assente"] = 0] = "Assente";
@@ -91,7 +102,6 @@ var Enums;
         Water_Type[Water_Type["Captazione da sorgente"] = 3] = "Captazione da sorgente";
         Water_Type[Water_Type["Nelle vicinanze"] = 4] = "Nelle vicinanze";
     })(Water_Type = Enums.Water_Type || (Enums.Water_Type = {}));
-    //tipo rifugio
     var Shelter_Type;
     (function (Shelter_Type) {
         Shelter_Type[Shelter_Type["Bivacco"] = 0] = "Bivacco";
@@ -100,7 +110,6 @@ var Enums;
         Shelter_Type[Shelter_Type["Capanna sociale"] = 3] = "Capanna sociale";
         Shelter_Type[Shelter_Type["Punto d'appoggio"] = 4] = "Punto d'appoggio";
     })(Shelter_Type = Enums.Shelter_Type || (Enums.Shelter_Type = {}));
-    //tipo rifugio regionale
     var Regional_Type;
     (function (Regional_Type) {
         Regional_Type[Regional_Type["Escursionistico"] = 0] = "Escursionistico";
@@ -108,7 +117,6 @@ var Enums;
         Regional_Type[Regional_Type["Bivacco"] = 2] = "Bivacco";
         Regional_Type[Regional_Type["Non classificabile"] = 3] = "Non classificabile";
     })(Regional_Type = Enums.Regional_Type || (Enums.Regional_Type = {}));
-    //categoria rifugio
     var Shelter_Category;
     (function (Shelter_Category) {
         Shelter_Category[Shelter_Category["A"] = 0] = "A";
@@ -117,7 +125,6 @@ var Enums;
         Shelter_Category[Shelter_Category["D"] = 3] = "D";
         Shelter_Category[Shelter_Category["E"] = 4] = "E";
     })(Shelter_Category = Enums.Shelter_Category || (Enums.Shelter_Category = {}));
-    //tipo di file
     var File_Type;
     (function (File_Type) {
         File_Type[File_Type["doc"] = 0] = "doc";
@@ -126,7 +133,6 @@ var Enums;
         File_Type[File_Type["image"] = 3] = "image";
         File_Type[File_Type["contribution"] = 4] = "contribution";
     })(File_Type = Enums.File_Type || (Enums.File_Type = {}));
-    //tipi di documento
     var Docs_Type;
     (function (Docs_Type) {
         Docs_Type[Docs_Type["txt"] = "text/plain"] = "txt";
@@ -136,13 +142,11 @@ var Enums;
         Docs_Type[Docs_Type["xls"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xls";
         Docs_Type[Docs_Type["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xlsx";
     })(Docs_Type = Enums.Docs_Type || (Enums.Docs_Type = {}));
-    //tipi di mappa
     var Maps_Type;
     (function (Maps_Type) {
         Maps_Type[Maps_Type["dwg"] = "application/acad, application/x-acad, application/autocad_dwg, image/x-dwg, application/dwg, application/x-dwg, application/x-autocad, image/vnd.dwg, drawing/dwg"] = "dwg";
         Maps_Type[Maps_Type["pdf"] = "application/pdf"] = "pdf";
     })(Maps_Type = Enums.Maps_Type || (Enums.Maps_Type = {}));
-    //tipi di ricevuta
     var Invoices_Type;
     (function (Invoices_Type) {
         Invoices_Type[Invoices_Type["txt"] = "text/plain"] = "txt";
@@ -181,7 +185,6 @@ var Enums;
         Image_Type[Image_Type["jpeg"] = "image/jpeg"] = "jpeg";
         Image_Type[Image_Type["jpg"] = "image/jpeg"] = "jpg";
     })(Image_Type = Enums.Image_Type || (Enums.Image_Type = {}));
-    //tipologia scarico
     var Drain_Type;
     (function (Drain_Type) {
         Drain_Type[Drain_Type["IMOF fognatura"] = 0] = "IMOF fognatura";
@@ -238,7 +241,6 @@ var Enums;
         Typo_consistency[Typo_consistency["Recuperabile"] = 2] = "Recuperabile";
         Typo_consistency[Typo_consistency["Nessuna"] = 3] = "Nessuna";
     })(Typo_consistency = Enums.Typo_consistency || (Enums.Typo_consistency = {}));
-    //Region group code for cai
     var Region_Code;
     (function (Region_Code) {
         Region_Code[Region_Code["Liguria"] = 10] = "Liguria";
@@ -268,7 +270,6 @@ var Enums;
         Invoice_Type[Invoice_Type["Attivit\u00E0"] = 0] = "Attivit\u00E0";
         Invoice_Type[Invoice_Type["Passivit\u00E0"] = 1] = "Passivit\u00E0";
     })(Invoice_Type = Enums.Invoice_Type || (Enums.Invoice_Type = {}));
-    //tipo fonte risorsa
     var Source_Type;
     (function (Source_Type) {
         Source_Type[Source_Type["Energetica"] = 0] = "Energetica";
@@ -281,7 +282,6 @@ var Enums;
         Owner_Type[Owner_Type["Proprietario"] = 1] = "Proprietario";
         Owner_Type[Owner_Type["Gestore"] = 2] = "Gestore";
     })(Owner_Type = Enums.Owner_Type || (Enums.Owner_Type = {}));
-    //tipo custodia
     var Custody_Type;
     (function (Custody_Type) {
         Custody_Type[Custody_Type["Diretta"] = 0] = "Diretta";

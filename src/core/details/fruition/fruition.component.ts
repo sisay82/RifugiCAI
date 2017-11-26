@@ -1,14 +1,15 @@
 import {
-  Component,Input,OnInit,OnDestroy,Directive
+  Component,Input,OnInit,Directive
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,Router } from '@angular/router';
 import { IShelter, IUse } from '../../../app/shared/types/interfaces'
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import {BcSharedService} from '../../../app/shared/shared.service'
 import {BcDetailsService} from '../details.service';
-
+import { Enums } from '../../../app/shared/types/enums';
+import { DetailBase } from '../shared/detail_base';
 
 @Directive({
   selector:"div[active]",
@@ -20,7 +21,6 @@ export class BcActiveTabStyler{
   @Input("active") active:boolean=false;
 }
 
-
 @Component({
   moduleId: module.id,
   selector: 'bc-fruition',
@@ -28,14 +28,14 @@ export class BcActiveTabStyler{
   styleUrls: ['fruition.component.scss'],
   providers:[ShelterService]
 })
-export class BcFruition {
+export class BcFruition extends DetailBase{
   data:[IUse]=<any>[];
   activeYear;
   activeTab:IUse;
-  constructor(private shelterService:ShelterService,private _route:ActivatedRoute,private shared:BcSharedService,private detailsService:BcDetailsService){
+  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
+    super(_route,shared,router);
     this.data=this.data.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;})
-    shared.activeComponent="use";
-    this.shared.onActiveOutletChange("content");
+    shared.activeComponent=Enums.Routed_Component.use;
   }
 
   isActive(year){
@@ -74,22 +74,17 @@ export class BcFruition {
     });
   }
 
-  ngOnInit(){
-    let routeSub=this._route.parent.params.subscribe(params=>{
-      this.getUse(params["id"])
-      .then((shelter)=>{
-        this.data = shelter.use.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;});
-        this.activeTab=shelter.use.find(obj=>obj.year==(new Date().getFullYear()));
-        this.activeYear=(new Date()).getFullYear();
-        if(!this.activeTab){
-          let use:IUse={year:(new Date()).getFullYear()}
-          this.data.push(use);
-          this.activeTab=use;
-        }
-        if(routeSub!=undefined){
-            routeSub.unsubscribe();
-        }
-      });
+  init(shelId){
+    this.getUse(shelId)
+    .then((shelter)=>{
+      this.data = shelter.use.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;});
+      this.activeTab=shelter.use.find(obj=>obj.year==(new Date().getFullYear()));
+      this.activeYear=(new Date()).getFullYear();
+      if(!this.activeTab){
+        let use:IUse={year:(new Date()).getFullYear()}
+        this.data.push(use);
+        this.activeTab=use;
+      }
     });
   }
 

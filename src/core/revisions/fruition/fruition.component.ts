@@ -1,8 +1,9 @@
 import {
     Component,Input,OnInit,OnDestroy
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { IShelter,IUse } from '../../../app/shared/types/interfaces'
+import { ActivatedRoute,Router } from '@angular/router';
+import { IShelter,IUse } from '../../../app/shared/types/interfaces';
+import { Enums } from '../../../app/shared/types/enums'
 import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
@@ -10,7 +11,6 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {RevisionBase} from '../shared/revision_base';
 import {BcAuthService} from '../../../app/shared/auth.service';
-import { Enums } from '../../../app/shared/types/enums'
 
 @Component({
     moduleId: module.id,
@@ -23,11 +23,10 @@ export class BcFruitionRevision extends RevisionBase {
     useForm: FormGroup; 
     private data:IUse;
 
-    constructor(private shelterService:ShelterService,private authService:BcAuthService,private shared:BcSharedService,private revisionService:BcRevisionsService,private fb: FormBuilder,private _route:ActivatedRoute){
-        super(shelterService,shared,revisionService,authService);
-        shared.activeComponent="use";
-        shared.onActiveOutletChange("revision");
-
+    constructor(shelterService:ShelterService,authService:BcAuthService,shared:BcSharedService,router:Router,revisionService:BcRevisionsService,private fb: FormBuilder,_route:ActivatedRoute){
+        super(shelterService,shared,revisionService,_route,router,authService);
+        shared.activeComponent=Enums.Routed_Component.use;
+        this.MENU_SECTION=Enums.MenuSection.economy;
         this.useForm = fb.group({
             stay_count_associate:[""],
             stay_count_reciprocity:[""],
@@ -51,7 +50,7 @@ export class BcFruitionRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave("use");
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.use);
                 }
             }else{
                 shared.onDisplayError();
@@ -60,44 +59,23 @@ export class BcFruitionRevision extends RevisionBase {
         });
     }
 
-    checkPermission(permissions){
-        if(permissions&&permissions.length>0){
-            if(permissions.find(obj=>obj==Enums.MenuSection.economy)>-1){
-                this.initialize();
-            }else{
-                location.href="/list";
-            }
-        }
-    }
-
     save(confirm){
-        if(this.useForm.valid){
+        if(!confirm||this.useForm.valid){
             let shelter:IShelter={_id:this._id,name:this.name};
-            let use:IUse={
-                year:this.data.year,
-                stay_count_associate:this.useForm.controls.stay_count_associate.value||null,
-                stay_count_reciprocity:this.useForm.controls.stay_count_reciprocity.value||null,
-                stay_count:this.useForm.controls.stay_count.value||null,
-                transit_count_associate:this.useForm.controls.transit_count_associate.value||null,
-                transit_count_reciprocity:this.useForm.controls.transit_count_reciprocity.value||null,
-                transit_count:this.useForm.controls.transit_count.value||null,
-            }
+            let use:IUse=<IUse>this.getFormValues(this.useForm);
+            use.year=this.data.year;
             
             shelter.use=[use];
-            this.revisionService.onChildSave(shelter,"use");
-            let shelSub=this.shelterService.preventiveUpdateShelter(shelter,"use").subscribe((returnVal)=>{
-                if(returnVal){
-                    this.displayError=false;
-                    if(confirm){
-                        this.shared.onMaskConfirmSave("use");
-                    }
-                }else{
-                    console.log("Err "+returnVal);
-                    this.displayError=true;
+            this.processSavePromise(shelter,"use")
+            .then(()=>{
+                this.displayError=false;
+                if(confirm){
+                    this.shared.onMaskConfirmSave(Enums.Routed_Component.use);
                 }
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
+            })
+            .catch(err=>{
+                this.displayError=true;
+                console.log(err);
             });
         }else{
             this.displayError=true;
@@ -164,28 +142,11 @@ export class BcFruitionRevision extends RevisionBase {
         });
     }
 
-    ngOnInit() {
-        let permissionSub = this.revisionService.fatherReturnPermissions$.subscribe(permissions=>{
-            this.checkPermission(permissions);
-            if(permissionSub!=undefined){
-                permissionSub.unsubscribe();
-            }
+    init(shelId){
+        this.getUse(shelId)
+        .then((shelter)=>{
+            this.initForm(shelter);
         });
-        this.revisionService.onChildGetPermissions();      
-    }
-
-    initialize(){
-        let routeSub=this._route.parent.params.subscribe(params=>{
-            this._id=params["id"];
-            this.getUse(params["id"])
-            .then((shelter)=>{
-                this.initForm(shelter);
-                if(routeSub!=undefined){
-                    routeSub.unsubscribe();
-                }
-            });
-        });
-
     }
 
     checkValidForm(){

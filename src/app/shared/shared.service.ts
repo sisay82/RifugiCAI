@@ -2,11 +2,12 @@ import {Injectable } from '@angular/core'
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import { IShelter } from '../shared/types/interfaces';
+import { Enums } from '../shared/types/enums';
 
 @Injectable()
 export class BcSharedService{
-    activeOutlet:string;
-    activeComponent:string;
+    activeOutlet:Enums.Routed_Outlet;
+    activeComponent:Enums.Routed_Component;
 
     private displayErrorSource = new Subject<void>();
     displayError$ = this.displayErrorSource.asObservable();
@@ -50,15 +51,15 @@ export class BcSharedService{
         this.maskCancelConfirmSource.next();
     }
 
-    private maskConfirmSaveSource = new Subject<string>();
+    private maskConfirmSaveSource = new Subject<Enums.Routed_Component>();
     maskConfirmSave$ = this.maskConfirmSaveSource.asObservable();
-    onMaskConfirmSave(component:string){
+    onMaskConfirmSave(component:Enums.Routed_Component){
         this.maskConfirmSaveSource.next(component);
     }
 
-    private activeOutletChangeSource = new Subject<string>();
+    private activeOutletChangeSource = new Subject<Enums.Routed_Outlet>();
     activeOutletChange$ = this.activeOutletChangeSource.asObservable();
-    onActiveOutletChange(outlet:string){
+    onActiveOutletChange(outlet:Enums.Routed_Outlet){
         this.activeOutlet=outlet;
         this.activeOutletChangeSource.next(outlet);
     }

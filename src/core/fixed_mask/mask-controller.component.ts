@@ -8,6 +8,9 @@ import {BcSharedService} from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import {ShelterService} from '../../app/shelter/shelter.service'
 import {BcAuthService} from '../../app/shared/auth.service';
+import { validators } from '../inputs/text/text_input.component';
+
+const validObjectIDRegExp = validators.objectID;
 
 @Component({
     moduleId: module.id,
@@ -20,15 +23,15 @@ import {BcAuthService} from '../../app/shared/auth.service';
 export class BcMaskController {
   @Input() shelter:IShelter;
   @Input() ref:string;
-  currentOutlet:string="";
+  currentOutlet:Enums.Routed_Outlet;
   _id:String;
   activeOutletSub:Subscription;
   shelIdRequest:Subscription;
   revisionPermission:Enums.User_Type;
-  constructor(private shared:BcSharedService,private route:ActivatedRoute,private shelterService:ShelterService,private authService:BcAuthService){
+  constructor(private shared:BcSharedService,private _route:ActivatedRoute,private router:Router,private shelterService:ShelterService,private authService:BcAuthService){
     this.currentOutlet=shared.activeOutlet;
     this.activeOutletSub=shared.activeOutletChange$.subscribe(outlet=>{
-      if(this.currentOutlet=='revision'&&outlet=='content'){
+      if(this.currentOutlet==Enums.Routed_Outlet.revision&&outlet==Enums.Routed_Outlet.content){
         let shelSub=this.shelterService.getShelter(this._id).subscribe(shelter=>{
           this.shelter=shelter;
           let permissionSub = this.authService.checkRevisionPermissionForShelter(shelter.idCai).subscribe(val=>{
@@ -46,32 +49,46 @@ export class BcMaskController {
     });
   }
 
+  getRoute():Promise<any>{
+    return new Promise<any>((resolve,reject)=>{
+      const sub = this._route.parent.params.subscribe(params=>{
+            this._id=params["id"];
+            if(sub){
+                sub.unsubscribe();
+            }
+            const id=params["id"];
+            if(validObjectIDRegExp.test(id)){
+                resolve(id);
+            }else{
+                reject({error:"Invalid ID"});
+            }
+        });
+    });
+  }
+
   ngOnInit(){
     if(this.shelter==undefined){
-      let routeSub=this.route.params.subscribe(params=>{
-        this._id=params['id'];
-
-        let shelSub=this.shelterService.getShelter(params['id']).subscribe(shelter=>{
+      this.getRoute()
+      .then(shelId=>{
+        const shelSub=this.shelterService.getShelter(shelId).subscribe(shelter=>{
           this.shelIdRequest = this.authService.shelIdRequest$.subscribe(()=>{
             this.authService.onShelId(shelter.idCai);
           });
 
           this.shelter=shelter;
-          let permissionSub = this.authService.checkRevisionPermissionForShelter(shelter.idCai).subscribe(val=>{
+          const permissionSub = this.authService.checkRevisionPermissionForShelter(shelter.idCai).subscribe(val=>{
             this.revisionPermission=val;
             if(permissionSub!=undefined){
               permissionSub.unsubscribe();
             }
-            if(routeSub!=undefined){
-              routeSub.unsubscribe();
-            }
             if(shelSub!=undefined){
               shelSub.unsubscribe();
             }
-
-          });
-          
+          }); 
         });
+      })
+      .catch(err=>{
+        this.router.navigateByUrl('/list');
       });
     }
   }
