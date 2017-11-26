@@ -16,9 +16,9 @@ const validObjectIDRegExp = validators.objectID;
     moduleId: module.id,
     selector: 'bc-mask',
     templateUrl: 'mask-controller.component.html',
-    providers:[ShelterService],
     styleUrls:['mask-controller.component.scss'],
-    encapsulation:ViewEncapsulation.None
+    encapsulation:ViewEncapsulation.None,
+    providers:[ShelterService]
 })
 export class BcMaskController {
   @Input() shelter:IShelter;

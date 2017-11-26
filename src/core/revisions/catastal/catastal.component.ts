@@ -153,10 +153,13 @@ export class BcCatastalRevision extends RevisionBase{
                 let drain:IDrain={};
                 let updates:number=this.getTotalDirtyForms();
 
-                this.processSaveForm(this.catastalForm,"catastal")
+                Promise.all([
+                    this.processSaveForm(this.catastalForm,"catastal"),
+                    this.processSaveForm(this.drainForm,"drain"),
+                    this.processSaveForm(this.energyForm,"energy")
+                ])
                 .then(()=>{
-                    updates--;
-                    if(confirm&&updates==0){
+                    if(confirm){
                         this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
                     }
                 })
@@ -165,29 +168,6 @@ export class BcCatastalRevision extends RevisionBase{
                     this.displayError=true;
                 });
 
-                this.processSaveForm(this.drainForm,"drain")
-                .then(()=>{
-                    updates--;
-                    if(confirm&&updates==0){
-                        this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
-                    }
-                })
-                .catch(err=>{
-                    console.log(err);
-                    this.displayError=true;
-                });
-
-                this.processSaveForm(this.energyForm,"energy")
-                .then(()=>{
-                    updates--;
-                    if(confirm&&updates==0){
-                        this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
-                    }
-                })
-                .catch(err=>{
-                    console.log(err);
-                    this.displayError=true;
-                });
             }else{
                 this.displayError=true;
             }
