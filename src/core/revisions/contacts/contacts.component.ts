@@ -152,14 +152,15 @@ export class BcContactsRevision extends RevisionBase {
                 webAddress:this.processUrl(<FormGroup>this.contactForm.controls.webAddress)
             }
 
+            
             const op=this.getFormArrayValues(<FormArray>this.contactForm.controls.openings);
             const openings = op.map(val=>{
                 if(val){
                     if(val.startDate){
-                        val.startDate=this.processDate(val.startDate);
+                        val.startDate=this.processSimpleDate(val.startDate);
                     }
                     if(val.endDate){
-                        val.endDate=this.processDate(val.endDate);
+                        val.endDate=this.processSimpleDate(val.endDate);
                     }
                 }
                 return val;

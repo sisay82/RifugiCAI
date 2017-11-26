@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnInit, OnDestroy, Directive,ViewEncapsulation
+  Component, Input, OnDestroy, Directive,ViewEncapsulation,OnChanges,SimpleChanges
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
@@ -211,29 +211,9 @@ export class BcMaskRevision {
     }
   }
 
-  ngOnInit(){
-    if(this.shelter==undefined){
-      let routeSub=this._route.params.subscribe(params=>{
-        if(params["name"]!=undefined){
-          if(params["name"]=="newShelter"){
-            this.newShelter=true;
-          }else{
-           this.router.navigateByUrl("list");
-          }
-        }else{
-          this.newShelter=false;
-        }
-        let shelSub=this.shelterService.getShelter(params['id']).subscribe(shelter=>{
-            this.shelter=shelter;
-            this.initForm();
-            if(shelSub!=undefined){
-              shelSub.unsubscribe();
-            } 
-            if(routeSub!=undefined){
-              routeSub.unsubscribe();
-            }
-        });
-      });
+  ngOnChanges(changes: SimpleChanges) {
+    if(this.shelter!=undefined){
+      this.initForm();
     }
   }
 

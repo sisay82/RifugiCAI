@@ -74,14 +74,17 @@ export class BcManage extends DetailBase{
   }
 
   getDifferenceDates(date1:Date,date2:Date){
-    let d1=new Date(date1);
-    let d2=new Date(date2);
-    if(d1!=undefined&&d2!=undefined){
-      return Math.abs((d2.getMonth() - d1.getMonth())+(d2.getFullYear() - d1.getFullYear())*12);
+    if(date1&&date2){
+      let d1=new Date(date1);
+      let d2=new Date(date2);
+      if(d1&&d2){
+        return Math.abs((d2.getMonth() - d1.getMonth())+(d2.getFullYear() - d1.getFullYear())*12);
+      }else{
+        return null;
+      }
     }else{
       return null;
     }
-    
   }
 
   gotoSite(webSite:string){

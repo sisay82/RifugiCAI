@@ -29,7 +29,15 @@ export class BcMaskController {
   constructor(private shared:BcSharedService,private _route:ActivatedRoute,private router:Router,private shelterService:ShelterService){
     this.currentOutlet=shared.activeOutlet;
     this.activeOutletSub=shared.activeOutletChange$.subscribe(outlet=>{
-        this.currentOutlet=outlet;
+      if(this.currentOutlet==Enums.Routed_Outlet.revision&&outlet==Enums.Routed_Outlet.content){
+        let shelSub=this.shelterService.getShelter(this._id).subscribe(shelter=>{
+          this.shelter=shelter;
+          if(shelSub!=undefined){
+            shelSub.unsubscribe();
+          }
+        });
+      }
+      this.currentOutlet=outlet;
     });
   }
 

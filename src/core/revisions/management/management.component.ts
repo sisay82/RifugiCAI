@@ -182,9 +182,9 @@ export class BcManagementRevision extends RevisionBase{
 
     save(confirm){
         if(!confirm||this.managForm.valid){
-            let shelter:IShelter={_id:this._id,name:this.name};
+            const shelter:IShelter={_id:this._id,name:this.name};
 
-            let management:IManagement={
+            const management:IManagement={
                 rentType:this.getControlValue(<FormGroup>this.managForm.controls.rentType),
                 valuta:this.getControlValue(<FormGroup>this.managForm.controls.valuta),
                 self_management:this.getControlValue(<FormGroup>this.managForm.controls.self_management),
@@ -192,24 +192,19 @@ export class BcManagementRevision extends RevisionBase{
                 reference:this.getControlValue(<FormGroup>this.managForm.controls.reference)
             };
 
-            let prop:ISubject={
-                name:this.getControlValue(<FormGroup>this.managForm.controls.name),
-                taxCode:this.getControlValue(<FormGroup>this.managForm.controls.taxCode),
-                fixedPhone:this.getControlValue(<FormGroup>this.managForm.controls.fixedPhone),
-                pec:this.getControlValue(<FormGroup>this.managForm.controls.pec),
-                email:this.getControlValue(<FormGroup>this.managForm.controls.email),
-                contract_start_date:this.processDate(this.managForm.controls["propContract_start_date"].value),
-                contract_end_date: this.managForm.controls["propContract_end_date"].value?(parseDate(this.managForm.controls["propContract_end_date"].value)||null):null,
-                contract_duration:this.getControlValue(<FormGroup>this.managForm.controls.contract_duration),
-                contract_fee:this.getControlValue(<FormGroup>this.managForm.controls.contract_fee),
-                possession_type:this.getControlValue(<FormGroup>this.managForm.controls.possession_type),
+            const prop:ISubject={
+                name:this.getControlValue(<FormGroup>this.managForm.controls.propName),
+                taxCode:this.getControlValue(<FormGroup>this.managForm.controls.propTaxCode),
+                fixedPhone:this.getControlValue(<FormGroup>this.managForm.controls.propFixedPhone),
+                pec:this.getControlValue(<FormGroup>this.managForm.controls.propPec),
+                email:this.getControlValue(<FormGroup>this.managForm.controls.propEmail),
+                contract_start_date:this.processFormDate(<FormGroup>this.managForm.controls["propContract_start_date"]),
+                contract_end_date: this.processFormDate(<FormGroup>this.managForm.controls["propContract_end_date"]),
+                contract_duration:this.getControlValue(<FormGroup>this.managForm.controls.propContract_duration),
+                contract_fee:this.getControlValue(<FormGroup>this.managForm.controls.propContract_fee),
+                possession_type:this.getControlValue(<FormGroup>this.managForm.controls.propPossession_type),
                 webSite:this.processUrl(<FormGroup>this.managForm.controls.propWebSite),
                 type:"Proprietario"
-            }
-
-            if(prop.contract_start_date>prop.contract_end_date){
-                this.displayError=true;
-                return;
             }
 
             const control = <FormArray>this.managForm.controls['subjects'];
@@ -226,16 +221,13 @@ export class BcManagementRevision extends RevisionBase{
                     email:this.getControlValue(<FormGroup>(<FormGroup>c).controls.email),
                     webSite:this.processUrl(c.value.webSite),
                     type:this.getControlValue(<FormGroup>(<FormGroup>c).controls.type),
-                    contract_start_date:this.processDate(<FormGroup>(<FormGroup>c).controls.contract_start_date),
-                    contract_end_date:this.processDate(<FormGroup>(<FormGroup>c).controls.contract_end_date),
+                    contract_start_date:this.processFormDate(<FormGroup>(<FormGroup>c).controls.contract_start_date),
+                    contract_end_date:this.processFormDate(<FormGroup>(<FormGroup>c).controls.contract_end_date),
                     contract_duration:this.getControlValue(<FormGroup>(<FormGroup>c).controls.contract_duration),
                     contract_fee:this.getControlValue(<FormGroup>(<FormGroup>c).controls.contract_fee),
                     possession_type:this.getControlValue(<FormGroup>(<FormGroup>c).controls.possession_type),
                 }    
-                if(s.contract_start_date>s.contract_end_date){
-                    this.displayError=true;
-                    return;
-                }
+
                 subjects.push(s);
             }
             shelter.management=management
