@@ -113,8 +113,7 @@ export class BcDocRevision extends RevisionBase{
             this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
           }
         }else{
-          shared.onDisplayError();
-          this.setDisplayError(true);
+          this.abortSave();
         }
     });
 
