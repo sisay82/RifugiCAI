@@ -1427,23 +1427,36 @@ appRoute.route("/shelters/:id")
     }
 })
 .put(function(req,res){
-    let shelUpdate = SheltersToUpdate.filter(shelter=>shelter.shelter._id==req.params.id)[0];
-    if(shelUpdate!=undefined){
-        for(let param in req.body){
-            if(shelUpdate.shelter.hasOwnProperty(param)){
-                shelUpdate.shelter[param]=req.body[param];
+    let shelUpdate;
+    if(req.query.confirm){
+        stop=true;
+        shelUpdate = SheltersToUpdate.filter(shelter=>shelter.shelter._id==req.params.id)[0];
+        if(shelUpdate!=undefined){
+            for(let param in req.body){
+                if(shelUpdate.shelter.hasOwnProperty(param)){
+                    shelUpdate.shelter[param]=req.body[param];
+                }
             }
+            shelUpdate.watchDog=new Date(Date.now());
+        }else{
+            let newShelter:IShelterExtended=req.body;
+            newShelter._id=req.params.id;
+            shelUpdate={watchDog:new Date(Date.now()),shelter:newShelter,files:null}
+            SheltersToUpdate.push(shelUpdate);
         }
-        shelUpdate.watchDog=new Date(Date.now());
-    }
-    updateShelter(req.params.id,req.body,shelUpdate&&shelUpdate.isNew)
-    .then(()=>{
+        stop=false;
         res.status(200).send(true);
-    })
-    .catch((err)=>{
-        logger(err);
-        res.status(500).send(err);
-    });
+        
+    }else{
+        updateShelter(req.params.id,req.body,shelUpdate&&shelUpdate.isNew)
+        .then(()=>{
+            res.status(200).send(true);
+        })
+        .catch((err)=>{
+            logger(err);
+            res.status(500).send(err);
+        });
+    }
 })
 .delete(function(req,res){
     deleteShelter(req.params.id)

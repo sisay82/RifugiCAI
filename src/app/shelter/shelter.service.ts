@@ -186,8 +186,12 @@ export class ShelterService {
             .catch(this.handleError.bind(this));
     }
 
-    updateShelter(shelter: IShelter): Observable<boolean> {
-        return this.http.put(this.sheltersBaseUrl + '/' + shelter._id, shelter)
+    updateShelter(shelter: IShelter,confirm?:boolean): Observable<boolean> {
+        let query="";
+        if(confirm){
+            query="?confirm="+confirm;
+        }
+        return this.http.put(this.sheltersBaseUrl + '/' + shelter._id + query, shelter)
             .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }

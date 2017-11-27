@@ -1409,22 +1409,36 @@ appRoute.route("/shelters/:id")
     }
 })
     .put(function (req, res) {
-    var shelUpdate = SheltersToUpdate.filter(function (shelter) { return shelter.shelter._id == req.params.id; })[0];
-    if (shelUpdate != undefined) {
-        for (var param in req.body) {
-            if (shelUpdate.shelter.hasOwnProperty(param)) {
-                shelUpdate.shelter[param] = req.body[param];
+    var shelUpdate;
+    if (req.query.confirm) {
+        stop = true;
+        shelUpdate = SheltersToUpdate.filter(function (shelter) { return shelter.shelter._id == req.params.id; })[0];
+        if (shelUpdate != undefined) {
+            for (var param in req.body) {
+                if (shelUpdate.shelter.hasOwnProperty(param)) {
+                    shelUpdate.shelter[param] = req.body[param];
+                }
             }
+            shelUpdate.watchDog = new Date(Date.now());
         }
-        shelUpdate.watchDog = new Date(Date.now());
-    }
-    updateShelter(req.params.id, req.body, shelUpdate && shelUpdate.isNew)
-        .then(function () {
+        else {
+            var newShelter = req.body;
+            newShelter._id = req.params.id;
+            shelUpdate = { watchDog: new Date(Date.now()), shelter: newShelter, files: null };
+            SheltersToUpdate.push(shelUpdate);
+        }
+        stop = false;
         res.status(200).send(true);
-    })["catch"](function (err) {
-        logger(err);
-        res.status(500).send(err);
-    });
+    }
+    else {
+        updateShelter(req.params.id, req.body, shelUpdate && shelUpdate.isNew)
+            .then(function () {
+            res.status(200).send(true);
+        })["catch"](function (err) {
+            logger(err);
+            res.status(500).send(err);
+        });
+    }
 })["delete"](function (req, res) {
     deleteShelter(req.params.id)
         .then(function () {
