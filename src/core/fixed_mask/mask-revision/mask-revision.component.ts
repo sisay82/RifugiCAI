@@ -157,7 +157,7 @@ export class BcMaskRevision {
           category:this.maskForm.controls.category.value||null,
           regional_type:this.maskForm.controls.regional_type.value||null
         }
-        const shelUpdateSub=this.shelterService.updateShelter(shelter).subscribe(value=>{
+        const shelUpdateSub=this.shelterService.updateShelter(shelter,true).subscribe(value=>{
           this.processConfirm(shelter)
           .then((component)=>{
             if(shelUpdateSub){
