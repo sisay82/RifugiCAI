@@ -84,8 +84,7 @@ export class BcManagementRevision extends RevisionBase{
                     this.shared.onMaskConfirmSave(Enums.Routed_Component.management);
                 }
             }else{
-                shared.onDisplayError();
-                this.displayError=true;
+                this.abortSave();
             }
         });
 
@@ -220,7 +219,7 @@ export class BcManagementRevision extends RevisionBase{
                     mobilePhone:this.getControlValue(<FormGroup>(<FormGroup>c).controls.mobilePhone),
                     pec:this.getControlValue(<FormGroup>(<FormGroup>c).controls.pec),
                     email:this.getControlValue(<FormGroup>(<FormGroup>c).controls.email),
-                    webSite:this.processUrl(c.value.webSite),
+                    webSite:this.processUrl(<FormGroup>(<FormGroup>c).controls.webSite),
                     type:this.getControlValue(<FormGroup>(<FormGroup>c).controls.type),
                     contract_start_date:this.processFormDate(<FormGroup>(<FormGroup>c).controls.contract_start_date),
                     contract_end_date:this.processFormDate(<FormGroup>(<FormGroup>c).controls.contract_end_date),
@@ -241,11 +240,11 @@ export class BcManagementRevision extends RevisionBase{
                 }
             })
             .catch(err=>{
-                this.displayError=true;
+                this.abortSave();
                 console.log(err);
             });
         }else{
-            this.displayError=true;
+            this.abortSave();
         }
     }
 

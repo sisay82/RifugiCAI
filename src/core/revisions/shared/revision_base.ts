@@ -106,6 +106,15 @@ export abstract class RevisionBase {
         }else return null;
     }
 
+    protected abortSave(){
+        this.setDisplayError(true);
+        this.shared.onMaskConfirmSave(null);
+    }
+
+    protected setDisplayError(value){
+        this.displayError=value;
+    }
+
     protected processSavePromise(shelter,section):Promise<any>{
         return new Promise<any>((resolve,reject)=>{
             this.revisionService.onChildSave(shelter,section);
