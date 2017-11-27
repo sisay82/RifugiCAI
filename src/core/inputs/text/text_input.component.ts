@@ -17,59 +17,66 @@ function validateDate(value){
     return null;
 }
 
-export function parseDate(input:String,removeYear?:boolean):Date{// dd-mm-yy | yy/mm/dd
+function customDateParser(val,month?,day?){
+    if(val){
+        if(typeof val==="number"){
+            return new Date(val,month,day);
+        }else{
+            const date=new Date(val);
+            return new Date(date.getFullYear(),date.getMonth(),date.getDay());            
+        }
+    }
+}
+
+function parseByCharacter(input:String,char:string){
+    if(char.length==1){
+        const parts = input.split(char);// yy-mm-dd
+        if(parts.length==3){
+            let year:string="";
+            if(parts[2].length==1){
+                year="200"+parts[2];
+            }else if(parts[2].length==2){
+                year="20"+parts[2];
+            }else{
+                year=parts[2];
+            }
+            return customDateParser(Number.parseInt(year), Number.parseInt(parts[1])-1, Number.parseInt(parts[0]));
+        }else{
+            if(parts.length==2){
+                return customDateParser((new Date(Date.now())).getFullYear(), Number.parseInt(parts[1])-1, Number.parseInt(parts[0]));
+            }else{
+                return null;
+            }
+        }
+    }
+}
+
+export function parseDate(input:string,removeYear?:boolean):Date{// dd-mm-yy | yy/mm/dd
     if(input){
         if(input.indexOf("-")>-1){
             if(input.indexOf("/")>-1){
                 return null;
             }else{
-                let parts = input.split('-');// yy-mm-dd
-                if(parts.length==3){
-                    let year:string="";
-                    if(parts[2].length==1){
-                        year="200"+parts[2];
-                    }else if(parts[2].length==2){
-                        year="20"+parts[2];
-                    }else{
-                        year=parts[2];
-                    }
-                    return (new Date(Number.parseInt(year), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
-                }else{
-                    if(parts.length==2){
-                        return (new Date((new Date(Date.now())).getFullYear(), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
-                    }else{
-                        return null;
-                    }
-                }
+                return parseByCharacter(input,'-');
             }
         }else if(input.indexOf("/")>-1){
             if(input.indexOf("-")>-1){
                 return null;
             }else{
-                let parts = input.split('/');// yy/mm/dd
-                if(parts.length==3){
-                    let year:string="";
-                    if(parts[2].length==1){
-                        year="200"+parts[2];
-                    }else if(parts[2].length==2){
-                        year="20"+parts[2];
-                    }else{
-                        year=parts[2];
-                    }
-                    return (new Date(Number.parseInt(year), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
-                }else{
-                    if(parts.length==2){
-                        return (new Date((new Date(Date.now())).getFullYear(), Number.parseInt(parts[1])-1, Number.parseInt(parts[0])));
-                    }else{
-                        return null;
-                    }
-                }
+                return parseByCharacter(input,'/');
             }
         }
     }else{
         return null;
     }
-    
+}
+
+export function trimYear(input:Date){
+    if(input){
+        return new Date(input).toLocaleDateString("it-IT",{month:'numeric',day:'numeric'});        
+    }else{
+        return input;
+    }
 }
 
 export function createValidationFunction(validator:string){
@@ -89,6 +96,7 @@ export const validators= {
     mailValidator:<RegExp>/(^$|^.*@.*\..*$)/,
     numberValidator:<RegExp>/^(-)?[0-9]*([.][0-9]*)?$/,
     urlValidator:<RegExp>/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+    dateWithoutYearValidator:<RegExp>/^[0-9]{1,2}(-|\/)?[0-9]{1,2}$/,
     objectID:<RegExp>/^[0-9a-fA-F]{24}$/
 }
 
@@ -127,9 +135,10 @@ export class BcTextInputErrorStyler {
 export class BcTextInput implements ControlValueAccessor {
     propagateChange = (_: any) => {};
     invalid:boolean=false;
+    private initialized:boolean=false;
     @Input() removeYear:boolean=false;
     @Input() replaceDot:boolean=false;
-    @Input() value=null;
+    value=null;
     @Input() enableBlock:boolean=false;
     @Input() required:boolean=false;
     @Input() title = "";
@@ -178,7 +187,11 @@ export class BcTextInput implements ControlValueAccessor {
 
     writeValue(value: any): void {
         if(!this.isDisabled&&value!=undefined){
-            this.value=value;
+            if(this.removeYear){
+                this.value=this.processYear(value);
+            }else{
+                this.value = value;                
+            }
         }
     }
 
@@ -201,9 +214,9 @@ export class BcTextInput implements ControlValueAccessor {
         this.propagateChange(this.value);        
     }
 
-    processYear(value){
+    processYear(value:string):string{
         if(value){
-            let date=parseDate(value);
+            const date=parseDate(value);
             if(date!=undefined){
                 if(date.toString()!="Invalid Date"){
                     return parseDate(value,true).toLocaleDateString("it-IT",{month:'numeric',day:'numeric'})
@@ -214,26 +227,31 @@ export class BcTextInput implements ControlValueAccessor {
                 return value;
             }
         }else{
-            return value;
+            return "";
         }
     }
 
     getValue(){      
+        let returnVal;
         if(this.value===true||this.value=="true") {
-            return 'si';
+            returnVal = 'si';
         }
         else if(this.value=="false"||(this.value===false&&this.value!=="")) {
-            return 'no'; 
+            returnVal = 'no'; 
         }
         else{
-            if(this.removeYear){
-                return this.processYear(this.value);
-            }else if(this.replaceDot){
-                return (new String(this.value)).replace(/\,/g,'.')
+            /*if(this.removeYear&&!this.initialized){
+                returnVal = this.processYear(this.value);
+            } else*/ if(this.replaceDot){
+                returnVal = (new String(this.value)).replace(/\,/g,'.')
             }else{
-                return this.value;
+                returnVal = this.value;
             }
         } 
+        if(!this.initialized){
+            this.initialized=true;
+        }
+        return returnVal;
     }
 
     validate(c:FormControl){
@@ -248,6 +266,7 @@ export class BcTextInput implements ControlValueAccessor {
                     (!this.maxLength||(c.value&&c.value.length<=this.maxLength))&&
                     (!this.minValue||(c.value&&c.value>=this.minValue))&&
                     (!this.maxValue||(c.value&&c.value<=this.maxValue))&&
+                    (!this.removeYear||validators.dateWithoutYearValidator.test(c.value))&&
                     (!this.except||(c.value&&c.value!=this.except))
                 ))
             ){
