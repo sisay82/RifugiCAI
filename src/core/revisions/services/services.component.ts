@@ -72,8 +72,7 @@ export class BcServRevision extends RevisionBase {
                     this.shared.onMaskConfirmSave(Enums.Routed_Component.services);
                 }
             }else{
-                shared.onDisplayError();
-                this.displayError=true;
+                this.abortSave();
             }
         });
 
@@ -328,11 +327,11 @@ export class BcServRevision extends RevisionBase {
             })
             .catch(err=>{
                 console.log(err);
-                this.displayError=true;
+                this.abortSave();
             });
 
         }else{
-            this.displayError=true;
+            this.abortSave();
         }
     }
 

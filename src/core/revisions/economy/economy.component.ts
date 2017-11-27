@@ -78,7 +78,7 @@ export class BcEconomyRevision extends RevisionBase{
         }
       })
       .catch(err=>{
-        this.displayError=true;
+        this.abortSave();
         console.log(err);
       });
       

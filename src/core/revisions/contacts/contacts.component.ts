@@ -61,8 +61,7 @@ export class BcContactsRevision extends RevisionBase {
                     this.shared.onMaskConfirmSave(Enums.Routed_Component.contacts);
                 }
             }else{
-                shared.onDisplayError();
-                this.displayError=true;
+                this.abortSave();
             }
         });
 
@@ -177,11 +176,11 @@ export class BcContactsRevision extends RevisionBase {
                 }
             })
             .catch((err)=>{
-                this.displayError=true;
+                this.abortSave();
                 console.log(err);
             });
         }else{
-            this.displayError=true;
+            this.abortSave();
         }
 
     }

@@ -116,8 +116,7 @@ export class BcCatastalRevision extends RevisionBase{
                     this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
                 }
             }else{
-                shared.onDisplayError();
-                this.displayError=true;
+                this.abortSave();
             }
         });
 
@@ -170,11 +169,11 @@ export class BcCatastalRevision extends RevisionBase{
                 })
                 .catch(err=>{
                     console.log(err);
-                    this.displayError=true;
+                    this.abortSave();
                 });
 
             }else{
-                this.displayError=true;
+                this.abortSave();
             }
         }
     }

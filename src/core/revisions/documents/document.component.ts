@@ -128,10 +128,6 @@ export class BcDocRevision extends RevisionBase{
     }
   }
 
-  setDisplayError(value){
-    this.displayError=value;
-  }
-
   checkValidForm(){
     return this.newDocForm.valid&&this.newInvoiceForm.valid&&this.newMapForm.valid&&this.invoicesForm.valid;
   }
@@ -224,7 +220,7 @@ export class BcDocRevision extends RevisionBase{
 
   addDoc(){
     let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
-    if(this.newDocForm.valid&&this.checkDocName(f.name)){
+    if(f&&this.newDocForm.valid&&this.checkDocName(f.name)){
       this.uploading=true;
       this.setDisplayError(false);
       let f=<File>(<FormGroup>(this.newDocForm.controls.file)).value;
@@ -261,7 +257,7 @@ export class BcDocRevision extends RevisionBase{
 
   addMap(){
     let f=<File>(<FormGroup>(this.newMapForm.controls.file)).value;
-    if(this.newMapForm.valid&&this.checkDocName(f.name)){
+    if(f&&this.newMapForm.valid&&this.checkDocName(f.name)){
       this.uploading=true;
       this.setDisplayError(false);
       let f=<File>(<FormGroup>(this.newMapForm.controls.file)).value;
@@ -339,7 +335,7 @@ export class BcDocRevision extends RevisionBase{
 
   addInvoice(){
     let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
-    if(this.newInvoiceForm.valid&&this.checkDocName(f.name)){
+    if(f&&this.newInvoiceForm.valid&&this.checkDocName(f.name)){
       this.uploading=true;
       this.setDisplayError(false);
       let f=<File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
@@ -393,10 +389,10 @@ export class BcDocRevision extends RevisionBase{
       this.setDisplayError(false);
       let i=0;
       if(this.invoicesForm.dirty){
-        let filesToUpdate=(<FormArray>this.invoicesForm.controls.files).controls.filter(obj=>obj.dirty);
+        const filesToUpdate=(<FormArray>this.invoicesForm.controls.files).controls.filter(obj=>obj.dirty);
         for(let file of filesToUpdate){
           if(file.dirty&&this.invalidYears.indexOf(file.value.year)==-1){
-            let updFile:IFile={
+            const updFile:IFile={
               _id:file.value._id,
               name:file.value.name,
               size:file.value.size,
@@ -435,7 +431,7 @@ export class BcDocRevision extends RevisionBase{
         }
       }
     }else{
-      this.setDisplayError(true);
+      this.abortSave();
     }
   }
 
