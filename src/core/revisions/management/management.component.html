@@ -9,7 +9,7 @@
                 <bc-text-input placeholder="Es: 00449700020 (solo numeri)" formControlName="propTaxCode" title="P.IVA" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input placeholder="Es: +39 0522 652347" formControlName="propFixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input placeholder="Es: +39 0522 652347" enableBlock="true" errorMessage="Inserire sono numeri." formControlName="propFixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
@@ -58,13 +58,13 @@
                         <bc-text-input placeholder="Cognome gestore o custode" formControlName="surname" title="Cognome" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
-                        <bc-text-input placeholder="Es: +39 0522 652347" formControlName="fixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
+                        <bc-text-input placeholder="Es: +39 0522 652347" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="fixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                     <bc-icon (click)="removeSubject(i)" class="bc-revision-management-add-tag" name="times" size=s></bc-icon>
                 </div>
                 <div style="display: flex;flex-direction:row">
                     <div class="bc-revision-management">
-                        <bc-text-input placeholder="Es: +39 335 6745896" formControlName="mobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
+                        <bc-text-input placeholder="Es: +39 335 6745896" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="mobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
                         <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: custode@info.it" formControlName="email" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
@@ -119,13 +119,13 @@
                 <bc-text-input placeholder="Cognome gestore o custode" formControlName="newSurname" title="Cognome" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input placeholder="Es: +39 0522 652347" formControlName="newFixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="invalid"></bc-text-input>
+                <bc-text-input placeholder="Es: +39 0522 652347" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="newFixedPhone" title="Telefono" validator="telephoneValidator" [displayError]="invalid"></bc-text-input>
             </div>
             <bc-icon tooltip="Aggiungi" (click)="addNewSubject()" class="bc-revision-management-add-tag" name="check" size=s></bc-icon>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
-                <bc-text-input placeholder="Es: +39 335 6745896" formControlName="newMobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="invalid"></bc-text-input>
+                <bc-text-input placeholder="Es: +39 335 6745896" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="newMobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: custode@info.it" formControlName="newMail" title="Mail" validator="mailValidator" [displayError]="invalid"></bc-text-input>

@@ -66,8 +66,7 @@ export class BcImgRevision extends RevisionBase {
               this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
           }
       }else{
-          shared.onDisplayError();
-          this.displayError=true;
+        this.abortSave();
       }
     });
 
@@ -168,7 +167,7 @@ export class BcImgRevision extends RevisionBase {
       }
       fileReader.readAsArrayBuffer(f);
     }else{
-      this.displayError=true;
+      this.setDisplayError(true);
     }
   }
 
@@ -218,7 +217,7 @@ export class BcImgRevision extends RevisionBase {
         }
       }
     }else{
-      this.displayError=true;
+      this.abortSave();
     }
   }
 

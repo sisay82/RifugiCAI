@@ -53,7 +53,7 @@ export class BcSharedService{
 
     private maskConfirmSaveSource = new Subject<Enums.Routed_Component>();
     maskConfirmSave$ = this.maskConfirmSaveSource.asObservable();
-    onMaskConfirmSave(component:Enums.Routed_Component){
+    onMaskConfirmSave(component:Enums.Routed_Component){        
         this.maskConfirmSaveSource.next(component);
     }
 
