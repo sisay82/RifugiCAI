@@ -9,7 +9,7 @@ import {ShelterService} from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import { parseDate } from '../../inputs/text/text_input.component';
+import { trimYear, parseDate } from '../../inputs/text/text_input.component';
 import {RevisionBase} from '../shared/revision_base';
 
 @Component({
@@ -99,10 +99,6 @@ export class BcContactsRevision extends RevisionBase {
                 this.newOpeningForm.controls['newOpeningEndDate'].value!=null&&this.newOpeningForm.controls['newOpeningEndDate'].value!=""){
                 startDate=parseDate(this.newOpeningForm.controls['newOpeningStartDate'].value);
                 endDate=parseDate(this.newOpeningForm.controls['newOpeningEndDate'].value);
-                if(startDate>endDate){
-                    this.invalid=true;
-                    return;
-                }
             }else{
                 startDate=null;
                 endDate=null;
@@ -132,8 +128,8 @@ export class BcContactsRevision extends RevisionBase {
 
     initOpening(opening:IOpening){
         return this.fb.group({
-            startDate:[opening.startDate?(new Date(opening.startDate).toLocaleDateString()||null):null],
-            endDate:[opening.endDate?(new Date(opening.endDate).toLocaleDateString()||null):null],
+            startDate:[trimYear(opening.startDate)],
+            endDate:[trimYear(opening.endDate)],
             type:[opening.type]
         });
     }
