@@ -86,8 +86,7 @@ export class BcContributionRevision extends RevisionBase {
                     shared.onMaskConfirmSave(Enums.Routed_Component.contribution);
                 }
             }else{
-                shared.onDisplayError();
-                this.displayError=true;
+                this.abortSave();
             }
         });
     
@@ -274,12 +273,12 @@ export class BcContributionRevision extends RevisionBase {
             })
             .catch(err=>{
                 console.log(err);
-                this.displayError=true;
+                this.abortSave();
             });
 
         }else{
             this.loading=false;
-            this.displayError=true;
+            this.abortSave();
         }
     }
 

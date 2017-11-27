@@ -116,11 +116,35 @@ export class BcMaskRevision {
             return val;
         });
     }
-}
+  }
+
+  processConfirm(shelter):Promise<String>{
+    return new Promise<any>((resolve,reject)=>{
+      const maskConfirmSub=this.shared.maskConfirmSave$.subscribe(component=>{
+        if(maskConfirmSub!=undefined){
+          maskConfirmSub.unsubscribe();
+        }
+        if(component){
+          const shelSub=this.shelterService.confirmShelter(shelter._id,true).subscribe(value=>{
+            if(shelSub!=undefined){
+              shelSub.unsubscribe();
+            }
+            
+            if(!value){
+              reject({error:"Error in confirm"});
+            }else{
+              resolve(component);        
+            }
+          });
+        }
+      });
+      this.shared.onMaskSave(shelter);
+    });
+  }
 
   save(){
     if(this.revisionPermission&&(this.revisionPermission!=Enums.User_Type.central||this.maskForm.valid)){
-      let shelter:IShelter;
+      let shelter:IShelter={_id:this.shelter._id};
       if(this.revisionPermission==Enums.User_Type.central&&this.maskForm.dirty){
         shelter={
           _id:this.shelter._id,
@@ -133,46 +157,28 @@ export class BcMaskRevision {
           category:this.maskForm.controls.category.value||null,
           regional_type:this.maskForm.controls.regional_type.value||null
         }
-        let shelUpdateSub=this.shelterService.updateShelter(shelter).subscribe(value=>{
-          let maskConfirmSub=this.shared.maskConfirmSave$.subscribe((component)=>{
-            let shelSub=this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
-              if(!value){
-                console.log("Error in Confirm"); 
-              }else{
-                this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
-                this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
-              }
-              if(shelSub!=undefined){
-                shelSub.unsubscribe();
-              }
-              if(maskConfirmSub!=undefined){
-                maskConfirmSub.unsubscribe();
-              }
-              if(shelUpdateSub!=undefined){
-                shelUpdateSub.unsubscribe();
-              }
-            });
+        const shelUpdateSub=this.shelterService.updateShelter(shelter).subscribe(value=>{
+          this.processConfirm(shelter)
+          .then((component)=>{
+            if(shelUpdateSub){
+              shelUpdateSub.unsubscribe();
+            }
+            this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
+            this.router.navigateByUrl("/shelter/"+shelter._id+"/(content:"+component+")");
+          })
+          .catch((err)=>{
+            console.log(err);
           });
-          this.shared.onMaskSave(shelter);
         });
       }else{
-        let maskConfirmSub=this.shared.maskConfirmSave$.subscribe((component)=>{
-          let shelSub=this.shelterService.confirmShelter(this.shelter._id,true).subscribe(value=>{
-            if(!value){
-              console.log("Error in Confirm"); 
-            }else{
-              this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
-              this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
-            }
-            if(shelSub!=undefined){
-              shelSub.unsubscribe();
-            }
-            if(maskConfirmSub!=undefined){
-              maskConfirmSub.unsubscribe();
-            }
-          });
+        this.processConfirm(shelter)
+        .then((component)=>{
+          this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
+          this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
+        })
+        .catch((err)=>{
+          console.log(err);
         });
-        this.shared.onMaskSave(shelter);
       }
     }else{
       this.displayError=true;
