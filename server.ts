@@ -1432,11 +1432,7 @@ appRoute.route("/shelters/:id")
         stop=true;
         shelUpdate = SheltersToUpdate.filter(shelter=>shelter.shelter._id==req.params.id)[0];
         if(shelUpdate!=undefined){
-            for(let param in req.body){
-                if(shelUpdate.shelter.hasOwnProperty(param)){
-                    shelUpdate.shelter[param]=req.body[param];
-                }
-            }
+            shelUpdate.shelter=req.body;
             shelUpdate.watchDog=new Date(Date.now());
         }else{
             let newShelter:IShelterExtended=req.body;
