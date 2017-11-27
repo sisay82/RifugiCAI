@@ -1415,11 +1415,7 @@ appRoute.route("/shelters/:id")
         stop = true;
         shelUpdate = SheltersToUpdate.filter(function (shelter) { return shelter.shelter._id == req.params.id; })[0];
         if (shelUpdate != undefined) {
-            for (var param in req.body) {
-                if (shelUpdate.shelter.hasOwnProperty(param)) {
-                    shelUpdate.shelter[param] = req.body[param];
-                }
-            }
+            shelUpdate.shelter = req.body;
             shelUpdate.watchDog = new Date(Date.now());
         }
         else {
