@@ -130,7 +130,7 @@ export class BcMaskRevision {
       if(this.maskForm.dirty){
         shelter={
           _id:this.shelter._id,
-          name:this.maskForm.controls.name.value,
+          name:this.maskForm.controls.name.value||null,
           alias:this.maskForm.controls.alias.value||null,
           idCai:this.maskForm.controls.idCai.value||null,
           type:this.maskForm.controls.type.value||null,
