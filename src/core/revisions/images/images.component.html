@@ -5,7 +5,7 @@
     <div formArrayName="files">
         <div *ngFor="let file of getFormControls('files');let i = index" >
             <div [formGroupName]="i" style="display: flex;flex-direction:row;align-items:center;white-space:nowrap">
-                <bc-icon (click)="removeFile(file.value.id)" class="bc-revision-img" name="times" size=s></bc-icon>
+                <bc-icon tooltip="Elimina file" (click)="removeFile(file.value.id)" class="bc-revision-img" name="times" size=s></bc-icon>
                 <div style="flex:1;display: flex;flex-direction:row;align-items:center;white-space:nowrap">
                     <div style="margin-left:1%" class="bc-body bc-revision-img" (click)="downloadFile(file.value.id)">{{file.value.name}}</div>
                     <div style="margin-left:1%" class="bc-body"> ({{file.value.size | formatsize}})</div>
