@@ -892,7 +892,13 @@ fileRoute.route("/shelters/file/confirm")
 fileRoute.route("/shelters/file/confirm/:fileId/:shelId")["delete"](function (req, res) {
     var shelUpdate = SheltersToUpdate.filter(function (obj) { return obj.shelter._id == req.params.shelId; });
     if (shelUpdate != undefined && shelUpdate.length > 0) {
-        var fileToDelete = shelUpdate[0].files.filter(function (f) { return f._id == req.params.fileId; });
+        var fileToDelete = void 0;
+        if (shelUpdate[0].files) {
+            fileToDelete = shelUpdate[0].files.filter(function (f) { return f._id == req.params.fileId; });
+        }
+        else {
+            shelUpdate[0].files = [];
+        }
         if (fileToDelete != undefined && fileToDelete.length > 0) {
             shelUpdate[0].files.splice(shelUpdate[0].files.indexOf(fileToDelete[0]), 1);
             delete (fileToDelete[0].data);

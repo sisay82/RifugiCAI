@@ -63,7 +63,6 @@ export namespace Enums {
         "Affitto immobile", 
         "Affitto a gestore", 
         "Diretto", 
-        "Capanna sociale", 
         "Custodia", 
         "Proprietà", 
         "Usufrutto", 
@@ -154,10 +153,10 @@ export namespace Enums {
     }
     
     export enum Drain_Type {
-        "IMOF fognatura",
-        "IMOF pozzo perdente",
-        "IMOF dispersore sottosuolo",
-        "IMOF trasporto a valle"
+        "IMHOFF fognatura",
+        "IMHOFF pozzo perdente",
+        "IMHOFF dispersore sottosuolo",
+        "IMHOFF trasporto a valle"
     }
 
     export enum Typo_consistency {
