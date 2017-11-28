@@ -2,24 +2,20 @@
 @import '../../style/typography';
 @import '../../style/constants';
 
-
-
-.disabled{
-    pointer-events: none;
-    cursor: default;
-}
-
-input, select{
-    font-family: $bc-font-family;
-}
-
-.bc-mask{
-    &-revision-control{
-        width:auto;
-        margin-right:2%;
-    }
-}
-
 @mixin bc-mask-revision ($theme){
-    @include bc-typography;
+    .disabled{
+        pointer-events: none;
+        cursor: default;
+    }
+    
+    input, select{
+        font-family: $bc-font-family;
+    }
+    
+    .bc-mask{
+        &-revision-control{
+            width:auto;
+            margin-right:2%;
+        }
+    }
 }

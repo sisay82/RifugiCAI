@@ -29,16 +29,16 @@ export class BcTooltip{
     checkPosition(){
         this._state='center';
 
-        let leftPos = (this.ref.nativeElement.getBoundingClientRect().left+window.scrollX) > (window.innerWidth-100);
+        const leftPos = (this.ref.nativeElement.offsetLeft+window.scrollX) > (window.innerWidth-100);
         if(leftPos){
             this._state='left';
         }
-        let rightPos = (this.ref.nativeElement.getBoundingClientRect().left+window.scrollX) < (100);
+        const rightPos = (this.ref.nativeElement.offsetLeft+window.scrollX) < (100);
         if(rightPos){
             this._state='right';
         }
 
-        let topPos = (this.ref.nativeElement.getBoundingClientRect().top+window.scrollY) > (window.innerHeight-50);
+        const topPos = (this.ref.nativeElement.offsetTop+window.scrollY) > (window.innerHeight-50);
         if(topPos){
             this._state='top';
         }
