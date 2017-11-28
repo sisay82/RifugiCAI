@@ -15,203 +15,149 @@ import {BcAuthService} from '../../app/shared/auth.service';
     providers:[BcRevisionsService]
 })
 export class BcRevisions{
-    ShelterToUpdate:IShelter;
-    Docs:IFile[];
-    Images:IFile[];
-    saveSub:Subscription;
-    loadSub:Subscription;
+    shelterToUpdate:IShelter;
+    docs:IFile[];
+    images:IFile[];
+    subscriptions:Subscription[]=[];
     localPermissions:any[];
-    saveFilesSub:Subscription;
-    saveFileSub:Subscription;
-    loadFilesSub:Subscription;
-    maskSaveSub:Subscription;
-    maskCancelSub:Subscription;
-    childDeleteSub:Subscription;
-    childPermissionGetSub:Subscription;
-    outletChangeSub:Subscription;
+    updateFile(file:IFile,remove?:Boolean){
+        if(file.type==Enums.File_Type.image){
+            this.updateFileLocal(this.images,file,remove);
+        }else{
+            this.updateFileLocal(this.docs,file,remove);
+        }
+    }
+
+    saveFiles(files:IFile[]){
+        for(let file of files){
+            if(file.type==Enums.File_Type.image){
+                this.updateFileLocal(this.images,file);
+            }else{
+                this.updateFileLocal(this.docs,file);
+            }
+        }
+    }
+
+    updateFileLocal(storage:IFile[],file:IFile,remove?:Boolean):void{
+        if(storage!=undefined){
+            if(remove){
+                const f=storage.find(f=>f._id==file._id);
+                if(f!=undefined){
+                    storage.splice(storage.indexOf(f),1);
+                }
+            }else{
+                const fIndex=storage.findIndex(f=>f._id==file._id);
+                if(fIndex>-1){
+                    storage[fIndex]=file;
+                }else{
+                    storage.push(file);
+                }
+            }
+        }else{
+            if(!remove){
+                storage=[file];
+            }
+        }
+    }
+
+    deleteSection(section:string){
+        if(this.shelterToUpdate&&this.shelterToUpdate.hasOwnProperty(section)){
+            this.shelterToUpdate[section]=null;
+        }
+    }
+
+    initStorage(){
+        this.docs=null;
+        this.images=null;
+        this.shelterToUpdate=null;
+    }
+
+    checkDocTypes(types:Enums.File_Type[]):boolean{
+        return (types.includes(Enums.File_Type.doc)||types.includes(Enums.File_Type.map)||types.includes(Enums.File_Type.invoice));
+    }
+    
+    checkImageTypes(types:Enums.File_Type[]):boolean{
+        return types.includes(Enums.File_Type.image);
+    }
+
     constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService,private authService:BcAuthService){
-        this.outletChangeSub=shared.activeOutletChange$.subscribe((outlet)=>{
-            if(outlet==Enums.Routed_Outlet.content){
-                delete(this.ShelterToUpdate);
-                delete(this.Docs);
-                delete(this.Images);
-            }
-        });
-
-        let permissionSub = authService.getPermissions().subscribe(permissions=>{
-            this.localPermissions=permissions; 
-            revisionService.onFatherReturnPermissions(this.localPermissions);         
-            this.childPermissionGetSub = revisionService.childGetPermissions$.subscribe(()=>{
-                revisionService.onFatherReturnPermissions(this.localPermissions);
-            });
-            if(permissionSub!=undefined){
-                permissionSub.unsubscribe();
-            }
-        });
-
-        this.saveSub=revisionService.save$.subscribe(obj=>{
-            if(this.ShelterToUpdate!=undefined){
-                this.ShelterToUpdate[obj.section]=obj.shelter[obj.section];
-            }else{
-                this.ShelterToUpdate=obj.shelter;
-            }
-        });
-        
-        this.loadSub=revisionService.loadRequest$.subscribe(section=>{
-            if(this.ShelterToUpdate!=undefined&&this.ShelterToUpdate[section]!=undefined){
-                this.revisionService.onChildLoad(this.ShelterToUpdate);
-            }else{
-                this.revisionService.onChildLoad(null);
-            }
-        });
-
-        this.saveFileSub=revisionService.saveFile$.subscribe(obj=>{
-            if(obj.file.type==Enums.File_Type.image){
-                if(this.Images!=undefined){
-                    if(obj.remove){
-                        let f=this.Images.find(f=>f._id==obj.file._id);
-                        if(f!=undefined){
-                            this.Images.splice(this.Images.indexOf(f),1);
-                        }
-                    }else{
-                        let fIndex=this.Images.findIndex(f=>f._id==obj.file._id);
-                        if(fIndex>-1){
-                            this.Images[fIndex]=obj.file;
-                        }else{
-                            this.Images.push(obj.file);
-                        }
-                    }
+        this.subscriptions.push(
+            authService.getPermissions().subscribe(permissions=>{
+                this.localPermissions=permissions; 
+                revisionService.onFatherReturnPermissions(this.localPermissions);         
+                this.subscriptions.push(revisionService.childGetPermissions$.subscribe(()=>{
+                    revisionService.onFatherReturnPermissions(this.localPermissions);
+                }));
+            }),
+            shared.activeOutletChange$.subscribe((outlet)=>{
+                if(outlet==Enums.Routed_Outlet.content){
+                    this.initStorage();
+                }
+            }),
+            revisionService.save$.subscribe(obj=>{
+                if(this.shelterToUpdate){
+                    this.shelterToUpdate[obj.section]=obj.shelter[obj.section];
                 }else{
-                    if(!obj.remove){
-                        this.Images=[obj.file];
-                    }
+                    this.shelterToUpdate=obj.shelter;
                 }
-            }else{
-                if(this.Docs!=undefined){
-                    if(obj.remove){
-                        let f=this.Docs.find(f=>f._id==obj.file._id);
-                        if(f!=undefined){
-                            this.Docs.splice(this.Docs.indexOf(f),1);
-                        }
-                    }else{
-                        let fIndex=this.Docs.findIndex(f=>f._id==obj.file._id);
-                        if(fIndex>-1){
-                            this.Docs[fIndex]=obj.file;
-                        }else{
-                            this.Docs.push(obj.file);
-                        }
-                    }
+            }),
+            revisionService.loadRequest$.subscribe(section=>{
+                if(this.shelterToUpdate&&this.shelterToUpdate[section]){
+                    this.revisionService.onChildLoad(this.shelterToUpdate);
                 }else{
-                    if(!obj.remove){
-                        this.Docs=[obj.file];
-                    }
+                    this.revisionService.onChildLoad(null);
                 }
-            }
-            
-        });
-
-        this.saveFilesSub=revisionService.saveFiles$.subscribe(files=>{
-            for(let file of files){
-                if(file.type==Enums.File_Type.image){
-                    if(this.Images!=undefined){
-                        let fIndex=this.Images.findIndex(f=>f._id==file._id);
-                        if(fIndex>-1){
-                            this.Images[fIndex]=file;
-                        }else{
-                            this.Images.push(file);
-                        }
-                    }else{
-                        this.Images=[file]
-                    }
+            }),
+            revisionService.saveFile$.subscribe(obj=>{
+                this.updateFile(obj.file,obj.remove);
+            }),
+            revisionService.saveFiles$.subscribe(files=>{
+                this.saveFiles(files);
+            }),
+            revisionService.loadFilesRequest$.subscribe(types=>{
+                let files:IFile[]=[];
+                let retNull=false;
+                if(this.docs!=undefined&&this.checkDocTypes(types)){
+                    files=files.concat(this.docs.filter(f=>types.includes(f.type)));
                 }else{
-                    if(this.Docs!=undefined){
-                        let fIndex=this.Docs.findIndex(f=>f._id==file._id);
-                        if(fIndex>-1){
-                            this.Docs[fIndex]=file;
-                        }else{
-                            this.Docs.push(file);
-                        }
+                    if(this.images!=undefined&&this.checkImageTypes(types)){
+                        retNull=false;
+                        files=files.concat(this.images.filter(f=>types.includes(f.type)));
                     }else{
-                        this.Docs=[file]
+                        retNull=true;
                     }
                 }
-            }
-        });
-
-        this.loadFilesSub=revisionService.loadFilesRequest$.subscribe(types=>{
-            let files:IFile[]=[];
-            let retNull=false;
-            if(this.Docs!=undefined&&
-                (types.includes(Enums.File_Type.doc)||types.includes(Enums.File_Type.map)||types.includes(Enums.File_Type.invoice))){
-                files=files.concat(this.Docs.filter(f=>types.includes(f.type)));
-            }else{
-                if(this.Images!=undefined&&types.includes(Enums.File_Type.image)){
-                    retNull=false;
-                    files=files.concat(this.Images.filter(f=>types.includes(f.type)));
+                
+                if(retNull){
+                    this.revisionService.onChildLoadFiles(null);
                 }else{
-                    retNull=true;
+                    this.revisionService.onChildLoadFiles(files);
                 }
-            }
-
-            if(retNull){
-                this.revisionService.onChildLoadFiles(null);
-            }else{
-                this.revisionService.onChildLoadFiles(files);
-            }
-        });
-
-        this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            delete(this.ShelterToUpdate);
-            delete(this.Docs);
-            delete(this.Images);
-        });
-        
-        this.maskCancelSub=shared.maskCancel$.subscribe(()=>{
-            delete(this.ShelterToUpdate);
-            delete(this.Docs);
-            delete(this.Images);
-            let disableSaveSub = this.revisionService.childDisableSaveAnswer$.subscribe(()=>{
-                shared.onMaskConfirmCancel();
-                if(disableSaveSub!=undefined){
-                    disableSaveSub.unsubscribe();
-                }
-            });
-            this.revisionService.onChildDisableSaveRequest();
-        });
-
-        this.childDeleteSub=revisionService.childDelete$.subscribe(section=>{
-            if(this.ShelterToUpdate!=undefined&&this.ShelterToUpdate.hasOwnProperty(section))
-                delete(this.ShelterToUpdate[section]);
-        })
+            }),
+            shared.maskSave$.subscribe(()=>{
+                this.initStorage();
+            }),
+            shared.maskCancel$.subscribe(()=>{
+                this.initStorage();
+                const disableSaveSub = this.revisionService.childDisableSaveAnswer$.subscribe(()=>{
+                    shared.onMaskConfirmCancel();
+                    if(disableSaveSub!=undefined){
+                        disableSaveSub.unsubscribe();
+                    }
+                });
+                this.revisionService.onChildDisableSaveRequest();
+            }),
+            revisionService.childDelete$.subscribe(section=>{
+                this.deleteSection(section);
+            })
+        );
     }
 
     ngOnDestroy(){
-        if(this.childPermissionGetSub!=undefined){
-            this.childPermissionGetSub.unsubscribe();
-        }
-        if(this.outletChangeSub!=undefined){
-            this.outletChangeSub.unsubscribe();
-        }
-        if(this.saveSub!=undefined){
-            this.saveSub.unsubscribe();
-        }
-        if(this.loadSub!=undefined){
-            this.loadSub.unsubscribe();
-        }
-        if(this.maskCancelSub!=undefined){
-            this.maskCancelSub.unsubscribe();
-        }
-        if(this.childDeleteSub!=undefined){
-            this.childDeleteSub.unsubscribe();
-        }
-        if(this.saveFilesSub!=undefined){
-            this.saveFilesSub.unsubscribe();
-        }
-        if(this.loadFilesSub!=undefined){
-            this.loadFilesSub.unsubscribe();
-        }
-        if(this.maskSaveSub!=undefined){
-            this.maskSaveSub.unsubscribe();
-        }
+        this.subscriptions.forEach(sub=>{
+            if(sub){
+                sub.unsubscribe();
+            }
+        });
     }
 }
