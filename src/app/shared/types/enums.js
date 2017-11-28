@@ -73,12 +73,11 @@ var Enums;
         Possession_Type[Possession_Type["Affitto immobile"] = 1] = "Affitto immobile";
         Possession_Type[Possession_Type["Affitto a gestore"] = 2] = "Affitto a gestore";
         Possession_Type[Possession_Type["Diretto"] = 3] = "Diretto";
-        Possession_Type[Possession_Type["Capanna sociale"] = 4] = "Capanna sociale";
-        Possession_Type[Possession_Type["Custodia"] = 5] = "Custodia";
-        Possession_Type[Possession_Type["Propriet\u00E0"] = 6] = "Propriet\u00E0";
-        Possession_Type[Possession_Type["Usufrutto"] = 7] = "Usufrutto";
-        Possession_Type[Possession_Type["Concessione"] = 8] = "Concessione";
-        Possession_Type[Possession_Type["Comodato"] = 9] = "Comodato";
+        Possession_Type[Possession_Type["Custodia"] = 4] = "Custodia";
+        Possession_Type[Possession_Type["Propriet\u00E0"] = 5] = "Propriet\u00E0";
+        Possession_Type[Possession_Type["Usufrutto"] = 6] = "Usufrutto";
+        Possession_Type[Possession_Type["Concessione"] = 7] = "Concessione";
+        Possession_Type[Possession_Type["Comodato"] = 8] = "Comodato";
     })(Possession_Type = Enums.Possession_Type || (Enums.Possession_Type = {}));
     var Seasons;
     (function (Seasons) {
@@ -164,10 +163,10 @@ var Enums;
     })(Image_Type = Enums.Image_Type || (Enums.Image_Type = {}));
     var Drain_Type;
     (function (Drain_Type) {
-        Drain_Type[Drain_Type["IMOF fognatura"] = 0] = "IMOF fognatura";
-        Drain_Type[Drain_Type["IMOF pozzo perdente"] = 1] = "IMOF pozzo perdente";
-        Drain_Type[Drain_Type["IMOF dispersore sottosuolo"] = 2] = "IMOF dispersore sottosuolo";
-        Drain_Type[Drain_Type["IMOF trasporto a valle"] = 3] = "IMOF trasporto a valle";
+        Drain_Type[Drain_Type["IMHOFF fognatura"] = 0] = "IMHOFF fognatura";
+        Drain_Type[Drain_Type["IMHOFF pozzo perdente"] = 1] = "IMHOFF pozzo perdente";
+        Drain_Type[Drain_Type["IMHOFF dispersore sottosuolo"] = 2] = "IMHOFF dispersore sottosuolo";
+        Drain_Type[Drain_Type["IMHOFF trasporto a valle"] = 3] = "IMHOFF trasporto a valle";
     })(Drain_Type = Enums.Drain_Type || (Enums.Drain_Type = {}));
     var Typo_consistency;
     (function (Typo_consistency) {
