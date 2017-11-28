@@ -8,7 +8,6 @@ import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/Rx';
 import {BcDetailsService} from '../details.service';
 import { DetailBase } from '../shared/detail_base';
 

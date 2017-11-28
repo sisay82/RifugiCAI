@@ -9,7 +9,6 @@ import {ShelterService} from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/Rx';
 import {RevisionBase} from '../shared/revision_base';
 
 @Directive({

@@ -41,6 +41,10 @@ export class BcMaskController {
     });
   }
 
+  checkOutlet(check:string){
+    return Enums.Routed_Outlet[check]==this.currentOutlet;
+  }
+
   getRoute():Promise<any>{
     return new Promise<any>((resolve,reject)=>{
       const sub = this._route.params.subscribe(params=>{

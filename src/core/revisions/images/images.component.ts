@@ -9,7 +9,6 @@ import { Enums } from '../../../app/shared/types/enums';
 import { BcRevisionsService } from '../revisions.service';
 import {BcSharedService} from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/Rx';
 import {RevisionBase} from '../shared/revision_base';
 
 const maxImages:Number=10;
