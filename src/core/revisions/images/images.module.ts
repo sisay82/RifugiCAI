@@ -9,11 +9,12 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {BcIconModule} from '../../icon/icon.module';
 import {BcButtonModule} from '../../button/button.module';
 import { PipesModule } from '../../pipes/pipes.module';
+import {BcTooltipModule} from '../../tooltip/tooltip.module';
 
 @NgModule({
     declarations: [BcImgRevision],
     exports: [BcImgRevision],
-    imports:[BcIconModule,PipesModule,BcTextInputModule,BcDividerModule,CommonModule,FormsModule,ReactiveFormsModule,BcFileInputModule,BcButtonModule]
+    imports:[BcIconModule,BcTooltipModule,PipesModule,BcTextInputModule,BcDividerModule,CommonModule,FormsModule,ReactiveFormsModule,BcFileInputModule,BcButtonModule]
 })
 export class BcImgRevisionModule {
         
