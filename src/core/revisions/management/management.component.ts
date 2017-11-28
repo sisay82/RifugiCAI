@@ -202,11 +202,11 @@ export class BcManagementRevision extends RevisionBase{
                 contract_end_date: this.processFormDate(<FormGroup>this.managForm.controls["propContract_end_date"]),
                 contract_duration:this.getControlValue(<FormGroup>this.managForm.controls.propContract_duration),
                 contract_fee:this.getControlValue(<FormGroup>this.managForm.controls.propContract_fee),
-                possession_type:this.getControlValue(<FormGroup>this.managForm.controls.newPossessionType),
+                possession_type:this.getControlValue(<FormGroup>this.managForm.controls.propPossessionType),
                 webSite:this.processUrl(<FormGroup>this.managForm.controls.propWebSite),
                 type:"Proprietario"
             }
-
+            
             const control = <FormArray>this.managForm.controls['subjects'];
             let subjects:ISubject[]=[];
             subjects.push(prop);
