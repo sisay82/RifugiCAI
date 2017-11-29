@@ -2,6 +2,7 @@ import {Injectable } from '@angular/core'
 import { Subject } from 'rxjs/Subject';
 import { Http, Response,Headers,RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import "rxjs/add/observable/of";
 import { Enums } from './types/enums';
 import { Subscription } from 'rxjs/Subscription';
 import { ActivatedRoute, Router } from '@angular/router';
