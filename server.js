@@ -416,7 +416,7 @@ function createPDF(shelter) {
         var contribution_1 = shelter.contributions;
         var title_1 = "24px";
         var subtitle_1 = "20px";
-        var body_1 = "16px";
+        var body_1 = "18px";
         return new Promise(function (resolve, reject) {
             var assestpath = path.join("file://" + __dirname + "/src/assets/images/");
             var header = "<div style=\"text-align:center\">\n            <div style=\"height:100px\"><img style=\"max-width:100%;max-height:100%\" src=\"" + assestpath + "logo_pdf.png\" /></div>\n            <div style=\"font-weight: bold;font-size:" + title_1 + "\">CLUB ALPINO ITALIANO</div>\n            </div>";

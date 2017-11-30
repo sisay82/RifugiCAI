@@ -439,7 +439,7 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
         let contribution=shelter.contributions;
         const title="24px";
         const subtitle="20px";
-        const body="16px";
+        const body="18px";
         return new Promise<{name:String,id:any}>((resolve,reject)=>{
             let assestpath=path.join("file://"+__dirname+"/src/assets/images/");
 
