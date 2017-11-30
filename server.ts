@@ -630,7 +630,7 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
         const subtitle="20px";
         const body="18px";
         return new Promise<{name:String,id:any}>((resolve,reject)=>{
-            let assestpath=path.join("file://"+__dirname+"/src/assets/images/");
+            let assestpath=path.join("file://"+__dirname+"/dist/assets/images/");
 
             let header = `<div style="text-align:center">
             <div style="height:100px"><img style="max-width:100%;max-height:100%" src="`+assestpath +`logo_pdf.png" /></div>
