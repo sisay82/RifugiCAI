@@ -616,10 +616,10 @@ function createPDF(shelter) {
         var contribution_1 = shelter.contributions;
         var title_1 = "12px";
         var subtitle_1 = "10px";
-        var body_1 = "9px";
+        var body_1 = "10px";
         if (enableBigTextPDF) {
             title_1 = "24px";
-            subtitle_1 = "20px";
+            subtitle_1 = "22px";
             body_1 = "18px";
         }
         return new Promise(function (resolve, reject) {

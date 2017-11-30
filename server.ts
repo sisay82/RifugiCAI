@@ -630,10 +630,10 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
         let contribution=shelter.contributions;
         let title="12px";
         let subtitle="10px";
-        let body="9px";
+        let body="10px";
         if(enableBigTextPDF){
             title="24px";
-            subtitle="20px";
+            subtitle="22px";
             body="18px";
         }
         return new Promise<{name:String,id:any}>((resolve,reject)=>{
