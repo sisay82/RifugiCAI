@@ -43,7 +43,6 @@ export class BcEconomyRevision extends RevisionBase{
   economy:[IEconomy]=<any>[];
   private files:IFile[]=[];  
   private activeYear;
-  private userRole:Enums.User_Type;
   maskSaveSub:Subscription;
   name:String;
   activeTab:IEconomy;
@@ -277,29 +276,29 @@ export class BcEconomyRevision extends RevisionBase{
   }
 
   init(shelId){
-      this.getEconomy(shelId)
-      .then((shelter)=>{
-        this.name=shelter.name;
-        this.getDocs(shelId)
-        .then(files=>{
-          this.analyzeDocsYear(files)
-          .then(()=>{});
-          this.files=files;
-          this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
-          this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];
-          this.setBalanceSheetByYear((new Date()).getFullYear());
-        });
-        let tab;
-        let year;
-        year=(new Date()).getFullYear();        
-        if(shelter.economy&&shelter.economy.length>0){
-            this.economy = shelter.economy.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;});       
-            tab=shelter.economy.find(obj=>obj.year==(new Date().getFullYear()));     
-        }else{
-            let economy:IEconomy={year:(new Date()).getFullYear()}
-            this.economy=[economy];
-        }
-        this.changeActiveTab(year,tab);
+    this.getEconomy(shelId)
+    .then((shelter)=>{
+      this.name=shelter.name;
+      this.getDocs(shelId)
+      .then(files=>{
+        this.analyzeDocsYear(files)
+        .then(()=>{});
+        this.files=files;
+        this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
+        this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];
+        this.setBalanceSheetByYear((new Date()).getFullYear());
       });
+      let tab;
+      let year;
+      year=(new Date()).getFullYear();        
+      if(shelter.economy&&shelter.economy.length>0){
+          this.economy = shelter.economy.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;});       
+          tab=shelter.economy.find(obj=>obj.year==(new Date().getFullYear()));     
+      }else{
+          let economy:IEconomy={year:(new Date()).getFullYear()}
+          this.economy=[economy];
+      }
+      this.changeActiveTab(year,tab);
+    });
   }
 }

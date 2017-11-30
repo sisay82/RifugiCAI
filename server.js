@@ -14,6 +14,7 @@ var pdf = require("html-pdf");
 var MongoStore = require('connect-mongo')(session);
 var disableAuth = false;
 var disableLog = true;
+var enableBigTextPDF = false;
 var months = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 mongoose.Promise = global.Promise;
 var DOMParser = xmldom.DOMParser;
@@ -616,6 +617,11 @@ function createPDF(shelter) {
         var title_1 = "12px";
         var subtitle_1 = "10px";
         var body_1 = "9px";
+        if (enableBigTextPDF) {
+            title_1 = "24px";
+            subtitle_1 = "20px";
+            body_1 = "18px";
+        }
         return new Promise(function (resolve, reject) {
             var assestpath = path.join("file://" + __dirname + "/src/assets/images/");
             var header = "<div style=\"text-align:center\">\n            <div style=\"height:100px\"><img style=\"max-width:100%;max-height:100%\" src=\"" + assestpath + "logo_pdf.png\" /></div>\n            <div style=\"font-weight: bold;font-size:" + title_1 + "\">CLUB ALPINO ITALIANO</div>\n            </div>";
