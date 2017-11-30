@@ -21,6 +21,7 @@ export abstract class RevisionBase {
     protected maskInvalidSub:Subscription;
     protected maskValidSub:Subscription;
     protected formValidSub:Subscription;
+    protected userRole:Enums.User_Type;
     protected permissionSub:Subscription;
     protected MENU_SECTION:Enums.MenuSection=Enums.MenuSection.detail;
     constructor(protected shelterService,protected shared,protected revisionService,private _route,private router,protected auth){
@@ -78,19 +79,34 @@ export abstract class RevisionBase {
     }
 
     ngOnInit(){
-        let sub = this.getRoute()
+        let _id;
+        const sub = this.getRoute()
         .then(id=>{
-            this.getPermission()
-            .then(permissions=>{
-                if(this.checkPermission(permissions)){
-                    this.init(id);                                    
-                }else{
-                    this.redirect('/list');
-                }     
-            });
+            _id=id;
+            return this.getUserPermission()
+        })
+        .then(()=>this.getPermission())
+        .then(permissions=>{
+            if(this.checkPermission(permissions)){
+                this.init(_id);                                    
+            }else{
+                this.redirect('/list');
+            }
         })
         .catch(err=>{
             this.redirect('/pageNotFound');
+        });
+    }
+
+    private getUserPermission():Promise<any>{
+        return new Promise<any>((resolve,reject)=>{
+            const authSub = this.auth.checkUserPermission().subscribe(role=>{
+                this.userRole=role;
+                if(authSub){
+                    authSub.unsubscribe();
+                }
+                resolve();
+            });
         });
     }
 
@@ -180,7 +196,7 @@ export abstract class RevisionBase {
     protected abstract checkValidForm();
 
     protected abstract save(confirm);
-
+    
     protected checkPermission(permissions):boolean{
         if(permissions&&permissions.length>0){
             if(permissions.find(obj=>obj==this.MENU_SECTION)>-1){
