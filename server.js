@@ -14,6 +14,7 @@ var pdf = require("html-pdf");
 var MongoStore = require('connect-mongo')(session);
 var disableAuth = false;
 var disableLog = !(process.env.ENABLE_LOG || false);
+var enableBigTextPDF = false;
 var months = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 mongoose.Promise = global.Promise;
 var DOMParser = xmldom.DOMParser;
@@ -615,9 +616,14 @@ function createPDF(shelter) {
         var contribution_1 = shelter.contributions;
         var title_1 = "12px";
         var subtitle_1 = "10px";
-        var body_1 = "9px";
+        var body_1 = "10px";
+        if (enableBigTextPDF) {
+            title_1 = "24px";
+            subtitle_1 = "22px";
+            body_1 = "18px";
+        }
         return new Promise(function (resolve, reject) {
-            var assestpath = path.join("file://" + __dirname + "/src/assets/images/");
+            var assestpath = path.join("file://" + __dirname + "/dist/assets/images/");
             var header = "<div style=\"text-align:center\">\n            <div style=\"height:65px\"><img style=\"max-width:100%;max-height:100%\" src=\"" + assestpath + "logo_pdf.png\" /></div>\n            <div style=\"font-weight: bold;font-size:" + title_1 + "\">CLUB ALPINO ITALIANO</div>\n            </div>";
             var document = "<html><head></head><body>" + header + "\n            <br/><div style=\"font-size:" + body_1 + "\" align='right'><span style='text-align:left'>Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div><br/>\n            <div style=\"font-weight: bold;font-size:" + title_1 + "\">Oggetto: Richiesta di contributi di tipo " + contribution_1.type + " Rifugi</div><br/>\n            <div style=\"font-weight: 400;font-size:" + title_1 + "\">Con la presente vi comunico che la Sezione di " + shelter.branch + " intende svolgere nel \n            " + (contribution_1.year + 1) + " i lavori di manutenzione in seguito descritti,\n            predisponendo un piano economico cos\u00EC suddiviso:</div><br/>";
             document += "<div style='font-weight:400;font-size:" + subtitle_1 + "'>";

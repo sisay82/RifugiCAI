@@ -26,6 +26,7 @@ interface IFileExtended extends IFile,mongoose.Document{
 
 const disableAuth:boolean=false;
 const disableLog:boolean=!(process.env.ENABLE_LOG || false);
+const enableBigTextPDF:boolean=false;
 const months=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
 (<any>mongoose.Promise)=global.Promise;
 const DOMParser = xmldom.DOMParser;
@@ -627,11 +628,16 @@ function getContributionHtml(title:String,value:Number,rightTitle?:boolean):Stri
 function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
     if(shelter&&shelter.branch&&shelter.contributions&&shelter.contributions.data){
         let contribution=shelter.contributions;
-        const title="12px";
-        const subtitle="10px";
-        const body="9px";
+        let title="12px";
+        let subtitle="10px";
+        let body="10px";
+        if(enableBigTextPDF){
+            title="24px";
+            subtitle="22px";
+            body="18px";
+        }
         return new Promise<{name:String,id:any}>((resolve,reject)=>{
-            let assestpath=path.join("file://"+__dirname+"/src/assets/images/");
+            let assestpath=path.join("file://"+__dirname+"/dist/assets/images/");
 
             let header = `<div style="text-align:center">
             <div style="height:65px"><img style="max-width:100%;max-height:100%" src="`+assestpath +`logo_pdf.png" /></div>

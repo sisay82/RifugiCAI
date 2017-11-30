@@ -33,7 +33,6 @@ export class BcContributionRevision extends RevisionBase {
     docs:IFile[]=<any>[];
     newAttachmentForm: FormGroup;
     contrForm: FormGroup; 
-    private userRole:Enums.User_Type;
     private accepted:boolean;
     filesEnum:String[]=[];
     maskSaveSub:Subscription;
