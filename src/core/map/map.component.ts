@@ -93,6 +93,7 @@ export class BcMap implements OnInit{
     private map:Map;
     private divIcon;
     private currentCenterSub:Subscription;
+    private initCenter:L.LatLng|L.LatLngExpression;
 
     constructor(@Optional() private mapService:BcMapService,private router:Router,public shelterService:ShelterService){
         this.normalIcon=L.divIcon({
@@ -255,7 +256,11 @@ export class BcMap implements OnInit{
             .on("click",getTooltipEventHandler(shelter._id),this);
             
             this.addMarker(mark);
-            this.map.closeTooltip(tooltip);
+            if(!this.openTooltipCenter||!this.initCenter||!tooltip.getLatLng().equals(this.initCenter)){
+                this.map.closeTooltip(tooltip);                
+            }else{
+                this.initCenter=null;
+            }
         }
     }
 
