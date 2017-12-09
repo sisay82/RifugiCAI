@@ -77,5 +77,3 @@ $font-family:$bc-font-family;
     @include bc-marker-style($theme);
     @include bc-tooltip-style($theme);
 }
-
-@include bc-typography();
