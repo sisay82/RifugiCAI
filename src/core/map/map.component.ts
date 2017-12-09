@@ -5,7 +5,7 @@ import { ShelterService } from '../../app/shelter/shelter.service';
 import { Router } from '@angular/router';
 import * as L from 'leaflet';
 import { Map } from 'leaflet';
-import { IMarker } from '../../app/shared/types/interfaces';
+import { IMarker, IShelter } from '../../app/shared/types/interfaces';
 import { Enums } from '../../app/shared/types/enums';
 import {BcAuthService} from '../../app/shared/auth.service';
 import {BcMapService} from './map.service';
@@ -40,6 +40,35 @@ interface Region_Marker {
     marker:L.Marker;
 }
 
+function getTooltipEventHandler(shelId):(event:any)=>any{
+    return function(clickEvent:any){
+        const isOpen=clickEvent.target.isTooltipOpen();
+        const tooltip=clickEvent.target.getTooltip();
+        const clickPosition=clickEvent.latlng;
+        if(isOpen){
+            location.href="/shelter/"+shelId+"/(content:geographic)";
+        }
+        else{
+            this.map.eachLayer((layer)=>layer.closeTooltip());     
+            const bound=(5000/this.map.getZoom());   
+            if(clickPosition.distanceTo(<L.LatLng>this.map.getCenter())>bound){
+                this.map.off('moveend');
+                this.map.on('moveend',(ev)=>{
+                    ev.target.openTooltip(tooltip);
+                    this.map.off('moveend');
+                    this.map.on("moveend",this.moveEvent,this);
+                    
+                });
+                this.map.setView(clickEvent.target._latlng);
+                clickEvent.target.toggleTooltip();
+            }else{
+                clickEvent.target.openTooltip(tooltip);                                
+            }
+        }    
+    }
+}
+
+
 @Component({
     moduleId:module.id,
     selector:'bc-map',
@@ -52,7 +81,6 @@ export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
     @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
- //   @Input() currentCenter:Subject<L.LatLng|L.LatLngExpression>;
     @Input() initialZoom:number=6;
     @Input() openTooltipCenter:boolean=false;
     increaseRatio:number=10;
@@ -70,7 +98,7 @@ export class BcMap implements OnInit{
     }
     
     private _toggle:boolean=false;
-    private countrySheltersNumber:Region_Marker[]=[];
+    private countryShelters:Region_Marker[]=[];
     private normalIcon;
     expanded:boolean=false;   
     private markerPane= L.featureGroup();
@@ -78,6 +106,7 @@ export class BcMap implements OnInit{
     private map:Map;
     private divIcon;
     private currentCenterSub:Subscription;
+    private initCenter:L.LatLng|L.LatLngExpression;
 
     constructor(private authService:BcAuthService,@Optional() private mapService:BcMapService,private router:Router,public shelterService:ShelterService){
         this.normalIcon=L.divIcon({
@@ -92,10 +121,12 @@ export class BcMap implements OnInit{
             this.currentCenterSub=this.mapService.currentcenter$.subscribe(newCenter=>{
                 if(newCenter[0]!=null&&newCenter[1]!=null){
                     this.map.setView(newCenter,this.initialZoom);
+                    if(!this.initCenter){
+                        this.initCenter=newCenter;
+                    }
                 }
             });
         }
-        
     }
 
     ngOnDestroy() {
@@ -113,28 +144,16 @@ export class BcMap implements OnInit{
     }
 
     ngOnInit(){
-        this.getMapInit('map');
+        this.initMap('map');
         this.map.invalidateSize();
         this.map.setView(DEFAULT_CENTER,this.initialZoom);
-
-        if(this.openTooltipCenter){
-            this.map.eachLayer(function(layer){
-                if(layer.getTooltip()!=undefined){
-                    if(layer.getTooltip().getLatLng().equals(this.initialCenter)){
-                        layer.openTooltip();
-                    }else{
-                        layer.closeTooltip()
-                    }
-                }
-            },this);
-        }
     }
 
     addMarker(marker:L.Marker){
         this.markerPane.addLayer(marker);
     }
 
-    getMapInit(mapElement:string){
+    initMap(mapElement:string){
         this.map = new L.Map(mapElement);
         L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
             attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="https://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'        
@@ -144,54 +163,46 @@ export class BcMap implements OnInit{
         });
         this.markerPane.addTo(this.map);
         if(this.enableExpansion){
-                this.map.on("click",this.clickEvent,this);
+            this.map.on("click",this.clickEvent,this);
         }
-        this.map.on("moveend",this.moveEvent,this);
-        
+        this.map.on("moveend",this.moveEvent,this);   
     }
 
-    getShelterNumberForRegion(country:string){
-        let savedMarkers;
-        let coordinateMarker:L.LatLng;        
-        if(country){
-            savedMarkers=this.countrySheltersNumber.find(obj=>obj.region==country);
-            if(Enums.Defaults.Region_LanLng[country.toLowerCase()]){
-                coordinateMarker=Enums.Defaults.Region_LanLng[country.toLowerCase()];
+    createRegionDivIcon(num:number):L.DivIcon{
+        const regionIcon= L.divIcon({
+            className:'',
+            iconSize:null,
+            iconAnchor:[this.regionIconSize/4,this.regionIconSize],
+            html:  getRegionMarkerHtml(num,this.regionIconSize)
+        });
+        return regionIcon;
+    }
+
+    getShelterForRegion(country:string){
+        if(country&&Enums.Defaults.Region_LanLng[country.toLowerCase()]){
+            const savedMarkers=this.countryShelters.find(obj=>obj.region.indexOf(country)>-1);
+            const coordinateMarker:L.LatLng=Enums.Defaults.Region_LanLng[country.toLowerCase()];     
+
+            if(!savedMarkers){                
+                const newCountryMarker:Region_Marker={marker:null,region:country};
+                this.countryShelters.push(newCountryMarker);
+
+                const countryMarkerSub=this.shelterService.getConutryMarkersNumber(country).subscribe(obj=>{                
+                    if(obj&&obj.num&&obj.num>0){
+                        const mark:L.Marker=L.marker(coordinateMarker,{icon:this.createRegionDivIcon(obj.num)});
+                        this.countryShelters.find(obj=>obj==newCountryMarker).marker=mark;           
+                        this.addMarker(mark.on("click",this.openPopupRegion,this));
+                    }else{
+                        this.countryShelters.push({marker:null,region:country});
+                    }
+                    if(countryMarkerSub!=undefined){
+                        countryMarkerSub.unsubscribe();
+                    }
+                });
             }else{
-                return;
-            }
-        }else{
-            return;
-        }
-
-        if(!coordinateMarker){
-            return;
-        }
-
-        if(savedMarkers==undefined){
-            let countryMarkerSub=this.shelterService.getConutryMarkersNumber(country).subscribe(obj=>{                
-                if(obj!=undefined&&obj.num!=undefined&&obj.num>0){
-                    let regionIcon= L.divIcon({
-                        className:'',
-                        iconSize:null,
-                        iconAnchor:[this.regionIconSize/4,this.regionIconSize],
-                        html:  getRegionMarkerHtml(obj.num,this.regionIconSize)
-                    });
-                    let mark:L.Marker=L.marker(coordinateMarker,{icon:regionIcon});
-                    this.countrySheltersNumber.push({marker:mark,region:country});           
-                    this.addMarker(mark.on("click",this.openPopupRegion,this));
-                }else{
-                    this.countrySheltersNumber.push({marker:null,region:country})
+                if(savedMarkers.marker){
+                    this.addMarker(savedMarkers.marker.on("click",this.openPopupRegion,this));
                 }
-                if(countryMarkerSub!=undefined){
-                    countryMarkerSub.unsubscribe();
-                }
-            });
-        }else{
-            if(savedMarkers.marker!=null)
-                this.addMarker(savedMarkers.marker.on("click",this.openPopupRegion,this));
-            else{
-                this.countrySheltersNumber.splice(this.countrySheltersNumber.findIndex(obj=>obj.region==country),1);                    
             }
         }
     }
@@ -199,12 +210,12 @@ export class BcMap implements OnInit{
 
 
     markRegions(){
-        let permissionSub = this.authService.getUserProfile().subscribe(profile=>{      
-            let processedUser = this.authService.processUserProfileCode(profile);    
+        const permissionSub = this.authService.getUserProfile().subscribe(profile=>{      
+            const processedUser = this.authService.processUserProfileCode(profile);    
             if(processedUser){
                 const regions=this.authService.getRegions(profile.role,profile.code);
                 for(let region of regions){
-                    this.getShelterNumberForRegion(region);
+                    this.getShelterForRegion(region);
                 }
             }else{
                 return;
@@ -225,55 +236,57 @@ export class BcMap implements OnInit{
     }
 
     moveEvent(event:any){
+        this.removeMarkers();
+        
         if(event.target.getZoom()>7){
-            this.removeMarkers();
             this.setMarkersAround(event.target.getCenter());
         }else{
-            this.removeMarkers();
             this.markRegions();
         }
     }
 
+    getIncreaseRatio(){
+        return 1+this.increaseRatio/this.map.getZoom()
+    }
+
+    createTooltip(shelter:IShelter):L.Tooltip{
+        const popup:string=getTooltip(shelter.name,shelter.geoData.location.municipality,shelter.geoData.location.province,shelter.geoData.location.region);
+        const tooltip = L.tooltip({permanent:true,direction:"right",offset:[25,-50],interactive:true}).setContent(popup);
+
+        tooltip.on("click",function(event:Event){
+            this.router.navigateByUrl("/shelter/"+shelter._id);
+        });
+
+        return tooltip;
+    }
+
+    createShelterSingleMarker(shelter:IShelter){
+        if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){
+            const tooltip:L.Tooltip=this.createTooltip(shelter);
+            
+            const mark=L.marker([<number>shelter.geoData.location.latitude,<number>shelter.geoData.location.longitude],{icon:this.normalIcon})
+            .bindTooltip(tooltip)
+            .on("click",getTooltipEventHandler(shelter._id),this);
+            
+            this.addMarker(mark);
+
+            if(!this.openTooltipCenter||!this.initCenter||!tooltip.getLatLng().equals(this.initCenter)){
+                this.map.closeTooltip(tooltip);                
+            }else{
+                this.initCenter=null;
+            }
+        }
+    }
+
     setMarkersAround(point:L.LatLng){
-        const permissionSub = this.authService.getUserProfile().subscribe(profile=>{            
-            const sheltersAroundSub = this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom()).subscribe(shelters=>{
-                for(let shelter of shelters){
-                    if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){
-                        let popup:string=getTooltip(shelter.name,shelter.geoData.location.municipality,shelter.geoData.location.province,shelter.geoData.location.region);
-                        let tooltip:L.Tooltip=L.tooltip({permanent:true,direction:"right",offset:[25,-50],interactive:true}).setContent(popup);
-                        tooltip.on("click",function(event:Event){
-                            this.router.navigateByUrl("/shelter/"+shelter._id);
-                        });
-                        let mark=L.marker([shelter.geoData.location.latitude as number,shelter.geoData.location.longitude as number],{icon:this.normalIcon}).bindTooltip(tooltip).on("click",function(e:any){
-                            let isOpen=e.target.isTooltipOpen();
-                            if(isOpen){
-                                location.href="/shelter/"+shelter._id+"/(content:geographic)";
-                            }
-                            this.map.eachLayer(function(layer){layer.closeTooltip()});               
-                            if(!isOpen){
-                                if(e.latlng.distanceTo(this.map.getCenter())>100){
-                                    this.map.off('moveend');
-                                    this.map.on('moveend',(ev)=>{
-                                        ev.target.openTooltip(e.target._tooltip);
-                                        this.map.off('moveend');
-                                        this.map.on("moveend",this.moveEvent,this);
-                                        
-                                    });
-                                    this.map.setView(e.target._latlng);
-                                    e.target.toggleTooltip();                                    
-                                }else{
-                                    e.target.openTooltip(e.target._tooltip);
-                                }
-                            }    
-                        },this);
-                        this.addMarker(mark);
-                        this.map.closeTooltip(tooltip);
-                    }
-                }
-                if(sheltersAroundSub!=undefined){
-                    sheltersAroundSub.unsubscribe();
-                }
-            });
+        const sheltersAroundSub = this.shelterService.getSheltersAroundPoint(point,this.getIncreaseRatio()).subscribe(shelters=>{
+            for(let shelter of shelters){
+                this.createShelterSingleMarker(shelter);
+
+            }
+            if(sheltersAroundSub!=undefined){
+                sheltersAroundSub.unsubscribe();
+            }
         });
     }
 
