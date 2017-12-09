@@ -41,7 +41,7 @@ export class BcEconomy extends DetailBase{
   outgos:number=0;
   constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
     super(_route,shared,router);
-    shared.activeComponent=Enums.Routed_Component.economy;
+    shared.activeComponent=Enums.Routes.Routed_Component.economy;
   }
 
   isActive(year){
@@ -57,7 +57,7 @@ export class BcEconomy extends DetailBase{
   getContributionSumPerType(type:Enums.Contribution_Type){
     let total:any=0;
     this.revenuesFiles.concat(
-      this.files.filter(obj=>obj.type==Enums.File_Type.contribution)
+      this.files.filter(obj=>obj.type==Enums.Files.File_Type.contribution)
     ).filter(obj=>obj.contribution_type==type&&obj.invoice_year==this.activeYear).forEach((file)=>{
       total+=this.getTotal(file.value,file.invoice_tax);
     });
@@ -143,16 +143,16 @@ export class BcEconomy extends DetailBase{
             if(queryFileSub!=undefined){
               queryFileSub.unsubscribe();
             }
-            resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
+            resolve(files.filter(obj=>obj.type==Enums.Files.File_Type.invoice||obj.type==Enums.Files.File_Type.contribution));
           });
         }else{
-          resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
+          resolve(files.filter(obj=>obj.type==Enums.Files.File_Type.invoice||obj.type==Enums.Files.File_Type.contribution));
         }
         if(loadServiceSub!=undefined){
           loadServiceSub.unsubscribe();
         }
       });
-      this.detailsService.onChildLoadFilesRequest([Enums.File_Type.invoice,Enums.File_Type.contribution]);
+      this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.invoice,Enums.Files.File_Type.contribution]);
     });
   }
 

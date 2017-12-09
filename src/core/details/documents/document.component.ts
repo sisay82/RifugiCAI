@@ -25,7 +25,7 @@ export class BcDoc extends DetailBase{
     invoices:IFile[]=[];
     constructor(private shelterService:ShelterService,shared:BcSharedService,_route:ActivatedRoute,router:Router,private detailsService:BcDetailsService) {
         super(_route,shared,router);
-        shared.activeComponent=Enums.Routed_Component.documents;
+        shared.activeComponent=Enums.Routes.Routed_Component.documents;
     }
 
     downloadFile(id){
@@ -63,7 +63,7 @@ export class BcDoc extends DetailBase{
     }
 
     getIcon(type,name){
-        if(type==Enums.File_Type.doc){
+        if(type==Enums.Files.File_Type.doc){
             if(this.checkExtension(this.getExtension(name),["doc","docx"])){
                 return "file-word-o"
             }else if(this.checkExtension(this.getExtension(name),["xls","xlsx"])){
@@ -73,7 +73,7 @@ export class BcDoc extends DetailBase{
             }else if(this.checkExtension(this.getExtension(name),["pdf"])){
                 return "file-pdf-o"
             }else return "file-text-o";
-        }else if(type==Enums.File_Type.map){
+        }else if(type==Enums.Files.File_Type.map){
             if(this.checkExtension(this.getExtension(name),["dwg"])){
                 return "map-o"
             }else if(this.checkExtension(this.getExtension(name),["pdf"])){
@@ -81,7 +81,7 @@ export class BcDoc extends DetailBase{
             }else{
                 return "file-text-o";
             }
-        }else if(type==Enums.File_Type.invoice){
+        }else if(type==Enums.Files.File_Type.invoice){
             if(this.checkExtension(this.getExtension(name),["doc","docx"])){
                 return "file-word-o"
             }else if(this.checkExtension(this.getExtension(name),["xls","xlsx"])){
@@ -91,7 +91,7 @@ export class BcDoc extends DetailBase{
             }else if(this.checkExtension(this.getExtension(name),["pdf"])){
                 return "file-pdf-o"
             }else return "file-text-o";
-        }else if(type==Enums.File_Type.contribution){
+        }else if(type==Enums.Files.File_Type.contribution){
             return "file-pdf-o"
         }else{
             return "file-text-o"
@@ -101,11 +101,11 @@ export class BcDoc extends DetailBase{
     initDocs(files){
         for(let file of files){
             if(file.type!=undefined){
-                if(file.type==Enums.File_Type.contribution||file.type==Enums.File_Type.doc){
+                if(file.type==Enums.Files.File_Type.contribution||file.type==Enums.Files.File_Type.doc){
                     this.docs.push(file);       
-                }else if(file.type==Enums.File_Type.map){
+                }else if(file.type==Enums.Files.File_Type.map){
                     this.maps.push(file);
-                }else if(file.type==Enums.File_Type.invoice){
+                }else if(file.type==Enums.Files.File_Type.invoice){
                     this.invoices.push(file);
                 }   
             }
@@ -129,6 +129,6 @@ export class BcDoc extends DetailBase{
                 loadServiceSub.unsubscribe();
             }
         });
-        this.detailsService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice,Enums.File_Type.contribution]);
+        this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.doc,Enums.Files.File_Type.map,Enums.Files.File_Type.invoice,Enums.Files.File_Type.contribution]);
     }
 }

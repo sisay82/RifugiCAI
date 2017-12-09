@@ -64,7 +64,7 @@ export class BcMap implements OnInit{
     
     private _toggle:boolean=false;
     private countrySheltersNumber:{region:string,marker:L.Marker}[]=[];
-    public static defaultCenter:L.LatLng=new L.LatLng((<any>Enums.Region_LanLng.lazio)[0],(<any>Enums.Region_LanLng.lazio)[1]);
+    public static defaultCenter:L.LatLng=new L.LatLng((<any>Enums.Defaults.Region_LanLng.lazio)[0],(<any>Enums.Defaults.Region_LanLng.lazio)[1]);
     private normalIcon;
 
     expanded:boolean=false;   
@@ -138,19 +138,16 @@ export class BcMap implements OnInit{
         
     }
 
-    getShelterNumberForRegion(country:string,regionFilter?:string,sectionFilter?:string){
-        let m;
+    getShelterNumberForRegion(country:string){
+        let savedMarkers;
         let coordinateMarker:L.LatLng;        
         if(country){
-            m=this.countrySheltersNumber.find(obj=>obj.region==country);
-            if(Enums.Region_LanLng[country.toLowerCase()]){
-                coordinateMarker=Enums.Region_LanLng[country.toLowerCase()];
+            savedMarkers=this.countrySheltersNumber.find(obj=>obj.region==country);
+            if(Enums.Defaults.Region_LanLng[country.toLowerCase()]){
+                coordinateMarker=Enums.Defaults.Region_LanLng[country.toLowerCase()];
             }else{
                 return;
             }
-        }else if(regionFilter){
-            m=this.countrySheltersNumber.find(obj=>obj.region==Enums.Region_Code[regionFilter]);
-            coordinateMarker=<any>Enums.Region_LanLng[(Enums.Region_Code[regionFilter]).toLowerCase()];
         }else{
             return;
         }
@@ -159,8 +156,8 @@ export class BcMap implements OnInit{
             return;
         }
 
-        if(m==undefined){
-            let countryMarkerSub=this.shelterService.getConutryMarkersNumber(country,sectionFilter,regionFilter).subscribe(obj=>{                
+        if(savedMarkers==undefined){
+            let countryMarkerSub=this.shelterService.getConutryMarkersNumber(country).subscribe(obj=>{                
                 if(obj!=undefined&&obj.num!=undefined&&obj.num>0){
                     let regionIcon= L.divIcon({
                         className:'',
@@ -169,11 +166,7 @@ export class BcMap implements OnInit{
                         html:  getRegionMarkerHtml(obj.num,this.regionIconSize)
                     });
                     let mark:L.Marker=L.marker(coordinateMarker,{icon:regionIcon});
-                    if(country){
-                        this.countrySheltersNumber.push({marker:mark,region:country});           
-                    }else{
-                        this.countrySheltersNumber.push({marker:mark,region:Enums.Region_Code[regionFilter]});                                
-                    }
+                    this.countrySheltersNumber.push({marker:mark,region:country});           
                     this.addMarker(mark.on("click",this.openPopupRegion,this));
                 }else{
                     this.countrySheltersNumber.push({marker:null,region:country})
@@ -183,14 +176,10 @@ export class BcMap implements OnInit{
                 }
             });
         }else{
-            if(m.marker!=null)
-                this.addMarker(m.marker.on("click",this.openPopupRegion,this));
+            if(savedMarkers.marker!=null)
+                this.addMarker(savedMarkers.marker.on("click",this.openPopupRegion,this));
             else{
-                if(country){
-                    this.countrySheltersNumber.splice(this.countrySheltersNumber.findIndex(obj=>obj.region==country),1);                    
-                }else{
-                    this.countrySheltersNumber.splice(this.countrySheltersNumber.findIndex(obj=>obj.region==Enums.Region_Code[regionFilter]),1);                    
-                }
+                this.countrySheltersNumber.splice(this.countrySheltersNumber.findIndex(obj=>obj.region==country),1);                    
             }
         }
     }
@@ -201,15 +190,30 @@ export class BcMap implements OnInit{
         let permissionSub = this.authService.getUserProfile().subscribe(profile=>{      
             let processedUser = this.authService.processUserProfileCode(profile);    
             if(processedUser){
-                if(profile.role==Enums.User_Type.regional){
-                    this.getShelterNumberForRegion(null,processedUser.region.toString(),null);
-                }else if(profile.role==Enums.User_Type.sectional){
-                    this.getShelterNumberForRegion(null,processedUser.region.toString(),processedUser.section.toString());
+                const regions=this.authService.getRegions(profile.role,profile.code);
+                for(let region of regions){
+                    this.getShelterNumberForRegion(region);
+                }
+                /*if(!this.authService.isCentralRole(profile.role)){
+                    if(profile.role==Enums.Auth_Permissions.User_Type.area){
+                        for(const region of this.authService.getRegions(profile.role,profile.code)){
+
+                        }
+                    }else{
+                        this.getShelterNumberForRegion(<string>processedUser.region);                        
+                    }
                 }else{
-                    for(let item of Object.keys(Enums.Region_Code)){      
+                    
+                }
+                if(profile.role==Enums.Auth_Permissions.User_Type.regional){
+                    this.getShelterNumberForRegion(processedUser.region.toString());
+                }else if(profile.role==Enums.Auth_Permissions.User_Type.sectional){
+                    this.getShelterNumberForRegion(processedUser.region.toString());
+                }else{
+                    for(let item of Object.keys(Enums.Auth_Permissions.Region_Code)){      
                         this.getShelterNumberForRegion(item);
                     }
-                }
+                }*/
             }else{
                 return;
             }
@@ -239,16 +243,8 @@ export class BcMap implements OnInit{
     }
 
     setMarkersAround(point:L.LatLng){
-        let permissionSub = this.authService.getUserProfile().subscribe(profile=>{            
-
-            let processedUser = this.authService.processUserProfileCode(profile);
-            if(!processedUser){
-                return
-            }
-            let region=processedUser.region;
-            let section=processedUser.section;
-            
-            let sheltersAroundSub = this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom(),section,region).subscribe(shelters=>{
+        const permissionSub = this.authService.getUserProfile().subscribe(profile=>{            
+            const sheltersAroundSub = this.shelterService.getSheltersAroundPoint(point,1+this.increaseRatio/this.map.getZoom()).subscribe(shelters=>{
                 for(let shelter of shelters){
                     if(shelter.geoData!=undefined&&shelter.geoData.location!=undefined){
                         let popup:string=getTooltip(shelter.name,shelter.geoData.location.municipality,shelter.geoData.location.province,shelter.geoData.location.region);

@@ -7,7 +7,7 @@ export namespace Schema {
         province:String,
         municipality:String,
         locality:String,
-        ownerRegion:{type:Enums.Region_Code},
+        ownerRegion:{type:Enums.Auth_Permissions.Region_Code},
         regional_commission:String,
         authorityJurisdiction:String,
         altitude:Number,
@@ -210,7 +210,7 @@ export namespace Schema {
         invoice_confirmed:Boolean,
         invoice_type:{type:Enums.Invoice_Type},
         contentType:String,
-        type:{type:Enums.File_Type},
+        type:{type:Enums.Files.File_Type},
         description:String,
         value:Number
     });

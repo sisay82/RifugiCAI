@@ -21,7 +21,7 @@ export class BcRevisions{
     subscriptions:Subscription[]=[];
     localPermissions:any[];
     updateFile(file:IFile,remove?:Boolean){
-        if(file.type==Enums.File_Type.image){
+        if(file.type==Enums.Files.File_Type.image){
             this.updateFileLocal(this.images,file,remove);
         }else{
             this.updateFileLocal(this.docs,file,remove);
@@ -30,7 +30,7 @@ export class BcRevisions{
 
     saveFiles(files:IFile[]){
         for(let file of files){
-            if(file.type==Enums.File_Type.image){
+            if(file.type==Enums.Files.File_Type.image){
                 this.updateFileLocal(this.images,file);
             }else{
                 this.updateFileLocal(this.docs,file);
@@ -72,12 +72,12 @@ export class BcRevisions{
         this.shelterToUpdate=null;
     }
 
-    checkDocTypes(types:Enums.File_Type[]):boolean{
-        return (types.includes(Enums.File_Type.doc)||types.includes(Enums.File_Type.map)||types.includes(Enums.File_Type.invoice));
+    checkDocTypes(types:Enums.Files.File_Type[]):boolean{
+        return (types.includes(Enums.Files.File_Type.doc)||types.includes(Enums.Files.File_Type.map)||types.includes(Enums.Files.File_Type.invoice));
     }
     
-    checkImageTypes(types:Enums.File_Type[]):boolean{
-        return types.includes(Enums.File_Type.image);
+    checkImageTypes(types:Enums.Files.File_Type[]):boolean{
+        return types.includes(Enums.Files.File_Type.image);
     }
 
     constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService,private authService:BcAuthService){
@@ -90,7 +90,7 @@ export class BcRevisions{
                 }));
             }),
             shared.activeOutletChange$.subscribe((outlet)=>{
-                if(outlet==Enums.Routed_Outlet.content){
+                if(outlet==Enums.Routes.Routed_Outlet.content){
                     this.initStorage();
                 }
             }),

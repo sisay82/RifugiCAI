@@ -40,7 +40,7 @@ export class BcMaskRevision {
   displayErrorSub:Subscription;
   displayError:boolean=false;
   shelterInitialized:Boolean=false;
-  revisionPermission:Enums.User_Type;
+  revisionPermission:Enums.Auth_Permissions.User_Type;
   disableSave:boolean=false;
   saveDisabled:boolean=false;
   newShelter:boolean=false;
@@ -73,7 +73,7 @@ export class BcMaskRevision {
       this.displayError=true;
     });
 
-    this.saveDisabled=(this.shared.activeComponent==Enums.Routed_Component.contribution);
+    this.saveDisabled=(this.shared.activeComponent==Enums.Routes.Routed_Component.contribution);
     this.shared.disableMaskSave$.subscribe((val)=>{
       this.saveDisabled=val
     })
@@ -143,9 +143,9 @@ export class BcMaskRevision {
   }
 
   save(){
-    if(this.revisionPermission&&(this.revisionPermission!=Enums.User_Type.central||this.maskForm.valid)){
+    if(this.revisionPermission&&(this.revisionPermission!=Enums.Auth_Permissions.User_Type.central||this.maskForm.valid)){
       let shelter:IShelter={_id:this.shelter._id};
-      if(this.revisionPermission==Enums.User_Type.central&&this.maskForm.dirty){
+      if(this.revisionPermission==Enums.Auth_Permissions.User_Type.central&&this.maskForm.dirty){
         shelter={
           _id:this.shelter._id,
           name:this.maskForm.controls.name.value||null,
@@ -163,7 +163,7 @@ export class BcMaskRevision {
             if(shelUpdateSub){
               shelUpdateSub.unsubscribe();
             }
-            this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
+            this.shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.content);
             this.router.navigateByUrl("/shelter/"+shelter._id+"/(content:"+component+")");
           })
           .catch((err)=>{
@@ -173,7 +173,7 @@ export class BcMaskRevision {
       }else{
         this.processConfirm(shelter)
         .then((component)=>{
-          this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
+          this.shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.content);
           this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
         })
         .catch((err)=>{
@@ -222,7 +222,7 @@ export class BcMaskRevision {
       this.maskForm.controls.regional_type.setValue(this.shelter.regional_type||null);
     }
 
-    if(permission!=Enums.User_Type.central&&permission!=Enums.User_Type.superUser){
+    if(permission!=Enums.Auth_Permissions.User_Type.central&&permission!=Enums.Auth_Permissions.User_Type.superUser){
       this.maskForm.disable();
     }
   }   
@@ -309,7 +309,7 @@ export class BcMaskRevision {
             this.router.navigateByUrl("list");
           }else{
             let component = this.shared.activeComponent;
-            this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
+            this.shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.content);
             this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
           }
           if(shelSub!=undefined)

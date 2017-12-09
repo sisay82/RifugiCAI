@@ -62,14 +62,14 @@ export class BcImgRevision extends RevisionBase {
               this.disableSave=true;
               this.save(true);
           }else{
-              this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
+              this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.images);
           }
       }else{
         this.abortSave();
       }
     });
 
-    shared.activeComponent=Enums.Routed_Component.images;
+    shared.activeComponent=Enums.Routes.Routed_Component.images;
   }
 
   getFormControls(controlName){
@@ -113,7 +113,7 @@ export class BcImgRevision extends RevisionBase {
   }
 
   removeFile(id){
-    this.commitToFather({_id:id,type:Enums.File_Type.image},true);
+    this.commitToFather({_id:id,type:Enums.Files.File_Type.image},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -127,7 +127,7 @@ export class BcImgRevision extends RevisionBase {
   }
 
   getContentType(){
-    return Object.keys(Enums.Image_Type);
+    return Object.keys(Enums.Files.Image_Type);
   }
 
   addDoc(){
@@ -142,7 +142,7 @@ export class BcImgRevision extends RevisionBase {
           contentType:f.type,
           shelterId:this._id,
           description:this.getControlValue(<FormGroup>(<FormGroup>this.newDocForm).controls.description),
-          type:Enums.File_Type.image
+          type:Enums.Files.File_Type.image
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
@@ -157,7 +157,7 @@ export class BcImgRevision extends RevisionBase {
             this.uploading=false;
             this.cleanForm();
             if(confirm){
-                this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
+                this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.images);
             }
             if(shelServiceSub!=undefined){
                 shelServiceSub.unsubscribe();
@@ -190,7 +190,7 @@ export class BcImgRevision extends RevisionBase {
             if(val){
               i++;
               if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
-                this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
+                this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.images);
               }
             }
             if(updateSub!=undefined){
@@ -211,7 +211,7 @@ export class BcImgRevision extends RevisionBase {
         }else{
           i++;
           if((<FormArray>this.docsForm.controls.files).controls.length==i&&confirm){
-            this.shared.onMaskConfirmSave(Enums.Routed_Component.images);
+            this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.images);
           }
         }
       }
@@ -288,7 +288,7 @@ export class BcImgRevision extends RevisionBase {
         loadServiceSub.unsubscribe();
       }
     });
-    this.revisionService.onChildLoadFilesRequest([Enums.File_Type.image]);
+    this.revisionService.onChildLoadFilesRequest([Enums.Files.File_Type.image]);
   }
 
 }

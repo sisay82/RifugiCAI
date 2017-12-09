@@ -22,7 +22,7 @@ import {BcAuthService} from '../../../app/shared/auth.service';
 })
 export class BcMask {
   @Input() shelter:IShelter;
-  private revisionPermission:Enums.User_Type;
+  private revisionPermission:Enums.Auth_Permissions.User_Type;
   private shelterInitialized:Boolean=false;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private authService:BcAuthService){
     
@@ -43,7 +43,7 @@ export class BcMask {
   revision(){
     if(this.reviseCheck()){
       let component = this.shared.activeComponent;
-      this.shared.onActiveOutletChange(Enums.Routed_Outlet.revision);
+      this.shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.revision);
       this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(revision:"+component+")");
     }
   }

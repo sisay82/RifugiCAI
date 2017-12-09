@@ -35,7 +35,7 @@ export class BcFruition extends DetailBase{
   constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
     super(_route,shared,router);
     this.data=this.data.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;})
-    shared.activeComponent=Enums.Routed_Component.use;
+    shared.activeComponent=Enums.Routes.Routed_Component.use;
   }
 
   isActive(year){

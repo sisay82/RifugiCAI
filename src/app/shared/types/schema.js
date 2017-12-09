@@ -9,7 +9,7 @@ var Schema;
         province: String,
         municipality: String,
         locality: String,
-        ownerRegion: { type: enums_1.Enums.Region_Code },
+        ownerRegion: { type: enums_1.Enums.Auth_Permissions.Region_Code },
         regional_commission: String,
         authorityJurisdiction: String,
         altitude: Number,
@@ -195,7 +195,7 @@ var Schema;
         invoice_confirmed: Boolean,
         invoice_type: { type: enums_1.Enums.Invoice_Type },
         contentType: String,
-        type: { type: enums_1.Enums.File_Type },
+        type: { type: enums_1.Enums.Files.File_Type },
         description: String,
         value: Number
     });

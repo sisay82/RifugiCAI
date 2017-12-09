@@ -59,14 +59,14 @@ export class BcContactsRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.contacts);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.contacts);
                 }
             }else{
                 this.abortSave();
             }
         });
 
-        shared.activeComponent=Enums.Routed_Component.contacts;
+        shared.activeComponent=Enums.Routes.Routed_Component.contacts;
     } 
 
     getFormControls(controlName){
@@ -169,7 +169,7 @@ export class BcContactsRevision extends RevisionBase {
             .then(()=>{
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.contacts);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.contacts);
                 }
             })
             .catch((err)=>{

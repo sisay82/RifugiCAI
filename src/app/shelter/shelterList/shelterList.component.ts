@@ -17,7 +17,7 @@ export class BcShelterList {
     filterText: string = "";
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
-    private profile:{code:String,role:Enums.User_Type};
+    private profile:{code:String,role:Enums.Auth_Permissions.User_Type};
     isCentral:boolean;
     constructor(private shelterService: ShelterService,private shared:BcSharedService,private authService:BcAuthService) {}
 
@@ -35,17 +35,13 @@ export class BcShelterList {
         let permissionSub = this.authService.getUserProfile().subscribe(profile=>{
             this.profile=profile;
             
-            let section;
-            let region;
-            let processedProfile=this.authService.processUserProfileCode(profile);
+            const processedProfile=this.authService.processUserProfileCode(profile);
             if(!processedProfile){
                 return;
             }
-            section=processedProfile.section;
-            region=processedProfile.region;
             
             this.isCentralUser();
-            let shelSub = this.shelterService.getShelters(region,section).subscribe(shelters => {
+            let shelSub = this.shelterService.getShelters().subscribe(shelters => {
                 this.rifugiSample = shelters;
                 this.filteredShelter = shelters;
                 this.filterChanged("");
@@ -64,8 +60,8 @@ export class BcShelterList {
     createShel(){
         if(this.isCentralUser()){
             let newShelSub=this.shelterService.getNewId().subscribe((obj)=>{
-                this.shared.activeOutlet=Enums.Routed_Outlet.revision;
-                this.shared.activeComponent=Enums.Routed_Component.geographic;
+                this.shared.activeOutlet=Enums.Routes.Routed_Outlet.revision;
+                this.shared.activeComponent=Enums.Routes.Routed_Component.geographic;
                 if(newShelSub!=undefined){
                     newShelSub.unsubscribe();
                 }

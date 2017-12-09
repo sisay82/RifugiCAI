@@ -23,15 +23,15 @@ const validObjectIDRegExp = validators.objectID;
 export class BcMaskController {
   @Input() shelter:IShelter;
   @Input() ref:string;
-  currentOutlet:Enums.Routed_Outlet;
+  currentOutlet:Enums.Routes.Routed_Outlet;
   _id:String;
   activeOutletSub:Subscription;
   shelIdRequest:Subscription;
-  revisionPermission:Enums.User_Type;
+  revisionPermission:Enums.Auth_Permissions.User_Type;
   constructor(private shared:BcSharedService,private _route:ActivatedRoute,private router:Router,private shelterService:ShelterService,private authService:BcAuthService){
     this.currentOutlet=shared.activeOutlet;
     this.activeOutletSub=shared.activeOutletChange$.subscribe(outlet=>{
-      if(this.currentOutlet==Enums.Routed_Outlet.revision&&outlet==Enums.Routed_Outlet.content){
+      if(this.currentOutlet==Enums.Routes.Routed_Outlet.revision&&outlet==Enums.Routes.Routed_Outlet.content){
         let shelSub=this.shelterService.getShelter(this._id).subscribe(shelter=>{
           this.shelter=shelter;
           let permissionSub = this.authService.checkRevisionPermissionForShelter(shelter.idCai).subscribe(val=>{
@@ -50,7 +50,7 @@ export class BcMaskController {
   }
 
   checkOutlet(check:string){
-    return Enums.Routed_Outlet[check]==this.currentOutlet;
+    return Enums.Routes.Routed_Outlet[check]==this.currentOutlet;
   }
 
   getRoute():Promise<any>{

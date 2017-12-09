@@ -8,7 +8,7 @@ const validObjectIDRegExp = validators.objectID;
 export abstract class DetailBase {
     _id:String;
     constructor(protected _route,protected shared,protected router){
-        shared.onActiveOutletChange(Enums.Routed_Outlet.content);
+        shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.content);
     }
 
     getRoute():Promise<any>{

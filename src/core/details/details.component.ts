@@ -24,7 +24,7 @@ export class BcDetails {
 
     constructor(private detailsService:BcDetailsService,private shared:BcSharedService){
         this.outletChangeSub=shared.activeOutletChange$.subscribe((outlet)=>{
-            if(outlet==Enums.Routed_Outlet.revision){
+            if(outlet==Enums.Routes.Routed_Outlet.revision){
                 delete(this.Shelters);
                 delete(this.Docs);
                 delete(this.Images);
@@ -33,7 +33,7 @@ export class BcDetails {
 
         this.saveFilesSub=detailsService.saveFiles$.subscribe(files=>{
             for(let file of files){
-                if(file.type==Enums.File_Type.image){
+                if(file.type==Enums.Files.File_Type.image){
                     if(this.Images!=undefined){
                         let fIndex=this.Images.findIndex(f=>f._id==file._id);
                         if(fIndex>-1){
@@ -63,10 +63,10 @@ export class BcDetails {
             let files:IFile[]=[];
             let retNull=false;
             if(this.Docs!=undefined&&
-                (types.includes(Enums.File_Type.doc)||types.includes(Enums.File_Type.map)||types.includes(Enums.File_Type.invoice))){
+                (types.includes(Enums.Files.File_Type.doc)||types.includes(Enums.Files.File_Type.map)||types.includes(Enums.Files.File_Type.invoice))){
                 files=files.concat(this.Docs.filter(f=>types.includes(f.type)));
             }else{
-                if(this.Images!=undefined&&types.includes(Enums.File_Type.image)){
+                if(this.Images!=undefined&&types.includes(Enums.Files.File_Type.image)){
                     retNull=false;
                     files=files.concat(this.Images.filter(f=>types.includes(f.type)));
                 }else{

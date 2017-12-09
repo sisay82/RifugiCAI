@@ -36,7 +36,7 @@ export class BcImg extends DetailBase{
     data:{file:IFile,url:any}[]=[];
     constructor(private shelterService:ShelterService,shared:BcSharedService,_route:ActivatedRoute,router:Router,private detailsService:BcDetailsService) {
         super(_route,shared,router)    
-        shared.activeComponent=Enums.Routed_Component.images;
+        shared.activeComponent=Enums.Routes.Routed_Component.images;
     }
 
     downloadFile(id){
@@ -69,7 +69,7 @@ export class BcImg extends DetailBase{
     }
 
     getContentType():any[]{
-        return Object.keys(Enums.Image_Type);
+        return Object.keys(Enums.Files.Image_Type);
     }
 
     initImages(files){
@@ -115,6 +115,6 @@ export class BcImg extends DetailBase{
                 loadServiceSub.unsubscribe();
             }
         });
-        this.detailsService.onChildLoadFilesRequest([Enums.File_Type.image]);
+        this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.image]);
     }
 }

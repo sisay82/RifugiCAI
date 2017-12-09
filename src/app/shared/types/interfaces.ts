@@ -35,7 +35,7 @@ export interface ILocation{
     province?:String;
     municipality?:String;
     locality?:String;
-    ownerRegion?:Enums.Region_Code;
+    ownerRegion?:Enums.Auth_Permissions.Region_Code;
     regional_commission?:String;
     authorityJurisdiction?:String;
     altitude?:Number;
@@ -236,7 +236,7 @@ export interface IFile{
     invoice_confirmed?:Boolean;
     contribution_type?:Enums.Contribution_Type;
     contentType?:String;
-    type?:Enums.File_Type;
+    type?:Enums.Files.File_Type;
     description?:String;
     value?:Number;
 }

@@ -70,14 +70,14 @@ export class BcServRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.services);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.services);
                 }
             }else{
                 this.abortSave();
             }
         });
 
-        shared.activeComponent=Enums.Routed_Component.services;
+        shared.activeComponent=Enums.Routes.Routed_Component.services;
     } 
 
     getFormControls(controlName){

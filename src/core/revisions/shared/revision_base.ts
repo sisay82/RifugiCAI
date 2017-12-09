@@ -21,12 +21,12 @@ export abstract class RevisionBase {
     protected maskInvalidSub:Subscription;
     protected maskValidSub:Subscription;
     protected formValidSub:Subscription;
-    protected userRole:Enums.User_Type;
+    protected userRole:Enums.Auth_Permissions.User_Type;
     protected permissionSub:Subscription;
     protected MENU_SECTION:Enums.MenuSection=Enums.MenuSection.detail;
     constructor(protected shelterService,protected shared,protected revisionService,private _route,private router,protected auth){
 
-        shared.onActiveOutletChange(Enums.Routed_Outlet.revision);
+        shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.revision);
 
         this.maskInvalidSub = shared.maskInvalid$.subscribe(()=>{
             this.maskError=true;

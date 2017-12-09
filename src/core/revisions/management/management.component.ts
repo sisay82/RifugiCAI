@@ -81,14 +81,14 @@ export class BcManagementRevision extends RevisionBase{
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.management);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.management);
                 }
             }else{
                 this.abortSave();
             }
         });
 
-        shared.activeComponent=Enums.Routed_Component.management;
+        shared.activeComponent=Enums.Routes.Routed_Component.management;
     } 
 
     getFormControls(controlName){
@@ -236,7 +236,7 @@ export class BcManagementRevision extends RevisionBase{
             .then(()=>{
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.management);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.management);
                 }
             })
             .catch(err=>{

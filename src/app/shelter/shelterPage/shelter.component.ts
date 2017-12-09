@@ -4,7 +4,7 @@ import { BcSharedService} from '../../shared/shared.service';
 import {BcAuthService} from '../../shared/auth.service';
 import { Subscription } from 'rxjs/Subscription';
 import {Enums} from '../../shared/types/enums';
-
+import Routes = Enums.Routes;
 @Directive({
     selector: 'a[bc-menu-element]',
     host: {
@@ -29,7 +29,7 @@ export class BcShelter {
     getLink(link:String):any{
         const outlet=this.shared.activeOutlet;
         let routerLink;
-        if(outlet==Enums.Routed_Outlet.revision){
+        if(outlet==Routes.Routed_Outlet.revision){
             routerLink = [{outlets:({'revision': [link],'content': null})}];
         }else{
             routerLink = [{outlets:({'content': [link],'revision': null})}];
@@ -37,7 +37,7 @@ export class BcShelter {
         return routerLink;
     }
 
-    isActiveLink(link:Enums.Routed_Component){
+    isActiveLink(link:Routes.Routed_Component){
         const component=this.shared.activeComponent;
         return (component==link)
     }
@@ -47,22 +47,22 @@ export class BcShelter {
         {
             layerName:"detail",
             elements:[
-                {name:"Dati geografici",icon:"map-signs",link:Enums.Routed_Component.geographic},
-                {name:"Servizi",icon:"home",link:Enums.Routed_Component.services},
-                {name:"Contatti e apertura",icon:"phone",link:Enums.Routed_Component.contacts},
-                {name:"Proprietà e custodia",icon:"user",link:Enums.Routed_Component.management},
-                {name:"Dati catastali",icon:"book",link:Enums.Routed_Component.catastal}
+                {name:"Dati geografici",icon:"map-signs",link:Routes.Routed_Component.geographic},
+                {name:"Servizi",icon:"home",link:Routes.Routed_Component.services},
+                {name:"Contatti e apertura",icon:"phone",link:Routes.Routed_Component.contacts},
+                {name:"Proprietà e custodia",icon:"user",link:Routes.Routed_Component.management},
+                {name:"Dati catastali",icon:"book",link:Routes.Routed_Component.catastal}
             ]},{
             layerName:"document",
             elements:[
-                {name:"Documenti",icon:"file-pdf-o",link:Enums.Routed_Component.documents},
-                {name:"Immagini",icon:"picture-o",link:Enums.Routed_Component.images},
+                {name:"Documenti",icon:"file-pdf-o",link:Routes.Routed_Component.documents},
+                {name:"Immagini",icon:"picture-o",link:Routes.Routed_Component.images},
             ]},{
             layerName:"economy",
             elements:[
-                {name:"Economia",icon:"certificate",link:Enums.Routed_Component.economy},
-                {name:"Richiesta contributi",icon:"eur",link:Enums.Routed_Component.contribution},
-                {name:"Fruizione",icon:"bar-chart",link:Enums.Routed_Component.use}
+                {name:"Economia",icon:"certificate",link:Routes.Routed_Component.economy},
+                {name:"Richiesta contributi",icon:"eur",link:Routes.Routed_Component.contribution},
+                {name:"Fruizione",icon:"bar-chart",link:Routes.Routed_Component.use}
             ]}
         ]
     };

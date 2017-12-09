@@ -2,14 +2,35 @@
 exports.__esModule = true;
 var Enums;
 (function (Enums) {
-    var ShelterSectionType;
-    (function (ShelterSectionType) {
-        ShelterSectionType[ShelterSectionType["geolocation"] = 0] = "geolocation";
-        ShelterSectionType[ShelterSectionType["contacts"] = 1] = "contacts";
-        ShelterSectionType[ShelterSectionType["services"] = 2] = "services";
-        ShelterSectionType[ShelterSectionType["management"] = 3] = "management";
-        ShelterSectionType[ShelterSectionType["catastal"] = 4] = "catastal";
-    })(ShelterSectionType = Enums.ShelterSectionType || (Enums.ShelterSectionType = {}));
+    var Routes;
+    (function (Routes) {
+        var Routed_Component;
+        (function (Routed_Component) {
+            Routed_Component[Routed_Component["geographic"] = "geographic"] = "geographic";
+            Routed_Component[Routed_Component["services"] = "services"] = "services";
+            Routed_Component[Routed_Component["contacts"] = "contacts"] = "contacts";
+            Routed_Component[Routed_Component["management"] = "management"] = "management";
+            Routed_Component[Routed_Component["catastal"] = "catastal"] = "catastal";
+            Routed_Component[Routed_Component["documents"] = "documents"] = "documents";
+            Routed_Component[Routed_Component["images"] = "images"] = "images";
+            Routed_Component[Routed_Component["economy"] = "economy"] = "economy";
+            Routed_Component[Routed_Component["contribution"] = "contribution"] = "contribution";
+            Routed_Component[Routed_Component["use"] = "use"] = "use";
+            Routed_Component[Routed_Component["working"] = "working"] = "working";
+        })(Routed_Component = Routes.Routed_Component || (Routes.Routed_Component = {}));
+        var Routed_Outlet;
+        (function (Routed_Outlet) {
+            Routed_Outlet[Routed_Outlet["content"] = "content"] = "content";
+            Routed_Outlet[Routed_Outlet["revision"] = "revision"] = "revision";
+        })(Routed_Outlet = Routes.Routed_Outlet || (Routes.Routed_Outlet = {}));
+    })(Routes = Enums.Routes || (Enums.Routes = {}));
+    /*export enum ShelterSectionType {
+        "geolocation",
+        "contacts",
+        "services",
+        "management",
+        "catastal"
+    }*/
     var Heating_Type;
     (function (Heating_Type) {
         Heating_Type[Heating_Type["Elettrico"] = 0] = "Elettrico";
@@ -19,25 +40,6 @@ var Enums;
         Heating_Type[Heating_Type["Assente"] = 4] = "Assente";
         Heating_Type[Heating_Type["Combinato"] = 5] = "Combinato";
     })(Heating_Type = Enums.Heating_Type || (Enums.Heating_Type = {}));
-    var Routed_Component;
-    (function (Routed_Component) {
-        Routed_Component[Routed_Component["geographic"] = "geographic"] = "geographic";
-        Routed_Component[Routed_Component["services"] = "services"] = "services";
-        Routed_Component[Routed_Component["contacts"] = "contacts"] = "contacts";
-        Routed_Component[Routed_Component["management"] = "management"] = "management";
-        Routed_Component[Routed_Component["catastal"] = "catastal"] = "catastal";
-        Routed_Component[Routed_Component["documents"] = "documents"] = "documents";
-        Routed_Component[Routed_Component["images"] = "images"] = "images";
-        Routed_Component[Routed_Component["economy"] = "economy"] = "economy";
-        Routed_Component[Routed_Component["contribution"] = "contribution"] = "contribution";
-        Routed_Component[Routed_Component["use"] = "use"] = "use";
-        Routed_Component[Routed_Component["working"] = "working"] = "working";
-    })(Routed_Component = Enums.Routed_Component || (Enums.Routed_Component = {}));
-    var Routed_Outlet;
-    (function (Routed_Outlet) {
-        Routed_Outlet[Routed_Outlet["content"] = "content"] = "content";
-        Routed_Outlet[Routed_Outlet["revision"] = "revision"] = "revision";
-    })(Routed_Outlet = Enums.Routed_Outlet || (Enums.Routed_Outlet = {}));
     var Contribution_Type;
     (function (Contribution_Type) {
         Contribution_Type[Contribution_Type["Ordinario"] = 0] = "Ordinario";
@@ -124,66 +126,6 @@ var Enums;
         Shelter_Category[Shelter_Category["D"] = 3] = "D";
         Shelter_Category[Shelter_Category["E"] = 4] = "E";
     })(Shelter_Category = Enums.Shelter_Category || (Enums.Shelter_Category = {}));
-    var File_Type;
-    (function (File_Type) {
-        File_Type[File_Type["doc"] = 0] = "doc";
-        File_Type[File_Type["map"] = 1] = "map";
-        File_Type[File_Type["invoice"] = 2] = "invoice";
-        File_Type[File_Type["image"] = 3] = "image";
-        File_Type[File_Type["contribution"] = 4] = "contribution";
-    })(File_Type = Enums.File_Type || (Enums.File_Type = {}));
-    var Docs_Type;
-    (function (Docs_Type) {
-        Docs_Type[Docs_Type["txt"] = "text/plain"] = "txt";
-        Docs_Type[Docs_Type["pdf"] = "application/pdf"] = "pdf";
-        Docs_Type[Docs_Type["doc"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"] = "doc";
-        Docs_Type[Docs_Type["docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"] = "docx";
-        Docs_Type[Docs_Type["xls"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xls";
-        Docs_Type[Docs_Type["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xlsx";
-    })(Docs_Type = Enums.Docs_Type || (Enums.Docs_Type = {}));
-    var Maps_Type;
-    (function (Maps_Type) {
-        Maps_Type[Maps_Type["dwg"] = "application/acad, application/x-acad, application/autocad_dwg, image/x-dwg, application/dwg, application/x-dwg, application/x-autocad, image/vnd.dwg, drawing/dwg"] = "dwg";
-        Maps_Type[Maps_Type["pdf"] = "application/pdf"] = "pdf";
-    })(Maps_Type = Enums.Maps_Type || (Enums.Maps_Type = {}));
-    var Invoices_Type;
-    (function (Invoices_Type) {
-        Invoices_Type[Invoices_Type["txt"] = "text/plain"] = "txt";
-        Invoices_Type[Invoices_Type["pdf"] = "application/pdf"] = "pdf";
-        Invoices_Type[Invoices_Type["doc"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"] = "doc";
-        Invoices_Type[Invoices_Type["docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"] = "docx";
-        Invoices_Type[Invoices_Type["xls"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xls";
-        Invoices_Type[Invoices_Type["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xlsx";
-    })(Invoices_Type = Enums.Invoices_Type || (Enums.Invoices_Type = {}));
-    var Region_LanLng;
-    (function (Region_LanLng) {
-        Region_LanLng[Region_LanLng["valle d'aosta"] = [45.7372, 7.3206]] = "valle d'aosta";
-        Region_LanLng[Region_LanLng["piemonte"] = [45.0667, 7.7]] = "piemonte";
-        Region_LanLng[Region_LanLng["liguria"] = [44.4072, 8.934]] = "liguria";
-        Region_LanLng[Region_LanLng["lombardia"] = [45.4642, 9.1903]] = "lombardia";
-        Region_LanLng[Region_LanLng["trentino alto adige"] = [46.0667, 11.1167]] = "trentino alto adige";
-        Region_LanLng[Region_LanLng["veneto"] = [45.4397, 12.3319]] = "veneto";
-        Region_LanLng[Region_LanLng["friuli-venezia giulia"] = [45.6361, 13.8042]] = "friuli-venezia giulia";
-        Region_LanLng[Region_LanLng["emilia romagna"] = [44.4939, 11.3428]] = "emilia romagna";
-        Region_LanLng[Region_LanLng["toscana"] = [43.7714, 11.2542]] = "toscana";
-        Region_LanLng[Region_LanLng["umbria"] = [43.1121, 12.3886]] = "umbria";
-        Region_LanLng[Region_LanLng["marche"] = [43.6167, 13.5167]] = "marche";
-        Region_LanLng[Region_LanLng["lazio"] = [41.8931, 12.4828]] = "lazio";
-        Region_LanLng[Region_LanLng["abruzzo"] = [42.354, 13.3919]] = "abruzzo";
-        Region_LanLng[Region_LanLng["molise"] = [41.561, 14.6684]] = "molise";
-        Region_LanLng[Region_LanLng["campania"] = [40.8333, 14.25]] = "campania";
-        Region_LanLng[Region_LanLng["puglia"] = [41.1253, 16.8667]] = "puglia";
-        Region_LanLng[Region_LanLng["basilicata"] = [40.6333, 15.8]] = "basilicata";
-        Region_LanLng[Region_LanLng["calabria"] = [38.91, 16.5875]] = "calabria";
-        Region_LanLng[Region_LanLng["sicilia"] = [38.1157, 13.3639]] = "sicilia";
-        Region_LanLng[Region_LanLng["sardegna"] = [39.2167, 9.1167]] = "sardegna";
-    })(Region_LanLng = Enums.Region_LanLng || (Enums.Region_LanLng = {}));
-    var Image_Type;
-    (function (Image_Type) {
-        Image_Type[Image_Type["png"] = "image/png"] = "png";
-        Image_Type[Image_Type["jpeg"] = "image/jpeg"] = "jpeg";
-        Image_Type[Image_Type["jpg"] = "image/jpeg"] = "jpg";
-    })(Image_Type = Enums.Image_Type || (Enums.Image_Type = {}));
     var Drain_Type;
     (function (Drain_Type) {
         Drain_Type[Drain_Type["IMHOFF fognatura"] = 0] = "IMHOFF fognatura";
@@ -191,48 +133,6 @@ var Enums;
         Drain_Type[Drain_Type["IMHOFF dispersore sottosuolo"] = 2] = "IMHOFF dispersore sottosuolo";
         Drain_Type[Drain_Type["IMHOFF trasporto a valle"] = 3] = "IMHOFF trasporto a valle";
     })(Drain_Type = Enums.Drain_Type || (Enums.Drain_Type = {}));
-    //tipologia di utente
-    var User_Type;
-    (function (User_Type) {
-        User_Type[User_Type["central"] = 1] = "central";
-        User_Type[User_Type["regional"] = 2] = "regional";
-        User_Type[User_Type["sectional"] = 3] = "sectional";
-        User_Type[User_Type["superUser"] = 4] = "superUser";
-    })(User_Type = Enums.User_Type || (Enums.User_Type = {}));
-    //permessi per documenti rifugio
-    Enums.DocRevisionPermission = [
-        User_Type.superUser,
-        User_Type.central,
-        User_Type.sectional
-    ];
-    //permessi per economia rifugio
-    Enums.EconomyRevisionPermission = [
-        User_Type.superUser,
-        User_Type.central,
-        User_Type.sectional
-    ];
-    //permessi per dettagli rifugio
-    Enums.DetailRevisionPermission = Enums.DocRevisionPermission.concat(Enums.EconomyRevisionPermission).filter(function (item, index, input) {
-        return input.indexOf(item) == index;
-    }).slice();
-    //permessi per inserimento rifugio
-    Enums.InsertShelterPermission = [
-        User_Type.superUser,
-        User_Type.central
-    ];
-    //permessi per rimozione rifugio
-    Enums.DeleteShelterPermission = [
-        User_Type.superUser,
-        User_Type.central
-    ];
-    //sezioni del menu
-    var MenuSection;
-    (function (MenuSection) {
-        MenuSection[MenuSection["detail"] = 0] = "detail";
-        MenuSection[MenuSection["document"] = 1] = "document";
-        MenuSection[MenuSection["economy"] = 2] = "economy";
-    })(MenuSection = Enums.MenuSection || (Enums.MenuSection = {}));
-    //coerenza tipologica
     var Typo_consistency;
     (function (Typo_consistency) {
         Typo_consistency[Typo_consistency["Piena"] = 0] = "Piena";
@@ -240,30 +140,12 @@ var Enums;
         Typo_consistency[Typo_consistency["Recuperabile"] = 2] = "Recuperabile";
         Typo_consistency[Typo_consistency["Nessuna"] = 3] = "Nessuna";
     })(Typo_consistency = Enums.Typo_consistency || (Enums.Typo_consistency = {}));
-    var Region_Code;
-    (function (Region_Code) {
-        Region_Code[Region_Code["Liguria"] = 10] = "Liguria";
-        Region_Code[Region_Code["Piemonte"] = 12] = "Piemonte";
-        Region_Code[Region_Code["Valle d'Aosta"] = 14] = "Valle d'Aosta";
-        Region_Code[Region_Code["Lombardia"] = 16] = "Lombardia";
-        Region_Code[Region_Code["Trentino Alto Adige"] = 18] = "Trentino Alto Adige";
-        Region_Code[Region_Code["Alto Adige"] = 19] = "Alto Adige";
-        Region_Code[Region_Code["Veneto"] = 20] = "Veneto";
-        Region_Code[Region_Code["Friuli-Venezia Giulia"] = 22] = "Friuli-Venezia Giulia";
-        Region_Code[Region_Code["Emilia Romagna"] = 24] = "Emilia Romagna";
-        Region_Code[Region_Code["Toscana"] = 26] = "Toscana";
-        Region_Code[Region_Code["Marche"] = 28] = "Marche";
-        Region_Code[Region_Code["Umbria"] = 30] = "Umbria";
-        Region_Code[Region_Code["Lazio"] = 32] = "Lazio";
-        Region_Code[Region_Code["Abruzzo"] = 34] = "Abruzzo";
-        Region_Code[Region_Code["Molise"] = 36] = "Molise";
-        Region_Code[Region_Code["Campania"] = 38] = "Campania";
-        Region_Code[Region_Code["Puglia"] = 40] = "Puglia";
-        Region_Code[Region_Code["Basilicata"] = 42] = "Basilicata";
-        Region_Code[Region_Code["Calabria"] = 44] = "Calabria";
-        Region_Code[Region_Code["Sicilia"] = 46] = "Sicilia";
-        Region_Code[Region_Code["Sardegna"] = 48] = "Sardegna";
-    })(Region_Code = Enums.Region_Code || (Enums.Region_Code = {}));
+    var MenuSection;
+    (function (MenuSection) {
+        MenuSection[MenuSection["detail"] = 0] = "detail";
+        MenuSection[MenuSection["document"] = 1] = "document";
+        MenuSection[MenuSection["economy"] = 2] = "economy";
+    })(MenuSection = Enums.MenuSection || (Enums.MenuSection = {}));
     var Invoice_Type;
     (function (Invoice_Type) {
         Invoice_Type[Invoice_Type["Attivit\u00E0"] = 0] = "Attivit\u00E0";
@@ -289,4 +171,182 @@ var Enums;
         Custody_Type[Custody_Type["Capanna sociale"] = 3] = "Capanna sociale";
         Custody_Type[Custody_Type["Custodia"] = 4] = "Custodia";
     })(Custody_Type = Enums.Custody_Type || (Enums.Custody_Type = {}));
+    var Files;
+    (function (Files) {
+        var File_Type;
+        (function (File_Type) {
+            File_Type[File_Type["doc"] = 0] = "doc";
+            File_Type[File_Type["map"] = 1] = "map";
+            File_Type[File_Type["invoice"] = 2] = "invoice";
+            File_Type[File_Type["image"] = 3] = "image";
+            File_Type[File_Type["contribution"] = 4] = "contribution";
+        })(File_Type = Files.File_Type || (Files.File_Type = {}));
+        var Docs_Type;
+        (function (Docs_Type) {
+            Docs_Type[Docs_Type["txt"] = "text/plain"] = "txt";
+            Docs_Type[Docs_Type["pdf"] = "application/pdf"] = "pdf";
+            Docs_Type[Docs_Type["doc"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"] = "doc";
+            Docs_Type[Docs_Type["docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"] = "docx";
+            Docs_Type[Docs_Type["xls"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xls";
+            Docs_Type[Docs_Type["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xlsx";
+        })(Docs_Type = Files.Docs_Type || (Files.Docs_Type = {}));
+        var Maps_Type;
+        (function (Maps_Type) {
+            Maps_Type[Maps_Type["dwg"] = "application/acad, application/x-acad, application/autocad_dwg, image/x-dwg, application/dwg, application/x-dwg, application/x-autocad, image/vnd.dwg, drawing/dwg"] = "dwg";
+            Maps_Type[Maps_Type["pdf"] = "application/pdf"] = "pdf";
+        })(Maps_Type = Files.Maps_Type || (Files.Maps_Type = {}));
+        var Invoices_Type;
+        (function (Invoices_Type) {
+            Invoices_Type[Invoices_Type["txt"] = "text/plain"] = "txt";
+            Invoices_Type[Invoices_Type["pdf"] = "application/pdf"] = "pdf";
+            Invoices_Type[Invoices_Type["doc"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"] = "doc";
+            Invoices_Type[Invoices_Type["docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"] = "docx";
+            Invoices_Type[Invoices_Type["xls"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xls";
+            Invoices_Type[Invoices_Type["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"] = "xlsx";
+        })(Invoices_Type = Files.Invoices_Type || (Files.Invoices_Type = {}));
+        var Image_Type;
+        (function (Image_Type) {
+            Image_Type[Image_Type["png"] = "image/png"] = "png";
+            Image_Type[Image_Type["jpeg"] = "image/jpeg"] = "jpeg";
+            Image_Type[Image_Type["jpg"] = "image/jpeg"] = "jpg";
+        })(Image_Type = Files.Image_Type || (Files.Image_Type = {}));
+    })(Files = Enums.Files || (Enums.Files = {}));
+    var Defaults;
+    (function (Defaults) {
+        var Region_LanLng;
+        (function (Region_LanLng) {
+            Region_LanLng[Region_LanLng["valle d'aosta"] = [45.7372, 7.3206]] = "valle d'aosta";
+            Region_LanLng[Region_LanLng["piemonte"] = [45.0667, 7.7]] = "piemonte";
+            Region_LanLng[Region_LanLng["liguria"] = [44.4072, 8.934]] = "liguria";
+            Region_LanLng[Region_LanLng["lombardia"] = [45.4642, 9.1903]] = "lombardia";
+            Region_LanLng[Region_LanLng["trentino alto adige"] = [46.0667, 11.1167]] = "trentino alto adige";
+            Region_LanLng[Region_LanLng["veneto"] = [45.4397, 12.3319]] = "veneto";
+            Region_LanLng[Region_LanLng["friuli-venezia giulia"] = [45.6361, 13.8042]] = "friuli-venezia giulia";
+            Region_LanLng[Region_LanLng["emilia romagna"] = [44.4939, 11.3428]] = "emilia romagna";
+            Region_LanLng[Region_LanLng["toscana"] = [43.7714, 11.2542]] = "toscana";
+            Region_LanLng[Region_LanLng["umbria"] = [43.1121, 12.3886]] = "umbria";
+            Region_LanLng[Region_LanLng["marche"] = [43.6167, 13.5167]] = "marche";
+            Region_LanLng[Region_LanLng["lazio"] = [41.8931, 12.4828]] = "lazio";
+            Region_LanLng[Region_LanLng["abruzzo"] = [42.354, 13.3919]] = "abruzzo";
+            Region_LanLng[Region_LanLng["molise"] = [41.561, 14.6684]] = "molise";
+            Region_LanLng[Region_LanLng["campania"] = [40.8333, 14.25]] = "campania";
+            Region_LanLng[Region_LanLng["puglia"] = [41.1253, 16.8667]] = "puglia";
+            Region_LanLng[Region_LanLng["basilicata"] = [40.6333, 15.8]] = "basilicata";
+            Region_LanLng[Region_LanLng["calabria"] = [38.91, 16.5875]] = "calabria";
+            Region_LanLng[Region_LanLng["sicilia"] = [38.1157, 13.3639]] = "sicilia";
+            Region_LanLng[Region_LanLng["sardegna"] = [39.2167, 9.1167]] = "sardegna";
+        })(Region_LanLng = Defaults.Region_LanLng || (Defaults.Region_LanLng = {}));
+    })(Defaults = Enums.Defaults || (Enums.Defaults = {}));
+    var Auth_Permissions;
+    (function (Auth_Permissions) {
+        var User_Type;
+        (function (User_Type) {
+            User_Type[User_Type["central"] = 1] = "central";
+            User_Type[User_Type["regional"] = 2] = "regional";
+            User_Type[User_Type["sectional"] = 3] = "sectional";
+            User_Type[User_Type["superUser"] = 4] = "superUser";
+            User_Type[User_Type["visualization"] = 5] = "visualization";
+            User_Type[User_Type["area"] = 6] = "area";
+        })(User_Type = Auth_Permissions.User_Type || (Auth_Permissions.User_Type = {}));
+        var Code_Type;
+        (function (Code_Type) {
+            Code_Type[Code_Type["section"] = 1] = "section";
+            Code_Type[Code_Type["subsection"] = 2] = "subsection";
+            Code_Type[Code_Type["territory"] = 3] = "territory";
+            Code_Type[Code_Type["regional"] = 4] = "regional";
+            Code_Type[Code_Type["operative"] = 5] = "operative";
+        })(Code_Type = Auth_Permissions.Code_Type || (Auth_Permissions.Code_Type = {}));
+        var Region_Code;
+        (function (Region_Code) {
+            Region_Code[Region_Code["Liguria"] = 10] = "Liguria";
+            Region_Code[Region_Code["Piemonte"] = 12] = "Piemonte";
+            Region_Code[Region_Code["Valle d'Aosta"] = 14] = "Valle d'Aosta";
+            Region_Code[Region_Code["Lombardia"] = 16] = "Lombardia";
+            Region_Code[Region_Code["Trentino Alto Adige"] = 18] = "Trentino Alto Adige";
+            Region_Code[Region_Code["Alto Adige"] = 19] = "Alto Adige";
+            Region_Code[Region_Code["Veneto"] = 20] = "Veneto";
+            Region_Code[Region_Code["Friuli-Venezia Giulia"] = 22] = "Friuli-Venezia Giulia";
+            Region_Code[Region_Code["Emilia Romagna"] = 24] = "Emilia Romagna";
+            Region_Code[Region_Code["Toscana"] = 26] = "Toscana";
+            Region_Code[Region_Code["Marche"] = 28] = "Marche";
+            Region_Code[Region_Code["Umbria"] = 30] = "Umbria";
+            Region_Code[Region_Code["Lazio"] = 32] = "Lazio";
+            Region_Code[Region_Code["Abruzzo"] = 34] = "Abruzzo";
+            Region_Code[Region_Code["Molise"] = 36] = "Molise";
+            Region_Code[Region_Code["Campania"] = 38] = "Campania";
+            Region_Code[Region_Code["Puglia"] = 40] = "Puglia";
+            Region_Code[Region_Code["Basilicata"] = 42] = "Basilicata";
+            Region_Code[Region_Code["Calabria"] = 44] = "Calabria";
+            Region_Code[Region_Code["Sicilia"] = 46] = "Sicilia";
+            Region_Code[Region_Code["Sardegna"] = 48] = "Sardegna";
+        })(Region_Code = Auth_Permissions.Region_Code || (Auth_Permissions.Region_Code = {}));
+        var Area_Code;
+        (function (Area_Code) {
+            Area_Code[Area_Code["C.M.I."] = 50] = "C.M.I.";
+            Area_Code[Area_Code["Lombardo"] = 16] = "Lombardo";
+            Area_Code[Area_Code["L.P.V."] = 10] = "L.P.V.";
+            Area_Code[Area_Code["T.A.A."] = 18] = "T.A.A.";
+            Area_Code[Area_Code["T.E.R."] = 24] = "T.E.R.";
+            Area_Code[Area_Code["V.F.G."] = 20] = "V.F.G.";
+        })(Area_Code = Auth_Permissions.Area_Code || (Auth_Permissions.Area_Code = {}));
+        Auth_Permissions.Regions_Area = {
+            "C.M.I.": [
+                Region_Code.Abruzzo,
+                Region_Code.Basilicata,
+                Region_Code.Calabria,
+                Region_Code.Campania,
+                Region_Code.Lazio,
+                Region_Code.Marche,
+                Region_Code.Molise,
+                Region_Code.Puglia,
+                Region_Code.Sardegna,
+                Region_Code.Sicilia,
+                Region_Code.Umbria
+            ],
+            "Lombardo": [
+                Region_Code.Lombardia
+            ],
+            "L.P.V.": [
+                Region_Code.Liguria,
+                Region_Code.Piemonte,
+                Region_Code["Valle d'Aosta"]
+            ],
+            "T.A.A.": [
+                Region_Code["Trentino Alto Adige"],
+                Region_Code["Alto Adige"]
+            ],
+            "T.E.R.": [
+                Region_Code["Emilia Romagna"],
+                Region_Code.Toscana
+            ],
+            "V.F.G.": [
+                Region_Code["Friuli-Venezia Giulia"],
+                Region_Code.Veneto
+            ]
+        };
+        var Revision_Permissions;
+        (function (Revision_Permissions) {
+            Revision_Permissions.DocRevisionPermission = [
+                User_Type.superUser,
+                User_Type.central,
+                User_Type.sectional
+            ];
+            Revision_Permissions.EconomyRevisionPermission = [
+                User_Type.superUser,
+                User_Type.central,
+                User_Type.sectional
+            ];
+            Revision_Permissions.DetailRevisionPermission = Revision_Permissions.DocRevisionPermission.concat(Revision_Permissions.EconomyRevisionPermission).filter(function (item, index, input) {
+                return input.indexOf(item) == index;
+            }).slice();
+            Revision_Permissions.InsertShelterPermission = [
+                User_Type.superUser,
+                User_Type.central
+            ];
+            Revision_Permissions.DeleteShelterPermission = [
+                User_Type.superUser,
+                User_Type.central
+            ];
+        })(Revision_Permissions = Auth_Permissions.Revision_Permissions || (Auth_Permissions.Revision_Permissions = {}));
+    })(Auth_Permissions = Enums.Auth_Permissions || (Enums.Auth_Permissions = {}));
 })(Enums = exports.Enums || (exports.Enums = {}));

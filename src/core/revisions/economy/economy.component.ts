@@ -60,7 +60,7 @@ export class BcEconomyRevision extends RevisionBase{
       this.save(true);    
     });
 
-    shared.activeComponent=Enums.Routed_Component.economy;
+    shared.activeComponent=Enums.Routes.Routed_Component.economy;
   }
 
   isDisabled(){
@@ -75,7 +75,7 @@ export class BcEconomyRevision extends RevisionBase{
       .then(()=>{
         this.displayError=false;
         if(confirm){
-            this.shared.onMaskConfirmSave(Enums.Routed_Component.economy);
+            this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.economy);
         }
       })
       .catch(err=>{
@@ -85,7 +85,7 @@ export class BcEconomyRevision extends RevisionBase{
       
     }else{
       if(confirm){
-        this.shared.onMaskConfirmSave(Enums.Routed_Component.economy);
+        this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.economy);
       }
     }
   }
@@ -120,7 +120,7 @@ export class BcEconomyRevision extends RevisionBase{
   }
 
   checkRole(){
-    return this.userRole==Enums.User_Type.sectional;
+    return this.userRole==Enums.Auth_Permissions.User_Type.sectional;
   }
 
   isActive(year){
@@ -145,7 +145,7 @@ export class BcEconomyRevision extends RevisionBase{
   getContributionSumPerType(type:Enums.Contribution_Type){
     let total:any=0;
     this.revenuesFiles.concat(
-      this.files.filter(obj=>obj.type==Enums.File_Type.contribution)
+      this.files.filter(obj=>obj.type==Enums.Files.File_Type.contribution)
     ).filter(obj=>obj.contribution_type==type&&obj.invoice_year==this.activeYear).forEach((file)=>{
       total+=this.getTotal(file.value,file.invoice_tax);
     });
@@ -237,16 +237,16 @@ export class BcEconomyRevision extends RevisionBase{
             if(queryFileSub!=undefined){
               queryFileSub.unsubscribe();
             }
-            resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
+            resolve(files.filter(obj=>obj.type==Enums.Files.File_Type.invoice||obj.type==Enums.Files.File_Type.contribution));
           });
         }else{
-          resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
+          resolve(files.filter(obj=>obj.type==Enums.Files.File_Type.invoice||obj.type==Enums.Files.File_Type.contribution));
         }
         if(loadServiceSub!=undefined){
           loadServiceSub.unsubscribe();
         }
       });
-      this.revisionService.onChildLoadFilesRequest([Enums.File_Type.invoice,Enums.File_Type.contribution]);
+      this.revisionService.onChildLoadFilesRequest([Enums.Files.File_Type.invoice,Enums.Files.File_Type.contribution]);
     });
   }
 

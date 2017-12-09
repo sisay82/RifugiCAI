@@ -25,7 +25,7 @@ export class BcGeo extends DetailBase{
   center:Subject<L.LatLng|L.LatLngExpression>=new Subject();
   constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
     super(_route,shared,router);
-    shared.activeComponent=Enums.Routed_Component.geographic;
+    shared.activeComponent=Enums.Routes.Routed_Component.geographic;
   }
 
   getCenter(){

@@ -109,14 +109,14 @@ export class BcDocRevision extends RevisionBase{
           if(this.newDocForm.dirty||this.newInvoiceForm.dirty||this.newMapForm.dirty||this.invoicesForm.dirty||this.invoicesChange){
             this.save(true);
           }else{
-            this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
+            this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.documents);
           }
         }else{
           this.abortSave();
         }
     });
 
-    shared.activeComponent=Enums.Routed_Component.documents;
+    shared.activeComponent=Enums.Routes.Routed_Component.documents;
   }
 
   getInvoicesFormControls(controlName:string,index?){
@@ -171,7 +171,7 @@ export class BcDocRevision extends RevisionBase{
   }
 
   removeDoc(id){
-    this.commitToFather({_id:id,type:Enums.File_Type.doc},true);
+    this.commitToFather({_id:id,type:Enums.Files.File_Type.doc},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -189,7 +189,7 @@ export class BcDocRevision extends RevisionBase{
   }
 
   removeMap(id){
-    this.commitToFather({_id:id,type:Enums.File_Type.map},true);
+    this.commitToFather({_id:id,type:Enums.Files.File_Type.map},true);
     let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
       if(!value){
         console.log(value);
@@ -204,7 +204,7 @@ export class BcDocRevision extends RevisionBase{
 
   removeInvoice(index,id){
     if(!(<FormArray>this.invoicesForm.controls.files).at(index).disabled){
-      this.commitToFather({_id:id,type:Enums.File_Type.invoice},true);
+      this.commitToFather({_id:id,type:Enums.Files.File_Type.invoice},true);
       let removeFileSub=this.shelterService.removeFile(id,this._id).subscribe(value=>{
         if(!value){
           console.log(value);
@@ -230,7 +230,7 @@ export class BcDocRevision extends RevisionBase{
         uploadDate:new Date(Date.now()),
         contentType:f.type,
         shelterId:this._id,
-        type:Enums.File_Type.doc
+        type:Enums.Files.File_Type.doc
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
@@ -267,7 +267,7 @@ export class BcDocRevision extends RevisionBase{
         uploadDate:new Date(Date.now()),
         contentType:f.type,
         shelterId:this._id,
-        type:Enums.File_Type.map
+        type:Enums.Files.File_Type.map
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
@@ -345,7 +345,7 @@ export class BcDocRevision extends RevisionBase{
         uploadDate:new Date(Date.now()),
         contentType:f.type,
         shelterId:this._id,
-        type:Enums.File_Type.invoice
+        type:Enums.Files.File_Type.invoice
       }
       let fileReader = new FileReader();
       fileReader.onloadend=(e:any)=>{
@@ -413,7 +413,7 @@ export class BcDocRevision extends RevisionBase{
               if(val){
                 i++;
                 if(filesToUpdate.length==i&&confirm){
-                  this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
+                  this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.documents);
                 }
               }
               if(updateSub!=undefined){
@@ -427,7 +427,7 @@ export class BcDocRevision extends RevisionBase{
       }else{
         this.setDisplayError(false);
         if(confirm){
-          this.shared.onMaskConfirmSave(Enums.Routed_Component.documents);
+          this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.documents);
         }
       }
     }else{
@@ -504,11 +504,11 @@ export class BcDocRevision extends RevisionBase{
     this.initialData=files;
     for(let file of files){
       if(file.type!=undefined){
-        if(file.type==Enums.File_Type.doc){
+        if(file.type==Enums.Files.File_Type.doc){
           this.docs.push(file);       
-        }else if(file.type==Enums.File_Type.map){
+        }else if(file.type==Enums.Files.File_Type.map){
           this.maps.push(file);
-        }else if(file.type==Enums.File_Type.invoice){
+        }else if(file.type==Enums.Files.File_Type.invoice){
           const control=this.initInvoice(file);
           if(file.invoice_confirmed){
             control.disable();
@@ -537,7 +537,7 @@ export class BcDocRevision extends RevisionBase{
           loadServiceSub.unsubscribe();
         }
       });
-      this.revisionService.onChildLoadFilesRequest([Enums.File_Type.doc,Enums.File_Type.map,Enums.File_Type.invoice]);
+      this.revisionService.onChildLoadFilesRequest([Enums.Files.File_Type.doc,Enums.Files.File_Type.map,Enums.Files.File_Type.invoice]);
     });
   }
 

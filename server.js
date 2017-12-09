@@ -7,6 +7,8 @@ var bodyParser = require("body-parser");
 var express = require("express");
 var schema_1 = require("./src/app/shared/types/schema");
 var enums_1 = require("./src/app/shared/types/enums");
+var Auth_Permissions = enums_1.Enums.Auth_Permissions;
+var Files_Enum = enums_1.Enums.Files;
 var multer = require("multer");
 var request = require("request");
 var xmldom = require("xmldom");
@@ -106,13 +108,13 @@ function checkInclude(source, target, attribute) {
 function getRole(data) {
     if (data) {
         if (checkInclude(data.aggregatedAuthorities, centralRole, "role")) {
-            return enums_1.Enums.User_Type.central;
+            return Auth_Permissions.User_Type.central;
         }
         else if (checkInclude(data.userGroups, regionalRoleName, "name")) {
-            return enums_1.Enums.User_Type.regional;
+            return Auth_Permissions.User_Type.regional;
         }
         else if (checkInclude(data.aggregatedAuthorities, sectionalRoleName, "role")) {
-            return enums_1.Enums.User_Type.sectional;
+            return Auth_Permissions.User_Type.sectional;
         }
         else {
             return null;
@@ -122,11 +124,50 @@ function getRole(data) {
         return null;
     }
 }
+function getArea(code) {
+    return code.substr(2, 2);
+}
+function getRegion(code) {
+    return code.substr(2, 2);
+}
+function getSection(code) {
+    return code.substr(4, 3);
+}
+function getAreaRegions(area) {
+    return Auth_Permissions.Regions_Area[Auth_Permissions.Area_Code[area]];
+}
+function getCode(type, data) {
+    var code = null;
+    if (type) {
+        if (type == Auth_Permissions.User_Type.sectional) {
+            if (data.sectionCode) {
+                code = data.sectionCode;
+            }
+        }
+        else {
+            if (data.regionaleGroupCode) {
+                var tmpCode = data.regionaleGroupCode;
+                if (tmpCode) {
+                    code = tmpCode.substr(0, 2) + tmpCode.substr(5, 2) + tmpCode.substr(2, 3);
+                }
+            }
+        }
+    }
+    return code;
+}
+function getUserPermissions(data) {
+    var role = getRole(data);
+    var code = getCode(role, data);
+    if (role == Auth_Permissions.User_Type.regional && code.substr(0, 2) == "93") {
+        role = Auth_Permissions.User_Type.area;
+    }
+    return { role: role, code: code };
+}
 function checkUserPromise(uuid) {
     logger("CHECKUSER");
     return new Promise(function (resolve, reject) {
         if (disableAuth) {
-            resolve({ role: enums_1.Enums.User_Type.superUser, code: "9999999" });
+            resolve({ role: Auth_Permissions.User_Type.superUser, code: "9999999" });
         }
         else {
             request.get({
@@ -138,24 +179,10 @@ function checkUserPromise(uuid) {
             }, function (err, response, body) {
                 try {
                     var data = JSON.parse(body);
-                    var role = getRole(data);
-                    if (role) {
-                        var code = void 0;
-                        if (role == enums_1.Enums.User_Type.sectional) {
-                            if (data.sectionCode) {
-                                code = data.sectionCode;
-                            }
-                        }
-                        else {
-                            if (data.regionaleGroupCode) {
-                                var tmpCode = data.regionaleGroupCode;
-                                if (tmpCode) {
-                                    code = tmpCode.substr(0, 2) + tmpCode.substr(5, 2) + tmpCode.substr(2, 3);
-                                }
-                            }
-                        }
-                        if (code) {
-                            resolve({ role: role, code: code });
+                    var user = getUserPermissions(data);
+                    if (user.role) {
+                        if (user.code) {
+                            resolve(user);
                         }
                         else {
                             reject("Error code");
@@ -219,6 +246,23 @@ function validationPromise(ticket) {
         }
     });
 }
+function checkUserData(user) {
+    if (user && user.code && user.role) {
+        var regions = [];
+        var section = getSection(user.code);
+        if (user.role == Auth_Permissions.User_Type.area) {
+            regions = getAreaRegions(getArea(user.code));
+        }
+        else if (user.role == Auth_Permissions.User_Type.regional ||
+            user.role == Auth_Permissions.User_Type.sectional) {
+            regions = [getRegion(user.code)];
+        }
+        return { section: section, regions: regions };
+    }
+    else {
+        return null;
+    }
+}
 function toTitleCase(input) {
     if (!input) {
         return '';
@@ -227,22 +271,38 @@ function toTitleCase(input) {
         return input.replace(/\w\S*/g, (function (txt) { return txt[0].toUpperCase() + txt.substr(1); })).replace(/_/g, " ");
     }
 }
+function getRegionFilter(region) {
+    if (region && region.length == 2) {
+        var regionQuery = { 'idCai': new RegExp("^[0-9-]{2,2}" + region + "[0-9-]{4,6}") };
+        return regionQuery;
+    }
+    else {
+        return null;
+    }
+}
+function getSectionFilter(section) {
+    if (section && section.length == 3) {
+        var sectionQuery = { 'idCai': new RegExp("^[0-9-]{4,4}" + section + "[0-9-]{1,3}") };
+        return sectionQuery;
+    }
+    else {
+        return null;
+    }
+}
 /**
  * QUERY
  */
-function getAllIdsHead(region, section) {
+function getAllIdsHead(regions, section) {
     var query = {};
-    if (region || section) {
-        var regionQuery = void 0;
+    if ((regions && regions.length > 0) || section) {
         query.$and = [];
         query.$and.push({ idCai: { '$ne': null } });
-        if (region && region.length == 2) {
-            regionQuery = { idCai: new RegExp("^[0-9-]{2,2}" + region + "[0-9-]{4,6}") };
-            query.$and.push(regionQuery);
+        for (var _i = 0, regions_1 = regions; _i < regions_1.length; _i++) {
+            var region = regions_1[_i];
+            query.$and.push(getRegionFilter(region));
         }
-        var sectionQuery = void 0;
         if (section && section.length == 3) {
-            sectionQuery = { idCai: new RegExp("^[0-9-]{4,4}" + section + "[0-9-]{1,3}") };
+            var sectionQuery = { idCai: new RegExp("^[0-9-]{4,4}" + section + "[0-9-]{1,3}") };
             query.$and.push(sectionQuery);
         }
     }
@@ -284,7 +344,7 @@ function queryFileById(id) {
 }
 function countContributionFilesByShelter(shelID) {
     return new Promise(function (resolve, reject) {
-        Files.count({ "shelterId": shelID, type: enums_1.Enums.File_Type.contribution }).exec(function (err, res) {
+        Files.count({ "shelterId": shelID, type: Files_Enum.File_Type.contribution }).exec(function (err, res) {
             if (err) {
                 reject(err);
             }
@@ -296,7 +356,7 @@ function countContributionFilesByShelter(shelID) {
 }
 function queryFilesByShelterId(id) {
     return new Promise(function (resolve, reject) {
-        Files.find({ "shelterId": id, type: { $not: { $in: [enums_1.Enums.File_Type.image] } } }, "name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec(function (err, ris) {
+        Files.find({ "shelterId": id, type: { $not: { $in: [Files_Enum.File_Type.image] } } }, "name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -308,7 +368,7 @@ function queryFilesByShelterId(id) {
 }
 function queryImagesByShelterId(id) {
     return new Promise(function (resolve, reject) {
-        Files.find({ "shelterId": id, type: enums_1.Enums.File_Type.image }, "name size contentType type description").exec(function (err, ris) {
+        Files.find({ "shelterId": id, type: Files_Enum.File_Type.image }, "name size contentType type description").exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -320,7 +380,7 @@ function queryImagesByShelterId(id) {
 }
 function queryAllFiles() {
     return new Promise(function (resolve, reject) {
-        Files.find({ type: { $not: { $in: [enums_1.Enums.File_Type.image] } } }, "name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec(function (err, ris) {
+        Files.find({ type: { $not: { $in: [Files_Enum.File_Type.image] } } }, "name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -332,7 +392,7 @@ function queryAllFiles() {
 }
 function queryAllImages() {
     return new Promise(function (resolve, reject) {
-        Files.find({ type: enums_1.Enums.File_Type.image }, "name size contentType type description").exec(function (err, ris) {
+        Files.find({ type: Files_Enum.File_Type.image }, "name size contentType type description").exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -366,25 +426,28 @@ function queryShelSectionById(id, section) {
         });
     });
 }
-function queryShelByRegion(region, regionFilter, sectionFilter) {
+function queryShelByRegion(region, regionFilters, sectionFilter) {
     return new Promise(function (resolve, reject) {
         var query = {};
         if (region && /[0-9]{2,2}/g.test(region)) {
-            region = enums_1.Enums.Region_Code[region];
+            region = Auth_Permissions.Region_Code[region];
         }
         if (region) {
             query['geoData.location.region'] = { $in: [region.toLowerCase(), region.toUpperCase(), toTitleCase(region), region] };
         }
-        else if (regionFilter && regionFilter.length == 2) {
-            var regionQuery = void 0;
+        else if (regionFilters && regionFilters.length > 0) {
             query.$and = [];
             query.$and.push({ 'idCai': { '$ne': null } });
-            regionQuery = { 'idCai': new RegExp("^[0-9-]{2,2}" + regionFilter + "[0-9-]{4,6}") };
-            query.$and.push(regionQuery);
-            var sectionQuery = void 0;
-            if (sectionFilter && sectionFilter.length == 3) {
-                sectionQuery = { 'idCai': new RegExp("^[0-9-]{4,4}" + sectionFilter + "[0-9-]{1,3}") };
-                query.$and.push(sectionQuery);
+            for (var _i = 0, regionFilters_1 = regionFilters; _i < regionFilters_1.length; _i++) {
+                var regionFilter = regionFilters_1[_i];
+                var region_1 = getRegionFilter(regionFilter);
+                if (region_1) {
+                    query.$and.push(region_1);
+                }
+            }
+            var section = getSectionFilter(sectionFilter);
+            if (section) {
+                query.$and.push(section);
             }
         }
         else {
@@ -400,28 +463,30 @@ function queryShelByRegion(region, regionFilter, sectionFilter) {
         });
     });
 }
-function queryShelAroundPoint(point, range, regionFilter, sectionFilter) {
+function queryShelAroundPoint(point, range, regionFilters, sectionFilter) {
     return new Promise(function (resolve, reject) {
         var query = {};
         query.$and = [
             { "geoData.location.latitude": { $gt: (point.lat - range), $lt: (point.lat + range) } },
             { "geoData.location.longitude": { $gt: (point.lng - range), $lt: (point.lng + range) } }
         ];
-        if (regionFilter || sectionFilter) {
+        if ((regionFilters && regionFilters.length > 0) || sectionFilter) {
             query.$and.push({ 'idCai': { '$ne': null } });
-            var regionQuery = void 0;
-            if (regionFilter && regionFilter.length == 2) {
-                regionQuery = { 'idCai': new RegExp("^[0-9-]{2,2}" + regionFilter + "[0-9-]{4,6}") };
-                query.$and.push(regionQuery);
+            for (var _i = 0, regionFilters_2 = regionFilters; _i < regionFilters_2.length; _i++) {
+                var regionFilter = regionFilters_2[_i];
+                var region = getRegionFilter(regionFilter);
+                if (region) {
+                    query.$and.push(region);
+                }
             }
-            var sectionQuery = void 0;
-            if (sectionFilter && sectionFilter.length == 3) {
-                sectionQuery = { 'idCai': new RegExp("^[0-9-]{4,4}" + sectionFilter + "[0-9-]{1,3}") };
-                query.$and.push(sectionQuery);
+            var section = getSectionFilter(sectionFilter);
+            if (section) {
+                query.$and.push(section);
             }
         }
         Shelters.find(query, 'name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude geoData.location.municipality geoData.location.region geoData.location.province').exec(function (err, ris) {
             if (err) {
+                console.log(err);
                 reject(err);
             }
             else {
@@ -687,7 +752,7 @@ function createPDF(shelter) {
                                 data: buff,
                                 contribution_type: contribution_1.type,
                                 contentType: "application/pdf",
-                                type: enums_1.Enums.File_Type.contribution,
+                                type: Files_Enum.File_Type.contribution,
                                 invoice_year: contribution_1.year,
                                 value: contribution_1.value
                             };
@@ -952,7 +1017,7 @@ function checkPermissionAppAPI(req, res, next) {
             }
             else {
                 if (req.method == "DELETE" || req.method == "POST") {
-                    if (user_1.role == enums_1.Enums.User_Type.central) {
+                    if (user_1.role == Auth_Permissions.User_Type.central) {
                         next();
                     }
                     else {
@@ -960,7 +1025,7 @@ function checkPermissionAppAPI(req, res, next) {
                     }
                 }
                 else if (req.method == "PUT") {
-                    if (enums_1.Enums.DetailRevisionPermission.find(function (obj) { return obj == user_1.role; })) {
+                    if (Auth_Permissions.Revision_Permissions.DetailRevisionPermission.find(function (obj) { return obj == user_1.role; })) {
                         next();
                     }
                     else {
@@ -985,7 +1050,7 @@ function checkPermissionFileAPI(req, res, next) {
         }
         else {
             if (req.method == "DELETE" || req.method == "POST" || req.method == "PUT") {
-                if (enums_1.Enums.DocRevisionPermission.find(function (obj) { return obj == user.role; })) {
+                if (Auth_Permissions.Revision_Permissions.DocRevisionPermission.find(function (obj) { return obj == user.role; })) {
                     next();
                 }
                 else {
@@ -1066,10 +1131,10 @@ fileRoute.route("/shelters/file/confirm")
                     var shelUpdate_1 = SheltersToUpdate.filter(function (obj) { return obj.shelter._id == id_1; });
                     file_1._id = fileId_1;
                     file_1["new"] = true;
-                    if (file_1.type == enums_1.Enums.File_Type.image) {
+                    if (file_1.type == Files_Enum.File_Type.image) {
                         var shelFiles = queryFilesByShelterId(id_1)
                             .then(function (files) {
-                            var images = files.filter(function (obj) { return obj.type == enums_1.Enums.File_Type.image; });
+                            var images = files.filter(function (obj) { return obj.type == Files_Enum.File_Type.image; });
                             if (shelUpdate_1 != undefined && shelUpdate_1.length > 0) {
                                 if (images.length < maxImages && (shelUpdate_1[0].files == undefined || images.length + shelUpdate_1[0].files.length < maxImages)) {
                                     if (shelUpdate_1[0].files != undefined) {
@@ -1264,7 +1329,7 @@ appRoute.route("/shelters/file/byshel/:id")
                         file[file.indexOf(fi)] = f;
                     }
                 };
-                for (var _i = 0, _a = shel.files.filter(function (f) { return f.type != enums_1.Enums.File_Type.image; }); _i < _a.length; _i++) {
+                for (var _i = 0, _a = shel.files.filter(function (f) { return f.type != Files_Enum.File_Type.image; }); _i < _a.length; _i++) {
                     var f = _a[_i];
                     _loop_3(f);
                 }
@@ -1306,7 +1371,7 @@ appRoute.route("/shelters/image/byshel/:id")
                         file[file.indexOf(fi)] = f;
                     }
                 };
-                for (var _i = 0, _a = shel.files.filter(function (f) { return f.type == enums_1.Enums.File_Type.image; }); _i < _a.length; _i++) {
+                for (var _i = 0, _a = shel.files.filter(function (f) { return f.type == Files_Enum.File_Type.image; }); _i < _a.length; _i++) {
                     var f = _a[_i];
                     _loop_4(f);
                 }
@@ -1322,21 +1387,28 @@ appRoute.route("/shelters/image/byshel/:id")
 });
 appRoute.route("/shelters")
     .get(function (req, res) {
-    try {
-        getAllIdsHead(req.query.region, req.query.section)
-            .then(function (rif) {
-            if (rif) {
-                res.status(200).send(rif);
-            }
-            else {
-                res.status(404).send({ error: "No Matcching Rifugio" });
-            }
-        })["catch"](function (err) {
-            res.status(500).send(err);
-        });
+    var user = req.body.user;
+    var userData = checkUserData(user);
+    if (userData) {
+        try {
+            getAllIdsHead(userData.regions, userData.section)
+                .then(function (rif) {
+                if (rif) {
+                    res.status(200).send(rif);
+                }
+                else {
+                    res.status(404).send({ error: "No Matcching Rifugio" });
+                }
+            })["catch"](function (err) {
+                res.status(500).send(err);
+            });
+        }
+        catch (e) {
+            res.status(500).send({ error: "Error Undefined" });
+        }
     }
-    catch (e) {
-        res.status(500).send({ error: "Error Undefined" });
+    else {
+        res.status(500).send({ error: "User undefined" });
     }
 })
     .post(function (req, res) {
@@ -1349,11 +1421,13 @@ appRoute.route("/shelters")
         res.status(500).send(err);
     });
 });
-appRoute.route("/shelters/country")
+appRoute.route("/shelters/country/:name")
     .get(function (req, res) {
-    try {
-        if (req.query.name || req.query.region) {
-            queryShelByRegion(req.query.name, req.query.region, req.query.section)
+    var user = req.body.user;
+    var userData = checkUserData(user);
+    if (userData) {
+        try {
+            queryShelByRegion(req.params.name, userData.regions, userData.section)
                 .then(function (ris) {
                 res.status(200).send({ num: ris });
             })["catch"](function (err) {
@@ -1361,33 +1435,40 @@ appRoute.route("/shelters/country")
                 res.status(500).send(err);
             });
         }
-        else {
-            res.status(500).send({ error: "Error parameters" });
+        catch (e) {
+            logger(e);
+            res.status(500).send({ error: "Error Undefined" });
         }
     }
-    catch (e) {
-        logger(e);
-        res.status(500).send({ error: "Error Undefined" });
+    else {
+        res.status(500).send({ error: "User undefined" });
     }
 });
 appRoute.route("/shelters/point")
     .get(function (req, res) {
-    try {
-        if (req.query.lat && req.query.lng && req.query.range) {
-            queryShelAroundPoint({ lat: Number(req.query.lat), lng: Number(req.query.lng) }, Number(req.query.range), req.query.region, req.query.section)
-                .then(function (ris) {
-                res.status(200).send(ris);
-            })["catch"](function (err) {
-                res.status(500).send(err);
-            });
+    var user = req.body.user;
+    var userData = checkUserData(user);
+    if (userData) {
+        try {
+            if (req.query.lat && req.query.lng && req.query.range) {
+                queryShelAroundPoint({ lat: Number(req.query.lat), lng: Number(req.query.lng) }, Number(req.query.range), userData.regions, userData.section)
+                    .then(function (ris) {
+                    res.status(200).send(ris);
+                })["catch"](function (err) {
+                    res.status(500).send(err);
+                });
+            }
+            else {
+                res.status(500).send({ error: "Query error, parameters not found" });
+            }
         }
-        else {
-            res.status(500).send({ error: "Query error, parameters not found" });
+        catch (e) {
+            logger(e);
+            res.status(500).send({ error: "Error Undefined" });
         }
     }
-    catch (e) {
-        logger(e);
-        res.status(500).send({ error: "Error Undefined" });
+    else {
+        res.status(500).send({ error: "User undefined" });
     }
 });
 appRoute.route("/shelters/:id")
@@ -1661,7 +1742,7 @@ authRoute.get('/j_spring_cas_security_check', function (req, res) {
 });
 authRoute.get('/user', function (req, res, next) {
     if (disableAuth) {
-        res.status(200).send({ code: "9999999", role: enums_1.Enums.User_Type.superUser });
+        res.status(200).send({ code: "9999999", role: Auth_Permissions.User_Type.superUser });
     }
     else {
         var user_2 = userList.find(function (obj) { return obj.id == req.session.id; });
@@ -1729,7 +1810,7 @@ authRoute.get('/*', function (req, res) {
                         user_3.uuid = usr;
                         checkUserPromise(usr)
                             .then(function (us) {
-                            logger("Access granted with role and code: ", enums_1.Enums.User_Type[us.role], us.code);
+                            logger("Access granted with role and code: ", Auth_Permissions.User_Type[us.role], us.code);
                             user_3.code = us.code;
                             user_3.role = us.role;
                             res.sendFile(path.join(__dirname + '/dist/index.html'));
@@ -1810,7 +1891,7 @@ app.use('/api', function (req, res, next) {
     }
     else {
         if (disableAuth) {
-            req.body.user = { code: "9999999", role: enums_1.Enums.User_Type.superUser };
+            req.body.user = { code: "9999999", role: Auth_Permissions.User_Type.superUser };
             next();
         }
         else {
@@ -1834,7 +1915,7 @@ app.use('/', function (req, res, next) {
         res.end();
     }
     else {
-        logger("SessionID: " + req.sessionID + ", METHOD: " + req.method + ", QUERY: " + JSON.stringify(req.query) + ", PATH: " + req.path);
+        //  logger("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
         next();
     }
 }, authRoute);

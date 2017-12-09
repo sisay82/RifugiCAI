@@ -22,7 +22,7 @@ export class BcServ extends DetailBase{
   activeComponentSub:Subscription;
   constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
     super(_route,shared,router);
-    shared.activeComponent=Enums.Routed_Component.services;
+    shared.activeComponent=Enums.Routes.Routed_Component.services;
   }
 
 

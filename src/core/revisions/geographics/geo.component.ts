@@ -64,14 +64,14 @@ export class BcGeoRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.geographic);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.geographic);
                 }
             }else{
                 this.abortSave();
             }
         });
 
-        shared.activeComponent=Enums.Routed_Component.geographic;
+        shared.activeComponent=Enums.Routes.Routed_Component.geographic;
     } 
     
     checkValidForm(){
@@ -144,7 +144,7 @@ export class BcGeoRevision extends RevisionBase {
             .then(()=>{
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.geographic);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.geographic);
                 }
             })
             .catch(err=>{

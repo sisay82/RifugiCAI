@@ -6,6 +6,8 @@ import * as express from "express";
 import { IShelter, IService, IFile, IOpening,IContribution } from "./src/app/shared/types/interfaces";
 import { Schema } from "./src/app/shared/types/schema";
 import { Enums } from "./src/app/shared/types/enums";
+import Auth_Permissions = Enums.Auth_Permissions;
+import Files_Enum = Enums.Files;
 import https = require('https');
 import multer = require('multer');
 import request = require('request');
@@ -24,6 +26,17 @@ interface IFileExtended extends IFile,mongoose.Document{
     _id:String;
 }
 
+interface User_Data {
+    id:String;
+    resource:String;
+    ticket?:String;
+    uuid?:String;
+    code?:String;
+    role?:Auth_Permissions.User_Type;
+    redirections:number;
+    checked:boolean;
+}
+
 const disableAuth:boolean=false;
 const disableLog:boolean=false;
 const months=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
@@ -35,7 +48,7 @@ const appPort=8000;
 const appBaseUrl = "http://localhost:"+appPort;
 const app = express();
 const parsedUrl=encodeURIComponent(appBaseUrl+"/j_spring_cas_security_check");
-const userList:{id:String,resource:String,ticket?:String,uuid?:String,code?:String,role?:Enums.User_Type,redirections:number,checked:boolean}[]=[];
+const userList:User_Data[]=[];
 const centralRole:String[]=["ROLE_RIFUGI_ADMIN"];
 const regionalRoleName:String[]=["PGR"];
 const sectionalRoleName:String[]=["ROLE_MEMBERS_VIEW","ROLE_MEMBERSHIP"/*,"Responsabile Esterno Sezione","Operatore Sezione Esteso"*/];
@@ -115,14 +128,14 @@ function checkInclude(source:any[],target:any[],attribute):boolean{
     }
 }
 
-function getRole(data):Enums.User_Type{
+function getRole(data):Auth_Permissions.User_Type {
     if(data){
         if(checkInclude(data.aggregatedAuthorities,centralRole,"role")){
-            return Enums.User_Type.central;
+            return Auth_Permissions.User_Type.central;
         }else if(checkInclude(data.userGroups,regionalRoleName,"name")){
-            return Enums.User_Type.regional;
+            return Auth_Permissions.User_Type.regional;
         }else if(checkInclude(data.aggregatedAuthorities,sectionalRoleName,"role")){
-            return Enums.User_Type.sectional;
+            return Auth_Permissions.User_Type.sectional;
         }else{
             return null;
         }
@@ -131,11 +144,55 @@ function getRole(data):Enums.User_Type{
     }
 }
 
-function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
+function getArea(code:String):String{
+    return code.substr(2,2);
+}
+
+function getRegion(code:String):String{
+    return code.substr(2,2);
+}
+
+function getSection(code:String):String{
+    return code.substr(4,3);
+}
+
+function getAreaRegions(area:string):any{
+    return Auth_Permissions.Regions_Area[Auth_Permissions.Area_Code[area]];
+}
+
+function getCode(type:Auth_Permissions.User_Type,data):String{
+    let code=null;
+    if(type){
+        if(type==Auth_Permissions.User_Type.sectional){
+            if(data.sectionCode){
+                code = data.sectionCode;
+            }   
+        }else{
+            if(data.regionaleGroupCode){
+                const tmpCode = data.regionaleGroupCode;
+                if(tmpCode){
+                    code = tmpCode.substr(0,2)+tmpCode.substr(5,2)+tmpCode.substr(2,3);                        
+                }
+            }
+        }
+    }
+    return code;
+}
+
+function getUserPermissions(data):{role:Auth_Permissions.User_Type,code:String}{
+    let role = getRole(data);
+    const code = getCode(role,data);
+    if(role==Auth_Permissions.User_Type.regional&&code.substr(0,2)=="93"){
+        role=Auth_Permissions.User_Type.area;
+    }
+    return {role:role,code:code};
+}
+
+function checkUserPromise(uuid):Promise<{role:Auth_Permissions.User_Type,code:String}>{
     logger("CHECKUSER");
-    return new Promise<{role:Enums.User_Type,code:String}>((resolve,reject)=>{
+    return new Promise<{role:Auth_Permissions.User_Type,code:String}>((resolve,reject)=>{
         if(disableAuth){
-            resolve({role:Enums.User_Type.superUser,code:"9999999"});
+            resolve({role:Auth_Permissions.User_Type.superUser,code:"9999999"});
         }else{
             request.get({
                 url:authUrl+uuid+'/full',
@@ -145,25 +202,12 @@ function checkUserPromise(uuid):Promise<{role:Enums.User_Type,code:String}>{
                 },
             },function(err,response,body){
                 try{
-                    let data=JSON.parse(body);     
-                    let role=getRole(data); 
-    
-                    if(role){
-                        let code;
-                        if(role==Enums.User_Type.sectional){
-                            if(data.sectionCode){
-                                code=data.sectionCode;
-                            }   
-                        }else{
-                            if(data.regionaleGroupCode){
-                                let tmpCode = data.regionaleGroupCode;
-                                if(tmpCode){
-                                    code = tmpCode.substr(0,2)+tmpCode.substr(5,2)+tmpCode.substr(2,3);                        
-                                }
-                            }
-                        }
-                        if(code){
-                            resolve({role:role,code:code});                                                  
+                    const data=JSON.parse(body);     
+                    const user:{role:Auth_Permissions.User_Type,code:String}=getUserPermissions(data); 
+                    
+                    if(user.role){
+                        if(user.code){
+                            resolve(user);                                                  
                         }else{
                             reject("Error code");
                         }
@@ -222,7 +266,21 @@ function validationPromise(ticket):Promise<String>{
     });
 }
 
-
+function checkUserData(user:User_Data):{section:String,regions:any[]}{
+    if(user&&user.code&&user.role){
+        let regions:any[]=[];
+        let section:String=getSection(user.code);
+        if(user.role==Auth_Permissions.User_Type.area){
+            regions=getAreaRegions(<string>getArea(user.code))
+        }else if(user.role==Auth_Permissions.User_Type.regional||
+                user.role==Auth_Permissions.User_Type.sectional){
+            regions=[getRegion(user.code)];
+        }
+        return {section:section,regions:regions};
+    }else{
+        return null;
+    }
+}
 
 function toTitleCase(input:string): string{
     if (!input) {
@@ -232,24 +290,39 @@ function toTitleCase(input:string): string{
     }
 }
 
+function getRegionFilter(region:String){
+    if(region&&region.length==2){
+        const regionQuery={'idCai':new RegExp("^[0-9-]{2,2}"+region+"[0-9-]{4,6}")};
+        return regionQuery;   
+    }else{
+        return null;
+    }
+}
+
+function getSectionFilter(section:String){
+    if(section&&section.length==3){
+        const sectionQuery={'idCai':new RegExp("^[0-9-]{4,4}"+section+"[0-9-]{1,3}")};
+        return sectionQuery;   
+    }else{
+        return null;
+    }
+}
+
 /**
  * QUERY
  */
 
-function getAllIdsHead(region?:String,section?:String):Promise<IShelterExtended[]>{
+function getAllIdsHead(regions:any[],section:String):Promise<IShelterExtended[]>{
     let query:any={};
-    if(region||section){
-        let regionQuery;
+    if((regions&&regions.length>0)||section){
         query.$and=[];
-        query.$and.push({idCai:{'$ne':null}})
-        if(region&&region.length==2){
-            regionQuery={idCai:new RegExp("^[0-9-]{2,2}"+region+"[0-9-]{4,6}")};
-            query.$and.push(regionQuery);
+        query.$and.push({idCai:{'$ne':null}});
+        for(const region of regions){
+            query.$and.push(getRegionFilter(region));
         }
-
-        let sectionQuery;
+        
         if(section&&section.length==3){
-            sectionQuery={idCai:new RegExp("^[0-9-]{4,4}"+section+"[0-9-]{1,3}")};
+            const sectionQuery={idCai:new RegExp("^[0-9-]{4,4}"+section+"[0-9-]{1,3}")};
             query.$and.push(sectionQuery);
         }
     }
@@ -292,7 +365,7 @@ function queryFileById(id):Promise<IFileExtended>{
 
 function countContributionFilesByShelter(shelID):Promise<Number>{
     return new Promise<Number>((resolve,reject)=>{
-        Files.count({"shelterId":shelID,type:Enums.File_Type.contribution}).exec((err,res)=>{
+        Files.count({"shelterId":shelID,type:Files_Enum.File_Type.contribution}).exec((err,res)=>{
             if(err){
                 reject(err);
             }else{
@@ -304,7 +377,7 @@ function countContributionFilesByShelter(shelID):Promise<Number>{
 
 function queryFilesByShelterId(id):Promise<IFileExtended[]>{
     return new Promise<IFileExtended[]>((resolve,reject)=>{
-        Files.find({"shelterId":id,type:{$not:{$in:[Enums.File_Type.image]}}},"name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec((err,ris)=>{
+        Files.find({"shelterId":id,type:{$not:{$in:[Files_Enum.File_Type.image]}}},"name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec((err,ris)=>{
             if(err){
                 reject(err);
             }else{
@@ -316,7 +389,7 @@ function queryFilesByShelterId(id):Promise<IFileExtended[]>{
 
 function queryImagesByShelterId(id):Promise<IFileExtended[]>{
     return new Promise<IFileExtended[]>((resolve,reject)=>{
-        Files.find({"shelterId":id,type:Enums.File_Type.image},"name size contentType type description").exec((err,ris)=>{
+        Files.find({"shelterId":id,type:Files_Enum.File_Type.image},"name size contentType type description").exec((err,ris)=>{
             if(err){
                 reject(err);
             }else{
@@ -328,7 +401,7 @@ function queryImagesByShelterId(id):Promise<IFileExtended[]>{
 
 function queryAllFiles():Promise<IFileExtended[]>{
     return new Promise<IFileExtended[]>((resolve,reject)=>{
-        Files.find({type:{$not:{$in:[Enums.File_Type.image]}}},"name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec((err,ris)=>{
+        Files.find({type:{$not:{$in:[Files_Enum.File_Type.image]}}},"name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type").exec((err,ris)=>{
             if(err){
                 reject(err);
             }else{
@@ -340,7 +413,7 @@ function queryAllFiles():Promise<IFileExtended[]>{
 
 function queryAllImages():Promise<IFileExtended[]>{
     return new Promise<IFileExtended[]>((resolve,reject)=>{
-        Files.find({type:Enums.File_Type.image},"name size contentType type description").exec((err,ris)=>{
+        Files.find({type:Files_Enum.File_Type.image},"name size contentType type description").exec((err,ris)=>{
             if(err){
                 reject(err);
             }else{
@@ -374,26 +447,30 @@ function queryShelSectionById(id,section):Promise<IShelterExtended>{
     });        
 }
 
-function queryShelByRegion(region:string,regionFilter:String,sectionFilter:String):Promise<number>{
+function queryShelByRegion(region:string,regionFilters:any[],sectionFilter:String):Promise<number>{
     return new Promise<number>((resolve,reject)=>{
         let query:any={};
         if(region&&/[0-9]{2,2}/g.test(region)){
-            region=Enums.Region_Code[region];
+            region=Auth_Permissions.Region_Code[region];
         }
         if(region){
             query['geoData.location.region']={$in:[region.toLowerCase(),region.toUpperCase(),toTitleCase(region),region]};        
-        }else if(regionFilter&&regionFilter.length==2){
-            let regionQuery;
+        }else if(regionFilters&&regionFilters.length>0){
             query.$and=[];
             query.$and.push({'idCai':{'$ne':null}});
-            regionQuery={'idCai':new RegExp("^[0-9-]{2,2}"+regionFilter+"[0-9-]{4,6}")};
-            query.$and.push(regionQuery);
 
-            let sectionQuery;
-            if(sectionFilter&&sectionFilter.length==3){
-                sectionQuery={'idCai':new RegExp("^[0-9-]{4,4}"+sectionFilter+"[0-9-]{1,3}")};
-                query.$and.push(sectionQuery);
+            for(const regionFilter of regionFilters){
+                const region=getRegionFilter(regionFilter);
+                if(region){
+                    query.$and.push(region);                                        
+                }
             }
+            
+            const section=getSectionFilter(sectionFilter);
+            if(section){
+                query.$and.push(section);
+            }
+
         }else{
             reject(<any>{error:"Parameter error"});
         }
@@ -409,28 +486,28 @@ function queryShelByRegion(region:string,regionFilter:String,sectionFilter:Strin
     });
 }
 
-function queryShelAroundPoint(point:{lat:number,lng:number},range:number,regionFilter:String,sectionFilter:String):Promise<IShelterExtended[]>{
+function queryShelAroundPoint(point:{lat:number,lng:number},range:number,regionFilters:any[],sectionFilter:String):Promise<IShelterExtended[]>{
     return new Promise<IShelterExtended[]>((resolve,reject)=>{
         let query:any={};
         query.$and=[
             {"geoData.location.latitude":{$gt:(point.lat-range),$lt:(point.lat+range)}},
             {"geoData.location.longitude":{$gt:(point.lng-range),$lt:(point.lng+range)}}
         ];
-
-        if(regionFilter||sectionFilter){
+        if((regionFilters&&regionFilters.length>0)||sectionFilter){
             query.$and.push({'idCai':{'$ne':null}});
 
-            let regionQuery;            
-            if(regionFilter&&regionFilter.length==2){
-                regionQuery={'idCai':new RegExp("^[0-9-]{2,2}"+regionFilter+"[0-9-]{4,6}")};
-                query.$and.push(regionQuery);    
+            for(const regionFilter of regionFilters){
+                const region=getRegionFilter(regionFilter);
+                if(region){
+                    query.$and.push(region);                                        
+                }
             }
             
-            let sectionQuery;
-            if(sectionFilter&&sectionFilter.length==3){
-                sectionQuery={'idCai':new RegExp("^[0-9-]{4,4}"+sectionFilter+"[0-9-]{1,3}")};
-                query.$and.push(sectionQuery);
+            const section=getSectionFilter(sectionFilter);
+            if(section){
+                query.$and.push(section);
             }
+            
         }
         Shelters.find(query,'name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude geoData.location.municipality geoData.location.region geoData.location.province').exec((err,ris)=>{
             if(err){
@@ -720,7 +797,7 @@ function createPDF(shelter:IShelterExtended):Promise<{name:String,id:any}>{
                                 data:buff,
                                 contribution_type:contribution.type,
                                 contentType:"application/pdf",
-                                type:Enums.File_Type.contribution,
+                                type:Files_Enum.File_Type.contribution,
                                 invoice_year:contribution.year,
                                 value:contribution.value
                             }
@@ -988,13 +1065,13 @@ function checkPermissionAppAPI(req,res,next){
                next(); 
             }else{
                 if(req.method=="DELETE"||req.method=="POST"){
-                    if(user.role==Enums.User_Type.central){
+                    if(user.role==Auth_Permissions.User_Type.central){
                         next();
                     }else{
                         res.status(500).send({error:"Unauthorized"});
                     }
                 }else if(req.method=="PUT"){
-                    if(Enums.DetailRevisionPermission.find(obj=>obj==user.role)){
+                    if(Auth_Permissions.Revision_Permissions.DetailRevisionPermission.find(obj=>obj==user.role)){
                         next();
                     }else{
                         res.status(500).send({error:"Unauthorized"});
@@ -1016,7 +1093,7 @@ function checkPermissionFileAPI(req,res,next){
            next(); 
         }else{
             if(req.method=="DELETE"||req.method=="POST"||req.method=="PUT"){
-                if(Enums.DocRevisionPermission.find(obj=>obj==user.role)){
+                if(Auth_Permissions.Revision_Permissions.DocRevisionPermission.find(obj=>obj==user.role)){
                     next();
                 }else{
                     res.status(500).send({error:"Unauthorized"});
@@ -1102,10 +1179,10 @@ fileRoute.route("/shelters/file/confirm")
                     let shelUpdate=SheltersToUpdate.filter(obj=>obj.shelter._id==id);
                     file._id=fileId;
                     file.new=true;
-                    if(file.type==Enums.File_Type.image){
+                    if(file.type==Files_Enum.File_Type.image){
                         let shelFiles=queryFilesByShelterId(id)
                         .then(files=>{
-                            const images=files.filter(obj=>obj.type==Enums.File_Type.image);
+                            const images=files.filter(obj=>obj.type==Files_Enum.File_Type.image);
                             if(shelUpdate!=undefined&&shelUpdate.length>0){
                                 if(images.length<maxImages&&(shelUpdate[0].files==undefined||images.length+shelUpdate[0].files.length<maxImages)){
                                     if(shelUpdate[0].files!=undefined){
@@ -1277,7 +1354,7 @@ appRoute.route("/shelters/file/byshel/:id")
         queryFilesByShelterId(req.params.id)
         .then((file)=>{
             if(shel.files!=null){
-                for(let f of shel.files.filter(f=>f.type!=Enums.File_Type.image)){
+                for(let f of shel.files.filter(f=>f.type!=Files_Enum.File_Type.image)){
                     if(f.remove){
                         let fi=file.filter(file=>file._id==f._id)[0];
                         file.splice(file.indexOf(fi),1);
@@ -1314,7 +1391,7 @@ appRoute.route("/shelters/image/byshel/:id")
         queryImagesByShelterId(req.params.id)
         .then((file)=>{
             if(shel.files!=null){
-                for(let f of shel.files.filter(f=>f.type==Enums.File_Type.image)){
+                for(let f of shel.files.filter(f=>f.type==Files_Enum.File_Type.image)){
                     if(f.remove){
                         let fi=file.filter(file=>file._id==f._id)[0];
                         file.splice(file.indexOf(fi),1);
@@ -1338,20 +1415,26 @@ appRoute.route("/shelters/image/byshel/:id")
 
 appRoute.route("/shelters")
 .get(function(req,res){
-    try{
-        getAllIdsHead(req.query.region,req.query.section)
-        .then((rif)=>{
-            if(rif){
-                res.status(200).send(rif);
-            }else{
-                res.status(404).send({error:"No Matcching Rifugio"});
-            }
-        })
-        .catch((err)=>{
-            res.status(500).send(err);
-        });
-    }catch(e){
-        res.status(500).send({error:"Error Undefined"});
+    const user:User_Data=req.body.user;
+    const userData=checkUserData(user);
+    if(userData){
+        try{
+            getAllIdsHead(userData.regions,userData.section)
+            .then((rif)=>{
+                if(rif){
+                    res.status(200).send(rif);
+                }else{
+                    res.status(404).send({error:"No Matcching Rifugio"});
+                }
+            })
+            .catch((err)=>{
+                res.status(500).send(err);
+            });
+        }catch(e){
+            res.status(500).send({error:"Error Undefined"});
+        } 
+    }else{
+        res.status(500).send({error:"User undefined"});
     }
 })
 .post(function(req,res){
@@ -1366,11 +1449,13 @@ appRoute.route("/shelters")
     });
 });
 
-appRoute.route("/shelters/country")
+appRoute.route("/shelters/country/:name")
 .get(function(req,res){
-    try{
-        if(req.query.name||req.query.region){
-            queryShelByRegion(req.query.name,req.query.region,req.query.section)
+    const user:User_Data=req.body.user;
+    const userData=checkUserData(user);
+    if(userData){
+        try{
+            queryShelByRegion(req.params.name,userData.regions,userData.section)
             .then((ris)=>{
                 res.status(200).send({num:ris});
             })
@@ -1378,33 +1463,39 @@ appRoute.route("/shelters/country")
                 logger(err);
                 res.status(500).send(err);
             });
-        }else{
-            res.status(500).send({error:"Error parameters"});
+        }catch(e){
+            logger(e);
+            res.status(500).send({error:"Error Undefined"});
         }
-        
-    }catch(e){
-        logger(e);
-        res.status(500).send({error:"Error Undefined"});
+    }else{
+        res.status(500).send({error:"User undefined"});
     }
 });
 
 appRoute.route("/shelters/point")
 .get(function(req,res){
-    try{
-        if(req.query.lat&&req.query.lng&&req.query.range){
-            queryShelAroundPoint({lat:Number(req.query.lat),lng:Number(req.query.lng)},Number(req.query.range),req.query.region,req.query.section)
-            .then((ris)=>{
-                res.status(200).send(ris);
-            })
-            .catch((err)=>{
-                res.status(500).send(err);
-            });
-        }else{
-            res.status(500).send({error:"Query error, parameters not found"});
+    const user:User_Data=req.body.user;
+    const userData=checkUserData(user);
+    if(userData){
+        try{
+            if(req.query.lat&&req.query.lng&&req.query.range){
+                queryShelAroundPoint({lat:Number(req.query.lat),lng:Number(req.query.lng)},Number(req.query.range),userData.regions,userData.section)
+                .then((ris)=>{
+                    res.status(200).send(ris);
+                })
+                .catch((err)=>{
+                    logger(err);
+                    res.status(500).send(err);
+                });
+            }else{
+                res.status(500).send({error:"Query error, parameters not found"});
+            }
+        }catch(e){
+            logger(e);
+            res.status(500).send({error:"Error Undefined"});
         }
-    }catch(e){
-        logger(e);
-        res.status(500).send({error:"Error Undefined"});
+    }else{
+        res.status(500).send({error:"User undefined"});
     }
 });
 
@@ -1680,7 +1771,7 @@ authRoute.get('/j_spring_cas_security_check',function(req,res){
 
 authRoute.get('/user',function(req,res,next){
     if(disableAuth){
-        res.status(200).send({code:"9999999",role:Enums.User_Type.superUser});
+        res.status(200).send({code:"9999999",role:Auth_Permissions.User_Type.superUser});
     }else{
         let user=userList.find(obj=>obj.id==req.session.id);
         logger("User permissions request (UUID): ",user.uuid);
@@ -1747,7 +1838,7 @@ authRoute.get('/*', function(req, res) {
                         user.uuid=usr;
                         checkUserPromise(usr)
                         .then(us=>{
-                            logger("Access granted with role and code: ",Enums.User_Type[us.role],us.code);
+                            logger("Access granted with role and code: ",Auth_Permissions.User_Type[us.role],us.code);
                             user.code=us.code;
                             user.role=us.role;
                             
@@ -1830,7 +1921,7 @@ app.use('/api',function(req,res,next){
         res.end();
     } else {
         if(disableAuth){
-            req.body.user={code:"9999999",role:Enums.User_Type.superUser};
+            req.body.user={code:"9999999",role:Auth_Permissions.User_Type.superUser};
             next();
         }else{
             let user=userList.find(obj=>obj.id==req.session.id);
@@ -1852,7 +1943,7 @@ app.use('/',function(req,res,next){
         res.writeHead(200, headers);
         res.end();
     } else {
-        logger("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
+      //  logger("SessionID: "+req.sessionID+", METHOD: "+req.method+", QUERY: "+JSON.stringify(req.query)+", PATH: "+req.path);
         next();
     }
 },authRoute);
