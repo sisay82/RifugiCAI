@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, Optional, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { ShelterService } from '../../app/shelter/shelter.service';
@@ -8,6 +8,7 @@ import { Map } from 'leaflet';
 import { IMarker } from '../../app/shared/types/interfaces';
 import { Enums } from '../../app/shared/types/enums';
 import {BcAuthService} from '../../app/shared/auth.service';
+import {BcMapService} from './map.service';
 
 function getRegionMarkerHtml(content,size){
     return `<div style="font-size:`+size+`px" class="fa fa-map-marker bc-marker">
@@ -22,15 +23,21 @@ function getNormalMarkerHtml(size){
 }
 
 function getTooltip(name,municipality,province,region){
-    let tooltip=`<div class="bc-tooltip">
+    return `<div class="bc-tooltip">
     <div class="bc-tooltip-head">
         <div style="top:20%;position:relative">`+(name?(name):'---')+`</div>
     </div>
     <div class="bc-tooltip-line">
         <div class="bc-tooltip-line-content">`+(municipality?(municipality):'---')+`, `+(province?(province):'---')+`</br>`+(region?(region):'---')+`</div>
     </div>
-</div>`
-    return tooltip;
+</div>`;
+}
+
+export const DEFAULT_CENTER:L.LatLng=new L.LatLng((<any>Enums.Defaults.Region_LanLng.lazio)[0],(<any>Enums.Defaults.Region_LanLng.lazio)[1]);
+
+interface Region_Marker {
+    region:string;
+    marker:L.Marker;
 }
 
 @Component({
@@ -45,7 +52,7 @@ export class BcMap implements OnInit{
     @Input() enableExpansion:boolean=false;
     @Input() normalIconSize:number=26;
     @Input() regionIconSize:number=60;
-    @Input() initialCenter:Subject<L.LatLng|L.LatLngExpression>;
+ //   @Input() currentCenter:Subject<L.LatLng|L.LatLngExpression>;
     @Input() initialZoom:number=6;
     @Input() openTooltipCenter:boolean=false;
     increaseRatio:number=10;
@@ -63,18 +70,16 @@ export class BcMap implements OnInit{
     }
     
     private _toggle:boolean=false;
-    private countrySheltersNumber:{region:string,marker:L.Marker}[]=[];
-    public static defaultCenter:L.LatLng=new L.LatLng((<any>Enums.Defaults.Region_LanLng.lazio)[0],(<any>Enums.Defaults.Region_LanLng.lazio)[1]);
+    private countrySheltersNumber:Region_Marker[]=[];
     private normalIcon;
-
     expanded:boolean=false;   
     private markerPane= L.featureGroup();
-
     private base_url:string="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
     private map:Map;
     private divIcon;
+    private currentCenterSub:Subscription;
 
-    constructor(private authService:BcAuthService,private router:Router,public shelterService:ShelterService){
+    constructor(private authService:BcAuthService,@Optional() private mapService:BcMapService,private router:Router,public shelterService:ShelterService){
         this.normalIcon=L.divIcon({
             className:'',
             iconSize:null,
@@ -82,28 +87,35 @@ export class BcMap implements OnInit{
             popupAnchor:[0,0],
             html:getNormalMarkerHtml(this.normalIconSize)
         });
+
+        if(this.mapService){
+            this.currentCenterSub=this.mapService.currentcenter$.subscribe(newCenter=>{
+                if(newCenter[0]!=null&&newCenter[1]!=null){
+                    this.map.setView(newCenter,this.initialZoom);
+                }
+            });
+        }
+        
     }
 
+    ngOnDestroy() {
+        if(this.currentCenterSub){
+            this.currentCenterSub.unsubscribe();
+        }
+        
+    }
+
+    /**
+     * Leaflet has problem if map container size check is done too early
+     */
     ngAfterContentInit() {
-        //Called after ngOnInit when the component's or directive's content has been initialized.
-        //Add 'implements AfterContentInit' to the class.
-        setTimeout(()=>{this.map.invalidateSize()}, 400);
+        setTimeout(()=>{this.map.invalidateSize()}, 0);
     }
 
     ngOnInit(){
         this.getMapInit('map');
         this.map.invalidateSize();
-        this.map.setView(BcMap.defaultCenter,this.initialZoom);
-        if(this.initialCenter!=undefined){
-            let initialCenterSub=this.initialCenter.subscribe(value=>{
-                if(value[0]!=null&&value[1]!=null){
-                    this.map.setView(value,this.initialZoom);
-                }
-                if(initialCenterSub!=undefined){
-                    initialCenterSub.unsubscribe();
-                }
-            });
-        }
+        this.map.setView(DEFAULT_CENTER,this.initialZoom);
 
         if(this.openTooltipCenter){
             this.map.eachLayer(function(layer){
@@ -194,26 +206,6 @@ export class BcMap implements OnInit{
                 for(let region of regions){
                     this.getShelterNumberForRegion(region);
                 }
-                /*if(!this.authService.isCentralRole(profile.role)){
-                    if(profile.role==Enums.Auth_Permissions.User_Type.area){
-                        for(const region of this.authService.getRegions(profile.role,profile.code)){
-
-                        }
-                    }else{
-                        this.getShelterNumberForRegion(<string>processedUser.region);                        
-                    }
-                }else{
-                    
-                }
-                if(profile.role==Enums.Auth_Permissions.User_Type.regional){
-                    this.getShelterNumberForRegion(processedUser.region.toString());
-                }else if(profile.role==Enums.Auth_Permissions.User_Type.sectional){
-                    this.getShelterNumberForRegion(processedUser.region.toString());
-                }else{
-                    for(let item of Object.keys(Enums.Auth_Permissions.Region_Code)){      
-                        this.getShelterNumberForRegion(item);
-                    }
-                }*/
             }else{
                 return;
             }

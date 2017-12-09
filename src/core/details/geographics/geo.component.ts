@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
 import { IGeographic,IShelter,ITag } from '../../../app/shared/types/interfaces'
-import {BcMap} from '../../map/map.component';
+import {BcMap,DEFAULT_CENTER} from '../../map/map.component';
 import {ShelterService} from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
 import * as L from 'leaflet';
@@ -12,36 +12,28 @@ import {BcSharedService} from '../../../app/shared/shared.service'
 import {BcDetailsService} from '../details.service';
 import { Enums } from '../../../app/shared/types/enums'
 import { DetailBase } from '../shared/detail_base';
+import { BcMapService } from '../../map/map.service';
 
 @Component({
   moduleId: module.id,
   selector: 'bc-geo',
   templateUrl: 'geo.component.html',
   styleUrls: ['geo.component.scss'],
-  providers:[ShelterService]
+  providers:[ShelterService,BcMapService]
 })
 export class BcGeo extends DetailBase{
   data:IGeographic={location:{longitude:null,latitude:null}};
-  center:Subject<L.LatLng|L.LatLngExpression>=new Subject();
-  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
+
+  constructor(private shelterService:ShelterService,private mapService:BcMapService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
     super(_route,shared,router);
     shared.activeComponent=Enums.Routes.Routed_Component.geographic;
-  }
-
-  getCenter(){
-    if(this.data!=undefined && this.data.location!=undefined
-    &&this.data.location.latitude!=undefined&&this.data.location.longitude!=undefined){
-      return [this.data.location.latitude,this.data.location.longitude];
-    }else{
-      return BcMap.defaultCenter;//default
-    }
   }
 
   getZoom(){
     if(this.data!=undefined && this.data.location!=undefined){
       return 17;
     }else{
-      return 6;//default
+      return 6;
     }
   }
 
@@ -74,7 +66,7 @@ export class BcGeo extends DetailBase{
   initGeographic(data){
     this.data=data;
     if(this.data!=undefined&&this.data.location!=undefined){
-      this.center.next([data.location.latitude as number,data.location.longitude as number]);
+      this.mapService.changeCurrentCenter([data.location.latitude as number,data.location.longitude as number]);
     }
   }
 
