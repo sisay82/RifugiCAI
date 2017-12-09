@@ -249,13 +249,16 @@ function validationPromise(ticket) {
 function checkUserData(user) {
     if (user && user.code && user.role) {
         var regions = [];
-        var section = getSection(user.code);
+        var section = void 0;
         if (user.role == Auth_Permissions.User_Type.area) {
             regions = getAreaRegions(getArea(user.code));
         }
         else if (user.role == Auth_Permissions.User_Type.regional ||
             user.role == Auth_Permissions.User_Type.sectional) {
             regions = [getRegion(user.code)];
+        }
+        if (user.role == Auth_Permissions.User_Type.sectional) {
+            section = getSection(user.code);
         }
         return { section: section, regions: regions };
     }
@@ -299,11 +302,14 @@ function getAllIdsHead(regions, section) {
         query.$and.push({ idCai: { '$ne': null } });
         for (var _i = 0, regions_1 = regions; _i < regions_1.length; _i++) {
             var region = regions_1[_i];
-            query.$and.push(getRegionFilter(region));
+            var regionFilter = getRegionFilter(region);
+            if (regionFilter) {
+                query.$and.push(regionFilter);
+            }
         }
-        if (section && section.length == 3) {
-            var sectionQuery = { idCai: new RegExp("^[0-9-]{4,4}" + section + "[0-9-]{1,3}") };
-            query.$and.push(sectionQuery);
+        var sectionFilter = getSectionFilter(section);
+        if (sectionFilter) {
+            query.$and.push(sectionFilter);
         }
     }
     return new Promise(function (resolve, reject) {
@@ -435,7 +441,7 @@ function queryShelByRegion(region, regionFilters, sectionFilter) {
         if (region) {
             query['geoData.location.region'] = { $in: [region.toLowerCase(), region.toUpperCase(), toTitleCase(region), region] };
         }
-        else if (regionFilters && regionFilters.length > 0) {
+        if ((regionFilters && regionFilters.length > 0) || sectionFilter) {
             query.$and = [];
             query.$and.push({ 'idCai': { '$ne': null } });
             for (var _i = 0, regionFilters_1 = regionFilters; _i < regionFilters_1.length; _i++) {
@@ -449,9 +455,6 @@ function queryShelByRegion(region, regionFilters, sectionFilter) {
             if (section) {
                 query.$and.push(section);
             }
-        }
-        else {
-            reject({ error: "Parameter error" });
         }
         Shelters.count(query).exec(function (err, ris) {
             if (err) {
@@ -486,7 +489,6 @@ function queryShelAroundPoint(point, range, regionFilters, sectionFilter) {
         }
         Shelters.find(query, 'name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude geoData.location.municipality geoData.location.region geoData.location.province').exec(function (err, ris) {
             if (err) {
-                console.log(err);
                 reject(err);
             }
             else {
@@ -1025,7 +1027,7 @@ function checkPermissionAppAPI(req, res, next) {
                     }
                 }
                 else if (req.method == "PUT") {
-                    if (Auth_Permissions.Revision_Permissions.DetailRevisionPermission.find(function (obj) { return obj == user_1.role; })) {
+                    if (Auth_Permissions.Revision.DetailRevisionPermission.find(function (obj) { return obj == user_1.role; })) {
                         next();
                     }
                     else {
@@ -1050,7 +1052,7 @@ function checkPermissionFileAPI(req, res, next) {
         }
         else {
             if (req.method == "DELETE" || req.method == "POST" || req.method == "PUT") {
-                if (Auth_Permissions.Revision_Permissions.DocRevisionPermission.find(function (obj) { return obj == user.role; })) {
+                if (Auth_Permissions.Revision.DocRevisionPermission.find(function (obj) { return obj == user.role; })) {
                     next();
                 }
                 else {
@@ -1455,6 +1457,7 @@ appRoute.route("/shelters/point")
                     .then(function (ris) {
                     res.status(200).send(ris);
                 })["catch"](function (err) {
+                    logger(err);
                     res.status(500).send(err);
                 });
             }

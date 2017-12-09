@@ -236,14 +236,6 @@ export namespace Enums {
             area=6
         }
 
-        export enum Code_Type {
-            section=1,
-            subsection=2,
-            territory=3,
-            regional=4,
-            operative=5
-        }
-
         export enum Region_Code{
             "Liguria"=10,
             "Piemonte"=12,
@@ -313,7 +305,7 @@ export namespace Enums {
             ]
         }
 
-        export namespace Revision_Permissions{
+        export namespace Revision {
             export const DocRevisionPermission:any[] = [
                 User_Type.superUser,
                 User_Type.central,
@@ -331,7 +323,9 @@ export namespace Enums {
                     return input.indexOf(item)==index;
                 }),
             ] 
-    
+        }
+        
+        export namespace Edit {
             export const InsertShelterPermission:any[] = [
                 User_Type.superUser,
                 User_Type.central
@@ -342,6 +336,39 @@ export namespace Enums {
                 User_Type.central
             ]
         }
+        
+
+        export namespace Visualization {
+            export enum Visualization_Level {
+                section,
+                region,
+                area,
+                complete
+            }
+
+            export const Complete_Visualization = [
+                User_Type.central,
+                User_Type.superUser,
+                User_Type.visualization
+            ]
+
+            export const Area_Visualization = [
+                ...Complete_Visualization,
+                User_Type.area
+            ]
+
+            export const Region_Visualization = [
+                ...Area_Visualization,
+                User_Type.regional
+            ]
+
+            export const Section_Visualization = [
+                ...Region_Visualization,
+                User_Type.sectional
+            ]
+            
+        }
+        
     }    
 
 }

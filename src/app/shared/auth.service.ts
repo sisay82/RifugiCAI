@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import Auth_Permissions = Enums.Auth_Permissions;
-import Revision_permissions = Auth_Permissions.Revision_Permissions;
+import Revision = Auth_Permissions.Revision;
 import { getAllDebugNodes } from '@angular/core/src/debug/debug_node';
 
 function getRegion(code:String):String{
@@ -165,7 +165,7 @@ export class BcAuthService{
     }
 
     revisionCheck(permission?){
-        return permission==Auth_Permissions.User_Type.superUser||(Revision_permissions.DetailRevisionPermission.find(obj=>obj==permission)!=null);
+        return permission==Auth_Permissions.User_Type.superUser||(Revision.DetailRevisionPermission.find(obj=>obj==permission)!=null);
     }
 
     private updateProfile():Observable<any>{
@@ -207,16 +207,6 @@ export class BcAuthService{
                     }
                 }else if(shelId){
                     permission=permission||checkEnumPermissionForShelter(profile,shelId,name);
-                    
-                    /*if(name==Auth_Permissions.User_Type.regional&&profile.role==Auth_Permissions.User_Type.regional){
-                        if(shelId.substr(2,2)==profile.code.substr(2,2)){
-                            permission=true;
-                        }
-                    }else if(name==Auth_Permissions.User_Type.sectional&&profile.role==Auth_Permissions.User_Type.sectional){
-                        if(shelId.substr(2,5)==profile.code.substr(2,5)){
-                            permission=true;
-                        }
-                    }*/
                 }
             });
         }   
@@ -231,13 +221,13 @@ export class BcAuthService{
             return Observable.create(observer=>{
                 let getSectionCodeSub = this.getUserProfile().subscribe(profile=>{
                     let getShelIdSub = this.shelId$.subscribe(shelId=>{
-                        if(this.checkEnumPermission(Revision_permissions.DetailRevisionPermission,shelId,profile)){
+                        if(this.checkEnumPermission(Revision.DetailRevisionPermission,shelId,profile)){
                             permissions.push(Enums.MenuSection.detail);
                         }
-                        if(this.checkEnumPermission(Revision_permissions.DocRevisionPermission,shelId,profile)){
+                        if(this.checkEnumPermission(Revision.DocRevisionPermission,shelId,profile)){
                             permissions.push(Enums.MenuSection.document);
                         }
-                        if(this.checkEnumPermission(Revision_permissions.EconomyRevisionPermission,shelId,profile)){
+                        if(this.checkEnumPermission(Revision.EconomyRevisionPermission,shelId,profile)){
                             permissions.push(Enums.MenuSection.economy);
                         }
                         this.localPermissions=permissions
@@ -260,26 +250,11 @@ export class BcAuthService{
         this.onShelId(shelId);
         return Observable.create(observer=>{
             let sectionCodeInit = this.getUserProfile().subscribe(profile=>{
-                if(profile.role==Auth_Permissions.User_Type.central){
-                    observer.next(Auth_Permissions.User_Type.central);
+                if(checkEnumPermissionForShelter(profile,shelId,profile.role)){
+                    observer.next(profile.role);
+                }else{
+                    observer.next(null);
                 }
-                else if(profile.role==Auth_Permissions.User_Type.regional){
-                    if(shelId&&profile.code.substr(2,2)==shelId.substr(2,2)){
-                        observer.next(Auth_Permissions.User_Type.regional);                        
-                    }else{
-                        observer.next(null);
-                    }
-                }
-                else if(profile.role==Auth_Permissions.User_Type.sectional){
-                    if(shelId&&profile.code.substr(2,5)==shelId.substr(2,5)){
-                        observer.next(Auth_Permissions.User_Type.sectional);                        
-                    }else{
-                        observer.next(null);
-                    }
-                }else if(profile.role==Auth_Permissions.User_Type.superUser){
-                    observer.next(Auth_Permissions.User_Type.superUser);
-                }
-                else observer.next(null);
                 if(sectionCodeInit!=undefined){
                     sectionCodeInit.unsubscribe();
                 }

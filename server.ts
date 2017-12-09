@@ -269,12 +269,15 @@ function validationPromise(ticket):Promise<String>{
 function checkUserData(user:User_Data):{section:String,regions:any[]}{
     if(user&&user.code&&user.role){
         let regions:any[]=[];
-        let section:String=getSection(user.code);
+        let section:String;
         if(user.role==Auth_Permissions.User_Type.area){
             regions=getAreaRegions(<string>getArea(user.code))
         }else if(user.role==Auth_Permissions.User_Type.regional||
                 user.role==Auth_Permissions.User_Type.sectional){
             regions=[getRegion(user.code)];
+        }
+        if(user.role==Auth_Permissions.User_Type.sectional){
+            section=getSection(user.code);
         }
         return {section:section,regions:regions};
     }else{
@@ -318,15 +321,19 @@ function getAllIdsHead(regions:any[],section:String):Promise<IShelterExtended[]>
         query.$and=[];
         query.$and.push({idCai:{'$ne':null}});
         for(const region of regions){
-            query.$and.push(getRegionFilter(region));
+            const regionFilter=getRegionFilter(region);
+            if(regionFilter){
+                query.$and.push(regionFilter);
+            }
         }
         
-        if(section&&section.length==3){
-            const sectionQuery={idCai:new RegExp("^[0-9-]{4,4}"+section+"[0-9-]{1,3}")};
-            query.$and.push(sectionQuery);
+        const sectionFilter=getSectionFilter(section);
+        if(sectionFilter){
+            query.$and.push(sectionFilter);
         }
-    }
 
+    }
+ 
     return new Promise<IShelterExtended[]>((resolve,reject)=>{
     Shelters.find(query,'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality').exec((err,ris)=>{
             if(err){
@@ -455,7 +462,8 @@ function queryShelByRegion(region:string,regionFilters:any[],sectionFilter:Strin
         }
         if(region){
             query['geoData.location.region']={$in:[region.toLowerCase(),region.toUpperCase(),toTitleCase(region),region]};        
-        }else if(regionFilters&&regionFilters.length>0){
+        }
+        if((regionFilters&&regionFilters.length>0)||sectionFilter){
             query.$and=[];
             query.$and.push({'idCai':{'$ne':null}});
 
@@ -471,10 +479,8 @@ function queryShelByRegion(region:string,regionFilters:any[],sectionFilter:Strin
                 query.$and.push(section);
             }
 
-        }else{
-            reject(<any>{error:"Parameter error"});
         }
-    
+
         Shelters.count(query).exec((err,ris:number)=>{
             if(err){
                 reject(err);
@@ -1071,7 +1077,7 @@ function checkPermissionAppAPI(req,res,next){
                         res.status(500).send({error:"Unauthorized"});
                     }
                 }else if(req.method=="PUT"){
-                    if(Auth_Permissions.Revision_Permissions.DetailRevisionPermission.find(obj=>obj==user.role)){
+                    if(Auth_Permissions.Revision.DetailRevisionPermission.find(obj=>obj==user.role)){
                         next();
                     }else{
                         res.status(500).send({error:"Unauthorized"});
@@ -1093,7 +1099,7 @@ function checkPermissionFileAPI(req,res,next){
            next(); 
         }else{
             if(req.method=="DELETE"||req.method=="POST"||req.method=="PUT"){
-                if(Auth_Permissions.Revision_Permissions.DocRevisionPermission.find(obj=>obj==user.role)){
+                if(Auth_Permissions.Revision.DocRevisionPermission.find(obj=>obj==user.role)){
                     next();
                 }else{
                     res.status(500).send({error:"Unauthorized"});
@@ -1432,7 +1438,7 @@ appRoute.route("/shelters")
             });
         }catch(e){
             res.status(500).send({error:"Error Undefined"});
-        } 
+        }
     }else{
         res.status(500).send({error:"User undefined"});
     }

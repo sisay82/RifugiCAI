@@ -141,7 +141,7 @@ export class BcDocRevision extends RevisionBase{
   }
 
   getKeys(enumName){
-    return Object.keys(Enums[enumName]);
+    return Object.keys(Enums.Files[enumName]);
   }
 
   isHiddenFile(value){

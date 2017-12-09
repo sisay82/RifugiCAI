@@ -248,14 +248,6 @@ var Enums;
             User_Type[User_Type["visualization"] = 5] = "visualization";
             User_Type[User_Type["area"] = 6] = "area";
         })(User_Type = Auth_Permissions.User_Type || (Auth_Permissions.User_Type = {}));
-        var Code_Type;
-        (function (Code_Type) {
-            Code_Type[Code_Type["section"] = 1] = "section";
-            Code_Type[Code_Type["subsection"] = 2] = "subsection";
-            Code_Type[Code_Type["territory"] = 3] = "territory";
-            Code_Type[Code_Type["regional"] = 4] = "regional";
-            Code_Type[Code_Type["operative"] = 5] = "operative";
-        })(Code_Type = Auth_Permissions.Code_Type || (Auth_Permissions.Code_Type = {}));
         var Region_Code;
         (function (Region_Code) {
             Region_Code[Region_Code["Liguria"] = 10] = "Liguria";
@@ -324,29 +316,56 @@ var Enums;
                 Region_Code.Veneto
             ]
         };
-        var Revision_Permissions;
-        (function (Revision_Permissions) {
-            Revision_Permissions.DocRevisionPermission = [
+        var Revision;
+        (function (Revision) {
+            Revision.DocRevisionPermission = [
                 User_Type.superUser,
                 User_Type.central,
                 User_Type.sectional
             ];
-            Revision_Permissions.EconomyRevisionPermission = [
+            Revision.EconomyRevisionPermission = [
                 User_Type.superUser,
                 User_Type.central,
                 User_Type.sectional
             ];
-            Revision_Permissions.DetailRevisionPermission = Revision_Permissions.DocRevisionPermission.concat(Revision_Permissions.EconomyRevisionPermission).filter(function (item, index, input) {
+            Revision.DetailRevisionPermission = Revision.DocRevisionPermission.concat(Revision.EconomyRevisionPermission).filter(function (item, index, input) {
                 return input.indexOf(item) == index;
             }).slice();
-            Revision_Permissions.InsertShelterPermission = [
+        })(Revision = Auth_Permissions.Revision || (Auth_Permissions.Revision = {}));
+        var Edit;
+        (function (Edit) {
+            Edit.InsertShelterPermission = [
                 User_Type.superUser,
                 User_Type.central
             ];
-            Revision_Permissions.DeleteShelterPermission = [
+            Edit.DeleteShelterPermission = [
                 User_Type.superUser,
                 User_Type.central
             ];
-        })(Revision_Permissions = Auth_Permissions.Revision_Permissions || (Auth_Permissions.Revision_Permissions = {}));
+        })(Edit = Auth_Permissions.Edit || (Auth_Permissions.Edit = {}));
+        var Visualization;
+        (function (Visualization) {
+            var Visualization_Level;
+            (function (Visualization_Level) {
+                Visualization_Level[Visualization_Level["section"] = 0] = "section";
+                Visualization_Level[Visualization_Level["region"] = 1] = "region";
+                Visualization_Level[Visualization_Level["area"] = 2] = "area";
+                Visualization_Level[Visualization_Level["complete"] = 3] = "complete";
+            })(Visualization_Level = Visualization.Visualization_Level || (Visualization.Visualization_Level = {}));
+            Visualization.Complete_Visualization = [
+                User_Type.central,
+                User_Type.superUser,
+                User_Type.visualization
+            ];
+            Visualization.Area_Visualization = Visualization.Complete_Visualization.concat([
+                User_Type.area
+            ]);
+            Visualization.Region_Visualization = Visualization.Area_Visualization.concat([
+                User_Type.regional
+            ]);
+            Visualization.Section_Visualization = Visualization.Region_Visualization.concat([
+                User_Type.sectional
+            ]);
+        })(Visualization = Auth_Permissions.Visualization || (Auth_Permissions.Visualization = {}));
     })(Auth_Permissions = Enums.Auth_Permissions || (Enums.Auth_Permissions = {}));
 })(Enums = exports.Enums || (exports.Enums = {}));

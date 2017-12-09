@@ -42,7 +42,7 @@ export class BcSelectInput implements ControlValueAccessor {
     @Input() required:boolean=false;
     @Input() title = "";
     @Input() defaultContent="";
-    @Input() enumName:any;
+    @Input() enumName:string;
     @Input() noName:boolean=false;
     @Input() enumValues:any[]=[];
     @Input() enableBlock:boolean=false;
@@ -63,13 +63,30 @@ export class BcSelectInput implements ControlValueAccessor {
         return this._displayError;
     }
 
+    getEnumKeys(){
+        const parts = this.enumName.split('.');
+        let enumKey;
+        if(parts.length>1){
+            enumKey=Enums;
+            for(let part of parts){
+                enumKey=enumKey[part]
+            }
+        }else{
+            enumKey=Enums[parts[0]];
+        }
+        return enumKey;
+    }
+
     getEnumNames(){
         if(this.isDisabled&&this.disableSelect){
             return [this.disableSelect]
         }else{
             if(this.enumName!=undefined){
                 let names:any[]=[];
-                const objValues = Object.keys(Enums[this.enumName]).map(k => Enums[this.enumName][k]);
+                
+                const enumKey=this.getEnumKeys();
+
+                const objValues = Object.keys(enumKey).map(k => enumKey[k]);
                 objValues.filter(v => typeof v === "string").forEach((val)=>{
                     names.push(val);
                 });

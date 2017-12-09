@@ -11,6 +11,7 @@ import {BcSharedService} from '../../../app/shared/shared.service';
 import {BcAuthService} from '../../../app/shared/auth.service';
 import { Subscription } from 'rxjs/Subscription';
 import {RevisionBase} from '../shared/revision_base';
+
 @Component({
   moduleId: module.id,
   selector: 'bc-geo-revision',
