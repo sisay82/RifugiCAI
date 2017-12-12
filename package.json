@@ -35,8 +35,9 @@
   "scripts": {
     "ng": "ng",
     "postinstall": "npm run build",
-    "start": "node server.js",
-    "build": "ng build --prod",
+    "start": "node ./server/build/server/server.js",
+    "build": "ng build && npm run build-server",
+    "build-server": "rimraf ./server/build && tsc --p ./server/tsconfig.json",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -88,6 +89,7 @@
     "karma-jasmine-html-reporter": "^0.2.2",
     "node-sass": "^4.7.2",
     "protractor": "^5.1.1",
+    "rimraf": "^2.6.2",
     "ts-node": "^3.0.2",
     "tslint": "^5.1.0",
     "typescript": ">=2.4.2 <2.5.0"

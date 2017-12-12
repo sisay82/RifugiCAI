@@ -1,30 +1,28 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose = require("mongoose");
 var session = require("express-session");
 var bodyParser = require("body-parser");
 var express = require("express");
 var enums_1 = require("../src/app/shared/types/enums");
 var Auth_Permissions = enums_1.Enums.Auth_Permissions;
-var path = require("path");
 var common_1 = require("./common");
 var files_api_1 = require("./API/files.api");
 var shelters_api_1 = require("./API/shelters.api");
 var auth_api_1 = require("./API/auth.api");
 var MongoStore = require('connect-mongo')(session);
 mongoose.Promise = global.Promise;
-var OUT_DIR = path.join(__dirname, "../dist");
 exports.APP_PORT = 8000;
-exports.APP_BASE_URL = "http://localhost:" + exports.APP_PORT;
-exports.PARSED_URL = encodeURIComponent(exports.APP_BASE_URL + "/j_spring_cas_security_check");
+exports.APP_BASE_URL = 'http://localhost:' + exports.APP_PORT;
+exports.PARSED_URL = encodeURIComponent(exports.APP_BASE_URL + '/j_spring_cas_security_check');
 var app = express();
 var Users = [];
-//"mongodb://localhost:27017/ProvaDB",process.env.MONGODB_URI
-var mongooseConnection = mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/CaiDB", {
+// 'mongodb://localhost:27017/ProvaDB',process.env.MONGODB_URI
+var mongooseConnection = mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/CaiDB', {
     useMongoClient: true
 }, function (err) {
     if (err) {
-        common_1.logger("Error connection: " + err);
+        common_1.logger('Error connection: ' + err);
     }
 });
 app.use(bodyParser.urlencoded({
@@ -37,28 +35,28 @@ app.use(bodyParser.urlencoded({
     saveUninitialized: true
 }), bodyParser.json());
 app.use('/api', function (req, res, next) {
-    common_1.logger("SessionID: " + req.sessionID + ", METHOD: " + req.method + ", QUERY: " + JSON.stringify(req.query) + ", PATH: " + req.path);
+    common_1.logger('SessionID: ' + req.sessionID + ', METHOD: ' + req.method + ', QUERY: ' + JSON.stringify(req.query) + ', PATH: ' + req.path);
     if (req.method === 'OPTIONS') {
         var headers = {};
-        headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
-        headers["Access-Control-Allow-Headers"] = "Content-Type";
-        headers["content-type"] = 'application/json; charset=utf-8';
+        headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS';
+        headers['Access-Control-Allow-Headers'] = 'Content-Type';
+        headers['content-type'] = 'application/json; charset=utf-8';
         res.writeHead(200, headers);
         res.end();
     }
     else {
         if (auth_api_1.DISABLE_AUTH) {
-            req.body.user = { code: "9999999", role: Auth_Permissions.User_Type.superUser };
+            req.body.user = { code: '9999999', role: Auth_Permissions.User_Type.superUser };
             next();
         }
         else {
-            var user = auth_api_1.userList.find(function (obj) { return obj.id == req.session.id; });
-            if (user != undefined && user.checked && user.role != undefined && user.code != undefined) {
+            var user = auth_api_1.userList.find(function (obj) { return obj.id === req.session.id; });
+            if (user && user.checked && user.role && user.code) {
                 req.body.user = user;
                 next();
             }
             else {
-                res.status(500).send({ error: "Unauthenticated user" });
+                res.status(500).send({ error: 'Unauthenticated user' });
             }
         }
     }
@@ -66,8 +64,8 @@ app.use('/api', function (req, res, next) {
 app.use('/', function (req, res, next) {
     if (req.method === 'OPTIONS') {
         var headers = {};
-        headers["Access-Control-Allow-Headers"] = "Content-Type";
-        headers["content-type"] = 'text/html; charset=UTF-8';
+        headers['Access-Control-Allow-Headers'] = 'Content-Type';
+        headers['content-type'] = 'text/html; charset=UTF-8';
         res.writeHead(200, headers);
         res.end();
     }
@@ -77,5 +75,6 @@ app.use('/', function (req, res, next) {
 }, auth_api_1.authRoute);
 var server = app.listen(process.env.PORT || exports.APP_PORT, function () {
     var port = server.address().port;
-    common_1.logger("App now running on port", port);
+    common_1.logger('App now running on port', port);
 });
+//# sourceMappingURL=server.js.map

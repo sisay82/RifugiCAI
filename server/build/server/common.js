@@ -1,14 +1,11 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose = require("mongoose");
-var path = require("path");
 var enums_1 = require("../src/app/shared/types/enums");
 var Auth_Permissions = enums_1.Enums.Auth_Permissions;
 var auth_api_1 = require("./API/auth.api");
 exports.SheltersToUpdate = [];
-exports.OUT_DIR = path.join(__dirname, "../dist");
 exports.ObjectId = mongoose.Types.ObjectId;
-exports.MONTHS = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 var DISABLE_LOG = false;
 var maxTime = 1000 * 60 * 10;
 function cleanSheltersToUpdate() {
@@ -35,14 +32,14 @@ function checkUserData(user) {
     if (user && user.code && user.role) {
         var regions = [];
         var section = void 0;
-        if (user.role == Auth_Permissions.User_Type.area) {
+        if (user.role === Auth_Permissions.User_Type.area) {
             regions = getAreaRegions(getArea(user.code));
         }
-        else if (user.role == Auth_Permissions.User_Type.regional ||
-            user.role == Auth_Permissions.User_Type.sectional) {
+        else if (user.role === Auth_Permissions.User_Type.regional ||
+            user.role === Auth_Permissions.User_Type.sectional) {
             regions = [getRegion(user.code)];
         }
-        if (user.role == Auth_Permissions.User_Type.sectional) {
+        if (user.role === Auth_Permissions.User_Type.sectional) {
             section = getSection(user.code);
         }
         return { section: section, regions: regions };
@@ -67,8 +64,19 @@ function toTitleCase(input) {
         return '';
     }
     else {
-        return input.replace(/\w\S*/g, (function (txt) { return txt[0].toUpperCase() + txt.substr(1); })).replace(/_/g, " ");
+        return input.replace(/\w\S*/g, (function (txt) { return txt[0].toUpperCase() + txt.substr(1); })).replace(/_/g, ' ');
     }
 }
 exports.toTitleCase = toTitleCase;
+function getPropertiesNumber(obj) {
+    var c = 0;
+    for (var prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+            ++c;
+        }
+    }
+    return c;
+}
+exports.getPropertiesNumber = getPropertiesNumber;
 setInterval(cleanSheltersToUpdate, 1500);
+//# sourceMappingURL=common.js.map

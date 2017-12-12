@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 var enums_1 = require("../../src/app/shared/types/enums");
 var Auth_Permissions = enums_1.Enums.Auth_Permissions;
@@ -10,11 +10,11 @@ var common_2 = require("../common");
 var auth_api_1 = require("./auth.api");
 var pdf_api_1 = require("./pdf.api");
 var files_api_1 = require("./files.api");
-exports.Services = mongoose.model("Services", schema_1.Schema.serviceSchema);
-exports.Shelters = mongoose.model("Shelters", schema_1.Schema.shelterSchema);
+exports.Services = mongoose.model('Services', schema_1.Schema.serviceSchema);
+exports.Shelters = mongoose.model('Shelters', schema_1.Schema.shelterSchema);
 function getRegionFilter(region) {
-    if (region && region.length == 2) {
-        var regionQuery = { 'idCai': new RegExp("^[0-9-]{2,2}" + region + "[0-9-]{4,6}") };
+    if (region && region.length === 2) {
+        var regionQuery = { 'idCai': new RegExp('^[0-9-]{2,2}' + region + '[0-9-]{4,6}') };
         return regionQuery;
     }
     else {
@@ -22,8 +22,8 @@ function getRegionFilter(region) {
     }
 }
 function getSectionFilter(section) {
-    if (section && section.length == 3) {
-        var sectionQuery = { 'idCai': new RegExp("^[0-9-]{4,4}" + section + "[0-9-]{1,3}") };
+    if (section && section.length === 3) {
+        var sectionQuery = { 'idCai': new RegExp('^[0-9-]{4,4}' + section + '[0-9-]{1,3}') };
         return sectionQuery;
     }
     else {
@@ -48,7 +48,8 @@ function getAllIdsHead(regions, section) {
         }
     }
     return new Promise(function (resolve, reject) {
-        exports.Shelters.find(query, 'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality').exec(function (err, ris) {
+        exports.Shelters.find(query, 'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality')
+            .exec(function (err, ris) {
             if (err) {
                 common_2.logger(err);
                 reject(err);
@@ -61,7 +62,8 @@ function getAllIdsHead(regions, section) {
 }
 function queryShelPage(pageNumber, pageSize) {
     return new Promise(function (resolve, reject) {
-        exports.Shelters.find({}, 'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality').skip(Number(pageNumber * pageSize)).limit(Number(pageSize)).exec(function (err, ris) {
+        exports.Shelters.find({}, 'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality')
+            .skip(Number(pageNumber * pageSize)).limit(Number(pageSize)).exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -73,7 +75,7 @@ function queryShelPage(pageNumber, pageSize) {
 }
 function queryShelById(id) {
     return new Promise(function (resolve, reject) {
-        exports.Shelters.findById(id).populate("services").exec(function (err, ris) {
+        exports.Shelters.findById(id).populate('services').exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -85,7 +87,7 @@ function queryShelById(id) {
 }
 function queryShelSectionById(id, section) {
     return new Promise(function (resolve, reject) {
-        exports.Shelters.findOne({ _id: id }, "name " + section).populate("services").exec(function (err, ris) {
+        exports.Shelters.findOne({ _id: id }, 'name ' + section).populate('services').exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -109,9 +111,9 @@ function queryShelByRegion(region, regionFilters, sectionFilter) {
             query.$and.push({ 'idCai': { '$ne': null } });
             for (var _i = 0, regionFilters_1 = regionFilters; _i < regionFilters_1.length; _i++) {
                 var regionFilter = regionFilters_1[_i];
-                var region_1 = getRegionFilter(regionFilter);
-                if (region_1) {
-                    query.$and.push(region_1);
+                var r = getRegionFilter(regionFilter);
+                if (r) {
+                    query.$and.push(r);
                 }
             }
             var section = getSectionFilter(sectionFilter);
@@ -133,8 +135,8 @@ function queryShelAroundPoint(point, range, regionFilters, sectionFilter) {
     return new Promise(function (resolve, reject) {
         var query = {};
         query.$and = [
-            { "geoData.location.latitude": { $gt: (point.lat - range), $lt: (point.lat + range) } },
-            { "geoData.location.longitude": { $gt: (point.lng - range), $lt: (point.lng + range) } }
+            { 'geoData.location.latitude': { $gt: (point.lat - range), $lt: (point.lat + range) } },
+            { 'geoData.location.longitude': { $gt: (point.lng - range), $lt: (point.lng + range) } }
         ];
         if ((regionFilters && regionFilters.length > 0) || sectionFilter) {
             query.$and.push({ 'idCai': { '$ne': null } });
@@ -150,7 +152,8 @@ function queryShelAroundPoint(point, range, regionFilters, sectionFilter) {
                 query.$and.push(section);
             }
         }
-        exports.Shelters.find(query, 'name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude geoData.location.municipality geoData.location.region geoData.location.province').exec(function (err, ris) {
+        exports.Shelters.find(query, "name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude\n             geoData.location.municipality geoData.location.region geoData.location.province")
+            .exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -174,7 +177,7 @@ function queryServById(id) {
 }
 function queryServWithParams(params) {
     return new Promise(function (resolve, reject) {
-        exports.Services.find(params).populate("services").exec(function (err, ris) {
+        exports.Services.find(params).populate('services').exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -200,12 +203,13 @@ function insertNewShelter(params) {
                         insertNewService(serv)
                             .then(function (ser) {
                             shel.services.push(ser._id);
-                            if (shel.services.length == services.length) {
+                            if (shel.services.length === services.length) {
                                 shel.save();
                                 resolve(shel);
                             }
-                        })["catch"](function (err) {
-                            reject(err);
+                        })
+                            .catch(function (e) {
+                            reject(e);
                         });
                     }
                 }
@@ -236,33 +240,33 @@ function checkPermissionAPI(req, res, next) {
     else {
         var user_1 = req.body.user;
         if (user_1) {
-            if (req.method == "GET") {
+            if (req.method === 'GET') {
                 next();
             }
             else {
-                if (req.method == "DELETE" || req.method == "POST") {
-                    if (user_1.role == Auth_Permissions.User_Type.central) {
+                if (req.method === 'DELETE' || req.method === 'POST') {
+                    if (user_1.role === Auth_Permissions.User_Type.central) {
                         next();
                     }
                     else {
-                        res.status(500).send({ error: "Unauthorized" });
+                        res.status(500).send({ error: 'Unauthorized' });
                     }
                 }
-                else if (req.method == "PUT") {
-                    if (Auth_Permissions.Revision.DetailRevisionPermission.find(function (obj) { return obj == user_1.role; })) {
+                else if (req.method === 'PUT') {
+                    if (Auth_Permissions.Revision.DetailRevisionPermission.find(function (obj) { return obj === user_1.role; })) {
                         next();
                     }
                     else {
-                        res.status(500).send({ error: "Unauthorized" });
+                        res.status(500).send({ error: 'Unauthorized' });
                     }
                 }
                 else {
-                    res.status(501).send({ error: "Not Implemented method " + req.method });
+                    res.status(501).send({ error: 'Not Implemented method ' + req.method });
                 }
             }
         }
         else {
-            res.status(500).send({ error: "Error request" });
+            res.status(500).send({ error: 'Error request' });
         }
     }
 }
@@ -279,133 +283,140 @@ function deleteShelter(id) {
             });
         }
         else {
-            reject(new Error("Invalid id"));
+            reject(new Error('Invalid id'));
         }
     });
+}
+function resolveSingleServiceInShelter(shelter, service) {
+    var c = common_2.getPropertiesNumber(service);
+    if (service.hasOwnProperty('_id') && c === 1) {
+        return deleteService(service._id);
+    }
+    else {
+        if (service._id) {
+            return updateService(service._id, service);
+        }
+        else {
+            return insertNewService(service)
+                .then(function (serv) {
+                shelter.services.push(serv._id);
+            });
+        }
+    }
 }
 function resolveServicesInShelter(shelter, services) {
     return new Promise(function (resolve, reject) {
         if (services) {
-            var count_1 = 0;
-            for (var _i = 0, services_2 = services; _i < services_2.length; _i++) {
-                var serv = services_2[_i];
-                var c = 0;
-                for (var k in serv) {
-                    if (serv.hasOwnProperty(k)) {
-                        ++c;
-                    }
-                }
-                if (serv.hasOwnProperty("_id") && c == 1) {
-                    deleteService(serv._id)
-                        .then(function () {
-                        count_1++;
-                        if (count_1 == services.length) {
-                            shelter.save();
-                            resolve(shelter);
-                        }
-                    })["catch"](function (err) {
-                        reject(err);
-                    });
-                }
-                else {
-                    if (serv._id) {
-                        updateService(serv._id, serv)
-                            .then(function () {
-                            count_1++;
-                            if (count_1 == services.length) {
-                                shelter.save();
-                                resolve(shelter);
-                            }
-                        })["catch"](function (err) {
-                            reject(err);
-                        });
-                    }
-                    else {
-                        insertNewService(serv)
-                            .then(function (ser) {
-                            shelter.services.push(ser._id);
-                            count_1++;
-                            if (count_1 == services.length) {
-                                shelter.save();
-                                resolve(shelter);
-                            }
-                        })["catch"](function (err) {
-                            reject(err);
-                        });
-                    }
-                }
-            }
+            var promises_1 = [];
+            services.forEach(function (service) {
+                promises_1.push(resolveSingleServiceInShelter(shelter, service));
+            });
+            Promise.all(promises_1)
+                .then(function () {
+                shelter.save();
+                resolve(shelter);
+            })
+                .catch(function (e) { return reject(e); });
         }
         else {
             resolve(shelter);
         }
     });
 }
+function updateShelterEconomy(shelter, economies) {
+    return new Promise(function (resolve, reject) {
+        if (economies) {
+            var _loop_1 = function (economy) {
+                var e = shelter.economy.filter(function (obj) { return obj.year === economy.year; })[0];
+                if (e) {
+                    shelter.economy.splice(shelter.economy.indexOf(e), 1);
+                }
+                shelter.economy.push(economy);
+            };
+            for (var _i = 0, economies_1 = economies; _i < economies_1.length; _i++) {
+                var economy = economies_1[_i];
+                _loop_1(economy);
+            }
+        }
+        resolve();
+    });
+}
+function updateShelterUse(shelter, uses) {
+    return new Promise(function (resolve, reject) {
+        if (uses) {
+            var _loop_2 = function (use) {
+                var u = shelter.use.filter(function (obj) { return obj.year === use.year; })[0];
+                if (u) {
+                    shelter.use.splice(shelter.use.indexOf(u), 1);
+                }
+                shelter.use.push(use);
+            };
+            for (var _i = 0, uses_1 = uses; _i < uses_1.length; _i++) {
+                var use = uses_1[_i];
+                _loop_2(use);
+            }
+        }
+        resolve();
+    });
+}
+function updateShelterContributions(shelter, contributions) {
+    return new Promise(function (resolve, reject) {
+        if (contributions && contributions.accepted) {
+            pdf_api_1.createContributionPDF(shelter)
+                .then(function (file) {
+                shelter.contributions = undefined;
+                resolve();
+            })
+                .catch(function (e) {
+                reject(e);
+            });
+        }
+        else {
+            resolve();
+        }
+    });
+}
 function resolveEconomyInShelter(shelter, uses, contributions, economies) {
     return new Promise(function (resolve, reject) {
         try {
-            if (uses != undefined) {
-                var _loop_1 = function (use) {
-                    var u = shelter.use.filter(function (obj) { return obj.year == use.year; })[0];
-                    if (u != undefined) {
-                        shelter.use.splice(shelter.use.indexOf(u), 1);
-                    }
-                    shelter.use.push(use);
-                };
-                for (var _i = 0, uses_1 = uses; _i < uses_1.length; _i++) {
-                    var use = uses_1[_i];
-                    _loop_1(use);
-                }
-            }
-            if (economies != undefined) {
-                var _loop_2 = function (economy) {
-                    var e = shelter.economy.filter(function (obj) { return obj.year == economy.year; })[0];
-                    if (e != undefined) {
-                        shelter.economy.splice(shelter.economy.indexOf(e), 1);
-                    }
-                    shelter.economy.push(economy);
-                };
-                for (var _a = 0, economies_1 = economies; _a < economies_1.length; _a++) {
-                    var economy = economies_1[_a];
-                    _loop_2(economy);
-                }
-            }
-            if (contributions != undefined) {
-                if (contributions.accepted) {
-                    pdf_api_1.createPDF(shelter)
-                        .then(function (file) {
-                        shelter.contributions = undefined;
-                        resolve(shelter);
-                    })["catch"](function (e) {
-                        reject(e);
-                    });
-                }
-                else {
-                    resolve(shelter);
-                }
-            }
-            else {
+            Promise.all([updateShelterEconomy(shelter, economies),
+                updateShelterUse(shelter, uses),
+                updateShelterContributions(shelter, contributions)])
+                .then(function () {
                 resolve(shelter);
-            }
+            })
+                .catch(function (err) {
+                reject(err);
+            });
         }
         catch (e) {
             reject(e);
         }
     });
 }
+function cleanShelterProps(shelter, params) {
+    for (var prop in shelter) {
+        if (Object.getPrototypeOf(shelter).hasOwnProperty(prop) &&
+            Object.getPrototypeOf(params).hasOwnProperty(prop)) {
+            shelter[prop] = undefined;
+        }
+        else if (shelter[prop] == null) {
+            shelter[prop] = undefined;
+        }
+    }
+}
 function updateShelter(id, params, isNew) {
     return new Promise(function (resolve, reject) {
         try {
-            var services_3 = params.services;
+            var services_2 = params.services;
             var use_1 = params.use;
             var contributions_1 = params.contributions;
             var economy_1 = params.economy;
             delete (params.services);
             delete (params.use);
             delete (params.economy);
-            //delete(params.contributions);
-            var options = { upsert: isNew || false, "new": true };
-            if (params.updateDate == undefined) {
+            var options = { upsert: isNew || false, new: true };
+            if (!params.updateDate) {
                 params.updateDate = new Date(Date.now());
             }
             exports.Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
@@ -414,27 +425,20 @@ function updateShelter(id, params, isNew) {
                     reject(err);
                 }
                 else {
-                    for (var prop in shel) {
-                        if (Object.getPrototypeOf(shel).hasOwnProperty(prop)) {
-                            if (Object.getPrototypeOf(params).hasOwnProperty(prop)) {
-                                shel[prop] = undefined;
-                            }
-                            else if (shel[prop] == null) {
-                                shel[prop] = undefined;
-                            }
-                        }
-                    }
-                    resolveServicesInShelter(shel, services_3)
+                    cleanShelterProps(shel, params);
+                    resolveServicesInShelter(shel, services_2)
                         .then(function (shelter) {
                         resolveEconomyInShelter(shelter, use_1, contributions_1, economy_1)
-                            .then(function (shelter) {
-                            shelter.save();
+                            .then(function (s) {
+                            s.save();
                             resolve(true);
-                        })["catch"](function (err) {
-                            reject(err);
+                        })
+                            .catch(function (e) {
+                            reject(e);
                         });
-                    })["catch"](function (err) {
-                        reject(err);
+                    })
+                        .catch(function (e) {
+                        reject(e);
                     });
                 }
             });
@@ -446,12 +450,13 @@ function updateShelter(id, params, isNew) {
 }
 function confirmShelter(id) {
     return new Promise(function (resolve, reject) {
-        var shelToUpdate = common_1.SheltersToUpdate.filter(function (obj) { return obj.shelter._id == id; })[0];
+        var shelToUpdate = common_1.SheltersToUpdate.filter(function (obj) { return obj.shelter._id === id; })[0];
         updateShelter(id, shelToUpdate.shelter)
             .then(function () {
             common_1.SheltersToUpdate.splice(common_1.SheltersToUpdate.indexOf(shelToUpdate), 1);
             resolve(true);
-        })["catch"](function (err) {
+        })
+            .catch(function (err) {
             reject(err);
         });
     });
@@ -459,13 +464,14 @@ function confirmShelter(id) {
 function addOpening(id, opening) {
     return new Promise(function (resolve, reject) {
         exports.Shelters.findById(id, 'openingTime', function (err, shelter) {
-            if (err)
+            if (err) {
                 reject(err);
+            }
             else {
                 shelter.openingTime.push(opening);
-                shelter.save(function (err) {
-                    if (err) {
-                        reject(err);
+                shelter.save(function (e) {
+                    if (e) {
+                        reject(e);
                     }
                     else {
                         resolve(true);
@@ -495,7 +501,8 @@ function deleteShelterService(shelterId, serviceId) {
                 .then(function () {
                 shelter.save();
                 resolve(true);
-            })["catch"](function (err) {
+            })
+                .catch(function (err) {
                 reject(err);
             });
         });
@@ -516,8 +523,8 @@ function deleteService(id) {
     });
 }
 exports.appRoute = express.Router();
-exports.appRoute.all("*", checkPermissionAPI);
-exports.appRoute.route("/shelters")
+exports.appRoute.all('*', checkPermissionAPI);
+exports.appRoute.route('/shelters')
     .get(function (req, res) {
     var user = req.body.user;
     var userData = common_2.checkUserData(user);
@@ -529,18 +536,19 @@ exports.appRoute.route("/shelters")
                     res.status(200).send(rif);
                 }
                 else {
-                    res.status(404).send({ error: "No Matcching Rifugio" });
+                    res.status(404).send({ error: 'No Matcching Rifugio' });
                 }
-            })["catch"](function (err) {
+            })
+                .catch(function (err) {
                 res.status(500).send(err);
             });
         }
         catch (e) {
-            res.status(500).send({ error: "Error Undefined" });
+            res.status(500).send({ error: 'Error Undefined' });
         }
     }
     else {
-        res.status(500).send({ error: "User undefined" });
+        res.status(500).send({ error: 'User undefined' });
     }
 })
     .post(function (req, res) {
@@ -549,11 +557,12 @@ exports.appRoute.route("/shelters")
         var id = shelter._id;
         delete (shelter._id);
         res.status(200).send({ id: id, shelter: shelter });
-    })["catch"](function (err) {
+    })
+        .catch(function (err) {
         res.status(500).send(err);
     });
 });
-exports.appRoute.route("/shelters/country/:name")
+exports.appRoute.route('/shelters/country/:name')
     .get(function (req, res) {
     var user = req.body.user;
     var userData = common_2.checkUserData(user);
@@ -562,21 +571,22 @@ exports.appRoute.route("/shelters/country/:name")
             queryShelByRegion(req.params.name, userData.regions, userData.section)
                 .then(function (ris) {
                 res.status(200).send({ num: ris });
-            })["catch"](function (err) {
+            })
+                .catch(function (err) {
                 common_2.logger(err);
                 res.status(500).send(err);
             });
         }
         catch (e) {
             common_2.logger(e);
-            res.status(500).send({ error: "Error Undefined" });
+            res.status(500).send({ error: 'Error Undefined' });
         }
     }
     else {
-        res.status(500).send({ error: "User undefined" });
+        res.status(500).send({ error: 'User undefined' });
     }
 });
-exports.appRoute.route("/shelters/point")
+exports.appRoute.route('/shelters/point')
     .get(function (req, res) {
     var user = req.body.user;
     var userData = common_2.checkUserData(user);
@@ -586,25 +596,26 @@ exports.appRoute.route("/shelters/point")
                 queryShelAroundPoint({ lat: Number(req.query.lat), lng: Number(req.query.lng) }, Number(req.query.range), userData.regions, userData.section)
                     .then(function (ris) {
                     res.status(200).send(ris);
-                })["catch"](function (err) {
+                })
+                    .catch(function (err) {
                     common_2.logger(err);
                     res.status(500).send(err);
                 });
             }
             else {
-                res.status(500).send({ error: "Query error, parameters not found" });
+                res.status(500).send({ error: 'Query error, parameters not found' });
             }
         }
         catch (e) {
             common_2.logger(e);
-            res.status(500).send({ error: "Error Undefined" });
+            res.status(500).send({ error: 'Error Undefined' });
         }
     }
     else {
-        res.status(500).send({ error: "User undefined" });
+        res.status(500).send({ error: 'User undefined' });
     }
 });
-exports.appRoute.route("/shelters/:id")
+exports.appRoute.route('/shelters/:id')
     .get(function (req, res) {
     try {
         if (common_2.ObjectId.isValid(req.params.id)) {
@@ -616,25 +627,28 @@ exports.appRoute.route("/shelters/:id")
                 else {
                     res.status(200).send({ _id: req.params.id });
                 }
-            })["catch"](function (err) {
+            })
+                .catch(function (err) {
                 res.status(500).send(err);
             });
         }
         else {
-            res.status(500).send({ error: "Error ID" });
+            res.status(500).send({ error: 'Error ID' });
         }
     }
     catch (e) {
-        res.status(500).send({ error: "Error Undefined" });
+        res.status(500).send({ error: 'Error Undefined' });
     }
 })
     .put(function (req, res) {
     var shelUpdate;
     if (req.query.confirm) {
-        shelUpdate = common_1.SheltersToUpdate.filter(function (shelter) { return shelter.shelter._id == req.params.id; })[0];
-        if (shelUpdate != undefined) {
+        shelUpdate = common_1.SheltersToUpdate.filter(function (shelter) { return shelter.shelter._id === req.params.id; })[0];
+        if (shelUpdate) {
             for (var prop in req.body) {
-                shelUpdate.shelter[prop] = req.body[prop];
+                if (req.body.hasOwnProperty(prop)) {
+                    shelUpdate.shelter[prop] = req.body[prop];
+                }
             }
             shelUpdate.watchDog = new Date(Date.now());
         }
@@ -650,31 +664,35 @@ exports.appRoute.route("/shelters/:id")
         updateShelter(req.params.id, req.body, shelUpdate && shelUpdate.isNew)
             .then(function () {
             res.status(200).send(true);
-        })["catch"](function (err) {
+        })
+            .catch(function (err) {
             common_2.logger(err);
             res.status(500).send(err);
         });
     }
-})["delete"](function (req, res) {
+})
+    .delete(function (req, res) {
     deleteShelter(req.params.id)
         .then(function () {
         res.status(200).send(true);
-    })["catch"](function (err) {
+    })
+        .catch(function (err) {
         res.status(500).send(err);
     });
 });
-exports.appRoute.route("/shelters/confirm/:id")
+exports.appRoute.route('/shelters/confirm/:id')
     .put(function (req, res) {
     try {
-        if (req.body.confirm != undefined) {
-            var shelToConfirm_1 = common_1.SheltersToUpdate.filter(function (shelter) { return shelter.shelter._id == req.params.id; })[0];
-            if (shelToConfirm_1 != undefined) {
+        if (req.body.confirm !== undefined) {
+            var shelToConfirm_1 = common_1.SheltersToUpdate.filter(function (shelter) { return shelter.shelter._id === req.params.id; })[0];
+            if (shelToConfirm_1) {
                 if (req.body.confirm) {
                     confirmShelter(req.params.id)
                         .then(function (ris) { return files_api_1.resolveFilesForShelter(shelToConfirm_1); })
                         .then(function (ris) {
                         res.status(200).send(true);
-                    })["catch"](function (err) {
+                    })
+                        .catch(function (err) {
                         res.status(500).send(err);
                     });
                 }
@@ -687,29 +705,24 @@ exports.appRoute.route("/shelters/confirm/:id")
                 res.status(200).send(true);
             }
         }
-        else if (req.body["new"] != undefined) {
-            if (req.body["new"]) {
-                var id = new common_2.ObjectId();
-                var newShelter = { _id: id };
-                common_1.SheltersToUpdate.push({ watchDog: new Date(Date.now()), shelter: newShelter, files: null, isNew: true });
-                res.status(200).send({ id: id });
-            }
-            else {
-                res.status(500).send({ error: "command not found" });
-            }
+        else if (req.body.new) {
+            var id = new common_2.ObjectId();
+            var newShelter = { _id: id };
+            common_1.SheltersToUpdate.push({ watchDog: new Date(Date.now()), shelter: newShelter, files: null, isNew: true });
+            res.status(200).send({ id: id });
         }
         else {
-            res.status(500).send({ error: "command not found" });
+            res.status(500).send({ error: 'command not found' });
         }
     }
     catch (e) {
-        res.status(500).send({ error: "Error Undefined" });
+        res.status(500).send({ error: 'Error Undefined' });
     }
 });
-exports.appRoute.route("/shelters/confirm/:section/:id")
+exports.appRoute.route('/shelters/confirm/:section/:id')
     .put(function (req, res) {
     try {
-        var shelUpdate = common_1.SheltersToUpdate.filter(function (obj) { return obj.shelter._id == req.params.id; });
+        var shelUpdate = common_1.SheltersToUpdate.filter(function (obj) { return obj.shelter._id === req.params.id; });
         if (shelUpdate.length > 0) {
             shelUpdate[0].shelter[req.params.section] = req.body[req.params.section];
             shelUpdate[0].watchDog = new Date(Date.now());
@@ -722,42 +735,44 @@ exports.appRoute.route("/shelters/confirm/:section/:id")
         res.status(200).send(true);
     }
     catch (e) {
-        res.status(500).send({ error: "Error Undefined" });
+        res.status(500).send({ error: 'Error Undefined' });
     }
 });
-exports.appRoute.route("/shelters/page/:pageSize")
+exports.appRoute.route('/shelters/page/:pageSize')
     .get(function (req, res) {
     try {
         queryShelPage(0, req.params.pageSize)
             .then(function (ris) {
             res.status(200).send(ris);
-        })["catch"](function (err) {
+        })
+            .catch(function (err) {
             res.status(500).send(err);
         });
     }
     catch (e) {
-        res.status(500).send({ error: "Error Undefined" });
+        res.status(500).send({ error: 'Error Undefined' });
     }
 });
-exports.appRoute.route("/shelters/page/:pageNumber/:pageSize")
+exports.appRoute.route('/shelters/page/:pageNumber/:pageSize')
     .get(function (req, res) {
     try {
         queryShelPage(req.params.pageNumber, req.params.pageSize)
             .then(function (ris) {
             res.status(200).send(ris);
-        })["catch"](function (err) {
+        })
+            .catch(function (err) {
             res.status(500).send(err);
         });
     }
     catch (e) {
-        res.status(500).send({ error: "Error Undefined" });
+        res.status(500).send({ error: 'Error Undefined' });
     }
 });
-exports.appRoute.route("/shelters/:id/:name")
+exports.appRoute.route('/shelters/:id/:name')
     .get(function (req, res) {
     try {
-        var shelUpdate = common_1.SheltersToUpdate.filter(function (obj) { return obj.shelter._id == req.params.id; });
-        if (shelUpdate.length > 0 && shelUpdate[0].shelter[req.params.name] != undefined) {
+        var shelUpdate = common_1.SheltersToUpdate.filter(function (obj) { return obj.shelter._id === req.params.id; });
+        if (shelUpdate.length > 0 && shelUpdate[0].shelter[req.params.name]) {
             shelUpdate[0].watchDog = new Date(Date.now());
             res.status(200).send(shelUpdate[0].shelter);
         }
@@ -770,19 +785,23 @@ exports.appRoute.route("/shelters/:id/:name")
                 else {
                     res.status(200).send({ _id: req.params.id });
                 }
-            })["catch"](function (err) {
+            })
+                .catch(function (err) {
                 res.status(500).send(err);
             });
         }
     }
     catch (e) {
-        res.status(500).send({ error: "Error Undefined" });
+        res.status(500).send({ error: 'Error Undefined' });
     }
-})["delete"](function (req, res) {
+})
+    .delete(function (req, res) {
     deleteService(req.params.name)
         .then(function () {
         res.status(200).send(true);
-    })["catch"](function (err) {
+    })
+        .catch(function (err) {
         res.status(500).send(err);
     });
 });
+//# sourceMappingURL=shelters.api.js.map
