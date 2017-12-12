@@ -53,8 +53,6 @@ function resolveFile(file) {
 function resolveFilesForShelter(shelter) {
     return new Promise(function (resolve, reject) {
         if (shelter.files != null) {
-            // const i = shelter.files.length;
-            // let j = 0;
             var promises_1 = [];
             shelter.files.forEach(function (file) {
                 promises_1.push(resolveFile(file));
@@ -68,20 +66,6 @@ function resolveFilesForShelter(shelter) {
                 common_1.logger(err);
                 reject(err);
             });
-            /*for (const file of shelter.files) {
-                resolveFile(file)
-                .then(() => {
-                    j++;
-                    if (j === i) {
-                        SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelter), 1);
-                        resolve();
-                    }
-                })
-                .catch(err => {
-                    logger (err);
-                    reject(err);
-                });
-            }*/
         }
         else {
             common_1.SheltersToUpdate.splice(common_1.SheltersToUpdate.indexOf(shelter), 1);
@@ -382,7 +366,7 @@ exports.fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
     if (shelUpdate && shelUpdate.length > 0) {
         var fileToDelete = void 0;
         if (shelUpdate[0].files) {
-            fileToDelete = shelUpdate[0].files.filter(function (f) { return f._id === req.params.fileid; });
+            fileToDelete = shelUpdate[0].files.filter(function (f) { return String(f._id) === req.params.fileid; });
         }
         else {
             shelUpdate[0].files = [];
@@ -423,7 +407,7 @@ exports.fileRoute.route('/shelters/file/:id')
             if (shel) {
                 var file = void 0;
                 if (shel.files) {
-                    file = shel.files.filter(function (f) { return f._id === req.params.id; })[0];
+                    file = shel.files.filter(function (f) { return String(f._id) === req.params.id; })[0];
                 }
                 else {
                     shel.files = [];

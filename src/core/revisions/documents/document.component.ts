@@ -390,40 +390,45 @@ export class BcDocRevision extends RevisionBase{
       let i=0;
       if(this.invoicesForm.dirty){
         const filesToUpdate=(<FormArray>this.invoicesForm.controls.files).controls.filter(obj=>obj.dirty);
-        for(let file of filesToUpdate){
-          if(file.dirty&&this.invalidYears.indexOf(file.value.year)==-1){
-            const updFile:IFile={
-              _id:file.value._id,
-              name:file.value.name,
-              size:file.value.size,
-              type:file.value.type,
-              value:this.getControlValue(<FormGroup>(<FormGroup>file).controls.value),
-              contentType:file.value.contentType,
-              description:this.getControlValue(<FormGroup>(<FormGroup>file).controls.description),
-              shelterId:this._id,
-              invoice_tax:this.getControlValue(<FormGroup>(<FormGroup>file).controls.invoice_tax),
-              invoice_type:file.value.invoice_type,
-              invoice_year:file.value.invoice_year,
-              contribution_type:file.value.contribution_type
-            }
-            if(<any>updFile.invoice_type!="Attività"){
-              updFile.contribution_type=null;
-            }
-            let updateSub = this.shelterService.updateFile(updFile).subscribe((val)=>{
-              if(val){
-                i++;
-                if(filesToUpdate.length==i&&confirm){
-                  this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.documents);
+        if(filesToUpdate.length>0){
+          for(let file of filesToUpdate){
+            if(file.dirty&&this.invalidYears.indexOf(file.value.year)==-1){
+              const updFile:IFile={
+                _id:file.value._id,
+                name:file.value.name,
+                size:file.value.size,
+                type:file.value.type,
+                value:this.getControlValue(<FormGroup>(<FormGroup>file).controls.value),
+                contentType:file.value.contentType,
+                description:this.getControlValue(<FormGroup>(<FormGroup>file).controls.description),
+                shelterId:this._id,
+                invoice_tax:this.getControlValue(<FormGroup>(<FormGroup>file).controls.invoice_tax),
+                invoice_type:file.value.invoice_type,
+                invoice_year:file.value.invoice_year,
+                contribution_type:file.value.contribution_type
+              }
+              if(<any>updFile.invoice_type!="Attività"){
+                updFile.contribution_type=null;
+              }
+              let updateSub = this.shelterService.updateFile(updFile).subscribe((val)=>{
+                if(val){
+                  i++;
+                  if(filesToUpdate.length==i&&confirm){
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.documents);
+                  }
                 }
-              }
-              if(updateSub!=undefined){
-                updateSub.unsubscribe();
-              }
-            });
-            this.commitToFather(updFile);
+                if(updateSub!=undefined){
+                  updateSub.unsubscribe();
+                }
+              });
+              this.commitToFather(updFile);
+            }
+          }
+        }else{
+          if(confirm){
+            this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.documents);
           }
         }
-
       }else{
         this.setDisplayError(false);
         if(confirm){

@@ -51,11 +51,7 @@ function resolveFile(file): Promise<any> {
 export function resolveFilesForShelter (shelter): Promise<any> {
     return new Promise<any>((resolve, reject) => {
         if (shelter.files != null) {
-            // const i = shelter.files.length;
-            // let j = 0;
-
             const promises = [];
-
             shelter.files.forEach(file => {
                 promises.push(resolveFile(file));
             });
@@ -69,20 +65,6 @@ export function resolveFilesForShelter (shelter): Promise<any> {
                 logger (err);
                 reject(err);
             });
-            /*for (const file of shelter.files) {
-                resolveFile(file)
-                .then(() => {
-                    j++;
-                    if (j === i) {
-                        SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelter), 1);
-                        resolve();
-                    }
-                })
-                .catch(err => {
-                    logger (err);
-                    reject(err);
-                });
-            }*/
         } else {
             SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelter), 1);
             resolve();
@@ -375,7 +357,7 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
     if (shelUpdate && shelUpdate.length > 0) {
         let fileToDelete;
         if (shelUpdate[0].files) {
-            fileToDelete = shelUpdate[0].files.filter (f => f._id === req.params.fileid);
+            fileToDelete = shelUpdate[0].files.filter (f => String(f._id) === req.params.fileid);
         } else {
             shelUpdate[0].files = [];
         }
@@ -414,7 +396,7 @@ fileRoute.route('/shelters/file/:id')
             if (shel) {
                 let file;
                 if (shel.files) {
-                    file = shel.files.filter(f => f._id === req.params.id)[0];
+                    file = shel.files.filter(f => String(f._id) === req.params.id)[0];
                 } else {
                     shel.files = [];
                 }

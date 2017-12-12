@@ -22,23 +22,23 @@ export class BcRevisions{
     localPermissions:any[];
     updateFile(file:IFile,remove?:Boolean){
         if(file.type==Enums.Files.File_Type.image){
-            this.updateFileLocal(this.images,file,remove);
+            this.images = this.updateFileLocal(this.images,file,remove);
         }else{
-            this.updateFileLocal(this.docs,file,remove);
+            this.docs = this.updateFileLocal(this.docs,file,remove);
         }
     }
 
     saveFiles(files:IFile[]){
         for(let file of files){
             if(file.type==Enums.Files.File_Type.image){
-                this.updateFileLocal(this.images,file);
+                this.images = this.updateFileLocal(this.images,file);
             }else{
-                this.updateFileLocal(this.docs,file);
+                this.docs = this.updateFileLocal(this.docs,file);
             }
         }
     }
 
-    updateFileLocal(storage:IFile[],file:IFile,remove?:Boolean):void{
+    updateFileLocal(storage:IFile[],file:IFile,remove?:Boolean):IFile[]{
         if(storage!=undefined){
             if(remove){
                 const f=storage.find(f=>f._id==file._id);
@@ -58,6 +58,7 @@ export class BcRevisions{
                 storage=[file];
             }
         }
+        return storage
     }
 
     deleteSection(section:string){
