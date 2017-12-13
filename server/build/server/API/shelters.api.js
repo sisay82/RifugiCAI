@@ -3,15 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 var enums_1 = require("../../src/app/shared/types/enums");
 var Auth_Permissions = enums_1.Enums.Auth_Permissions;
-var common_1 = require("../common");
+var common_1 = require("../tools/common");
 var mongoose = require("mongoose");
 var schema_1 = require("../../src/app/shared/types/schema");
-var common_2 = require("../common");
+var common_2 = require("../tools/common");
 var auth_api_1 = require("./auth.api");
 var pdf_api_1 = require("./pdf.api");
 var files_api_1 = require("./files.api");
-exports.Services = mongoose.model('Services', schema_1.Schema.serviceSchema);
-exports.Shelters = mongoose.model('Shelters', schema_1.Schema.shelterSchema);
+var Services = mongoose.model('Services', schema_1.Schema.serviceSchema);
+var Shelters = mongoose.model('Shelters', schema_1.Schema.shelterSchema);
 function getRegionFilter(region) {
     if (region && region.length === 2) {
         var regionQuery = { 'idCai': new RegExp('^[0-9-]{2,2}' + region + '[0-9-]{4,6}') };
@@ -48,7 +48,7 @@ function getAllIdsHead(regions, section) {
         }
     }
     return new Promise(function (resolve, reject) {
-        exports.Shelters.find(query, 'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality')
+        Shelters.find(query, 'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality')
             .exec(function (err, ris) {
             if (err) {
                 common_2.logger(err);
@@ -62,7 +62,7 @@ function getAllIdsHead(regions, section) {
 }
 function queryShelPage(pageNumber, pageSize) {
     return new Promise(function (resolve, reject) {
-        exports.Shelters.find({}, 'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality')
+        Shelters.find({}, 'name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality')
             .skip(Number(pageNumber * pageSize)).limit(Number(pageSize)).exec(function (err, ris) {
             if (err) {
                 reject(err);
@@ -75,7 +75,7 @@ function queryShelPage(pageNumber, pageSize) {
 }
 function queryShelById(id) {
     return new Promise(function (resolve, reject) {
-        exports.Shelters.findById(id).populate('services').exec(function (err, ris) {
+        Shelters.findById(id).populate('services').exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -87,7 +87,7 @@ function queryShelById(id) {
 }
 function queryShelSectionById(id, section) {
     return new Promise(function (resolve, reject) {
-        exports.Shelters.findOne({ _id: id }, 'name ' + section).populate('services').exec(function (err, ris) {
+        Shelters.findOne({ _id: id }, 'name ' + section).populate('services').exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -121,7 +121,7 @@ function queryShelByRegion(region, regionFilters, sectionFilter) {
                 query.$and.push(section);
             }
         }
-        exports.Shelters.count(query).exec(function (err, ris) {
+        Shelters.count(query).exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -152,7 +152,7 @@ function queryShelAroundPoint(point, range, regionFilters, sectionFilter) {
                 query.$and.push(section);
             }
         }
-        exports.Shelters.find(query, "name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude\n             geoData.location.municipality geoData.location.region geoData.location.province")
+        Shelters.find(query, "name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude\n             geoData.location.municipality geoData.location.region geoData.location.province")
             .exec(function (err, ris) {
             if (err) {
                 reject(err);
@@ -165,7 +165,7 @@ function queryShelAroundPoint(point, range, regionFilters, sectionFilter) {
 }
 function queryServById(id) {
     return new Promise(function (resolve, reject) {
-        exports.Services.findById(id, function (err, serv) {
+        Services.findById(id, function (err, serv) {
             if (err) {
                 reject(err);
             }
@@ -177,7 +177,7 @@ function queryServById(id) {
 }
 function queryServWithParams(params) {
     return new Promise(function (resolve, reject) {
-        exports.Services.find(params).populate('services').exec(function (err, ris) {
+        Services.find(params).populate('services').exec(function (err, ris) {
             if (err) {
                 reject(err);
             }
@@ -191,7 +191,7 @@ function insertNewShelter(params) {
     return new Promise(function (resolve, reject) {
         var services = params.services;
         params.services = [];
-        var shelter = new exports.Shelters(params);
+        var shelter = new Shelters(params);
         shelter.save(function (err, shel) {
             if (err) {
                 reject(err);
@@ -222,7 +222,7 @@ function insertNewShelter(params) {
 }
 function insertNewService(params) {
     return new Promise(function (resolve, reject) {
-        var shelter = new exports.Services(params);
+        var shelter = new Services(params);
         shelter.save(function (err, serv) {
             if (err) {
                 reject(err);
@@ -273,7 +273,7 @@ function checkPermissionAPI(req, res, next) {
 function deleteShelter(id) {
     return new Promise(function (resolve, reject) {
         if (id) {
-            exports.Shelters.remove({ _id: id }, function (err) {
+            Shelters.remove({ _id: id }, function (err) {
                 if (err) {
                     reject(err);
                 }
@@ -419,7 +419,7 @@ function updateShelter(id, params, isNew) {
             if (!params.updateDate) {
                 params.updateDate = new Date(Date.now());
             }
-            exports.Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
+            Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
                 if (err) {
                     common_2.logger(err);
                     reject(err);
@@ -463,7 +463,7 @@ function confirmShelter(id) {
 }
 function addOpening(id, opening) {
     return new Promise(function (resolve, reject) {
-        exports.Shelters.findById(id, 'openingTime', function (err, shelter) {
+        Shelters.findById(id, 'openingTime', function (err, shelter) {
             if (err) {
                 reject(err);
             }
@@ -483,7 +483,7 @@ function addOpening(id, opening) {
 }
 function updateService(id, params) {
     return new Promise(function (resolve, reject) {
-        exports.Services.update({ _id: id }, params, { upsert: true }, function (err) {
+        Services.update({ _id: id }, params, { upsert: true }, function (err) {
             if (err) {
                 reject(err);
             }
@@ -511,7 +511,7 @@ function deleteShelterService(shelterId, serviceId) {
 function deleteService(id) {
     return new Promise(function (resolve, reject) {
         if (id) {
-            exports.Services.remove({ _id: id }, function (err) {
+            Services.remove({ _id: id }, function (err) {
                 if (err) {
                     reject(err);
                 }

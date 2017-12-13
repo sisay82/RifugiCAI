@@ -15,11 +15,11 @@ import {
     IShelterExtended,
     IFileExtended,
     logger
-} from './common';
-import { OUT_DIR } from './constants';
+} from './tools/common';
+import { OUT_DIR } from './tools/constants';
 import {fileRoute} from './API/files.api';
 import {appRoute} from './API/shelters.api';
-import {authRoute, DISABLE_AUTH, userList} from './API/auth.api';
+import {authRoute, getUserData} from './API/auth.api';
 const MongoStore = require('connect-mongo')(session);
 
 (<any>mongoose.Promise) = global.Promise;
@@ -59,18 +59,14 @@ app.use('/api', function(req , res, next) {
         res.writeHead(200, headers);
         res.end();
     } else {
-        if (DISABLE_AUTH) {
-            req.body.user = {code: '9999999', role: Auth_Permissions.User_Type.superUser};
+        getUserData(req.session.id)
+        .then(userData => {
+            req.body.user = userData;
             next();
-        } else {
-            const user = userList.find(obj => obj.id === req.session.id);
-            if (user && user.checked && user.role && user.code) {
-                req.body.user = user;
-                next();
-            } else {
-                res.status(500).send({error: 'Unauthenticated user'});
-            }
-        }
+        })
+        .catch(err => {
+            res.status(500).send({error: err});
+        });
     }
 }, fileRoute, appRoute);
 

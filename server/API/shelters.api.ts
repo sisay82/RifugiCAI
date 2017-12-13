@@ -2,7 +2,7 @@
 import * as express from 'express';
 import { Enums } from '../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { SheltersToUpdate, IShelterExtended, IServiceExtended } from '../common';
+import { SheltersToUpdate, IShelterExtended, IServiceExtended } from '../tools/common';
 import * as mongoose from 'mongoose';
 import { IOpening } from '../../src/app/shared/types/interfaces';
 import { Schema } from '../../src/app/shared/types/schema';
@@ -13,13 +13,13 @@ import {
     toTitleCase,
     ObjectId,
     getPropertiesNumber
-} from '../common';
+} from '../tools/common';
 import {DISABLE_AUTH} from './auth.api';
 import { createContributionPDF } from './pdf.api';
 import {resolveFilesForShelter} from './files.api';
 
-export const Services = mongoose.model<IServiceExtended>('Services', Schema.serviceSchema);
-export const Shelters = mongoose.model<IShelterExtended>('Shelters', Schema.shelterSchema);
+const Services = mongoose.model<IServiceExtended>('Services', Schema.serviceSchema);
+const Shelters = mongoose.model<IShelterExtended>('Shelters', Schema.shelterSchema);
 
 function getRegionFilter (region: String) {
     if (region && region.length === 2) {

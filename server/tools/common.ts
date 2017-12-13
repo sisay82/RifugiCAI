@@ -1,9 +1,8 @@
-import { IShelter, IService, IFile } from '../src/app/shared/types/interfaces';
+import { IShelter, IService, IFile } from '../../src/app/shared/types/interfaces';
 import * as mongoose from 'mongoose';
 import * as path from 'path';
-import { Enums } from '../src/app/shared/types/enums';
+import { Enums } from '../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
-import {DISABLE_AUTH} from './API/auth.api';
 import request = require('request');
 
 export interface IServiceExtended extends IService, mongoose.Document {
@@ -27,7 +26,7 @@ export interface UpdatingShelter {
 
 export interface UserData {
     id: String;
-    resource: String;
+    resource?: String;
     ticket?: String;
     uuid?: String;
     code?: String;
@@ -40,12 +39,13 @@ export const SheltersToUpdate: UpdatingShelter[] = [];
 export const ObjectId = mongoose.Types.ObjectId;
 
 const DISABLE_LOG = false;
-const maxTime = 1000 * 60 * 10;
+const MAX_TIME = 1000 * 60 * 10;
+const TIMEOUT_REQUEST = 1000 * 10;
 
 function cleanSheltersToUpdate() {
     SheltersToUpdate.forEach(obj => {
         const diff = Date.now() - obj.watchDog.valueOf();
-        if (diff > maxTime) {
+        if (diff > MAX_TIME) {
             SheltersToUpdate.splice(SheltersToUpdate.indexOf(obj), 1);
         }
     });
@@ -85,7 +85,8 @@ export function checkUserData(user: UserData): {section: String, regions: any[]}
         return null;
     }
 }
-export function performRequestGET(url: String, authorization?: String): Promise<{response: any, body: any}> {
+
+export function performRequestGET(url: String, authorization?: String, count: number = 0): Promise<{response: any, body: any}> {
     return new Promise<{response: any, body: any}>((resolve, reject) => {
         const headers = authorization ? {'Authorization': authorization} : null;
 
@@ -93,10 +94,16 @@ export function performRequestGET(url: String, authorization?: String): Promise<
             url: url,
             method: 'GET',
             headers: headers,
-            timeout: 1000 * 10
+            timeout: TIMEOUT_REQUEST
         }, function(err, response, body) {
             if (err) {
-                reject(err);
+                if (String(err.code) === 'ESOCKETTIMEDOUT' && count < 3) {
+                    return performRequestGET(url, authorization, ++count)
+                    .then(value => resolve(value))
+                    .catch(e => reject(e));
+                } else {
+                    reject(err);
+                }
             } else {
                 resolve({response: response, body: body});
             }
@@ -105,7 +112,7 @@ export function performRequestGET(url: String, authorization?: String): Promise<
 }
 
 export function logger(log?: any, ...other) {
-    if (!DISABLE_AUTH) {
+    if (!DISABLE_LOG) {
         console.log(log, ...other);
     }
 }

@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-export const OUT_DIR = path.join(__dirname, '../../../dist');
+export const OUT_DIR = path.join(__dirname, '../../../../dist');
 export const MONTHS = [
     'gennaio',
     'febbraio',

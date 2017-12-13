@@ -1,5 +1,5 @@
-import { IShelterExtended } from '../common';
-import { OUT_DIR, MONTHS } from '../constants';
+import { IShelterExtended } from '../tools/common';
+import { OUT_DIR, MONTHS } from '../tools/constants';
 import * as path from 'path';
 import * as pdf from 'html-pdf';
 import {countContributionFilesByShelter, insertNewFile} from './files.api';

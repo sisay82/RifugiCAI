@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
-exports.OUT_DIR = path.join(__dirname, '../../../dist');
+exports.OUT_DIR = path.join(__dirname, '../../../../dist');
 exports.MONTHS = [
     'gennaio',
     'febbraio',

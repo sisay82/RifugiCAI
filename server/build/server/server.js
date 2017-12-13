@@ -4,9 +4,7 @@ var mongoose = require("mongoose");
 var session = require("express-session");
 var bodyParser = require("body-parser");
 var express = require("express");
-var enums_1 = require("../src/app/shared/types/enums");
-var Auth_Permissions = enums_1.Enums.Auth_Permissions;
-var common_1 = require("./common");
+var common_1 = require("./tools/common");
 var files_api_1 = require("./API/files.api");
 var shelters_api_1 = require("./API/shelters.api");
 var auth_api_1 = require("./API/auth.api");
@@ -45,20 +43,14 @@ app.use('/api', function (req, res, next) {
         res.end();
     }
     else {
-        if (auth_api_1.DISABLE_AUTH) {
-            req.body.user = { code: '9999999', role: Auth_Permissions.User_Type.superUser };
+        auth_api_1.getUserData(req.session.id)
+            .then(function (userData) {
+            req.body.user = userData;
             next();
-        }
-        else {
-            var user = auth_api_1.userList.find(function (obj) { return obj.id === req.session.id; });
-            if (user && user.checked && user.role && user.code) {
-                req.body.user = user;
-                next();
-            }
-            else {
-                res.status(500).send({ error: 'Unauthenticated user' });
-            }
-        }
+        })
+            .catch(function (err) {
+            res.status(500).send({ error: err });
+        });
     }
 }, files_api_1.fileRoute, shelters_api_1.appRoute);
 app.use('/', function (req, res, next) {

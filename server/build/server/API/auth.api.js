@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var enums_1 = require("../../src/app/shared/types/enums");
 var express = require("express");
 var Auth_Permissions = enums_1.Enums.Auth_Permissions;
-var common_1 = require("../common");
-var constants_1 = require("../constants");
+var common_1 = require("../tools/common");
+var constants_1 = require("../tools/constants");
 var server_1 = require("../server");
 var xmldom = require("xmldom");
 var path = require("path");
@@ -15,7 +15,31 @@ var regionalRoleName = ['PGR'];
 var sectionalRoleName = ['ROLE_MEMBERS_VIEW', 'ROLE_MEMBERSHIP' /*,'Responsabile Esterno Sezione','Operatore Sezione Esteso'*/];
 var casBaseUrl = 'https://accesso.cai.it';
 var authUrl = 'https://services.cai.it/cai-integration-ws/secured/users/';
-exports.userList = [];
+var userList = [];
+function getUserData(sessionID) {
+    return new Promise(function (resolve, reject) {
+        if (exports.DISABLE_AUTH) {
+            var user = {
+                id: sessionID,
+                redirections: 0,
+                checked: true,
+                code: '9999999',
+                role: Auth_Permissions.User_Type.superUser
+            };
+            resolve(user);
+        }
+        else {
+            var user = userList.find(function (obj) { return obj.id === sessionID; });
+            if (user && user.checked && user.role && user.code) {
+                resolve(user);
+            }
+            else {
+                reject({ error: 'Unauthorized User' });
+            }
+        }
+    });
+}
+exports.getUserData = getUserData;
 function getChildByName(node, name) {
     for (var i = 0; i < node.childNodes.length; i++) {
         if (node.childNodes.item(i).localName === name) {
@@ -202,10 +226,10 @@ exports.authRoute.get('/logout', function (req, res) {
         res.redirect('/list');
     }
     else {
-        var user = exports.userList.findIndex(function (obj) { return obj.id === req.session.id; });
+        var user = userList.findIndex(function (obj) { return obj.id === req.session.id; });
         common_1.logger('Logging out');
         if (user > -1) {
-            exports.userList.splice(user, 1);
+            userList.splice(user, 1);
         }
         res.redirect(casBaseUrl + '/cai-cas/logout');
     }
@@ -215,14 +239,14 @@ exports.authRoute.get('/j_spring_cas_security_check', function (req, res) {
         res.redirect('/list');
     }
     else {
-        var user = exports.userList.find(function (obj) { return obj.id === req.session.id; });
+        var user = userList.find(function (obj) { return obj.id === req.session.id; });
         if (user) {
             user.ticket = req.query.ticket;
             res.redirect(user.resource.toString());
         }
         else {
             common_1.logger('Invalid user request');
-            exports.userList.push({ id: req.session.id, resource: server_1.APP_BASE_URL, redirections: 0, checked: false });
+            userList.push({ id: req.session.id, resource: server_1.APP_BASE_URL, redirections: 0, checked: false });
             res.redirect(casBaseUrl + '/cai-cas/login?service=' + server_1.PARSED_URL);
         }
     }
@@ -232,7 +256,7 @@ exports.authRoute.get('/user', function (req, res, next) {
         res.status(200).send({ code: '9999999', role: Auth_Permissions.User_Type.superUser });
     }
     else {
-        var user_1 = exports.userList.find(function (obj) { return obj.id === req.session.id; });
+        var user_1 = userList.find(function (obj) { return obj.id === req.session.id; });
         common_1.logger('User permissions request (UUID): ', user_1.uuid);
         if (user_1 && user_1.uuid) {
             if (!user_1.code || !user_1.role) {
@@ -258,7 +282,7 @@ exports.authRoute.get('/user', function (req, res, next) {
         }
         else {
             common_1.logger('User not logged');
-            exports.userList.push({ id: req.session.id, resource: server_1.APP_BASE_URL + '/list', redirections: 0, checked: false });
+            userList.push({ id: req.session.id, resource: server_1.APP_BASE_URL + '/list', redirections: 0, checked: false });
             res.redirect(casBaseUrl + '/cai-cas/login?service=' + server_1.PARSED_URL);
         }
     }
@@ -280,10 +304,10 @@ exports.authRoute.get('/*', function (req, res) {
         res.sendFile(path.join(constants_1.OUT_DIR + '/index.html'));
     }
     else {
-        var user_2 = exports.userList.find(function (obj) { return obj.id === req.session.id; });
+        var user_2 = userList.find(function (obj) { return obj.id === req.session.id; });
         if (!user_2) {
             common_1.logger('User not logged');
-            exports.userList.push({ id: req.session.id, resource: req.path, redirections: 0, checked: false });
+            userList.push({ id: req.session.id, resource: req.path, redirections: 0, checked: false });
             res.redirect(casBaseUrl + '/cai-cas/login?service=' + server_1.PARSED_URL);
         }
         else {
@@ -324,8 +348,8 @@ exports.authRoute.get('/*', function (req, res) {
                     user_2.checked = false;
                     user_2.resource = req.path;
                     if (user_2.redirections >= 3) {
-                        var index = exports.userList.findIndex(function (obj) { return obj.id === user_2.id; });
-                        exports.userList.splice(index, 1);
+                        var index = userList.findIndex(function (obj) { return obj.id === user_2.id; });
+                        userList.splice(index, 1);
                         res.status(500).send("Error, try logout <a href='" + casBaseUrl + '/cai-cas/logout' + "'>here</a> before try again.\n                        <br>Error info:<br><br>" + err);
                     }
                     else {
@@ -338,8 +362,8 @@ exports.authRoute.get('/*', function (req, res) {
                 user_2.resource = req.path;
                 user_2.redirections++;
                 if (user_2.redirections >= 3) {
-                    var index = exports.userList.findIndex(function (obj) { return obj.id === user_2.id; });
-                    exports.userList.splice(index, 1);
+                    var index = userList.findIndex(function (obj) { return obj.id === user_2.id; });
+                    userList.splice(index, 1);
                     res.status(500).send('Error, try logout <a href="' + casBaseUrl + '/cai-cas/logout' + '">here</a> before try again');
                 }
                 else {

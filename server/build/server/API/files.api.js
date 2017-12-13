@@ -5,9 +5,10 @@ var enums_1 = require("../../src/app/shared/types/enums");
 var Auth_Permissions = enums_1.Enums.Auth_Permissions;
 var Files_Enum = enums_1.Enums.Files;
 var multer = require("multer");
-var common_1 = require("../common");
+var common_1 = require("../tools/common");
 var mongoose = require("mongoose");
 var schema_1 = require("../../src/app/shared/types/schema");
+var auth_api_1 = require("./auth.api");
 var Files = mongoose.model('Files', schema_1.Schema.fileSchema);
 var maxImages = 10;
 function countContributionFilesByShelter(shelid) {
@@ -37,17 +38,40 @@ function insertNewFile(file) {
     });
 }
 exports.insertNewFile = insertNewFile;
-function resolveFile(file) {
-    if (file.remove) {
-        return deleteFile(file._id);
-    }
-    else {
-        if (!file.new && file.update) {
-            return updateFile(file._id, file);
+function isValidFile(file) {
+    if (file.type === enums_1.Enums.Files.File_Type.invoice) {
+        if (file.value &&
+            file.invoice_year &&
+            file.invoice_tax &&
+            file.invoice_type &&
+            (enums_1.Enums.Invoice_Type[file.invoice_type] !== enums_1.Enums.Invoice_Type.Attività ||
+                file.contribution_type)) {
+            return true;
         }
         else {
-            return insertNewFile(file);
+            return false;
         }
+    }
+    else {
+        return true;
+    }
+}
+function resolveFile(file) {
+    if (isValidFile(file)) {
+        if (file.remove) {
+            return deleteFile(file._id);
+        }
+        else {
+            if (!file.new && file.update) {
+                return updateFile(file._id, file);
+            }
+            else {
+                return insertNewFile(file);
+            }
+        }
+    }
+    else {
+        return Promise.resolve();
     }
 }
 function resolveFilesForShelter(shelter) {
@@ -183,27 +207,32 @@ function deleteFile(id) {
     });
 }
 function checkPermissionAPI(req, res, next) {
-    var user = req.body.user;
-    if (user) {
-        if (req.method === 'GET') {
-            next();
-        }
-        else {
-            if (req.method === 'DELETE' || req.method === 'POST' || req.method === 'PUT') {
-                if (Auth_Permissions.Revision.DocRevisionPermission.find(function (obj) { return obj === user.role; })) {
-                    next();
-                }
-                else {
-                    res.status(500).send({ error: 'Unauthorized' });
-                }
-            }
-            else {
-                res.status(501).send({ error: 'Not Implemented method ' + req.method });
-            }
-        }
+    if (auth_api_1.DISABLE_AUTH) {
+        next();
     }
     else {
-        res.status(500).send({ error: 'Error request' });
+        var user_1 = req.body.user;
+        if (user_1) {
+            if (req.method === 'GET') {
+                next();
+            }
+            else {
+                if (req.method === 'DELETE' || req.method === 'POST' || req.method === 'PUT') {
+                    if (Auth_Permissions.Revision.DocRevisionPermission.find(function (obj) { return obj === user_1.role; })) {
+                        next();
+                    }
+                    else {
+                        res.status(500).send({ error: 'Unauthorized' });
+                    }
+                }
+                else {
+                    res.status(501).send({ error: 'Not Implemented method ' + req.method });
+                }
+            }
+        }
+        else {
+            res.status(500).send({ error: 'Error request' });
+        }
     }
 }
 exports.fileRoute = express.Router();

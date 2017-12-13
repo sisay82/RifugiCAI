@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose = require("mongoose");
-var enums_1 = require("../src/app/shared/types/enums");
+var enums_1 = require("../../src/app/shared/types/enums");
 var Auth_Permissions = enums_1.Enums.Auth_Permissions;
-var auth_api_1 = require("./API/auth.api");
 var request = require("request");
 exports.SheltersToUpdate = [];
 exports.ObjectId = mongoose.Types.ObjectId;
@@ -50,9 +49,9 @@ function checkUserData(user) {
     }
 }
 exports.checkUserData = checkUserData;
-function performRequestGET(url, authorization) {
+function performRequestGET(url, authorization, count) {
+    if (count === void 0) { count = 0; }
     return new Promise(function (resolve, reject) {
-        var time = Date.now();
         var headers = authorization ? { 'Authorization': authorization } : null;
         request.get({
             url: url,
@@ -60,9 +59,15 @@ function performRequestGET(url, authorization) {
             headers: headers,
             timeout: 1000 * 10
         }, function (err, response, body) {
-            console.log('GETRESPONSETIME', Date.now() - time);
             if (err) {
-                reject(err);
+                if (String(err.code) === 'ESOCKETTIMEDOUT' && count < 3) {
+                    return performRequestGET(url, authorization, ++count)
+                        .then(function (value) { return resolve(value); })
+                        .catch(function (e) { return reject(e); });
+                }
+                else {
+                    reject(err);
+                }
             }
             else {
                 resolve({ response: response, body: body });
@@ -76,7 +81,7 @@ function logger(log) {
     for (var _i = 1; _i < arguments.length; _i++) {
         other[_i - 1] = arguments[_i];
     }
-    if (!auth_api_1.DISABLE_AUTH) {
+    if (!DISABLE_LOG) {
         console.log.apply(console, [log].concat(other));
     }
 }

@@ -1,8 +1,8 @@
 import { Enums } from '../../src/app/shared/types/enums';
 import * as express from 'express';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { logger, UserData, performRequestGET } from '../common';
-import { OUT_DIR } from '../constants';
+import { logger, UserData, performRequestGET } from '../tools/common';
+import { OUT_DIR } from '../tools/constants';
 import {PARSED_URL, APP_BASE_URL} from '../server';
 import xmldom = require('xmldom');
 import * as path from 'path';
@@ -15,7 +15,29 @@ const regionalRoleName: String[] = ['PGR'];
 const sectionalRoleName: String[] = ['ROLE_MEMBERS_VIEW', 'ROLE_MEMBERSHIP'/*,'Responsabile Esterno Sezione','Operatore Sezione Esteso'*/];
 const casBaseUrl = 'https://accesso.cai.it';
 const authUrl = 'https://services.cai.it/cai-integration-ws/secured/users/';
-export const userList: UserData[] = [];
+const userList: UserData[] = [];
+
+export function getUserData(sessionID: string): Promise<UserData> {
+    return new Promise<UserData>((resolve, reject) => {
+        if (DISABLE_AUTH) {
+            const user: UserData = {
+                id: sessionID,
+                redirections: 0,
+                checked: true,
+                code: '9999999',
+                role: Auth_Permissions.User_Type.superUser
+            };
+            resolve(user);
+        } else {
+            const user = userList.find(obj => obj.id === sessionID);
+            if (user && user.checked && user.role && user.code) {
+                resolve(user);
+            } else {
+                reject({error: 'Unauthorized User'});
+            }
+        }
+    });
+}
 
 function getChildByName(node: Node, name: String): Node {
     for (let i = 0; i < node.childNodes.length; i++) {

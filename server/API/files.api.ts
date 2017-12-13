@@ -3,10 +3,11 @@ import { Enums } from '../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import Files_Enum = Enums.Files;
 import multer = require('multer');
-import { SheltersToUpdate, IFileExtended, ObjectId, UpdatingShelter, logger } from '../common';
+import { SheltersToUpdate, IFileExtended, ObjectId, UpdatingShelter, logger } from '../tools/common';
 import * as mongoose from 'mongoose';
 import { IFile } from '../../src/app/shared/types/interfaces';
 import { Schema } from '../../src/app/shared/types/schema';
+import {DISABLE_AUTH} from './auth.api';
 
 const Files = mongoose.model<IFileExtended>('Files', Schema.fileSchema);
 const maxImages = 10;
@@ -36,15 +37,39 @@ export function insertNewFile(file: IFileExtended): Promise<IFileExtended> {
     });
 }
 
-function resolveFile(file): Promise<any> {
-    if (file.remove) {
-        return deleteFile(file._id);
-    } else {
-        if (!file.new && file.update) {
-            return updateFile(file._id, file);
+function isValidFile(file): boolean {
+    if (file.type === Enums.Files.File_Type.invoice) {
+        if (file.value &&
+            file.invoice_year &&
+            file.invoice_tax &&
+            file.invoice_type &&
+            (
+                Enums.Invoice_Type[file.invoice_type] !== <any>Enums.Invoice_Type.Attività ||
+                file.contribution_type
+            )
+        ) {
+            return true;
         } else {
-            return insertNewFile(file);
+            return false;
         }
+    } else {
+        return true;
+    }
+}
+
+function resolveFile(file): Promise<any> {
+    if (isValidFile(file)) {
+        if (file.remove) {
+            return deleteFile(file._id);
+        } else {
+            if (!file.new && file.update) {
+                return updateFile(file._id, file);
+            } else {
+                return insertNewFile(file);
+            }
+        }
+    } else {
+        return Promise.resolve();
     }
 }
 
@@ -186,23 +211,27 @@ function deleteFile(id): Promise<boolean> {
 }
 
 function checkPermissionAPI(req, res, next) {
-    const user = req.body.user;
-    if (user) {
-        if (req.method === 'GET') {
-           next();
-        } else {
-            if (req.method === 'DELETE' || req.method === 'POST' || req.method === 'PUT') {
-                if (Auth_Permissions.Revision.DocRevisionPermission.find(obj => obj === user.role)) {
-                    next();
-                } else {
-                    res.status(500).send({error: 'Unauthorized'});
-                }
-            } else {
-                res.status(501).send({error: 'Not Implemented method ' + req.method});
-            }
-        }
+    if (DISABLE_AUTH) {
+        next();
     } else {
-        res.status(500).send({error: 'Error request'});
+        const user = req.body.user;
+        if (user) {
+            if (req.method === 'GET') {
+            next();
+            } else {
+                if (req.method === 'DELETE' || req.method === 'POST' || req.method === 'PUT') {
+                    if (Auth_Permissions.Revision.DocRevisionPermission.find(obj => obj === user.role)) {
+                        next();
+                    } else {
+                        res.status(500).send({error: 'Unauthorized'});
+                    }
+                } else {
+                    res.status(501).send({error: 'Not Implemented method ' + req.method});
+                }
+            }
+        } else {
+            res.status(500).send({error: 'Error request'});
+        }
     }
 }
 
