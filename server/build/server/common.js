@@ -4,6 +4,7 @@ var mongoose = require("mongoose");
 var enums_1 = require("../src/app/shared/types/enums");
 var Auth_Permissions = enums_1.Enums.Auth_Permissions;
 var auth_api_1 = require("./API/auth.api");
+var request = require("request");
 exports.SheltersToUpdate = [];
 exports.ObjectId = mongoose.Types.ObjectId;
 var DISABLE_LOG = false;
@@ -49,6 +50,27 @@ function checkUserData(user) {
     }
 }
 exports.checkUserData = checkUserData;
+function performRequestGET(url, authorization) {
+    return new Promise(function (resolve, reject) {
+        var time = Date.now();
+        var headers = authorization ? { 'Authorization': authorization } : null;
+        request.get({
+            url: url,
+            method: 'GET',
+            headers: headers,
+            timeout: 1000 * 10
+        }, function (err, response, body) {
+            console.log('GETRESPONSETIME', Date.now() - time);
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve({ response: response, body: body });
+            }
+        });
+    });
+}
+exports.performRequestGET = performRequestGET;
 function logger(log) {
     var other = [];
     for (var _i = 1; _i < arguments.length; _i++) {

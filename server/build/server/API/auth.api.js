@@ -5,7 +5,6 @@ var express = require("express");
 var Auth_Permissions = enums_1.Enums.Auth_Permissions;
 var common_1 = require("../common");
 var constants_1 = require("../constants");
-var request = require("request");
 var server_1 = require("../server");
 var xmldom = require("xmldom");
 var path = require("path");
@@ -125,15 +124,10 @@ function checkUserPromise(uuid) {
             resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });
         }
         else {
-            request.get({
-                url: authUrl + uuid + '/full',
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc='
-                },
-            }, function (err, response, body) {
+            common_1.performRequestGET(authUrl + uuid + '/full', 'Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc=')
+                .then(function (value) {
                 try {
-                    var data = JSON.parse(body);
+                    var data = JSON.parse(value.body);
                     var user = getUserPermissions(data);
                     if (user.role) {
                         if (user.code) {
@@ -150,6 +144,10 @@ function checkUserPromise(uuid) {
                 catch (e) {
                     reject(e);
                 }
+            })
+                .catch(function (err) {
+                common_1.logger(err);
+                reject(err);
             });
         }
     });
@@ -160,43 +158,40 @@ function validationPromise(ticket) {
             resolve(null);
         }
         else {
-            request.get({
-                url: casBaseUrl + '/cai-cas/serviceValidate?service=' + server_1.PARSED_URL + '&ticket=' + ticket,
-                method: 'GET'
-            }, function (err, response, body) {
-                if (err) {
-                    common_1.logger('Error in CAS request: ' + err);
-                    reject(err);
-                }
-                else {
-                    var parser = new DOMParser({
-                        locator: {},
-                        errorHandler: {
-                            warning: function (w) {
-                                reject(w);
-                            }
+            var url = casBaseUrl + '/cai-cas/serviceValidate?service=' + server_1.PARSED_URL + '&ticket=' + ticket;
+            common_1.performRequestGET(url)
+                .then(function (value) {
+                var parser = new DOMParser({
+                    locator: {},
+                    errorHandler: {
+                        warning: function (w) {
+                            reject(w);
                         }
-                    });
-                    var el = parser.parseFromString(body, 'text/xml');
-                    if (el) {
-                        var doc = el.firstChild;
-                        var res = false;
-                        var user = void 0;
-                        if (getChildByName(el, 'authenticationSuccess')) {
-                            res = true;
-                            user = getChildByName(el, 'uuid').textContent;
-                        }
-                        if (res) {
-                            resolve(user);
-                        }
-                        else {
-                            reject({ error: 'Authentication error' });
-                        }
+                    }
+                });
+                var el = parser.parseFromString(value.body, 'text/xml');
+                if (el) {
+                    var doc = el.firstChild;
+                    var res = false;
+                    var user = void 0;
+                    if (getChildByName(el, 'authenticationSuccess')) {
+                        res = true;
+                        user = getChildByName(el, 'uuid').textContent;
+                    }
+                    if (res) {
+                        resolve(user);
                     }
                     else {
-                        reject({ error: 'Document parsing error' });
+                        reject({ error: 'Authentication error' });
                     }
                 }
+                else {
+                    reject({ error: 'Document parsing error' });
+                }
+            })
+                .catch(function (err) {
+                common_1.logger(err);
+                reject(err);
             });
         }
     });

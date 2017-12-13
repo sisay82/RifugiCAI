@@ -4,6 +4,8 @@ import * as path from 'path';
 import { Enums } from '../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import {DISABLE_AUTH} from './API/auth.api';
+import request = require('request');
+
 export interface IServiceExtended extends IService, mongoose.Document {
     _id: String;
 }
@@ -82,6 +84,24 @@ export function checkUserData(user: UserData): {section: String, regions: any[]}
     } else {
         return null;
     }
+}
+export function performRequestGET(url: String, authorization?: String): Promise<{response: any, body: any}> {
+    return new Promise<{response: any, body: any}>((resolve, reject) => {
+        const headers = authorization ? {'Authorization': authorization} : null;
+
+        request.get({
+            url: url,
+            method: 'GET',
+            headers: headers,
+            timeout: 1000 * 10
+        }, function(err, response, body) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve({response: response, body: body});
+            }
+        });
+    });
 }
 
 export function logger(log?: any, ...other) {

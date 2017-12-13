@@ -42,9 +42,9 @@ function getPDFName(year: Number, type: Enums.Contribution_Type, num: Number): S
     return  year + '_' + type + '_' + num + '.pdf';
 }
 
-function getBufferFromPDF(fileIn: pdf.CreateResult): Promise<Buffer>{
+function getBufferFromPDF(fileIn: pdf.CreateResult): Promise<Buffer> {
     return new Promise<Buffer>((resolve, reject) => {
-        fileIn.toBuffer(function(err, buff){
+        fileIn.toBuffer(function(err, buff) {
             if (err) {
                 reject(err);
             } else {
@@ -58,7 +58,7 @@ function writePDFtoMongo(fileIn: pdf.CreateResult, shelId: String, value: Number
 : Promise<{name: String, id: any}> {
     return new Promise<{name: String, id: any}>((resolve, reject) => {
        getBufferFromPDF(fileIn)
-       .then(buff=>{
+       .then(buff => {
             const file = {
                 size: buff.length,
                 shelterId: shelId,
@@ -79,7 +79,7 @@ function writePDFtoMongo(fileIn: pdf.CreateResult, shelId: String, value: Number
         .catch(e => {
             reject(e);
         });
-    });               
+    });
 }
 
 export function createContributionPDF(shelter: IShelterExtended): Promise<{name: String, id: any}> {

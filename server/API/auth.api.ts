@@ -1,9 +1,8 @@
 import { Enums } from '../../src/app/shared/types/enums';
 import * as express from 'express';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { logger, UserData } from '../common';
+import { logger, UserData, performRequestGET } from '../common';
 import { OUT_DIR } from '../constants';
-import request = require('request');
 import {PARSED_URL, APP_BASE_URL} from '../server';
 import xmldom = require('xmldom');
 import * as path from 'path';
@@ -124,15 +123,10 @@ function checkUserPromise(uuid): Promise<{role: Auth_Permissions.User_Type, code
         if (DISABLE_AUTH) {
             resolve({role: Auth_Permissions.User_Type.superUser, code: '9999999'});
         } else {
-            request.get({
-                url: authUrl + uuid + '/full',
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc='
-                },
-            }, function(err, response, body) {
+            performRequestGET(authUrl + uuid + '/full', 'Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc=')
+            .then(value => {
                 try {
-                    const data = JSON.parse(body);
+                    const data = JSON.parse(value.body);
                     const user: {role: Auth_Permissions.User_Type, code: String} = getUserPermissions(data);
 
                     if (user.role) {
@@ -147,6 +141,10 @@ function checkUserPromise(uuid): Promise<{role: Auth_Permissions.User_Type, code
                 } catch (e) {
                     reject(e);
                 }
+            })
+            .catch(err => {
+                logger(err);
+                reject(err);
             });
         }
     });
@@ -157,40 +155,38 @@ function validationPromise(ticket): Promise<String> {
         if (DISABLE_AUTH) {
             resolve(null)
         } else {
-            request.get({
-                url: casBaseUrl + '/cai-cas/serviceValidate?service=' + PARSED_URL + '&ticket=' + ticket,
-                method: 'GET'
-            }, function(err, response, body) {
-                if (err) {
-                    logger('Error in CAS request: ' + err);
-                    reject(err);
-                } else {
-                    const parser = new DOMParser({
-                        locator: {},
-                        errorHandler: {
-                            warning: function(w) {
-                                reject(w);
-                            }
+            const url = casBaseUrl + '/cai-cas/serviceValidate?service=' + PARSED_URL + '&ticket=' + ticket
+            performRequestGET(url)
+            .then(value => {
+                const parser = new DOMParser({
+                    locator: {},
+                    errorHandler: {
+                        warning: function(w) {
+                            reject(w);
                         }
-                    });
-                    const el: Document = parser.parseFromString(body, 'text/xml');
-                    if (el) {
-                        const doc = el.firstChild;
-                        let res = false;
-                        let user: String;
-                        if (getChildByName(el, 'authenticationSuccess')) {
-                            res = true;
-                            user = getChildByName(el, 'uuid').textContent;
-                        }
-                        if (res) {
-                            resolve(user);
-                        } else {
-                            reject({error: 'Authentication error'});
-                        }
-                    } else {
-                        reject({error: 'Document parsing error'});
                     }
+                });
+                const el: Document = parser.parseFromString(value.body, 'text/xml');
+                if (el) {
+                    const doc = el.firstChild;
+                    let res = false;
+                    let user: String;
+                    if (getChildByName(el, 'authenticationSuccess')) {
+                        res = true;
+                        user = getChildByName(el, 'uuid').textContent;
+                    }
+                    if (res) {
+                        resolve(user);
+                    } else {
+                        reject({error: 'Authentication error'});
+                    }
+                } else {
+                    reject({error: 'Document parsing error'});
                 }
+            })
+            .catch(err => {
+                logger(err);
+                reject(err);
             });
         }
     });
