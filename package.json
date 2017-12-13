@@ -35,9 +35,11 @@
   "scripts": {
     "ng": "ng",
     "postinstall": "npm run build",
-    "start": "node ./server/build/server/server.js",
+    "start": "node ./out-tsc/server/server.js",
     "build": "ng build && npm run build-server",
-    "build-server": "rimraf ./server/build && tsc --p ./server/tsconfig.json",
+    "clean": "npm run clean-server && rimraf ./dist",
+    "clean-server": "rimraf ./out-tsc",
+    "build-server": "npm run clean-server && tsc --p ./server/tsconfig.json",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
