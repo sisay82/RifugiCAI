@@ -1,7 +1,7 @@
 import { IShelterExtended } from '../common';
 import { OUT_DIR, MONTHS } from '../constants';
 import * as path from 'path';
-import * as pdf from 'html-pdf'
+import * as pdf from 'html-pdf';
 import {countContributionFilesByShelter, insertNewFile} from './files.api';
 import { Enums } from '../../src/app/shared/types/enums';
 import Files_Enum = Enums.Files;
@@ -42,44 +42,44 @@ function getPDFName(year: Number, type: Enums.Contribution_Type, num: Number): S
     return  year + '_' + type + '_' + num + '.pdf';
 }
 
-function writePDFtoMongo(fileIn: pdf.CreateResult, shelId: String, value: Number, year: Number, type: Enums.Contribution_Type, num: Number)
-: Promise<{name: String, id: any}> {
-    return new Promise<{name: String, id: any}>((resolve, reject) => {
-        fileIn.toStream(function(err, res) {
+function getBufferFromPDF(fileIn: pdf.CreateResult): Promise<Buffer>{
+    return new Promise<Buffer>((resolve, reject) => {
+        fileIn.toBuffer(function(err, buff){
             if (err) {
                 reject(err);
             } else {
-                const bufs = [];
-                num += <any>1;
-                res.on('data', function(d) { bufs.push(d); });
-                res.on('end', () => {
-                    const buff = Buffer.concat(bufs);
-                    const file = {
-                        size: buff.length,
-                        shelterId: shelId,
-                        uploadDate: new Date(),
-                        name: getPDFName(year , type, num),
-                        data: buff,
-                        contribution_type: type,
-                        contentType: 'application/pdf',
-                        type: Files_Enum.File_Type.contribution,
-                        invoice_year: year,
-                        value: value
-                    }
-                    insertNewFile(<any>file)
-                    .then(f => {
-                        resolve({name: f.name, id: f._id});
-                    })
-                    .catch(e => {
-                        reject(e);
-                    });
-                });
-                res.on('error', function(e) {
-                    reject(e);
-                });
+                resolve(buff);
             }
         });
     });
+}
+
+function writePDFtoMongo(fileIn: pdf.CreateResult, shelId: String, value: Number, year: Number, type: Enums.Contribution_Type, num: Number)
+: Promise<{name: String, id: any}> {
+    return new Promise<{name: String, id: any}>((resolve, reject) => {
+       getBufferFromPDF(fileIn)
+       .then(buff=>{
+            const file = {
+                size: buff.length,
+                shelterId: shelId,
+                uploadDate: new Date(),
+                name: getPDFName(year , type, num),
+                data: buff,
+                contribution_type: type,
+                contentType: 'application/pdf',
+                type: Files_Enum.File_Type.contribution,
+                invoice_year: year,
+                value: value
+            }
+            return insertNewFile(<any>file);
+        })
+        .then(file => {
+            resolve({name: file.name, id: file._id});
+        })
+        .catch(e => {
+            reject(e);
+        });
+    });               
 }
 
 export function createContributionPDF(shelter: IShelterExtended): Promise<{name: String, id: any}> {

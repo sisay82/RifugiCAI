@@ -39,42 +39,41 @@ function createPdfFromHTMLDoc(document, footer) {
 function getPDFName(year, type, num) {
     return year + '_' + type + '_' + num + '.pdf';
 }
-function writePDFtoMongo(fileIn, shelId, value, year, type, num) {
+function getBufferFromPDF(fileIn) {
     return new Promise(function (resolve, reject) {
-        fileIn.toStream(function (err, res) {
+        fileIn.toBuffer(function (err, buff) {
             if (err) {
                 reject(err);
             }
             else {
-                var bufs_1 = [];
-                num += 1;
-                res.on('data', function (d) { bufs_1.push(d); });
-                res.on('end', function () {
-                    var buff = Buffer.concat(bufs_1);
-                    var file = {
-                        size: buff.length,
-                        shelterId: shelId,
-                        uploadDate: new Date(),
-                        name: getPDFName(year, type, num),
-                        data: buff,
-                        contribution_type: type,
-                        contentType: 'application/pdf',
-                        type: Files_Enum.File_Type.contribution,
-                        invoice_year: year,
-                        value: value
-                    };
-                    files_api_1.insertNewFile(file)
-                        .then(function (f) {
-                        resolve({ name: f.name, id: f._id });
-                    })
-                        .catch(function (e) {
-                        reject(e);
-                    });
-                });
-                res.on('error', function (e) {
-                    reject(e);
-                });
+                resolve(buff);
             }
+        });
+    });
+}
+function writePDFtoMongo(fileIn, shelId, value, year, type, num) {
+    return new Promise(function (resolve, reject) {
+        getBufferFromPDF(fileIn)
+            .then(function (buff) {
+            var file = {
+                size: buff.length,
+                shelterId: shelId,
+                uploadDate: new Date(),
+                name: getPDFName(year, type, num),
+                data: buff,
+                contribution_type: type,
+                contentType: 'application/pdf',
+                type: Files_Enum.File_Type.contribution,
+                invoice_year: year,
+                value: value
+            };
+            return files_api_1.insertNewFile(file);
+        })
+            .then(function (file) {
+            resolve({ name: file.name, id: file._id });
+        })
+            .catch(function (e) {
+            reject(e);
         });
     });
 }
