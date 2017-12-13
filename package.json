@@ -36,7 +36,7 @@
     "ng": "ng",
     "postinstall": "npm run build",
     "start": "node ./out-tsc/server/server.js",
-    "build": "ng build && npm run build-server",
+    "build": "npm run clean && ng build && npm run build-server",
     "clean": "npm run clean-server && rimraf ./dist",
     "clean-server": "rimraf ./out-tsc",
     "build-server": "npm run clean-server && tsc --p ./server/tsconfig.json",
