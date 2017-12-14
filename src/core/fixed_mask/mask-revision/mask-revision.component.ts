@@ -44,7 +44,7 @@ export class BcMaskRevision {
   disableSave:boolean=false;
   saveDisabled:boolean=false;
   newShelter:boolean=false;
-  private isCentral:boolean;
+  isCentral:boolean;
   constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder,private authService:BcAuthService){
     this.maskForm = fb.group({
         name:[""],
@@ -92,7 +92,7 @@ export class BcMaskRevision {
   }
 
   remove(){
-    if(this.isCentralUser()){
+    if(this.isCentral){
       let removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val)=>{
         if(val){
           this.return();
@@ -108,14 +108,9 @@ export class BcMaskRevision {
   }
 
   private isCentralUser(){
-    if(this.isCentral){
-        return this.isCentral
-    }else{
-        this.authService.isCentralUser().subscribe(val=>{
-            this.isCentral=val;
-            return val;
-        });
-    }
+      this.authService.isCentralUser().subscribe(val=>{
+        this.isCentral=val;
+      });
   }
 
   processConfirm(shelter):Promise<String>{
@@ -260,6 +255,7 @@ export class BcMaskRevision {
   }
 
   ngOnInit(){
+    this.isCentralUser();
     if(!this.shelterInitialized&&this.shelter!=undefined){
       this.shelterInitialized=true;
       let routeSub=this._route.params.subscribe(params=>{
@@ -274,6 +270,7 @@ export class BcMaskRevision {
         }
         let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
           this.revisionPermission=val;
+          
           if(!this.newShelter){
             if(val&&this.reviseCheck(val)){
               this.initForm(val);
