@@ -80,6 +80,7 @@ export class BcMaskController {
           });
 
           this.shelter=shelter;
+          
           const permissionSub = this.authService.checkRevisionPermissionForShelter(shelter.idCai).subscribe(val=>{
             this.revisionPermission=val;
             if(permissionSub!=undefined){

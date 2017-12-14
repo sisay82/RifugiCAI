@@ -301,7 +301,7 @@ fileRoute.route('/shelters/file/confirm')
                 if (file.size < 1024 * 1024 * 16) {
                     const id = file.shelterId;
                     const fileid = new ObjectId();
-                    const shelUpdate = SheltersToUpdate.filter (obj => obj.shelter._id === id);
+                    const shelUpdate = SheltersToUpdate.filter (obj => String(obj.shelter._id) === id);
                     file._id = fileid;
                     file.new = true;
                     if (file.type === Files_Enum.File_Type.image) {
@@ -382,7 +382,7 @@ fileRoute.route('/shelters/file/confirm')
 
 fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
 .delete(function(req, res) {
-    const shelUpdate = SheltersToUpdate.filter (obj => obj.shelter._id === req.params.shelid);
+    const shelUpdate = SheltersToUpdate.filter (obj => String(obj.shelter._id) === req.params.shelid);
     if (shelUpdate && shelUpdate.length > 0) {
         let fileToDelete;
         if (shelUpdate[0].files) {
@@ -483,7 +483,7 @@ fileRoute.route('/shelters/file/:id')
 
 fileRoute.route('/shelters/file/byshel/:id')
 .get(function(req, res) {
-    const shel = SheltersToUpdate.filter (obj => obj.shelter._id === req.params.id)[0];
+    const shel = SheltersToUpdate.filter (obj => String(obj.shelter._id) === req.params.id)[0];
     if (!shel) {
         queryFilesByshelterId(req.params.id)
         .then((file) => {
@@ -498,12 +498,12 @@ fileRoute.route('/shelters/file/byshel/:id')
             if (shel.files != null) {
                 for (const f of shel.files.filter (obj => obj.type !== Files_Enum.File_Type.image)) {
                     if (f.remove) {
-                        const fi = files.filter (obj => obj._id === f._id)[0];
+                        const fi = files.filter (obj => String(obj._id) === f._id)[0];
                         files.splice(files.indexOf(fi), 1);
                     } else if (f.new) {
                         files.push(f);
                     } else {
-                        const fi = files.filter (obj => obj._id === f._id)[0];
+                        const fi = files.filter (obj => String(obj._id) === f._id)[0];
                         files[files.indexOf(fi)] = f;
                     }
                 }
@@ -520,7 +520,7 @@ fileRoute.route('/shelters/file/byshel/:id')
 
 fileRoute.route('/shelters/image/byshel/:id')
 .get(function(req, res) {
-    const shel = SheltersToUpdate.filter (obj => obj.shelter._id === req.params.id)[0];
+    const shel = SheltersToUpdate.filter (obj => String(obj.shelter._id) === req.params.id)[0];
     if (!shel) {
         queryImagesByshelterId(req.params.id)
         .then((file) => {
@@ -535,12 +535,12 @@ fileRoute.route('/shelters/image/byshel/:id')
             if (shel.files != null) {
                 for (const f of shel.files.filter (obj => obj.type === Files_Enum.File_Type.image)) {
                     if (f.remove) {
-                        const fi = file.filter (obj => obj._id === f._id)[0];
+                        const fi = file.filter (obj => String(obj._id) === f._id)[0];
                         file.splice(file.indexOf(fi), 1);
                     } else if (f.new) {
                         file.push(f);
                     } else {
-                        const fi = file.filter (obj => obj._id === f._id)[0];
+                        const fi = file.filter (obj => String(obj._id) === f._id)[0];
                         file[file.indexOf(fi)] = f;
                     }
                 }

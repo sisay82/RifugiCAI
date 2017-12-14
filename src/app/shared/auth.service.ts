@@ -29,19 +29,24 @@ function getRegionsArea(area):Auth_Permissions.Region_Code[]{
 
 function getShelterFilter(type:Auth_Permissions.User_Type):(code:String)=>String{
     if(type){
-        if(type==Auth_Permissions.User_Type.regional||
-            type==Auth_Permissions.User_Type.central){
+        if(type==Auth_Permissions.User_Type.regional){
             return getRegion;
         }else if(type==Auth_Permissions.User_Type.sectional){
             return (code:String)=>{return getRegion(code).concat(<string>getSection(code))}
         }else if(type==Auth_Permissions.User_Type.area){
             return getArea;
+        }else if(isCentralRole(type)){
+            return function(code){return ''};
         }else{
             return function(code){return null};
         }
     }else{
         return function(code){return null};
     }
+}
+
+function isCentralRole(role: Auth_Permissions.User_Type):boolean{
+    return (role==Auth_Permissions.User_Type.central||role==Auth_Permissions.User_Type.superUser);
 }
 
 function getShelterProfileCheck(role:Auth_Permissions.User_Type):(shelId,code)=>Boolean{
@@ -54,7 +59,9 @@ function getShelterProfileCheck(role:Auth_Permissions.User_Type):(shelId,code)=>
                 }
                 return val;
             }
-        }else{
+        } else if (isCentralRole(role)){
+            return (shelId,code)=>true;
+        } else{
             return (shelId,code)=>shelId==code;
         }
     }else{
@@ -118,19 +125,15 @@ export class BcAuthService{
     isCentralUser():Observable<boolean>{
         return Observable.create(observer=>{
             this.getUserProfile().subscribe(profile=>{
-                observer.next(profile&&this.isCentralRole(profile.role));
+                observer.next(profile&&isCentralRole(profile.role));
                 observer.complete();
             });
         });
     }
 
-    isCentralRole(role):boolean{
-        return (role==Auth_Permissions.User_Type.central||role==Auth_Permissions.User_Type.superUser);
-    }
-
     getRegions(role,code):string[]{
         if(role){
-            if(this.isCentralRole(role)){
+            if(isCentralRole(role)){
                 return Object.keys(Auth_Permissions.Region_Code);
             }else if(role==Auth_Permissions.User_Type.area){
                 return Object.keys(getRegionsArea(getArea(code)));

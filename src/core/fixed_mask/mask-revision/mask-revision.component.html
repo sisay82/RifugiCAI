@@ -12,7 +12,7 @@
             <div style="display: inline;margin-left:auto;margin-right:1%;white-space:nowrap">
                 <bc-icon tooltip="Annulla e torna indietro" (click)="cancel()" class="bc-mask-icon" name="times" size=s></bc-icon>
                 <bc-icon tooltip="Salva le modifiche" *ngIf="!saveDisabled" (click)="save()" class="bc-mask-icon" name="floppy-o" size=s></bc-icon>
-                <bc-icon tooltip="Elimina rifugio" *ngIf="!newShelter" (click)="remove()" class="bc-mask-icon" name="trash" size=s></bc-icon>
+                <bc-icon tooltip="Elimina rifugio" *ngIf="!newShelter&&isCentral" (click)="remove()" class="bc-mask-icon" name="trash" size=s></bc-icon>
             </div>
         </div>
         <div class="bc-mask-line" style="margin-left:10px">

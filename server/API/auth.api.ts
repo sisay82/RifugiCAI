@@ -29,7 +29,7 @@ export function getUserData(sessionID: string): Promise<UserData> {
             };
             resolve(user);
         } else {
-            const user = userList.find(obj => obj.id === sessionID);
+            const user = userList.find(obj => String(obj.id) === sessionID);
             if (user && user.checked && user.role && user.code) {
                 resolve(user);
             } else {
@@ -220,7 +220,7 @@ authRoute.get('/logout', function(req, res) {
     if (DISABLE_AUTH) {
         res.redirect('/list');
     } else {
-        const user = userList.findIndex(obj => obj.id === req.session.id);
+        const user = userList.findIndex(obj => String(obj.id) === req.session.id);
         logger('Logging out');
 
         if (user > -1) {
@@ -234,7 +234,7 @@ authRoute.get('/j_spring_cas_security_check', function(req, res) {
     if (DISABLE_AUTH) {
         res.redirect('/list');
     } else {
-        const user = userList.find(obj => obj.id === req.session.id);
+        const user = userList.find(obj => String(obj.id) === req.session.id);
         if (user) {
             user.ticket = req.query.ticket;
             res.redirect(user.resource.toString());
@@ -250,7 +250,7 @@ authRoute.get('/user', function(req, res, next) {
     if (DISABLE_AUTH) {
         res.status(200).send({code: '9999999', role: Auth_Permissions.User_Type.superUser});
     } else {
-        const user = userList.find(obj => obj.id === req.session.id);
+        const user = userList.find(obj => String(obj.id) === req.session.id);
         logger('User permissions request (UUID): ', user.uuid);
         if (user && user.uuid) {
             if (!user.code || !user.role) {
@@ -298,7 +298,7 @@ authRoute.get('/*', function(req, res) {
     if (DISABLE_AUTH) {
         res.sendFile(path.join(OUT_DIR + '/index.html'));
     } else {
-        const user = userList.find(obj => obj.id === req.session.id);
+        const user = userList.find(obj => String(obj.id) === req.session.id);
         if (!user) {
             logger('User not logged');
             userList.push({id: req.session.id, resource: req.path, redirections: 0, checked: false});
@@ -340,7 +340,7 @@ authRoute.get('/*', function(req, res) {
                     user.checked = false;
                     user.resource = req.path;
                     if (user.redirections >= 3) {
-                        const index = userList.findIndex(obj => obj.id === user.id);
+                        const index = userList.findIndex(obj => String(obj.id) === user.id);
                         userList.splice(index, 1);
                         res.status(500).send(`Error, try logout <a href='` + casBaseUrl + '/cai-cas/logout' + `'>here</a> before try again.
                         <br>Error info:<br><br>` + err);
@@ -353,7 +353,7 @@ authRoute.get('/*', function(req, res) {
                 user.resource = req.path;
                 user.redirections++;
                 if (user.redirections >= 3) {
-                    const index = userList.findIndex(obj => obj.id === user.id);
+                    const index = userList.findIndex(obj => String(obj.id) === user.id);
                     userList.splice(index, 1);
                     res.status(500).send('Error, try logout <a href="' + casBaseUrl + '/cai-cas/logout' + '">here</a> before try again');
                 } else {

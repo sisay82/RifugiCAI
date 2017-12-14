@@ -459,13 +459,15 @@ function updateShelter (id: any, params: any, isNew?: Boolean): Promise<boolean>
 
 function confirmShelter (id: any): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-        const shelToUpdate = SheltersToUpdate.filter (obj => obj.shelter._id === id)[0];
-        updateShelter (id, shelToUpdate.shelter)
+        const shelToUpdate = SheltersToUpdate.filter (obj => String(obj.shelter._id) === id)[0];
+        console.log(shelToUpdate);
+        updateShelter (id, shelToUpdate.shelter, shelToUpdate.isNew)
         .then(() => {
             SheltersToUpdate.splice(SheltersToUpdate.indexOf (shelToUpdate), 1);
             resolve(true);
         })
         .catch((err) => {
+            logger(err);
             reject(err);
         });
     });
@@ -647,7 +649,7 @@ appRoute.route('/shelters/:id')
 .put(function(req, res) {
     let shelUpdate;
     if (req.query.confirm) {
-        shelUpdate = SheltersToUpdate.filter (shelter => shelter.shelter._id === req.params.id)[0];
+        shelUpdate = SheltersToUpdate.filter (shelter => String(shelter.shelter._id) === req.params.id)[0];
         if (shelUpdate) {
             for (const prop in req.body) {
                 if (req.body.hasOwnProperty(prop)) {
@@ -688,7 +690,7 @@ appRoute.route('/shelters/confirm/:id')
 .put(function(req, res) {
     try {
         if (req.body.confirm !== undefined) {
-            const shelToConfirm = SheltersToUpdate.filter (shelter => shelter.shelter._id === req.params.id)[0];
+            const shelToConfirm = SheltersToUpdate.filter (shelter => String(shelter.shelter._id) === req.params.id)[0];
             if (shelToConfirm) {
                 if (req.body.confirm) {
                     confirmShelter (req.params.id)
@@ -723,7 +725,7 @@ appRoute.route('/shelters/confirm/:id')
 appRoute.route('/shelters/confirm/:section/:id')
 .put(function(req, res) {
     try {
-        const shelUpdate = SheltersToUpdate.filter (obj => obj.shelter._id === req.params.id);
+        const shelUpdate = SheltersToUpdate.filter (obj => String(obj.shelter._id) === req.params.id);
         if (shelUpdate.length > 0) {
             shelUpdate[0].shelter[req.params.section] = req.body[req.params.section];
             shelUpdate[0].watchDog = new Date(Date.now());
@@ -771,7 +773,7 @@ appRoute.route('/shelters/page/:pageNumber/:pageSize')
 appRoute.route('/shelters/:id/:name')
 .get(function(req, res) {
     try {
-        const shelUpdate = SheltersToUpdate.filter (obj => obj.shelter._id === req.params.id);
+        const shelUpdate = SheltersToUpdate.filter (obj => String(obj.shelter._id) === req.params.id);
         if (shelUpdate.length > 0 && shelUpdate[0].shelter[req.params.name]) {
             shelUpdate[0].watchDog = new Date(Date.now());
             res.status(200).send(shelUpdate[0].shelter);
