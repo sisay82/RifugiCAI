@@ -833,7 +833,7 @@ function updateShelter(id:any,params:any,isNew?:Boolean):Promise<boolean>{
                             }
                         }
                     }
-                    
+
                     resolveServicesInShelter(shel,services)
                     .then((shelter)=>{
                         resolveEconomyInShelter(shelter,use,contributions,economy)
@@ -859,7 +859,7 @@ function updateShelter(id:any,params:any,isNew?:Boolean):Promise<boolean>{
 function confirmShelter(id:any):Promise<boolean>{
     return new Promise<boolean>((resolve,reject)=>{
         let shelToUpdate=SheltersToUpdate.filter(obj=>obj.shelter._id==id)[0];
-        updateShelter(id,shelToUpdate.shelter)
+        updateShelter(id,shelToUpdate.shelter,shelToUpdate.isNew)
         .then(()=>{
             SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToUpdate),1);
             resolve(true);

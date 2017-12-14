@@ -827,7 +827,7 @@ function updateShelter(id, params, isNew) {
 function confirmShelter(id) {
     return new Promise(function (resolve, reject) {
         var shelToUpdate = SheltersToUpdate.filter(function (obj) { return obj.shelter._id == id; })[0];
-        updateShelter(id, shelToUpdate.shelter)
+        updateShelter(id, shelToUpdate.shelter, shelToUpdate.isNew)
             .then(function () {
             SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToUpdate), 1);
             resolve(true);
