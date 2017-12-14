@@ -40,7 +40,7 @@ export const ObjectId = mongoose.Types.ObjectId;
 
 const DISABLE_LOG = false;
 const MAX_TIME = 1000 * 60 * 10;
-const TIMEOUT_REQUEST = 1000 * 10;
+const TIMEOUT_REQUEST = 1000 * 2;
 
 function cleanSheltersToUpdate() {
     SheltersToUpdate.forEach(obj => {
@@ -86,19 +86,21 @@ export function checkUserData(user: UserData): {section: String, regions: any[]}
     }
 }
 
-export function performRequestGET(url: String, authorization?: String, count: number = 0): Promise<{response: any, body: any}> {
+export function performRequestGET(url: String, authorization?: String, timeout: number = TIMEOUT_REQUEST, count: number = 0)
+: Promise<{response: any, body: any}> {
     return new Promise<{response: any, body: any}>((resolve, reject) => {
         const headers = authorization ? {'Authorization': authorization} : null;
-
+        const time = Date.now();
         request.get({
             url: url,
             method: 'GET',
             headers: headers,
-            timeout: TIMEOUT_REQUEST
+            timeout: timeout
         }, function(err, response, body) {
             if (err) {
                 if (String(err.code) === 'ESOCKETTIMEDOUT' && count < 3) {
-                    return performRequestGET(url, authorization, ++count)
+                    logger("RETRY REQUEST "+count, Date.now() - time);
+                    return performRequestGET(url, authorization, timeout, ++count)
                     .then(value => resolve(value))
                     .catch(e => reject(e));
                 } else {

@@ -145,7 +145,7 @@ function checkUserPromise(uuid): Promise<{role: Auth_Permissions.User_Type, code
         if (DISABLE_AUTH) {
             resolve({role: Auth_Permissions.User_Type.superUser, code: '9999999'});
         } else {
-            performRequestGET(authUrl + uuid + '/full', 'Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc=')
+            performRequestGET(authUrl + uuid + '/full', 'Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc=',1000 * 10)
             .then(value => {
                 try {
                     const data = JSON.parse(value.body);
