@@ -14,12 +14,13 @@ import {
     IServiceExtended,
     IShelterExtended,
     IFileExtended,
-    logger
+    logger,
+    LOG_TYPE
 } from './tools/common';
 import { OUT_DIR } from './tools/constants';
-import {fileRoute} from './API/files.api';
-import {appRoute} from './API/shelters.api';
-import {authRoute, getUserData} from './API/auth.api';
+import { fileRoute } from './API/files.api';
+import { appRoute } from './API/shelters.api';
+import { authRoute, getUserData } from './API/auth.api';
 const MongoStore = require('connect-mongo')(session);
 
 (<any>mongoose.Promise) = global.Promise;
@@ -33,9 +34,9 @@ const Users: String[] = [];
 // 'mongodb://localhost:27017/ProvaDB',process.env.MONGODB_URI
 const mongooseConnection = mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/CaiDB', {
     useMongoClient: true
-}, function(err) {
+}, function (err) {
     if (err) {
-        logger('Error connection: ' + err);
+        logger(LOG_TYPE.ERROR, 'Error connection: ' + err);
     }
 });
 
@@ -49,8 +50,9 @@ app.use(bodyParser.urlencoded({
     saveUninitialized: true
 }), bodyParser.json());
 
-app.use('/api', function(req , res, next) {
-    logger('SessionID: ' + req.sessionID + ', METHOD: '  + req.method + ', QUERY: ' + JSON.stringify(req.query) + ', PATH: ' + req.path);
+app.use('/api', function (req, res, next) {
+    logger(LOG_TYPE.INFO,
+        'SessionID: ' + req.sessionID + ', METHOD: ' + req.method + ', QUERY: ' + JSON.stringify(req.query) + ', PATH: ' + req.path);
     if (req.method === 'OPTIONS') {
         const headers = {};
         headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS';
@@ -60,17 +62,17 @@ app.use('/api', function(req , res, next) {
         res.end();
     } else {
         getUserData(req.session.id)
-        .then(userData => {
-            req.body.user = userData;
-            next();
-        })
-        .catch(err => {
-            res.status(500).send({error: err});
-        });
+            .then(userData => {
+                req.body.user = userData;
+                next();
+            })
+            .catch(err => {
+                res.status(500).send({ error: err });
+            });
     }
 }, fileRoute, appRoute);
 
-app.use('/', function(req, res, next) {
+app.use('/', function (req, res, next) {
     if (req.method === 'OPTIONS') {
         const headers = {};
         headers['Access-Control-Allow-Headers'] = 'Content-Type';
@@ -84,5 +86,5 @@ app.use('/', function(req, res, next) {
 
 const server = app.listen(process.env.PORT || APP_PORT, function () {
     const port = server.address().port;
-    logger('App now running on port', port);
+    logger(LOG_TYPE.INFO, 'App now running on port', port);
 });

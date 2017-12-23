@@ -2,7 +2,7 @@ import { IShelterExtended } from '../tools/common';
 import { OUT_DIR, MONTHS } from '../tools/constants';
 import * as path from 'path';
 import * as pdf from 'html-pdf';
-import {countContributionFilesByShelter, insertNewFile} from './files.api';
+import { countContributionFilesByShelter, insertNewFile } from './files.api';
 import { Enums } from '../../src/app/shared/types/enums';
 import Files_Enum = Enums.Files;
 
@@ -16,10 +16,10 @@ function getContributionHtml(title: String, value: Number, rightTitle?: boolean)
     }
     if (rightTitle) {
         return '<div style="max-width:65%"><div align="right" style="font-weight:bold">' +
-        title + ' (€): ' + value + '</div></div>';
+            title + ' (€): ' + value + '</div></div>';
     } else {
         return '<div style="max-width:65%"><div style="display:inline" align="left">' +
-        title + '</div><div style="display:inline;float:right">(€): ' + value + '</div></div>';
+            title + '</div><div style="display:inline;float:right">(€): ' + value + '</div></div>';
     }
 }
 
@@ -39,12 +39,12 @@ function createPdfFromHTMLDoc(document, footer): pdf.CreateResult {
 }
 
 function getPDFName(year: Number, type: Enums.Contribution_Type, num: Number): String {
-    return  year + '_' + type + '_' + num + '.pdf';
+    return year + '_' + type + '_' + num + '.pdf';
 }
 
 function getBufferFromPDF(fileIn: pdf.CreateResult): Promise<Buffer> {
     return new Promise<Buffer>((resolve, reject) => {
-        fileIn.toBuffer(function(err, buff) {
+        fileIn.toBuffer(function (err, buff) {
             if (err) {
                 reject(err);
             } else {
@@ -55,34 +55,34 @@ function getBufferFromPDF(fileIn: pdf.CreateResult): Promise<Buffer> {
 }
 
 function writePDFtoMongo(fileIn: pdf.CreateResult, shelId: String, value: Number, year: Number, type: Enums.Contribution_Type, num: Number)
-: Promise<{name: String, id: any}> {
-    return new Promise<{name: String, id: any}>((resolve, reject) => {
-       getBufferFromPDF(fileIn)
-       .then(buff => {
-            const file = {
-                size: buff.length,
-                shelterId: shelId,
-                uploadDate: new Date(),
-                name: getPDFName(year , type, num),
-                data: buff,
-                contribution_type: type,
-                contentType: 'application/pdf',
-                type: Files_Enum.File_Type.contribution,
-                invoice_year: year,
-                value: value
-            }
-            return insertNewFile(<any>file);
-        })
-        .then(file => {
-            resolve({name: file.name, id: file._id});
-        })
-        .catch(e => {
-            reject(e);
-        });
+    : Promise<{ name: String, id: any }> {
+    return new Promise<{ name: String, id: any }>((resolve, reject) => {
+        getBufferFromPDF(fileIn)
+            .then(buff => {
+                const file = {
+                    size: buff.length,
+                    shelterId: shelId,
+                    uploadDate: new Date(),
+                    name: getPDFName(year, type, num),
+                    data: buff,
+                    contribution_type: type,
+                    contentType: 'application/pdf',
+                    type: Files_Enum.File_Type.contribution,
+                    invoice_year: year,
+                    value: value
+                }
+                return insertNewFile(<any>file);
+            })
+            .then(file => {
+                resolve({ name: file.name, id: file._id });
+            })
+            .catch(e => {
+                reject(e);
+            });
     });
 }
 
-export function createContributionPDF(shelter: IShelterExtended): Promise<{name: String, id: any}> {
+export function createContributionPDF(shelter: IShelterExtended): Promise<{ name: String, id: any }> {
     if (shelter && shelter.branch && shelter.contributions && shelter.contributions.data) {
         const contribution = shelter.contributions;
         const assestpath = path.join('file://' + OUT_DIR + '/assets/images/');
@@ -95,11 +95,11 @@ export function createContributionPDF(shelter: IShelterExtended): Promise<{name:
         let document = `<html><head></head><body>` + header + `
         <br/><div style='font-size:` + bodySize + `' align="right"><span style="text-align:left">
         Spett.<br/>Club Alpino Italiano<br/>Commissione rifugi<br/><span></div><br/><div style='font-weight: bold;font-size:`
-        + titleSize + `'>Oggetto: Richiesta di contributi di tipo `
-        + contribution.type + ` Rifugi</div><br/>
+            + titleSize + `'>Oggetto: Richiesta di contributi di tipo `
+            + contribution.type + ` Rifugi</div><br/>
         <div style='font-weight: 400;font-size:`
-        + titleSize + `'>Con la presente vi comunico che la Sezione di ` + shelter.branch + ` intende svolgere nel `
-        + (<number>contribution.year + 1) + ` i lavori di manutenzione in seguito descritti,
+            + titleSize + `'>Con la presente vi comunico che la Sezione di ` + shelter.branch + ` intende svolgere nel `
+            + (<number>contribution.year + 1) + ` i lavori di manutenzione in seguito descritti,
         predisponendo un piano economico così suddiviso:</div><br/>`;
 
         document += '<div style="font-weight:400;font-size: ' + subtitleSize + '">'
@@ -125,16 +125,16 @@ export function createContributionPDF(shelter: IShelterExtended): Promise<{name:
         document += '</div><br/>'
 
         document += `<div style='font-size:`
-        + titleSize + `'><div>Vi richiediamo un contributo di euro (€): `
-        + contribution.value + `</div><br/>
+            + titleSize + `'><div>Vi richiediamo un contributo di euro (€): `
+            + contribution.value + `</div><br/>
         <div>Fiduciosi in un positivo accoglimento, con la presente ci è gradito porgere i nostri più cordiali saluti.</div>
         </div><br/><br/>`;
 
         const now = new Date(Date.now());
         document += `<div style='font-size:` + titleSize + `'><div style="display:inline" align="left">`
-        + (now.getDay() + '/' + (MONTHS[now.getMonth()]) + '/' + now.getFullYear ()) + `</div>
+            + (now.getDay() + '/' + (MONTHS[now.getMonth()]) + '/' + now.getFullYear()) + `</div>
         <div style="display:inline;float:right"><div style='text-align:center'>Il Presidente della Sezione di `
-        + shelter.branch + `</div></div></div>`;
+            + shelter.branch + `</div></div></div>`;
 
         let footer = '';
         if (contribution.attachments && contribution.attachments.length > 0) {
@@ -150,9 +150,9 @@ export function createContributionPDF(shelter: IShelterExtended): Promise<{name:
         const result = createPdfFromHTMLDoc(document, footer);
 
         return countContributionFilesByShelter(shelter._id)
-        .then((num) => writePDFtoMongo(result, shelter._id, contribution.value, contribution.year, contribution.type, num))
+            .then((num) => writePDFtoMongo(result, shelter._id, contribution.value, contribution.year, contribution.type, num))
 
     } else {
-        return Promise.reject(new Error ('Error contribution data'));
+        return Promise.reject(new Error('Error contribution data'));
     }
 }

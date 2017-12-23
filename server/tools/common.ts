@@ -67,55 +67,68 @@ function getAreaRegions(area: string): any {
     return Auth_Permissions.Regions_Area[Auth_Permissions.Area_Code[area]];
 }
 
-export function checkUserData(user: UserData): {section: String, regions: any[]} {
+export function checkUserData(user: UserData): { section: String, regions: any[] } {
     if (user && user.code && user.role) {
         let regions: any[] = [];
         let section: String;
         if (user.role === Auth_Permissions.User_Type.area) {
             regions = getAreaRegions(<string>getArea(user.code))
         } else if (user.role === Auth_Permissions.User_Type.regional ||
-                user.role === Auth_Permissions.User_Type.sectional) {
+            user.role === Auth_Permissions.User_Type.sectional) {
             regions = [getRegion(user.code)];
         }
         if (user.role === Auth_Permissions.User_Type.sectional) {
             section = getSection(user.code);
         }
-        return {section: section, regions: regions};
+        return { section: section, regions: regions };
     } else {
         return null;
     }
 }
 
 export function performRequestGET(url: String, authorization?: String, timeout: number = TIMEOUT_REQUEST, count: number = 0)
-: Promise<{response: any, body: any}> {
-    return new Promise<{response: any, body: any}>((resolve, reject) => {
-        const headers = authorization ? {'Authorization': authorization} : null;
+    : Promise<{ response: any, body: any }> {
+    return new Promise<{ response: any, body: any }>((resolve, reject) => {
+        const headers = authorization ? { 'Authorization': authorization } : null;
         const time = Date.now();
         request.get({
             url: url,
             method: 'GET',
             headers: headers,
             timeout: timeout
-        }, function(err, response, body) {
+        }, function (err, response, body) {
             if (err) {
                 if (String(err.code) === 'ESOCKETTIMEDOUT' && count < 3) {
-                    logger("RETRY REQUEST "+count, Date.now() - time);
+                    logger(LOG_TYPE.WARNING, 'RETRY REQUEST ' + count, Date.now() - time);
                     return performRequestGET(url, authorization, timeout, ++count)
-                    .then(value => resolve(value))
-                    .catch(e => reject(e));
+                        .then(value => resolve(value))
+                        .catch(e => reject(e));
                 } else {
                     reject(err);
                 }
             } else {
-                resolve({response: response, body: body});
+                resolve({ response: response, body: body });
             }
         });
     });
 }
 
-export function logger(log?: any, ...other) {
+export enum LOG_TYPE {
+    INFO,
+    WARNING,
+    ERROR
+}
+
+export function logger(logWeight: LOG_TYPE, log?: any, ...other) {
+    if (logWeight === LOG_TYPE.ERROR) {
+        console.log('FATAL ERROR: ', log, ...other);
+    }
     if (!DISABLE_LOG) {
-        console.log(log, ...other);
+        if (logWeight === LOG_TYPE.WARNING) {
+            console.log('WARNING: ', log, ...other);
+        } else {
+            console.log(log, ...other);
+        }
     }
 }
 
@@ -123,7 +136,7 @@ export function toTitleCase(input: string): string {
     if (!input) {
         return '';
     } else {
-        return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1) )).replace(/_/g, ' ');
+        return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1))).replace(/_/g, ' ');
     }
 }
 

@@ -1,9 +1,9 @@
 import { Enums } from '../../src/app/shared/types/enums';
 import * as express from 'express';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { logger, UserData, performRequestGET } from '../tools/common';
+import { logger, UserData, performRequestGET, LOG_TYPE } from '../tools/common';
 import { OUT_DIR } from '../tools/constants';
-import {PARSED_URL, APP_BASE_URL} from '../server';
+import { PARSED_URL, APP_BASE_URL } from '../server';
 import xmldom = require('xmldom');
 import * as path from 'path';
 const DOMParser = xmldom.DOMParser;
@@ -33,7 +33,7 @@ export function getUserData(sessionID: string): Promise<UserData> {
             if (user && user.checked && user.role && user.code) {
                 resolve(user);
             } else {
-                reject({error: 'Unauthorized User'});
+                reject({ error: 'Unauthorized User' });
             }
         }
     });
@@ -130,44 +130,44 @@ function getCode(type: Auth_Permissions.User_Type, data): String {
     return code;
 }
 
-function getUserPermissions(data): {role: Auth_Permissions.User_Type, code: String} {
+function getUserPermissions(data): { role: Auth_Permissions.User_Type, code: String } {
     let role = getRole(data);
     const code = getCode(role, data);
     if (role === Auth_Permissions.User_Type.regional && code.substr(0, 2) === '93') {
         role = Auth_Permissions.User_Type.area;
     }
-    return {role: role, code: code};
+    return { role: role, code: code };
 }
 
-function checkUserPromise(uuid): Promise<{role: Auth_Permissions.User_Type, code: String} > {
-    logger('CHECKUSER');
-    return new Promise<{role: Auth_Permissions.User_Type , code: String}>((resolve, reject) => {
+function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Type, code: String }> {
+    logger(LOG_TYPE.INFO, 'CHECKUSER');
+    return new Promise<{ role: Auth_Permissions.User_Type, code: String }>((resolve, reject) => {
         if (DISABLE_AUTH) {
-            resolve({role: Auth_Permissions.User_Type.superUser, code: '9999999'});
+            resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });
         } else {
-            performRequestGET(authUrl + uuid + '/full', 'Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc=',1000 * 10)
-            .then(value => {
-                try {
-                    const data = JSON.parse(value.body);
-                    const user: {role: Auth_Permissions.User_Type, code: String} = getUserPermissions(data);
+            performRequestGET(authUrl + uuid + '/full', 'Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc=', 1000 * 10)
+                .then(value => {
+                    try {
+                        const data = JSON.parse(value.body);
+                        const user: { role: Auth_Permissions.User_Type, code: String } = getUserPermissions(data);
 
-                    if (user.role) {
-                        if (user.code) {
-                            resolve(user);
+                        if (user.role) {
+                            if (user.code) {
+                                resolve(user);
+                            } else {
+                                reject('Error code');
+                            }
                         } else {
-                            reject('Error code');
+                            reject('User not authorized');
                         }
-                    } else {
-                        reject('User not authorized');
+                    } catch (e) {
+                        reject(e);
                     }
-                } catch (e) {
-                    reject(e);
-                }
-            })
-            .catch(err => {
-                logger(err);
-                reject(err);
-            });
+                })
+                .catch(err => {
+                    logger(LOG_TYPE.WARNING, err);
+                    reject(err);
+                });
         }
     });
 }
@@ -179,49 +179,49 @@ function validationPromise(ticket): Promise<String> {
         } else {
             const url = casBaseUrl + '/cai-cas/serviceValidate?service=' + PARSED_URL + '&ticket=' + ticket
             performRequestGET(url)
-            .then(value => {
-                const parser = new DOMParser({
-                    locator: {},
-                    errorHandler: {
-                        warning: function(w) {
-                            reject(w);
+                .then(value => {
+                    const parser = new DOMParser({
+                        locator: {},
+                        errorHandler: {
+                            warning: function (w) {
+                                reject(w);
+                            }
                         }
-                    }
-                });
-                const el: Document = parser.parseFromString(value.body, 'text/xml');
-                if (el) {
-                    const doc = el.firstChild;
-                    let res = false;
-                    let user: String;
-                    if (getChildByName(el, 'authenticationSuccess')) {
-                        res = true;
-                        user = getChildByName(el, 'uuid').textContent;
-                    }
-                    if (res) {
-                        resolve(user);
+                    });
+                    const el: Document = parser.parseFromString(value.body, 'text/xml');
+                    if (el) {
+                        const doc = el.firstChild;
+                        let res = false;
+                        let user: String;
+                        if (getChildByName(el, 'authenticationSuccess')) {
+                            res = true;
+                            user = getChildByName(el, 'uuid').textContent;
+                        }
+                        if (res) {
+                            resolve(user);
+                        } else {
+                            reject({ error: 'Authentication error' });
+                        }
                     } else {
-                        reject({error: 'Authentication error'});
+                        reject({ error: 'Document parsing error' });
                     }
-                } else {
-                    reject({error: 'Document parsing error'});
-                }
-            })
-            .catch(err => {
-                logger(err);
-                reject(err);
-            });
+                })
+                .catch(err => {
+                    logger(LOG_TYPE.WARNING, err);
+                    reject(err);
+                });
         }
     });
 }
 
 export const authRoute = express.Router();
 
-authRoute.get('/logout', function(req, res) {
+authRoute.get('/logout', function (req, res) {
     if (DISABLE_AUTH) {
         res.redirect('/list');
     } else {
         const user = userList.findIndex(obj => String(obj.id) === req.session.id);
-        logger('Logging out');
+        logger(LOG_TYPE.INFO, 'Logging out');
 
         if (user > -1) {
             userList.splice(user, 1);
@@ -230,7 +230,7 @@ authRoute.get('/logout', function(req, res) {
     }
 });
 
-authRoute.get('/j_spring_cas_security_check', function(req, res) {
+authRoute.get('/j_spring_cas_security_check', function (req, res) {
     if (DISABLE_AUTH) {
         res.redirect('/list');
     } else {
@@ -239,47 +239,47 @@ authRoute.get('/j_spring_cas_security_check', function(req, res) {
             user.ticket = req.query.ticket;
             res.redirect(user.resource.toString());
         } else {
-            logger('Invalid user request');
-            userList.push({id: req.session.id, resource: APP_BASE_URL, redirections: 0, checked: false});
+            logger(LOG_TYPE.WARNING, 'Invalid user request');
+            userList.push({ id: req.session.id, resource: APP_BASE_URL, redirections: 0, checked: false });
             res.redirect(casBaseUrl + '/cai-cas/login?service=' + PARSED_URL);
         }
     }
 });
 
-authRoute.get('/user', function(req, res, next) {
+authRoute.get('/user', function (req, res, next) {
     if (DISABLE_AUTH) {
-        res.status(200).send({code: '9999999', role: Auth_Permissions.User_Type.superUser});
+        res.status(200).send({ code: '9999999', role: Auth_Permissions.User_Type.superUser });
     } else {
         const user = userList.find(obj => String(obj.id) === req.session.id);
-        logger('User permissions request (UUID): ', user.uuid);
+        logger(LOG_TYPE.INFO, 'User permissions request (UUID): ', user.uuid);
         if (user && user.uuid) {
             if (!user.code || !user.role) {
                 if (user.checked) {
                     user.checked = false;
-                    res.status(500).send({error: 'Invalid user or request'});
+                    res.status(500).send({ error: 'Invalid user or request' });
                 } else {
                     checkUserPromise(user.uuid)
-                    .then(usr => {
-                        user.code = usr.code;
-                        user.role = usr.role;
-                        res.status(200).send(usr);
-                    })
-                    .catch(() => {
-                        res.status(500).send({error: 'Invalid user or request'});
-                    });
+                        .then(usr => {
+                            user.code = usr.code;
+                            user.role = usr.role;
+                            res.status(200).send(usr);
+                        })
+                        .catch(() => {
+                            res.status(500).send({ error: 'Invalid user or request' });
+                        });
                 }
             } else {
-                res.status(200).send({code: user.code, role: user.role});
+                res.status(200).send({ code: user.code, role: user.role });
             }
         } else {
-            logger('User not logged');
-            userList.push({id: req.session.id, resource: APP_BASE_URL + '/list', redirections: 0, checked: false});
+            logger(LOG_TYPE.INFO, 'User not logged');
+            userList.push({ id: req.session.id, resource: APP_BASE_URL + '/list', redirections: 0, checked: false });
             res.redirect(casBaseUrl + '/cai-cas/login?service=' + PARSED_URL);
         }
     }
 })
 
-authRoute.get('/', function(req, res, next) {
+authRoute.get('/', function (req, res, next) {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('content-type', 'text/html; charset=utf-8');
@@ -288,9 +288,9 @@ authRoute.get('/', function(req, res, next) {
 
 authRoute.use(express.static(OUT_DIR));
 
-authRoute.get('/*', function(req, res) {
-    logger(req.method + ' REQUEST: ' + JSON.stringify(req.query));
-    logger(req.path);
+authRoute.get('/*', function (req, res) {
+    logger(LOG_TYPE.INFO, req.method + ' REQUEST: ' + JSON.stringify(req.query));
+    logger(LOG_TYPE.INFO, req.path);
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('content-type', 'text/html; charset=utf-8');
@@ -300,59 +300,63 @@ authRoute.get('/*', function(req, res) {
     } else {
         const user = userList.find(obj => String(obj.id) === req.session.id);
         if (!user) {
-            logger('User not logged');
-            userList.push({id: req.session.id, resource: req.path, redirections: 0, checked: false});
+            logger(LOG_TYPE.INFO, 'User not logged');
+            userList.push({ id: req.session.id, resource: req.path, redirections: 0, checked: false });
             res.redirect(casBaseUrl + '/cai-cas/login?service=' + PARSED_URL);
         } else {
             if (user.ticket) {
-                logger('Checking ticket: ', user.ticket);
+                logger(LOG_TYPE.INFO, 'Checking ticket: ', user.ticket);
                 validationPromise(user.ticket)
-                .then((usr) => {
-                    logger('Valid ticket');
-                    user.checked = true;
-                    user.redirections = 0;
-                    if (!user.code || !user.role) {
-                        user.uuid = usr;
-                        checkUserPromise(usr)
-                        .then(us => {
-                            logger('Access granted with role and code: ', Auth_Permissions.User_Type[us.role], us.code);
-                            user.code = us.code;
-                            user.role = us.role;
+                    .then((usr) => {
+                        logger(LOG_TYPE.INFO, 'Valid ticket');
+                        user.checked = true;
+                        user.redirections = 0;
+                        if (!user.code || !user.role) {
+                            user.uuid = usr;
+                            checkUserPromise(usr)
+                                .then(us => {
+                                    logger(LOG_TYPE.INFO,
+                                        'Access granted with role and code: ', Auth_Permissions.User_Type[us.role], us.code);
+                                    user.code = us.code;
+                                    user.role = us.role;
 
-                            res.sendFile(path.join(OUT_DIR + '/index.html'));
-                        })
-                        .catch(() => {
-                            logger('Access denied');
-                            res.sendFile(path.join(OUT_DIR + '/index.html'));
-                        });
-                    } else {
-                        if (user.role) {
-                            logger('Access granted with role and code: ', user.role, user.code);
-                            res.sendFile(path.join(OUT_DIR + '/index.html'));
+                                    res.sendFile(path.join(OUT_DIR + '/index.html'));
+                                })
+                                .catch(() => {
+                                    logger(LOG_TYPE.INFO, 'Access denied');
+                                    res.sendFile(path.join(OUT_DIR + '/index.html'));
+                                });
                         } else {
-                            res.sendFile(path.join(OUT_DIR + '/index.html'));
+                            if (user.role) {
+                                logger(LOG_TYPE.INFO, 'Access granted with role and code: ', user.role, user.code);
+                                res.sendFile(path.join(OUT_DIR + '/index.html'));
+                            } else {
+                                res.sendFile(path.join(OUT_DIR + '/index.html'));
+                            }
                         }
-                    }
-                })
-                .catch((err) => {
-                    logger('Invalid ticket', err);
-                    user.redirections++;
-                    user.checked = false;
-                    user.resource = req.path;
-                    if (user.redirections >= 3) {
-                        const index = userList.findIndex(obj => String(obj.id) === user.id);
-                        userList.splice(index, 1);
-                        res.status(500).send(`Error, try logout <a href='` + casBaseUrl + '/cai-cas/logout' + `'>here</a> before try again.
-                        <br>Error info:<br><br>` + err);
-                    } else {
-                        res.redirect(casBaseUrl + '/cai-cas/login?service=' + PARSED_URL);
-                    }
-                });
+                    })
+                    .catch((err) => {
+                        logger(LOG_TYPE.INFO, 'Invalid ticket', err);
+                        user.redirections++;
+                        user.checked = false;
+                        user.resource = req.path;
+                        if (user.redirections >= 3) {
+                            const index = userList.findIndex(obj => String(obj.id) === user.id);
+                            userList.splice(index, 1);
+                            logger(LOG_TYPE.WARNING, 'Too many redirects');
+                            res.status(500).send(`Error, try logout <a href='` +
+                                casBaseUrl + '/cai-cas/logout' + `'>here</a> before try again.
+                                <br>Error info:<br><br>` + err);
+                        } else {
+                            res.redirect(casBaseUrl + '/cai-cas/login?service=' + PARSED_URL);
+                        }
+                    });
             } else {
-                logger('Invalid user ticket');
+                logger(LOG_TYPE.WARNING, 'Invalid user ticket');
                 user.resource = req.path;
                 user.redirections++;
                 if (user.redirections >= 3) {
+                    logger(LOG_TYPE.WARNING, 'Too many redirects');
                     const index = userList.findIndex(obj => String(obj.id) === user.id);
                     userList.splice(index, 1);
                     res.status(500).send('Error, try logout <a href="' + casBaseUrl + '/cai-cas/logout' + '">here</a> before try again');
