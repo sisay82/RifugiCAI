@@ -10,9 +10,6 @@ const DOMParser = xmldom.DOMParser;
 
 export const DISABLE_AUTH = false;
 
-const centralRole: String[] = ['ROLE_RIFUGI_ADMIN'];
-const regionalRoleName: String[] = ['PGR'];
-const sectionalRoleName: String[] = ['ROLE_MEMBERS_VIEW', 'ROLE_MEMBERSHIP'/*,'Responsabile Esterno Sezione','Operatore Sezione Esteso'*/];
 const casBaseUrl = 'https://accesso.cai.it';
 const authUrl = 'https://services.cai.it/cai-integration-ws/secured/users/';
 const userList: UserData[] = [];
@@ -97,11 +94,12 @@ function checkInclude(source: any[], target: any[], attribute): boolean {
 
 function getRole(data): Auth_Permissions.User_Type {
     if (data) {
-        if (checkInclude(data.aggregatedAuthorities, centralRole, 'role')) {
+        if (checkInclude(data.aggregatedAuthorities, Auth_Permissions.getUserRolesByType(Auth_Permissions.User_Type.central), 'role')) {
             return Auth_Permissions.User_Type.central;
-        } else if (checkInclude(data.userGroups, regionalRoleName, 'name')) {
+        } else if (checkInclude(data.userGroups, Auth_Permissions.getUserRolesByType(Auth_Permissions.User_Type.regional), 'name')) {
             return Auth_Permissions.User_Type.regional;
-        } else if (checkInclude(data.aggregatedAuthorities, sectionalRoleName, 'role')) {
+        } else if (checkInclude(data.aggregatedAuthorities,
+            Auth_Permissions.getUserRolesByType(Auth_Permissions.User_Type.sectional), 'role')) {
             return Auth_Permissions.User_Type.sectional;
         } else {
             return null;

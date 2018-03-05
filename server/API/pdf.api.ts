@@ -5,10 +5,12 @@ import * as pdf from 'html-pdf';
 import { countContributionFilesByShelter, insertNewFile } from './files.api';
 import { Enums } from '../../src/app/shared/types/enums';
 import Files_Enum = Enums.Files;
+import { IFile } from '../../src/app/shared/types/interfaces';
 
 const titleSize = '24px';
 const subtitleSize = '20px';
 const bodySize = '18px';
+const assestpath = path.join('file://' + OUT_DIR + '/assets/images/');
 
 function getContributionHtml(title: String, value: Number, rightTitle?: boolean): String {
     if (value == null) {
@@ -23,7 +25,7 @@ function getContributionHtml(title: String, value: Number, rightTitle?: boolean)
     }
 }
 
-function createPdfFromHTMLDoc(document, footer): pdf.CreateResult {
+function createPdfFromHTMLDoc(document, footer?): pdf.CreateResult {
     return pdf.create(document, {
         'directory': '/tmp',
         'border': {
@@ -33,12 +35,12 @@ function createPdfFromHTMLDoc(document, footer): pdf.CreateResult {
             'right': '0.6in',
         },
         'footer': {
-            'contents': footer
+            'contents': footer ? (footer) : ''
         }
     });
 }
 
-function getPDFName(year: Number, type: Enums.Contribution_Type, num: Number): String {
+function getPDFContributionName(year: Number, type: Enums.Contribution_Type, num: Number): String {
     return year + '_' + type + '_' + num + '.pdf';
 }
 
@@ -54,24 +56,14 @@ function getBufferFromPDF(fileIn: pdf.CreateResult): Promise<Buffer> {
     });
 }
 
-function writePDFtoMongo(fileIn: pdf.CreateResult, shelId: String, value: Number, year: Number, type: Enums.Contribution_Type, num: Number)
+function writePDFtoMongo(fileIn: pdf.CreateResult, fileData: IFile)
     : Promise<{ name: String, id: any }> {
     return new Promise<{ name: String, id: any }>((resolve, reject) => {
         getBufferFromPDF(fileIn)
             .then(buff => {
-                const file = {
-                    size: buff.length,
-                    shelterId: shelId,
-                    uploadDate: new Date(),
-                    name: getPDFName(year, type, num),
-                    data: buff,
-                    contribution_type: type,
-                    contentType: 'application/pdf',
-                    type: Files_Enum.File_Type.contribution,
-                    invoice_year: year,
-                    value: value
-                }
-                return insertNewFile(<any>file);
+                fileData.size = buff.length;
+                fileData.data = buff
+                return insertNewFile(<any>fileData);
             })
             .then(file => {
                 resolve({ name: file.name, id: file._id });
@@ -82,15 +74,35 @@ function writePDFtoMongo(fileIn: pdf.CreateResult, shelId: String, value: Number
     });
 }
 
-export function createContributionPDF(shelter: IShelterExtended): Promise<{ name: String, id: any }> {
-    if (shelter && shelter.branch && shelter.contributions && shelter.contributions.data) {
-        const contribution = shelter.contributions;
-        const assestpath = path.join('file://' + OUT_DIR + '/assets/images/');
-
-        const header = `<div style='text-align:center'>
+function getPDFHeader() {
+    return `<div style='text-align:center'>
         <div style='height:100px'><img style='max-width:100%;max-height:100%' src='` + assestpath + `logo_pdf.png' /></div>
         <div style='font-weight: bold;font-size:` + titleSize + `'>CLUB ALPINO ITALIANO</div>
         </div>`;
+}
+
+export function createEconomyPDF(shelter: IShelterExtended, year: number): Promise<{name: String, id: any}> {
+    const header = getPDFHeader();
+
+    const document = `<html><head></head>${header}</html>`
+    const result = createPdfFromHTMLDoc(document);
+
+    const f: IFile = {
+        name: 'Economia_anno_' + year,
+        shelterId: shelter._id,
+        uploadDate: new Date(),
+        contentType: 'application/pdf',
+        type: Files_Enum.File_Type.doc,
+    }
+
+    return writePDFtoMongo(result, f);
+};
+
+export function createContributionPDF(shelter: IShelterExtended): Promise<{ name: String, id: any }> {
+    if (shelter && shelter.branch && shelter.contributions && shelter.contributions.data) {
+        const contribution = shelter.contributions;
+
+        const header = getPDFHeader();
 
         let document = `<html><head></head><body>` + header + `
         <br/><div style='font-size:` + bodySize + `' align="right"><span style="text-align:left">
@@ -149,9 +161,22 @@ export function createContributionPDF(shelter: IShelterExtended): Promise<{ name
 
         const result = createPdfFromHTMLDoc(document, footer);
 
-        return countContributionFilesByShelter(shelter._id)
-            .then((num) => writePDFtoMongo(result, shelter._id, contribution.value, contribution.year, contribution.type, num))
+        const f: IFile = {
+            shelterId: shelter._id,
+            uploadDate: new Date(),
+            contribution_type: contribution.type,
+            contentType: 'application/pdf',
+            type: Files_Enum.File_Type.contribution,
+            invoice_year: contribution.year,
+        }
 
+        return countContributionFilesByShelter(shelter._id)
+            .then((num) => {
+                f.name = getPDFContributionName(contribution.year, contribution.type, num);
+                f.value = num;
+                return writePDFtoMongo(result, f)
+            })
+            .catch(error => Promise.reject(error));
     } else {
         return Promise.reject(new Error('Error contribution data'));
     }

@@ -340,6 +340,7 @@ function resolveServicesInShelter(shelter, services): Promise<IShelterExtended> 
     });
 }
 
+// TODO! PDF economy
 function updateShelterEconomy(shelter: IShelterExtended, economies: any[]): Promise<any> {
     return new Promise<any>((resolve, reject) => {
         if (economies) {
@@ -390,9 +391,11 @@ function updateShelterContributions(shelter: IShelterExtended, contributions: an
 function resolveEconomyInShelter(shelter: IShelterExtended, uses: any[], contributions: any, economies: any[]): Promise<IShelterExtended> {
     return new Promise<IShelterExtended>((resolve, reject) => {
         try {
-            Promise.all([updateShelterEconomy(shelter, economies),
-            updateShelterUse(shelter, uses),
-            updateShelterContributions(shelter, contributions)])
+            Promise.all([
+                updateShelterEconomy(shelter, economies),
+                updateShelterUse(shelter, uses),
+                updateShelterContributions(shelter, contributions)
+            ])
                 .then(() => {
                     resolve(shelter);
                 })
