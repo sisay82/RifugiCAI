@@ -107,6 +107,6 @@ export class BcSelectInput extends BcBaseInput {
                 this.invalid = false;
             }
         }
-        this.setValue(value);
+        this.updateValue(value);
     }
 }

@@ -42,6 +42,6 @@ export class BcCheckboxInput extends BcBaseInput {
     }
 
     onChange(event: any) {
-        this.setValue(this.isChecked(event.target.checked));
+        this.updateValue(this.isChecked(event.target.checked));
     }
 }

@@ -68,19 +68,17 @@ export class BcTextInput extends BcBaseInput {
     }
 
     // override
-    setValue(value) {
-        if (!this.isDisabled) {
-            if (this.removeYear) {
-                this.value = this.processYear(value);
-            } else {
-                this.value = value;
-            }
-            this.propagateChange(this.value);
+    updateValue(value) {
+        let newVal = value;
+        if (this.removeYear) {
+            newVal = this.processYear(value);
         }
+        this.setValue(newVal);
+        this.propagateChange(newVal);
     }
 
     onKey(event: any) {
-        this.setValue(event.target.value);
+        this.updateValue(event.target.value);
     }
 
     processYear(value: string): string {
@@ -107,9 +105,6 @@ export class BcTextInput extends BcBaseInput {
         } else if (this.value === "false" || (this.value === false && this.value !== "")) {
             returnVal = 'no';
         } else {
-            /*if(this.removeYear&&!this.initialized){
-                returnVal = this.processYear(this.value);
-            } else*/
             if (this.replaceDot) {
                 returnVal = ( < String > this.value).replace(/\,/g, '.')
             } else {

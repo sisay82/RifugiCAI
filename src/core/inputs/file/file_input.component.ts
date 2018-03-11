@@ -76,7 +76,7 @@ export class BcFileInput extends BcBaseInput {
         let files = [];
         if (event.target && event.target.files) { files = event.target.files }
         if (event.srcElement && event.srcElement.files) { files = event.srcElement.files }
-        this.setValue(files[0]);
+        this.updateValue(files[0]);
     }
 
     getExtension(filename: String) {
@@ -116,8 +116,7 @@ export class BcFileInput extends BcBaseInput {
                 (this.testName(c.value.name)) &&
                 (c.value.size > 0) &&
                 (this.checkExtension(this.getExtension(c.value.name)))) {
-                this.setValue(c.value);
-                if (this.value.size > this.sizeLimit) {
+                if (c.value.size > this.sizeLimit) {
                     if (this.displayError) {
                         this.invalid = true;
                     }
@@ -126,6 +125,7 @@ export class BcFileInput extends BcBaseInput {
                         err: "Size over limit"
                     };
                 } else {
+                    this.setValue(c.value);
                     this.invalid = false;
                     return null;
                 }

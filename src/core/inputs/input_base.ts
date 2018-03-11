@@ -165,9 +165,7 @@ export abstract class BcBaseInput implements ControlValueAccessor {
     }
 
     writeValue(value: any): void {
-        if (!this.isDisabled && value !== undefined) {
-            this.setValue(value);
-        }
+        this.updateValue(value);
     }
 
     registerOnChange(fn: any): void {
@@ -185,6 +183,12 @@ export abstract class BcBaseInput implements ControlValueAccessor {
     protected setValue(value) {
         if (!this.isDisabled) {
             this.value = value;
+        }
+    }
+
+    protected updateValue(value) {
+        if (!this.isDisabled) {
+            this.setValue(value);
             this.propagateChange(this.value);
         }
     }
@@ -193,6 +197,7 @@ export abstract class BcBaseInput implements ControlValueAccessor {
         valid ?: Boolean,
         err ?: String
     } {
+        this.updateValue(c.value)
         return null;
     }
 }
