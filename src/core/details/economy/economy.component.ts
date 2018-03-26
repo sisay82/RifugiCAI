@@ -1,24 +1,24 @@
 import {
-  Component,Input,OnInit,Directive
+  Component, Input, OnInit, Directive
 } from '@angular/core';
-import { ActivatedRoute,Router } from '@angular/router';
-import { IShelter,IEconomy, IContribution, IFile } from '../../../app/shared/types/interfaces'
+import { ActivatedRoute, Router } from '@angular/router';
+import { IShelter, IEconomy, IContribution, IFile } from '../../../app/shared/types/interfaces'
 import { Enums } from '../../../app/shared/types/enums'
-import {ShelterService} from '../../../app/shelter/shelter.service'
+import { ShelterService } from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import {BcSharedService} from '../../../app/shared/shared.service'
-import {BcDetailsService} from '../details.service';
+import { BcSharedService } from '../../../app/shared/shared.service'
+import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
 
 @Directive({
-  selector:"div[active]",
-  host:{
-    "[class.bc-detail-economy-tab-active]":"active"
+  selector: "div[active]",
+  host: {
+    "[class.bc-detail-economy-tab-active]": "active"
   }
 })
-export class BcActiveTabStyler{
-  @Input("active") active:boolean=false;
+export class BcActiveTabStyler {
+  @Input("active") active: boolean = false;
 }
 
 
@@ -27,208 +27,208 @@ export class BcActiveTabStyler{
   selector: 'bc-economy',
   templateUrl: 'economy.component.html',
   styleUrls: ['economy.component.scss'],
-  providers:[ShelterService]
+  providers: [ShelterService]
 })
-export class BcEconomy extends DetailBase{
-  economy:[IEconomy]=<any>[];
+export class BcEconomy extends DetailBase {
+  economy: [IEconomy] = <any>[];
   activeYear;
-  activeTab:IEconomy;
-  balanceSheet:number=0;
-  files:IFile[]=[];
-  revenuesFiles:[IFile]=[] as [IFile];
-  outgosFiles:[IFile]=[] as [IFile];
-  revenues:number=0;
-  outgos:number=0;
-  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
-    super(_route,shared,router);
-    shared.activeComponent=Enums.Routed_Component.economy;
+  activeTab: IEconomy;
+  balanceSheet = 0;
+  files: IFile[] = [];
+  revenuesFiles: [IFile] = [] as [IFile];
+  outgosFiles: [IFile] = [] as [IFile];
+  revenues = 0;
+  outgos = 0;
+  constructor(private shelterService: ShelterService, _route: ActivatedRoute, shared: BcSharedService, router: Router, private detailsService: BcDetailsService) {
+    super(_route, shared, router);
+    shared.activeComponent = Enums.Routes.Routed_Component.economy;
   }
 
-  isActive(year){
-    return year==this.activeYear;
+  isActive(year) {
+    return year == this.activeYear;
   }
 
-  showTab(year){
-    if(year!=this.activeYear){
-      this.changeActiveTab(year,this.economy.find(obj=>obj.year==year));
+  showTab(year) {
+    if (year != this.activeYear) {
+      this.changeActiveTab(year, this.economy.find(obj => obj.year == year));
     }
   }
 
-  getContributionSumPerType(type:Enums.Contribution_Type){
-    let total:any=0;
+  getContributionSumPerType(type: Enums.Contribution_Type) {
+    let total: any = 0;
     this.revenuesFiles.concat(
-      this.files.filter(obj=>obj.type==Enums.File_Type.contribution)
-    ).filter(obj=>obj.contribution_type==type&&obj.invoice_year==this.activeYear).forEach((file)=>{
-      total+=this.getTotal(file.value,file.invoice_tax);
+      this.files.filter(obj => obj.type == Enums.Files.File_Type.contribution)
+    ).filter(obj => obj.contribution_type == type && obj.invoice_year == this.activeYear).forEach((file) => {
+      total += this.getTotal(file.value, file.invoice_tax);
     });
     return total;
   }
 
-  changeActiveTab(year,newTab:IEconomy){
-    this.activeYear=year;
-    if(newTab){
-      this.activeTab=newTab;
-    }else{
-      this.activeTab={year:year};
+  changeActiveTab(year, newTab: IEconomy) {
+    this.activeYear = year;
+    if (newTab) {
+      this.activeTab = newTab;
+    } else {
+      this.activeTab = { year: year };
     }
     this.setBalanceSheetByYear(year);
   }
 
-  getTotal(value,tax){
-    if(tax){
-      if(tax>1){
-        return (value*(tax/100))+value;
-      }else{
-        return (value*tax)+value;
+  getTotal(value, tax) {
+    if (tax) {
+      if (tax > 1) {
+        return (value * (tax / 100)) + value;
+      } else {
+        return (value * tax) + value;
       }
-    }else{
+    } else {
       return value;
     }
-    
+
   }
 
-  getEnumNames(){
-      let names:any[]=[];
-      const objValues = Object.keys(Enums.Contribution_Type).map(k => Enums.Contribution_Type[k]);
-      objValues.filter(v => typeof v === "string").forEach((val)=>{
-          names.push(val);
-      });
-      return names;
+  getEnumNames() {
+    const names: any[] = [];
+    const objValues = Object.keys(Enums.Contribution_Type).map(k => Enums.Contribution_Type[k]);
+    objValues.filter(v => typeof v === "string").forEach((val) => {
+      names.push(val);
+    });
+    return names;
   }
 
-  setBalanceSheetByYear(year){
-    let total:number=0;
-    let totRevenues:number=0;
-    let totOutgos:number=0;
-    this.outgosFiles.filter(obj=>obj.invoice_year==year).forEach(entry=>{
-      let n=0;
-      n=this.getTotal(entry.value,entry.invoice_tax);
-      totOutgos+=<number>n;
+  setBalanceSheetByYear(year) {
+    let total = 0;
+    let totRevenues = 0;
+    let totOutgos = 0;
+    this.outgosFiles.filter(obj => obj.invoice_year == year).forEach(entry => {
+      let n = 0;
+      n = this.getTotal(entry.value, entry.invoice_tax);
+      totOutgos += <number>n;
     });
-    this.revenuesFiles.filter(obj=>obj.invoice_year==year).forEach(entry=>{
-      let n=0;
-      n=this.getTotal(entry.value,entry.invoice_tax);
-      totRevenues+=<number>n;
+    this.revenuesFiles.filter(obj => obj.invoice_year == year).forEach(entry => {
+      let n = 0;
+      n = this.getTotal(entry.value, entry.invoice_tax);
+      totRevenues += <number>n;
     });
-    this.outgos=totOutgos;
-    this.revenues=totRevenues;
-    total=totRevenues-totOutgos;
-    this.balanceSheet=total;
+    this.outgos = totOutgos;
+    this.revenues = totRevenues;
+    total = totRevenues - totOutgos;
+    this.balanceSheet = total;
     return total;
   }
 
-  analyzeDocsYear(files:IFile[]):Promise<any>{
-    return new Promise<any>((resolve,reject)=>{
-      files.forEach(file=>{
-        if(!this.economy.find(obj=>obj.year==file.invoice_year)){
-          this.economy.push({year:file.invoice_year,accepted:false,confirm:false});
+  analyzeDocsYear(files: IFile[]): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      files.forEach(file => {
+        if (!this.economy.find(obj => obj.year == file.invoice_year)) {
+          this.economy.push({ year: file.invoice_year, accepted: false, confirm: false });
         }
-        
+
       });
-      this.economy=this.economy.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;})
+      this.economy = this.economy.sort((a, b) => { return a.year < b.year ? -1 : a.year > b.year ? +1 : 0; })
       resolve()
     });
   }
 
-  getFilesByYear(files:any[]):any[]{    
-    return files.filter(obj=>obj.invoice_year==this.activeYear);
+  getFilesByYear(files: any[]): any[] {
+    return files.filter(obj => obj.invoice_year == this.activeYear);
   }
 
-  getDocs(shelId):Promise<IFile[]>{
-    return new Promise<IFile[]>((resolve,reject)=>{
-      let loadServiceSub=this.detailsService.loadFiles$.subscribe(files=>{
-        if(!files){
-          let queryFileSub=this.shelterService.getFilesByShelterId(shelId).subscribe(files=>{
+  getDocs(shelId): Promise<IFile[]> {
+    return new Promise<IFile[]>((resolve, reject) => {
+      const loadServiceSub = this.detailsService.loadFiles$.subscribe(files => {
+        if (!files) {
+          const queryFileSub = this.shelterService.getFilesByShelterId(shelId).subscribe(files => {
             this.detailsService.onChildSaveFiles(files);
-            if(queryFileSub!=undefined){
+            if (queryFileSub != undefined) {
               queryFileSub.unsubscribe();
             }
-            resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
+            resolve(files.filter(obj => obj.type == Enums.Files.File_Type.invoice || obj.type == Enums.Files.File_Type.contribution));
           });
-        }else{
-          resolve(files.filter(obj=>obj.type==Enums.File_Type.invoice||obj.type==Enums.File_Type.contribution));
+        } else {
+          resolve(files.filter(obj => obj.type == Enums.Files.File_Type.invoice || obj.type == Enums.Files.File_Type.contribution));
         }
-        if(loadServiceSub!=undefined){
+        if (loadServiceSub != undefined) {
           loadServiceSub.unsubscribe();
         }
       });
-      this.detailsService.onChildLoadFilesRequest([Enums.File_Type.invoice,Enums.File_Type.contribution]);
+      this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.invoice, Enums.Files.File_Type.contribution]);
     });
   }
 
-  getEconomy(id):Promise<IShelter>{
-    return new Promise<IShelter>((resolve,reject)=>{
-        let revSub=this.detailsService.load$.subscribe(shelter=>{
-          if(shelter!=null&&shelter.use!=undefined){
-              if(revSub!=undefined){
-                  revSub.unsubscribe();
-              }
-              resolve(shelter);
-          }else{
-              let shelSub=this.shelterService.getShelterSection(id,"economy").subscribe(shelter=>{
-                this.detailsService.onChildSave(shelter,"economy");
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
-                if(revSub!=undefined){
-                    revSub.unsubscribe();
-                }
-                resolve(shelter);
-              });
+  getEconomy(id): Promise<IShelter> {
+    return new Promise<IShelter>((resolve, reject) => {
+      const revSub = this.detailsService.load$.subscribe(shelter => {
+        if (shelter != null && shelter.use != undefined) {
+          if (revSub != undefined) {
+            revSub.unsubscribe();
           }
+          resolve(shelter);
+        } else {
+          const shelSub = this.shelterService.getShelterSection(id, "economy").subscribe(shelter => {
+            this.detailsService.onChildSave(shelter, "economy");
+            if (shelSub != undefined) {
+              shelSub.unsubscribe();
+            }
+            if (revSub != undefined) {
+              revSub.unsubscribe();
+            }
+            resolve(shelter);
+          });
+        }
       });
       this.detailsService.onChildLoadRequest("economy");
     });
   }
 
-  getContributions(id):Promise<IShelter>{
-    return new Promise<IShelter>((resolve,reject)=>{
-        let revSub=this.detailsService.load$.subscribe(shelter=>{
-          if(shelter!=null&&shelter.use!=undefined){
-              if(revSub!=undefined){
-                  revSub.unsubscribe();
-              }
-              resolve(shelter);
-          }else{
-              let shelSub=this.shelterService.getShelterSection(id,"contributions").subscribe(shelter=>{
-                this.detailsService.onChildSave(shelter,"contributions");
-                if(shelSub!=undefined){
-                    shelSub.unsubscribe();
-                }
-                if(revSub!=undefined){
-                    revSub.unsubscribe();
-                }
-                resolve(shelter);
-              });
+  getContributions(id): Promise<IShelter> {
+    return new Promise<IShelter>((resolve, reject) => {
+      const revSub = this.detailsService.load$.subscribe(shelter => {
+        if (shelter != null && shelter.use != undefined) {
+          if (revSub != undefined) {
+            revSub.unsubscribe();
           }
+          resolve(shelter);
+        } else {
+          const shelSub = this.shelterService.getShelterSection(id, "contributions").subscribe(shelter => {
+            this.detailsService.onChildSave(shelter, "contributions");
+            if (shelSub != undefined) {
+              shelSub.unsubscribe();
+            }
+            if (revSub != undefined) {
+              revSub.unsubscribe();
+            }
+            resolve(shelter);
+          });
+        }
       });
       this.detailsService.onChildLoadRequest("contributions");
     });
   }
 
-  init(shelId){
+  init(shelId) {
     this.getEconomy(shelId)
-    .then((shelter)=>{
-      this.getDocs(shelId)
-      .then(files=>{
-        this.analyzeDocsYear(files)
-        .then(()=>{});
-        this.files=files;
-        this.revenuesFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Attività.toString()) as [IFile];
-        this.outgosFiles=files.filter(obj=>Enums.Invoice_Type[obj.invoice_type]==Enums.Invoice_Type.Passività.toString()) as [IFile];
-        this.setBalanceSheetByYear((new Date()).getFullYear());
+      .then((shelter) => {
+        this.getDocs(shelId)
+          .then(files => {
+            this.analyzeDocsYear(files)
+              .then(() => { });
+            this.files = files;
+            this.revenuesFiles = files.filter(obj => Enums.Invoice_Type[obj.invoice_type] == Enums.Invoice_Type.Attività.toString()) as [IFile];
+            this.outgosFiles = files.filter(obj => Enums.Invoice_Type[obj.invoice_type] == Enums.Invoice_Type.Passività.toString()) as [IFile];
+            this.setBalanceSheetByYear((new Date()).getFullYear());
+          });
+        let tab;
+        let year;
+        year = (new Date()).getFullYear();
+        if (shelter.economy && shelter.economy.length > 0) {
+          this.economy = shelter.economy.sort((a, b) => { return a.year < b.year ? -1 : a.year > b.year ? +1 : 0; });
+          tab = shelter.economy.find(obj => obj.year == (new Date().getFullYear()));
+        } else {
+          const economy: IEconomy = { year: (new Date()).getFullYear() }
+          this.economy = [economy];
+        }
+        this.changeActiveTab(year, tab);
       });
-      let tab;
-      let year;
-      year=(new Date()).getFullYear();        
-      if(shelter.economy&&shelter.economy.length>0){
-        this.economy = shelter.economy.sort((a,b)=>{return a.year < b.year ? -1 : a.year > b.year ? +1 : 0;});       
-        tab=shelter.economy.find(obj=>obj.year==(new Date().getFullYear()));     
-      }else{
-        let economy:IEconomy={year:(new Date()).getFullYear()}
-        this.economy=[economy];
-      }
-      this.changeActiveTab(year,tab);
-    });
   }
 }

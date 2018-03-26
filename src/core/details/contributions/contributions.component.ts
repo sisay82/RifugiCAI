@@ -35,7 +35,7 @@ export class BcContributions extends DetailBase{
   
   constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
     super(_route,shared,router);
-    shared.activeComponent=Enums.Routed_Component.contribution;
+    shared.activeComponent=Enums.Routes.Routed_Component.contribution;
   }
 
   isActive(year){
@@ -62,16 +62,16 @@ export class BcContributions extends DetailBase{
                   if(queryFileSub!=undefined){
                       queryFileSub.unsubscribe();
                   }
-                  resolve(files.filter(obj=>obj.type==Enums.File_Type.contribution));
+                  resolve(files.filter(obj=>obj.type==Enums.Files.File_Type.contribution));
               });
             }else{
-                resolve(files.filter(obj=>obj.type==Enums.File_Type.contribution));
+                resolve(files.filter(obj=>obj.type==Enums.Files.File_Type.contribution));
             }
             if(loadServiceSub!=undefined){
                 loadServiceSub.unsubscribe();
             }
         });
-        this.detailsService.onChildLoadFilesRequest([Enums.File_Type.contribution]);
+        this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.contribution]);
     });
 }
 

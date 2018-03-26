@@ -108,14 +108,14 @@ export class BcCatastalRevision extends RevisionBase{
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.catastal);
                 }
             }else{
                 this.abortSave();
             }
         });
 
-        shared.activeComponent=Enums.Routed_Component.catastal;
+        shared.activeComponent=Enums.Routes.Routed_Component.catastal;
     }
 
     checkValidForm(){
@@ -144,7 +144,7 @@ export class BcCatastalRevision extends RevisionBase{
 
     save(confirm){
         if(!this.catastalForm.dirty&&!this.drainForm.dirty&&!this.energyForm.dirty){
-            this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
+            this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.catastal);
         }else{
             if(!confirm||(this.catastalForm.valid&&this.drainForm.valid&&this.energyForm.valid)){
                 let catastal:ICatastal={};
@@ -159,7 +159,7 @@ export class BcCatastalRevision extends RevisionBase{
                 ])
                 .then(()=>{
                     if(confirm){
-                        this.shared.onMaskConfirmSave(Enums.Routed_Component.catastal);
+                        this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.catastal);
                     }
                 })
                 .catch(err=>{

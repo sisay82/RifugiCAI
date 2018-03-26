@@ -2,10 +2,10 @@ import { NgModule } from '@angular/core';
 import { BcMap } from './map.component';
 import { CommonModule } from '@angular/common';
 @NgModule({
-    imports:[CommonModule],
+    imports: [CommonModule],
     declarations: [BcMap],
     exports: [BcMap]
 })
-export class BcMapModule{
+export class BcMapModule {
 
 }

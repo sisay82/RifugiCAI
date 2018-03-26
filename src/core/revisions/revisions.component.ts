@@ -21,24 +21,24 @@ export class BcRevisions{
     subscriptions:Subscription[]=[];
     localPermissions:any[];
     updateFile(file:IFile,remove?:Boolean){
-        if(file.type==Enums.File_Type.image){
-            this.updateFileLocal(this.images,file,remove);
+        if(file.type==Enums.Files.File_Type.image){
+            this.images = this.updateFileLocal(this.images,file,remove);
         }else{
-            this.updateFileLocal(this.docs,file,remove);
+            this.docs = this.updateFileLocal(this.docs,file,remove);
         }
     }
 
     saveFiles(files:IFile[]){
         for(let file of files){
-            if(file.type==Enums.File_Type.image){
-                this.updateFileLocal(this.images,file);
+            if(file.type==Enums.Files.File_Type.image){
+                this.images = this.updateFileLocal(this.images,file);
             }else{
-                this.updateFileLocal(this.docs,file);
+                this.docs = this.updateFileLocal(this.docs,file);
             }
         }
     }
 
-    updateFileLocal(storage:IFile[],file:IFile,remove?:Boolean):void{
+    updateFileLocal(storage:IFile[],file:IFile,remove?:Boolean):IFile[]{
         if(storage!=undefined){
             if(remove){
                 const f=storage.find(f=>f._id==file._id);
@@ -58,6 +58,7 @@ export class BcRevisions{
                 storage=[file];
             }
         }
+        return storage
     }
 
     deleteSection(section:string){
@@ -72,12 +73,12 @@ export class BcRevisions{
         this.shelterToUpdate=null;
     }
 
-    checkDocTypes(types:Enums.File_Type[]):boolean{
-        return (types.includes(Enums.File_Type.doc)||types.includes(Enums.File_Type.map)||types.includes(Enums.File_Type.invoice));
+    checkDocTypes(types:Enums.Files.File_Type[]):boolean{
+        return (types.includes(Enums.Files.File_Type.doc)||types.includes(Enums.Files.File_Type.map)||types.includes(Enums.Files.File_Type.invoice));
     }
     
-    checkImageTypes(types:Enums.File_Type[]):boolean{
-        return types.includes(Enums.File_Type.image);
+    checkImageTypes(types:Enums.Files.File_Type[]):boolean{
+        return types.includes(Enums.Files.File_Type.image);
     }
 
     constructor(private revisionService:BcRevisionsService,private router: Router,private shared:BcSharedService,private authService:BcAuthService){
@@ -90,7 +91,7 @@ export class BcRevisions{
                 }));
             }),
             shared.activeOutletChange$.subscribe((outlet)=>{
-                if(outlet==Enums.Routed_Outlet.content){
+                if(outlet==Enums.Routes.Routed_Outlet.content){
                     this.initStorage();
                 }
             }),

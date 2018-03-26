@@ -1,139 +1,135 @@
 import {
-  Component, Input, OnInit, OnDestroy, Directive,SimpleChanges,OnChanges,ViewEncapsulation
+  Component, Input, OnInit, OnDestroy, Directive, SimpleChanges, OnChanges, ViewEncapsulation
 } from '@angular/core';
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
-import {Router,ActivatedRoute} from '@angular/router';
-import { FormGroup, FormBuilder,FormControl, Validators, FormArray } from '@angular/forms';
-import {ShelterService} from '../../../app/shelter/shelter.service'
-import {BcSharedService} from '../../../app/shared/shared.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FormGroup, FormBuilder, FormControl, Validators, FormArray } from '@angular/forms';
+import { ShelterService } from '../../../app/shelter/shelter.service'
+import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import {createValidationFunction} from '../../inputs/text/text_input.component';
-import {BcAuthService} from '../../../app/shared/auth.service';
+import { createValidationFunction } from '../../inputs/input_base';
+import { BcAuthService } from '../../../app/shared/auth.service';
 
 @Directive({
-  selector:"[disabled]",
-  host:{
-    "[class.disabled]":"disable"
+  selector: "[disabled]",
+  host: {
+    "[class.disabled]": "disable"
   }
 })
-export class BcDisableStyler{
-  @Input('disabled') disable:boolean=false;
+export class BcDisableStyler {
+  @Input('disabled') disable = false;
 }
 
 @Component({
-    moduleId: module.id,
-    selector: 'bc-mask-revision',
-    templateUrl: 'mask-revision.component.html',
-    styleUrls: ['mask-revision.component.scss'],
-    providers:[ShelterService],
-    host:{
-      '[class.bc-mask]':'true'
-    },
-    encapsulation:ViewEncapsulation.None
+  moduleId: module.id,
+  selector: 'bc-mask-revision',
+  templateUrl: 'mask-revision.component.html',
+  styleUrls: ['mask-revision.component.scss'],
+  providers: [ShelterService],
+  host: {
+    '[class.bc-mask]': 'true'
+  },
+  encapsulation: ViewEncapsulation.None
 })
-export class BcMaskRevision {
-  @Input() shelter:IShelter;
-  maskForm: FormGroup; 
-  formValiditySub:Subscription;
-  maskSaveTriggerSub:Subscription;
-  displayErrorSub:Subscription;
-  displayError:boolean=false;
-  shelterInitialized:Boolean=false;
-  revisionPermission:Enums.User_Type;
-  disableSave:boolean=false;
-  saveDisabled:boolean=false;
-  newShelter:boolean=false;
-  private isCentral:boolean;
-  constructor(private router:Router,private _route:ActivatedRoute,private shelterService:ShelterService,private shared:BcSharedService,private fb: FormBuilder,private authService:BcAuthService){
+export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
+  @Input() shelter: IShelter;
+  maskForm: FormGroup;
+  formValiditySub: Subscription;
+  maskSaveTriggerSub: Subscription;
+  displayErrorSub: Subscription;
+  displayError = false;
+  shelterInitialized: Boolean = false;
+  revisionPermission: Enums.Auth_Permissions.User_Type;
+  disableSave = false;
+  saveDisabled = false;
+  newShelter = false;
+  isCentral: boolean;
+  constructor(private router: Router, private _route: ActivatedRoute, private shelterService: ShelterService, private shared: BcSharedService, private fb: FormBuilder, private authService: BcAuthService) {
     this.maskForm = fb.group({
-        name:[""],
-        alias:[""],
-        idCai:[""],
-        type:[""],
-        branch:[""],
-        owner:[""],
-        category:[""],
-        regional_type:[""],
-    }); 
+      name: [""],
+      alias: [""],
+      idCai: [""],
+      type: [""],
+      branch: [""],
+      owner: [""],
+      category: [""],
+      regional_type: [""],
+    });
 
-    this.maskSaveTriggerSub = this.shared.sendMaskSave$.subscribe(()=>{
+    this.maskSaveTriggerSub = this.shared.sendMaskSave$.subscribe(() => {
       this.save();
     });
 
-    this.formValiditySub = this.maskForm.statusChanges.subscribe((value)=>{
-      if(value=="VALID"){
+    this.formValiditySub = this.maskForm.statusChanges.subscribe((value) => {
+      if (value == "VALID") {
         shared.onMaskValid();
-      }else if(value=="INVALID"){
+      } else if (value == "INVALID") {
         shared.onMaskInvalid();
       }
     });
 
-    this.displayErrorSub = this.shared.displayError$.subscribe(()=>{
-      this.displayError=true;
+    this.displayErrorSub = this.shared.displayError$.subscribe(() => {
+      this.displayError = true;
     });
 
-    this.saveDisabled=(this.shared.activeComponent==Enums.Routed_Component.contribution);
-    this.shared.disableMaskSave$.subscribe((val)=>{
-      this.saveDisabled=val
+    this.saveDisabled = (this.shared.activeComponent == Enums.Routes.Routed_Component.contribution);
+    this.shared.disableMaskSave$.subscribe((val) => {
+      this.saveDisabled = val
     })
   }
 
-  setMaskSaveDisabled(val){
-    this.saveDisabled=val;
+  setMaskSaveDisabled(val) {
+    this.saveDisabled = val;
   }
 
-  toggleMenu(){
+  toggleMenu() {
     this.shared.onToggleMenu();
   }
 
-  checkWinPlatform(){
-    return (navigator.userAgent.toLowerCase().indexOf("win")==-1);
+  checkWinPlatform() {
+    return (navigator.userAgent.toLowerCase().indexOf("win") == -1);
   }
 
-  remove(){
-    if(this.isCentralUser()){
-      let removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val)=>{
-        if(val){
+  remove() {
+    if (this.isCentral) {
+      const removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val) => {
+        if (val) {
           this.return();
-        }else{
-          
+        } else {
+
           this.shared.onMaskInvalid();
         }
-        if(removeShelSub!=undefined){
+        if (removeShelSub != undefined) {
           removeShelSub.unsubscribe();
         }
       });
     }
   }
 
-  private isCentralUser(){
-    if(this.isCentral){
-        return this.isCentral
-    }else{
-        this.authService.isCentralUser().subscribe(val=>{
-            this.isCentral=val;
-            return val;
-        });
-    }
+  private isCentralUser() {
+    this.authService.isCentralUser().subscribe(val => {
+      this.isCentral = val;
+    });
+
   }
 
-  processConfirm(shelter):Promise<String>{
-    return new Promise<any>((resolve,reject)=>{
-      const maskConfirmSub=this.shared.maskConfirmSave$.subscribe(component=>{
-        if(maskConfirmSub!=undefined){
+  processConfirm(shelter): Promise<String> {
+    return new Promise<any>((resolve, reject) => {
+      const maskConfirmSub = this.shared.maskConfirmSave$.subscribe(component => {
+        if (maskConfirmSub != undefined) {
           maskConfirmSub.unsubscribe();
         }
-        if(component){
-          const shelSub=this.shelterService.confirmShelter(shelter._id,true).subscribe(value=>{
-            if(shelSub!=undefined){
+        if (component) {
+          const shelSub = this.shelterService.confirmShelter(shelter._id, true).subscribe(value => {
+            if (shelSub != undefined) {
               shelSub.unsubscribe();
             }
-            
-            if(!value){
-              reject({error:"Error in confirm"});
-            }else{
-              resolve(component);        
+
+            if (!value) {
+              reject({ error: "Error in confirm" });
+            } else {
+              resolve(component);
             }
           });
         }
@@ -142,152 +138,157 @@ export class BcMaskRevision {
     });
   }
 
-  save(){
-    if(this.revisionPermission&&(this.revisionPermission!=Enums.User_Type.central||this.maskForm.valid)){
-      let shelter:IShelter={_id:this.shelter._id};
-      if(this.revisionPermission==Enums.User_Type.central&&this.maskForm.dirty){
-        shelter={
-          _id:this.shelter._id,
-          name:this.maskForm.controls.name.value||null,
-          alias:this.maskForm.controls.alias.value||null,
-          idCai:this.maskForm.controls.idCai.value||null,
-          type:this.maskForm.controls.type.value||null,
-          branch:this.maskForm.controls.branch.value||null,
-          owner:this.maskForm.controls.owner.value||null,
-          category:this.maskForm.controls.category.value||null,
-          regional_type:this.maskForm.controls.regional_type.value||null
+  save() {
+    if (this.revisionPermission && (this.revisionPermission != Enums.Auth_Permissions.User_Type.central || this.maskForm.valid)) {
+      let shelter: IShelter = { _id: this.shelter._id };
+      if (this.revisionPermission == Enums.Auth_Permissions.User_Type.central && this.maskForm.dirty) {
+        shelter = {
+          _id: this.shelter._id,
+          name: this.maskForm.controls.name.value || null,
+          alias: this.maskForm.controls.alias.value || null,
+          idCai: this.maskForm.controls.idCai.value || null,
+          type: this.maskForm.controls.type.value || null,
+          branch: this.maskForm.controls.branch.value || null,
+          owner: this.maskForm.controls.owner.value || null,
+          category: this.maskForm.controls.category.value || null,
+          regional_type: this.maskForm.controls.regional_type.value || null
         }
-        const shelUpdateSub=this.shelterService.updateShelter(shelter,true).subscribe(value=>{
+        const shelUpdateSub = this.shelterService.updateShelter(shelter, true).subscribe(value => {
           this.processConfirm(shelter)
-          .then((component)=>{
-            if(shelUpdateSub){
-              shelUpdateSub.unsubscribe();
-            }
-            this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
-            this.router.navigateByUrl("/shelter/"+shelter._id+"/(content:"+component+")");
+            .then((component) => {
+              if (shelUpdateSub) {
+                shelUpdateSub.unsubscribe();
+              }
+              this.shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.content);
+              this.router.navigateByUrl("/shelter/" + shelter._id + "/(content:" + component + ")");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        });
+      } else {
+        this.processConfirm(shelter)
+          .then((component) => {
+            this.shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.content);
+            this.router.navigateByUrl("/shelter/" + this.shelter._id + "/(content:" + component + ")");
           })
-          .catch((err)=>{
+          .catch((err) => {
             console.log(err);
           });
-        });
-      }else{
-        this.processConfirm(shelter)
-        .then((component)=>{
-          this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
-          this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
-        })
-        .catch((err)=>{
-          console.log(err);
-        });
       }
-    }else{
-      this.displayError=true;
+    } else {
+      this.displayError = true;
       this.shared.onMaskSave(null);
     }
   }
 
-  return(){
-    let cancelSub=this.shared.maskCancelConfirm$.subscribe(()=>{
-      let shelSub=this.shelterService.confirmShelter(this.shelter._id,false).subscribe(value=>{
-        if(!value){
-          console.log("Error in Cancel"); 
-          if(shelSub!=undefined)
+  return() {
+    const cancelSub = this.shared.maskCancelConfirm$.subscribe(() => {
+      const shelSub = this.shelterService.confirmShelter(this.shelter._id, false).subscribe(value => {
+        if (!value) {
+          console.log("Error in Cancel");
+          if (shelSub != undefined) {
             shelSub.unsubscribe();
-          if(cancelSub!=undefined)
+          }
+          if (cancelSub != undefined) {
             cancelSub.unsubscribe();
-        }else{
+          }
+        } else {
           this.router.navigateByUrl("list");
-          if(shelSub!=undefined)
+          if (shelSub != undefined) {
             shelSub.unsubscribe();
-          if(cancelSub!=undefined)
+          }
+          if (cancelSub != undefined) {
             cancelSub.unsubscribe();
+          }
         }
-        
+
       });
     });
     this.shared.onMaskCancel();
-    
+
   }
 
-  initForm(permission){
-    this.revisionPermission=permission;    
-    if(this.shelter!=undefined){
-      this.maskForm.controls.name.setValue(this.shelter.name||null);
-      this.maskForm.controls.alias.setValue(this.shelter.alias||null);
-      this.maskForm.controls.idCai.setValue(this.shelter.idCai||null);
-      this.maskForm.controls.type.setValue(this.shelter.type||null);
-      this.maskForm.controls.branch.setValue(this.shelter.branch||null);
-      this.maskForm.controls.owner.setValue(this.shelter.owner||null);
-      this.maskForm.controls.category.setValue(this.shelter.category||null);
-      this.maskForm.controls.regional_type.setValue(this.shelter.regional_type||null);
+  initForm(permission) {
+    this.revisionPermission = permission;
+    if (this.shelter != undefined) {
+      this.maskForm.controls.name.setValue(this.shelter.name || null);
+      this.maskForm.controls.alias.setValue(this.shelter.alias || null);
+      this.maskForm.controls.idCai.setValue(this.shelter.idCai || null);
+      this.maskForm.controls.type.setValue(this.shelter.type || null);
+      this.maskForm.controls.branch.setValue(this.shelter.branch || null);
+      this.maskForm.controls.owner.setValue(this.shelter.owner || null);
+      this.maskForm.controls.category.setValue(this.shelter.category || null);
+      this.maskForm.controls.regional_type.setValue(this.shelter.regional_type || null);
     }
 
-    if(permission!=Enums.User_Type.central&&permission!=Enums.User_Type.superUser){
+    if (permission != Enums.Auth_Permissions.User_Type.central && permission != Enums.Auth_Permissions.User_Type.superUser) {
       this.maskForm.disable();
     }
-  }   
+  }
 
-  ngOnDestroy(){
-    if(this.formValiditySub!=undefined){
+  ngOnDestroy() {
+    if (this.formValiditySub != undefined) {
       this.formValiditySub.unsubscribe();
     }
-    if(this.displayErrorSub!=undefined){
+    if (this.displayErrorSub != undefined) {
       this.displayErrorSub.unsubscribe();
     }
-    if(this.maskSaveTriggerSub!=undefined){
+    if (this.maskSaveTriggerSub != undefined) {
       this.maskSaveTriggerSub.unsubscribe();
     }
   }
 
-  reviseCheck(permission?){
-    return this.authService.revisionCheck(permission||this.revisionPermission);
+  reviseCheck(permission?) {
+    return this.authService.revisionCheck(permission || this.revisionPermission);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(!this.newShelter&&!this.shelterInitialized&&this.shelter!=undefined){
-      this.shelterInitialized=true;
-      let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
-        if(val&&this.reviseCheck(val)){
+    if (!this.newShelter && !this.shelterInitialized && this.shelter != undefined) {
+      this.shelterInitialized = true;
+      const authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val => {
+        if (val && this.reviseCheck(val)) {
           this.initForm(val);
-        }else{
+        } else {
           this.return();
         }
-        if(authSub!=undefined){
+        if (authSub != undefined) {
           authSub.unsubscribe();
         }
       });
     }
   }
 
-  ngOnInit(){
-    if(!this.shelterInitialized&&this.shelter!=undefined){
-      this.shelterInitialized=true;
-      let routeSub=this._route.params.subscribe(params=>{
-        if(params["name"]!=undefined){
-          if(params["name"]=="newShelter"){
-            this.newShelter=true;
-          }else{
-          this.router.navigateByUrl("list");
+  ngOnInit() {
+    this.isCentralUser();
+    if (!this.shelterInitialized && this.shelter != undefined) {
+      this.shelterInitialized = true;
+      const routeSub = this._route.params.subscribe(params => {
+        if (params["name"] != undefined) {
+          if (params["name"] == "newShelter") {
+            this.newShelter = true;
+          } else {
+            this.router.navigateByUrl("list");
           }
-        }else{
-          this.newShelter=false;
+        } else {
+          this.newShelter = false;
         }
-        let authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val=>{
-          this.revisionPermission=val;
-          if(!this.newShelter){
-            if(val&&this.reviseCheck(val)){
+        const authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val => {
+          this.revisionPermission = val;
+          if (!this.newShelter) {
+            if (val && this.reviseCheck(val)) {
               this.initForm(val);
-            }else{
+            } else {
               this.return();
             }
           }
-          if(!val){
+          if (!val) {
             this.return();
           }
-          if(routeSub!=undefined){
+          if (routeSub != undefined) {
             routeSub.unsubscribe();
           }
-          if(authSub!=undefined){
+          if (authSub != undefined) {
             authSub.unsubscribe();
           }
         });
@@ -295,33 +296,31 @@ export class BcMaskRevision {
     }
   }
 
-  cancel(){
-    let cancelSub=this.shared.maskCancelConfirm$.subscribe(()=>{
-      let shelSub=this.shelterService.confirmShelter(this.shelter._id,false).subscribe(value=>{
-        if(!value){
-          console.log("Error in Cancel"); 
-          if(shelSub!=undefined)
+  cancel() {
+    const cancelSub = this.shared.maskCancelConfirm$.subscribe(() => {
+      const shelSub = this.shelterService.confirmShelter(this.shelter._id, false).subscribe(value => {
+        if (!value) {
+          console.log("Error in Cancel");
+          if (shelSub != undefined)
             shelSub.unsubscribe();
-          if(cancelSub!=undefined)
+          if (cancelSub != undefined)
             cancelSub.unsubscribe();
-        }else{
-          if(this.newShelter){
+        } else {
+          if (this.newShelter) {
             this.router.navigateByUrl("list");
-          }else{
+          } else {
             let component = this.shared.activeComponent;
-            this.shared.onActiveOutletChange(Enums.Routed_Outlet.content);
-            this.router.navigateByUrl("/shelter/"+this.shelter._id+"/(content:"+component+")");
+            this.shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.content);
+            this.router.navigateByUrl("/shelter/" + this.shelter._id + "/(content:" + component + ")");
           }
-          if(shelSub!=undefined)
+          if (shelSub != undefined)
             shelSub.unsubscribe();
-          if(cancelSub!=undefined)
+          if (cancelSub != undefined)
             cancelSub.unsubscribe();
         }
-        
+
       });
     });
     this.shared.onMaskCancel();
   }
-
-
 }

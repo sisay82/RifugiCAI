@@ -23,7 +23,7 @@ export class BcManage extends DetailBase{
   managers:ISubject[]=[];
   constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
     super(_route,shared,router);
-    shared.activeComponent=Enums.Routed_Component.management;
+    shared.activeComponent=Enums.Routes.Routed_Component.management;
   }
 
   initManagement(management:IManagement){
