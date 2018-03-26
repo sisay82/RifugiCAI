@@ -13,7 +13,7 @@ import { ActivatedRoute,Router } from '@angular/router';
 export class BcWorkingDetailPage extends DetailBase{
     constructor(shared:BcSharedService,router:Router,_route:ActivatedRoute){
         super(_route,shared,router);
-        shared.activeComponent=Enums.Routed_Component.working;
+        shared.activeComponent=Enums.Routes.Routed_Component.working;
     }
     init(shelId){}
 }

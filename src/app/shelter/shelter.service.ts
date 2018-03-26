@@ -19,22 +19,10 @@ export class ShelterService {
 
     constructor(private http: Http) { }
 
-    getShelters(region?:String,section?:String): Observable<IShelter[]> {
-        let query="";
-        if(region){
-            query+="?region="+region
-            if(section){
-                query+="&section="+section
-            }
-        }else{
-            if(section){
-                query+="?section="+section
-            }
-        }
-
-        return this.http.get(this.sheltersBaseUrl+query)
+    getShelters(): Observable<IShelter[]> {
+        return this.http.get(this.sheltersBaseUrl)
             .map((res: Response) => {
-                let shelters = res.json();
+                const shelters = res.json();
                 return shelters;
             })
             .catch(this.handleError.bind(this));
@@ -50,7 +38,7 @@ export class ShelterService {
         return this.http.get(`${this.sheltersBaseUrl}/page/${page}/${pageSize}`)
             .map((res: Response) => {
                 const totalRecords = + res.headers.get('X-InlineCount');
-                let shelters = res.json();
+                const shelters = res.json();
                 return {
                     results: shelters,
                     totalRecords: totalRecords
@@ -60,46 +48,26 @@ export class ShelterService {
     }
 
     getShelter(id: String): Observable<IShelter> {
-        return this.http.get(this.sheltersBaseUrl + '/' + id)
+        return this.http.get(this.sheltersBaseUrl + `/${id}`)
             .map((res: Response) => {
-                let shelter = res.json();
+                const shelter = res.json();
                 return shelter;
             })
             .catch(this.handleError.bind(this));
     }
 
-    getConutryMarkersNumber(countryName:String,section:String,region:String): Observable<any>{
-        let query="?";
-        if(countryName){
-            query+='name=' + countryName;
-            if(region){
-                query+="&";
-            }
-        }
-
-        if(region){
-            query+="region="+region
-            if(section){
-                query+='&section='+section;
-            }
-        } 
-        
-        return this.http.get(this.sheltersBaseUrl + '/country' + query)
+    getConutryMarkersNumber(countryName:String): Observable<any>{
+        return this.http.get(this.sheltersBaseUrl + `/country/${countryName}`)
             .map((res: Response) => {
-                let markers = res.json();
+                const markers = res.json();
                 return markers;
             })
             .catch(this.handleError.bind(this));
     }
 
-    getSheltersAroundPoint(point:L.LatLng,range:number,section?:String,region?:String):Observable<IShelter[]>{
+    getSheltersAroundPoint(point:L.LatLng,range:number):Observable<IShelter[]>{
         let query='?lat='+ point.lat +"&lng="+ point.lng+"&range="+range;
-        if(region){
-            query+='&section='+section;
-        }
-        if(section){
-            query+='&region='+region;
-        }
+
         return this.http.get(this.sheltersBaseUrl + '/point' + query)
             .map((res: Response) => {
                 let shelter = res.json();
@@ -109,7 +77,7 @@ export class ShelterService {
     }      
 
     getShelterSection(id: String,section: string): Observable<IShelter> {
-        return this.http.get(this.sheltersBaseUrl + '/' + id + '/' + section)
+        return this.http.get(this.sheltersBaseUrl + `/${id}/${section}`)
             .map((res: Response) => {
                 let shelter = res.json();
                 return shelter;
@@ -118,7 +86,7 @@ export class ShelterService {
     }
 
     getFile(id):Observable<IFile>{
-        return this.http.get(this.sheltersBaseUrl+"/file/"+id)
+        return this.http.get(this.sheltersBaseUrl+`/file/${id}`)
             .map((res:Response)=>res.json())
             .catch(this.handleError.bind(this));
     }
@@ -130,7 +98,7 @@ export class ShelterService {
     }
 
     getFilesByShelterId(id):Observable<IFile[]>{
-        return this.http.get(this.sheltersBaseUrl+"/file/byshel/"+id)
+        return this.http.get(this.sheltersBaseUrl+`/file/byshel/${id}`)
             .map((res:Response)=>res.json())
             .catch(this.handleError.bind(this));
     }
@@ -142,7 +110,7 @@ export class ShelterService {
     }
 
     getImagesByShelterId(id):Observable<IFile[]>{
-        return this.http.get(this.sheltersBaseUrl+"/image/byshel/"+id)
+        return this.http.get(this.sheltersBaseUrl+`/image/byshel/${id}`)
             .map((res:Response)=>res.json())
             .catch(this.handleError.bind(this));
     }
@@ -157,13 +125,13 @@ export class ShelterService {
     }
 
     removeFile(id,shelId):Observable<boolean>{
-        return this.http.delete(this.sheltersBaseUrl+"/file/confirm/"+id+"/"+shelId)
+        return this.http.delete(this.sheltersBaseUrl+`/file/confirm/${id}/${shelId}`)
             .map((res:Response)=>res.json())
             .catch(this.handleError.bind(this));
     }
 
     updateFile(file:IFile):Observable<boolean>{
-        return this.http.put(this.sheltersBaseUrl+"/file/"+file._id,{file:file})
+        return this.http.put(this.sheltersBaseUrl+`/file/${file._id}`,{file:file})
             .map((res:Response)=>res.json())
             .catch(this.handleError.bind(this));
     }
@@ -175,13 +143,13 @@ export class ShelterService {
     }
 
     confirmShelter(shelterId:String,confirm:boolean): Observable<boolean>{
-        return this.http.put(this.sheltersBaseUrl + '/confirm/'+shelterId,{confirm:confirm})
+        return this.http.put(this.sheltersBaseUrl + `/confirm/${shelterId}`,{confirm:confirm})
             .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
     preventiveUpdateShelter(shelter: IShelter,section:string): Observable<boolean> {
-        return this.http.put(this.sheltersBaseUrl + '/confirm/' + section + '/' + shelter._id, shelter)
+        return this.http.put(this.sheltersBaseUrl + `/confirm/${section}/${shelter._id}`, shelter)
             .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
@@ -191,13 +159,13 @@ export class ShelterService {
         if(confirm){
             query="?confirm="+confirm;
         }
-        return this.http.put(this.sheltersBaseUrl + '/' + shelter._id + query, shelter)
+        return this.http.put(this.sheltersBaseUrl + `/${shelter._id}` + query, shelter)
             .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
     deleteShelter(id: String): Observable<boolean> {
-        return this.http.delete(this.sheltersBaseUrl + '/' + id)
+        return this.http.delete(this.sheltersBaseUrl + `/${id}`)
             .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }

@@ -82,14 +82,14 @@ export class BcContributionRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    shared.onMaskConfirmSave(Enums.Routed_Component.contribution);
+                    shared.onMaskConfirmSave(Enums.Routes.Routed_Component.contribution);
                 }
             }else{
                 this.abortSave();
             }
         });
     
-        shared.activeComponent=Enums.Routed_Component.contribution;
+        shared.activeComponent=Enums.Routes.Routed_Component.contribution;
         shared.onSetDisableMaskSave(true);
     }
 
@@ -195,7 +195,7 @@ export class BcContributionRevision extends RevisionBase {
     }
 
     checkRole(){
-        return this.userRole==Enums.User_Type.sectional||this.userRole==Enums.User_Type.superUser;
+        return this.userRole==Enums.Auth_Permissions.User_Type.sectional||this.userRole==Enums.Auth_Permissions.User_Type.superUser;
     }
 
     initForm(contributions:IContribution){
@@ -267,7 +267,7 @@ export class BcContributionRevision extends RevisionBase {
             .then(()=>{
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.contribution);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.contribution);
                 }
             })
             .catch(err=>{
@@ -315,7 +315,7 @@ export class BcContributionRevision extends RevisionBase {
                     if(queryFileSub!=undefined){
                         queryFileSub.unsubscribe();
                     }
-                    resolve(files.filter(obj=>obj.type!=Enums.File_Type.contribution));
+                    resolve(files.filter(obj=>obj.type!=Enums.Files.File_Type.contribution));
                 });
                 }else{
                     resolve(files);
@@ -324,7 +324,7 @@ export class BcContributionRevision extends RevisionBase {
                     loadServiceSub.unsubscribe();
                 }
             });
-            this.revisionService.onChildLoadFilesRequest([Enums.File_Type.invoice,Enums.File_Type.doc,Enums.File_Type.map]);
+            this.revisionService.onChildLoadFilesRequest([Enums.Files.File_Type.invoice,Enums.Files.File_Type.doc,Enums.Files.File_Type.map]);
         });
     }
 

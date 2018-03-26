@@ -25,7 +25,7 @@ export class BcFruitionRevision extends RevisionBase {
 
     constructor(shelterService:ShelterService,authService:BcAuthService,shared:BcSharedService,router:Router,revisionService:BcRevisionsService,private fb: FormBuilder,_route:ActivatedRoute){
         super(shelterService,shared,revisionService,_route,router,authService);
-        shared.activeComponent=Enums.Routed_Component.use;
+        shared.activeComponent=Enums.Routes.Routed_Component.use;
         this.MENU_SECTION=Enums.MenuSection.economy;
         this.useForm = fb.group({
             stay_count_associate:[""],
@@ -50,7 +50,7 @@ export class BcFruitionRevision extends RevisionBase {
                     this.disableSave=true;
                     this.save(true);
                 }else{
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.use);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.use);
                 }
             }else{
                 this.abortSave();
@@ -69,7 +69,7 @@ export class BcFruitionRevision extends RevisionBase {
             .then(()=>{
                 this.displayError=false;
                 if(confirm){
-                    this.shared.onMaskConfirmSave(Enums.Routed_Component.use);
+                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.use);
                 }
             })
             .catch(err=>{

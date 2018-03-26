@@ -23,7 +23,7 @@ export class BcCatastal extends DetailBase{
   energy:IEnergy={};
   constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,private detailsService:BcDetailsService,router:Router){
     super(_route,shared,router);
-    shared.activeComponent=Enums.Routed_Component.catastal;
+    shared.activeComponent=Enums.Routes.Routed_Component.catastal;
   }
 
   getDrain(id):Promise<void>{

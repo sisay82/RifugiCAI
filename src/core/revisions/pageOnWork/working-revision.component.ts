@@ -18,7 +18,7 @@ export class BcWorkingRevisionPage extends RevisionBase{
    
     constructor(shared:BcSharedService,shelterService:ShelterService,router:Router,_route:ActivatedRoute,revisionService:BcRevisionsService,auth:BcAuthService){
         super(shelterService,shared,revisionService,_route,router,auth);
-        shared.activeComponent=Enums.Routed_Component.working;
+        shared.activeComponent=Enums.Routes.Routed_Component.working;
     }
 
     save(confirm){}
