@@ -24,9 +24,9 @@ import { authRoute, getUserData } from './API/auth.api';
 const MongoStore = require('connect-mongo')(session);
 
 (<any>mongoose.Promise) = global.Promise;
-const SERVER_URL = "localhost:";
+const SERVER_URL = "app-cai.herokuapp.com";
 export const APP_PORT = process.env.PORT || 8000;
-export const APP_BASE_URL = 'http://' + SERVER_URL + APP_PORT;
+export const APP_BASE_URL = 'http://' + SERVER_URL;
 export const PARSED_URL = encodeURIComponent(APP_BASE_URL + '/j_spring_cas_security_check');
 const app = express();
 const Users: String[] = [];
