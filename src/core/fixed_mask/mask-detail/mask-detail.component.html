@@ -1,7 +1,8 @@
 <div class="bc-mask-container">
     <div class="bc-mask-line">
         <div class="bc-h6" style="display:flex;flex-direction:row;align-items:center;white-space:nowrap;width:100%">
-            <bc-icon tooltip="Torna alla lista" (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:1%" name="arrow-left" size=s></bc-icon>
+            <bc-icon tooltip="Torna alla lista" (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:1%" name="arrow-left"
+                size=s></bc-icon>
             <bc-icon *ngIf="checkWinPlatform()" (click)="toggleMenu()" class="bc-mask-icon" name="bars" size=s></bc-icon>
             <div style="display: flex;flex-direction: row;align-items: center;position:relative;margin-right:1%;width:30%">
                 <div style="white-space: nowrap;margin-right:1%">{{shelter?.name || 'Nome Rifugio'}},</div>
@@ -47,6 +48,16 @@
         <div class="bc-mask-line-content">
             <div class="bc-mask-title  bc-body-strong">Aggiornato il:</div>
             <div class="bc-mask-element bc-body">{{shelter?(shelter.updateDate?(shelter.updateDate | date:"dd/MM/yy"):'----'): '----'}}</div>
+        </div>
+    </div>
+    <div class="bc-mask-line" style="margin-left:10px">
+        <div class="bc-mask-line-content">
+            <div class="bc-mask-title  bc-body-strong">Stato:</div>
+            <div class="bc-mask-element bc-body">{{shelter?.status || '----'}}</div>
+        </div>
+        <div class="bc-mask-line-content">
+            <div class="bc-mask-title  bc-body-strong">Aggiornato da:</div>
+            <div class="bc-mask-element bc-body">{{shelter?.updateSubject || '----'}}</div>
         </div>
     </div>
     <bc-divider style="margin:0"></bc-divider>

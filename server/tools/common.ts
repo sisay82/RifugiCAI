@@ -35,7 +35,11 @@ export interface UserData {
     checked: boolean;
 }
 
-export const SheltersToUpdate: UpdatingShelter[] = [];
+const ShelUpdate: UpdatingShelter[] = [];
+export const SheltersToUpdate = new Proxy(ShelUpdate, {
+    get(target, name) { return target[name] }
+});
+
 export const ObjectId = mongoose.Types.ObjectId;
 
 const DISABLE_LOG = false;
@@ -43,12 +47,24 @@ const MAX_TIME = 1000 * 60 * 10;
 const TIMEOUT_REQUEST = 1000 * 2;
 
 function cleanSheltersToUpdate() {
-    SheltersToUpdate.forEach(obj => {
+    ShelUpdate.forEach(obj => {
         const diff = Date.now() - obj.watchDog.valueOf();
         if (diff > MAX_TIME) {
-            SheltersToUpdate.splice(SheltersToUpdate.indexOf(obj), 1);
+            ShelUpdate.splice(ShelUpdate.indexOf(obj), 1);
         }
     });
+}
+
+export function addShelterToUpdate(updatingShelter: UpdatingShelter, user: UserData): boolean {
+    if (!user || !user.role) {
+        return false;
+    }
+
+    updatingShelter.shelter.updateSubject = <any>Enums.Auth_Permissions.User_Role[user.role];
+    updatingShelter.watchDog = new Date(Date.now());
+
+    ShelUpdate.push(updatingShelter);
+    return true;
 }
 
 function getArea(code: String): String {

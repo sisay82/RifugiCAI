@@ -2,7 +2,7 @@
 import * as express from 'express';
 import { Enums } from '../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { SheltersToUpdate, IShelterExtended, IServiceExtended } from '../tools/common';
+import { SheltersToUpdate, addShelterToUpdate, IShelterExtended, IServiceExtended } from '../tools/common';
 import * as mongoose from 'mongoose';
 import { IOpening } from '../../src/app/shared/types/interfaces';
 import { Schema } from '../../src/app/shared/types/schema';
@@ -13,7 +13,8 @@ import {
     LOG_TYPE,
     toTitleCase,
     ObjectId,
-    getPropertiesNumber
+    getPropertiesNumber,
+    UpdatingShelter
 } from '../tools/common';
 import { DISABLE_AUTH } from './auth.api';
 import { createContributionPDF } from './pdf.api';
@@ -433,6 +434,7 @@ function updateShelter(id: any, params: any, isNew?: Boolean): Promise<boolean> 
             if (!params.updateDate) {
                 params.updateDate = new Date(Date.now());
             }
+            params.updateSubject = 
             Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
                 if (err) {
                     logger(LOG_TYPE.WARNING, err);
@@ -651,7 +653,7 @@ appRoute.route('/shelters/:id')
         }
     })
     .put(function (req, res) {
-        let shelUpdate;
+        let shelUpdate: UpdatingShelter;
         if (req.query.confirm) {
             shelUpdate = SheltersToUpdate.filter(shelter => String(shelter.shelter._id) === req.params.id)[0];
             if (shelUpdate) {
@@ -665,7 +667,7 @@ appRoute.route('/shelters/:id')
                 const newShelter: IShelterExtended = req.body;
                 newShelter._id = req.params.id;
                 shelUpdate = { watchDog: new Date(Date.now()), shelter: newShelter, files: null }
-                SheltersToUpdate.push(shelUpdate);
+                addShelterToUpdate(shelUpdate, req.body.user);
             }
             res.status(200).send(true);
 
@@ -715,7 +717,7 @@ appRoute.route('/shelters/confirm/:id')
             } else if (req.body.new) {
                 const id = new ObjectId();
                 const newShelter: any = { _id: id };
-                SheltersToUpdate.push({ watchDog: new Date(Date.now()), shelter: newShelter, files: null, isNew: true });
+                addShelterToUpdate({ watchDog: new Date(Date.now()), shelter: newShelter, files: null, isNew: true }, req.body.user);
                 res.status(200).send({ id: id });
             } else {
                 res.status(500).send({ error: 'command not found' });
@@ -736,7 +738,8 @@ appRoute.route('/shelters/confirm/:section/:id')
             } else {
                 const newShelter: IShelterExtended = req.body;
                 newShelter._id = req.params.id;
-                SheltersToUpdate.push({ watchDog: new Date(Date.now()), shelter: newShelter, files: null });
+
+                addShelterToUpdate({ watchDog: new Date(Date.now()), shelter: newShelter, files: null }, req.body.user);
             }
             res.status(200).send(true);
         } catch (e) {

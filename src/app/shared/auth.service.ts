@@ -56,7 +56,7 @@ function getShelterFilter(type: Auth_Permissions.User_Type): (code: String) => S
             return getRegion;
         } else if (type == Auth_Permissions.User_Type.sectional) {
             return (code: String) => {
-                return getRegion(code).concat( < string > getSection(code))
+                return getRegion(code).concat(<string>getSection(code))
             }
         } else if (type == Auth_Permissions.User_Type.area) {
             return getArea;
@@ -121,6 +121,21 @@ export class BcAuthService {
     private newShelter = false;
     private localPermissions: any[];
     private userSectionCodeSub: Subscription;
+    private errorRouteSource = new Subject<boolean>();
+    private routeError;
+    private errorRoute$ = this.errorRouteSource.asObservable();
+    private shelIdRequestSource = new Subject<void>();
+    shelIdRequest$ = this.shelIdRequestSource.asObservable();
+    private shelIdSource = new Subject<String>();
+    shelId$ = this.shelIdSource.asObservable();
+    private userProfile: {
+        code: String,
+        role: Auth_Permissions.User_Type
+    };
+    private userProfileSource = new Subject<{
+        code: String,
+        role: Auth_Permissions.User_Type
+    }>();
 
     constructor(private http: Http, private route: ActivatedRoute, private router: Router) {
         this.userSectionCodeSub = this.updateProfile().subscribe(profile => {
@@ -131,30 +146,18 @@ export class BcAuthService {
         });
     }
 
-    private shelIdSource = new Subject < String > ();
-    shelId$ = this.shelIdSource.asObservable();
     onShelId(shelId) {
         this.shelIdSource.next(shelId);
     }
 
-    private shelIdRequestSource = new Subject < void > ();
-    shelIdRequest$ = this.shelIdRequestSource.asObservable();
     onShelIdRequest() {
         this.shelIdRequestSource.next();
     }
 
-    private userProfile: {
+    getUserProfile(): Observable<{
         code: String,
         role: Auth_Permissions.User_Type
-    };
-    private userProfileSource = new Subject < {
-        code: String,
-        role: Auth_Permissions.User_Type
-    } > ();
-    getUserProfile(): Observable < {
-        code: String,
-        role: Auth_Permissions.User_Type
-    } > {
+    }> {
         if (this.userProfile) {
             return Observable.of(this.userProfile);
         } else {
@@ -162,7 +165,7 @@ export class BcAuthService {
         }
     }
 
-    isCentralUser(): Observable < boolean > {
+    isCentralUser(): Observable<boolean> {
         return Observable.create(observer => {
             this.getUserProfile().subscribe(profile => {
                 observer.next(profile && isCentralRole(profile.role));
@@ -178,7 +181,7 @@ export class BcAuthService {
             } else if (role == Auth_Permissions.User_Type.area) {
                 return Object.keys(getRegionsArea(getArea(code)));
             } else {
-                return [Auth_Permissions.Region_Code[ < string > getRegion(code)]];
+                return [Auth_Permissions.Region_Code[<string>getRegion(code)]];
             }
         } else {
             return null;
@@ -219,11 +222,12 @@ export class BcAuthService {
         }
     }
 
-    revisionCheck(permission ? ) {
-        return permission == Auth_Permissions.User_Type.superUser || (Revision.DetailRevisionPermission.find(obj => obj == permission) != null);
+    revisionCheck(permission?) {
+        return permission == Auth_Permissions.User_Type.superUser
+        || (Revision.DetailRevisionPermission.find(obj => obj == permission) != null);
     }
 
-    private updateProfile(): Observable < any > {
+    private updateProfile(): Observable<any> {
         if (this._disableAuth) {
             return Observable.create(observer => {
                 const user = {
@@ -254,7 +258,7 @@ export class BcAuthService {
     }
 
     private checkEnumPermission(names: any[], shelId, profile) {
-        let permission: boolean = false;
+        let permission = false;
         if (profile.role == Auth_Permissions.User_Type.superUser) {
             permission = true;
         } else {
@@ -271,14 +275,14 @@ export class BcAuthService {
         return permission;
     }
 
-    getPermissions(): Observable < any[] > {
+    getPermissions(): Observable<any[]> {
         if (this.localPermissions) {
             return Observable.of(this.localPermissions);
         } else {
-            let permissions: any[] = [];
+            const permissions: any[] = [];
             return Observable.create(observer => {
-                let getSectionCodeSub = this.getUserProfile().subscribe(profile => {
-                    let getShelIdSub = this.shelId$.subscribe(shelId => {
+                const getSectionCodeSub = this.getUserProfile().subscribe(profile => {
+                    const getShelIdSub = this.shelId$.subscribe(shelId => {
                         if (this.checkEnumPermission(Revision.DetailRevisionPermission, shelId, profile)) {
                             permissions.push(Enums.MenuSection.detail);
                         }
@@ -304,10 +308,10 @@ export class BcAuthService {
         }
     }
 
-    checkRevisionPermissionForShelter(shelId: String): Observable < Auth_Permissions.User_Type > {
+    checkRevisionPermissionForShelter(shelId: String): Observable<Auth_Permissions.User_Type> {
         this.onShelId(shelId);
         return Observable.create(observer => {
-            let sectionCodeInit = this.getUserProfile().subscribe(profile => {
+            const sectionCodeInit = this.getUserProfile().subscribe(profile => {
                 if (checkEnumPermissionForShelter(profile, shelId, profile.role)) {
                     observer.next(profile.role);
                 } else {
@@ -321,10 +325,9 @@ export class BcAuthService {
         });
     }
 
-    checkUserPermission(): Observable < Auth_Permissions.User_Type > {
-        let revisionPermission: Auth_Permissions.User_Type;
+    checkUserPermission(): Observable<Auth_Permissions.User_Type> {
         return Observable.create(observer => {
-            let sectionCodeInit = this.getUserProfile().subscribe(profile => {
+            const sectionCodeInit = this.getUserProfile().subscribe(profile => {
                 if (profile.role) {
                     observer.next(profile.role);
                 } else {
@@ -335,7 +338,7 @@ export class BcAuthService {
         });
     }
 
-    getRouteError(): Observable < boolean > {
+    getRouteError(): Observable<boolean> {
         if (!this.routeError) {
             return this.errorRoute$;
         } else {
@@ -343,9 +346,6 @@ export class BcAuthService {
         }
     }
 
-    private errorRouteSource = new Subject < boolean > ();
-    private routeError;
-    private errorRoute$ = this.errorRouteSource.asObservable();
     private handleError(error: any) {
         if (!this.route.children.find(child => child.outlet == "access-denied")) {
             this.router.navigate([{
@@ -361,5 +361,4 @@ export class BcAuthService {
             error: "Access denied"
         })
     }
-
 }

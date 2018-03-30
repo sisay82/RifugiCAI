@@ -94,12 +94,20 @@ export namespace Enums {
         "Nelle vicinanze"
     }
 
+    export enum Shelter_Status {
+        "Immobile non agibile",
+        "In ristrutturazione",
+        "Momentaneamente chiuso",
+        "In attività"
+    }
+
     export enum Shelter_Type {
         "Bivacco",
         "Rifugio custodito",
         "Rifugio incustodito",
         "Capanna sociale",
-        "Punto d'appoggio"
+        "Punto d'appoggio",
+        "Ricovero di emergenza"
     }
 
     export enum Regional_Type {
@@ -242,6 +250,15 @@ export namespace Enums {
             superUser = 4,
             visualization = 5,
             area = 6
+        }
+
+        export enum User_Role {
+            "Centrale" = 1,
+            "Regionale" = 2,
+            "Sezionale" = 3,
+            "SuperUser" = 4,
+            "Visualizzazione" = 5,
+            "Area" = 6
         }
 
         export function getUserRolesByType(type: User_Type): String[] {

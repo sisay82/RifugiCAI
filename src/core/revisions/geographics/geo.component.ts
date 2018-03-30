@@ -1,16 +1,46 @@
 import {
-    Component, Input, OnDestroy, OnInit
+    Component,
+    Input,
+    OnDestroy,
+    OnInit
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ITag, ILocation, IGeographic, IShelter } from '../../../app/shared/types/interfaces';
-import { Enums } from '../../../app/shared/types/enums';
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
-import { ShelterService } from '../../../app/shelter/shelter.service'
-import { BcRevisionsService } from '../revisions.service';
-import { BcSharedService } from '../../../app/shared/shared.service';
-import { BcAuthService } from '../../../app/shared/auth.service';
-import { Subscription } from 'rxjs/Subscription';
-import { RevisionBase } from '../shared/revision_base';
+import {
+    ActivatedRoute,
+    Router
+} from '@angular/router';
+import {
+    ITag,
+    ILocation,
+    IGeographic,
+    IShelter
+} from '../../../app/shared/types/interfaces';
+import {
+    Enums
+} from '../../../app/shared/types/enums';
+import {
+    FormGroup,
+    FormBuilder,
+    FormControl,
+    FormArray
+} from '@angular/forms';
+import {
+    ShelterService
+} from '../../../app/shelter/shelter.service'
+import {
+    BcRevisionsService
+} from '../revisions.service';
+import {
+    BcSharedService
+} from '../../../app/shared/shared.service';
+import {
+    BcAuthService
+} from '../../../app/shared/auth.service';
+import {
+    Subscription
+} from 'rxjs/Subscription';
+import {
+    RevisionBase
+} from '../shared/revision_base';
 
 @Component({
     moduleId: module.id,
@@ -19,12 +49,12 @@ import { RevisionBase } from '../shared/revision_base';
     styleUrls: ['geo.component.scss'],
     providers: [ShelterService]
 })
-export class BcGeoRevision extends RevisionBase {
+export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
     geoForm: FormGroup;
     private newTagForm: FormGroup;
     private data: IGeographic;
-    private tagChange: boolean = false
-    private hiddenTag: boolean = true;
+    private tagChange = false
+    private hiddenTag = true;
     constructor(shelterService: ShelterService, authService: BcAuthService, shared: BcSharedService, _route: ActivatedRoute, router: Router, private fb: FormBuilder, revisionService: BcRevisionsService) {
         super(shelterService, shared, revisionService, _route, router, authService);
         this.geoForm = fb.group({
@@ -35,7 +65,7 @@ export class BcGeoRevision extends RevisionBase {
             ownerRegion: [""],
             regional_commission: [""],
             authorityJurisdiction: [""],
-            altitude: [""],//number
+            altitude: [""],
             latitude: [""],
             longitude: [""],
             massif: [""],
@@ -102,7 +132,7 @@ export class BcGeoRevision extends RevisionBase {
         this.tagChange = true;
         if (this.newTagForm.controls['newKey'].valid && this.newTagForm.controls['newValue'].valid) {
             const control = <FormArray>this.geoForm.controls['tags'];
-            for (let c of control.controls) {
+            for (const c of control.controls) {
                 if (c.value.key.toLowerCase().indexOf(this.newTagForm.controls["newKey"].value.toLowerCase()) > -1) {
                     this.invalid = true;
                     return;
@@ -133,7 +163,13 @@ export class BcGeoRevision extends RevisionBase {
 
     save(confirm) {
         if (!confirm || this.geoForm.valid) {
-            const shelter: IShelter = { _id: this._id, name: this.name, geoData: { location: this.data.location } };
+            const shelter: IShelter = {
+                _id: this._id,
+                name: this.name,
+                geoData: {
+                    location: (this.data) ? this.data.location : null
+                }
+            };
             const location: ILocation = <ILocation>this.getFormValues(this.geoForm);
 
             const a: any[] = this.getFormArrayValues(<FormArray>this.geoForm.controls.tags);
@@ -163,7 +199,7 @@ export class BcGeoRevision extends RevisionBase {
 
         if (this.data != undefined) {
             if (this.data.location != undefined) {
-                for (let prop in this.data.location) {
+                for (const prop in this.data.location) {
                     if (this.data.location.hasOwnProperty(prop)) {
                         if (this.geoForm.contains(prop)) {
                             this.geoForm.controls[prop].setValue(this.data.location[prop]);
@@ -173,7 +209,7 @@ export class BcGeoRevision extends RevisionBase {
                 }
             }
             if (this.data.tags != undefined) {
-                for (let tag of this.data.tags) {
+                for (const tag of this.data.tags) {
                     this.addTag(tag.key, tag.value);
                 }
             }
@@ -201,15 +237,20 @@ export class BcGeoRevision extends RevisionBase {
 
     getGeoData(id): Promise<IShelter> {
         return new Promise<IShelter>((resolve, reject) => {
-            let revSub = this.revisionService.load$.subscribe(shelter => {
+            const revSub = this.revisionService.load$.subscribe(shelter => {
                 if (shelter != null && shelter.geoData != undefined) {
                     if (revSub != undefined) {
                         revSub.unsubscribe();
                     }
                     resolve(shelter);
                 } else {
-                    let shelSub = this.shelterService.getShelterSection(id, "geoData").subscribe(shelter => {
-                        if (shelter.geoData == undefined) shelter.geoData = { location: {}, tags: [] as [ITag] };
+                    const shelSub = this.shelterService.getShelterSection(id, "geoData").subscribe(shelter => {
+                        if (shelter.geoData == undefined) {
+                            shelter.geoData = {
+                                location: {},
+                                tags: [] as [ITag]
+                            };
+                        }
                         this.revisionService.onChildSave(shelter, "geoData");
                         if (shelSub != undefined) {
                             shelSub.unsubscribe();

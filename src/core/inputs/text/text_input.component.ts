@@ -22,7 +22,7 @@ import {
 } from '../input_base';
 
 @Directive({
-    selector: 'input[bc-enable-error]',
+    selector: 'textarea[bc-enable-error]',
     host: {
         '[class.invalid]': 'invalid'
     }
@@ -61,6 +61,7 @@ export class BcTextInput extends BcBaseInput {
     @Input() minValue: number;
     @Input() maxValue: number;
     @Input() except: number;
+    @Input() lines: number;
     _validator: Function = createValidationFunction("stringValidator");
 
     @Input() set validator(validator) {
@@ -98,6 +99,14 @@ export class BcTextInput extends BcBaseInput {
         }
     }
 
+    getLines() {
+        if (!this.lines) {
+            return 1;
+        } else {
+            return this.lines
+        }
+    }
+
     getValue() {
         let returnVal;
         if (this.value === true || this.value === "true") {
@@ -106,7 +115,7 @@ export class BcTextInput extends BcBaseInput {
             returnVal = 'no';
         } else {
             if (this.replaceDot) {
-                returnVal = ( < String > this.value).replace(/\,/g, '.')
+                returnVal = (<String>this.value).replace(/\,/g, '.')
             } else {
                 returnVal = this.value;
             }
@@ -117,9 +126,9 @@ export class BcTextInput extends BcBaseInput {
         return returnVal;
     }
 
-    validate(c ?: FormControl): null | {
-        valid ?: Boolean,
-        err ?: String
+    validate(c?: FormControl): null | {
+        valid?: Boolean,
+        err?: String
     } {
         const value = c ? (c.value || this.value) : this.value;
         if (

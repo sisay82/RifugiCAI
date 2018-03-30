@@ -46,6 +46,15 @@
                 <div class="bc-mask-content bc-body">{{shelter?(shelter.updateDate?(shelter.updateDate | date:"dd/MM/yy"):'----'): '----'}}</div>
             </div>
         </div>
+        <div class="bc-mask-line" style="margin-left:15px">
+            <div class="bc-mask-revision-control">
+                <bc-select-input one-line enumName="Shelter_Status" [displayError]="displayError" defaultContent="Seleziona stato struttura" formControlName="status" title="Stato"></bc-select-input>
+            </div>
+            <div class="bc-mask-line-content">
+                <div class="bc-mask-title  bc-body-strong">Aggiornato da:</div>
+                <div class="bc-mask-element bc-body">{{shelter?.updateSubject || '----'}}</div>
+            </div>
+        </div>
         <bc-divider style="margin:0"></bc-divider>
     </form>
 </div>

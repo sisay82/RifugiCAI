@@ -202,12 +202,14 @@ export interface IShelter {
     alias?: String;
     idCai?: String;
     type?: Enums.Shelter_Type;
+    status?: Enums.Shelter_Status;
     branch?: String;
     owner?: String;
     category?: Enums.Shelter_Category;
     regional_type?: Enums.Regional_Type;
     insertDate?: Date;
     updateDate?: Date;
+    updateSubject?: Enums.Auth_Permissions.User_Role;
 
     geoData?: IGeographic;
     services?: [IService];

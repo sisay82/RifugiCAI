@@ -43,7 +43,7 @@ export abstract class RevisionBase implements OnInit {
         const disableSaveSub = revisionService.childDisableSaveRequest$.subscribe(() => {
             this.disableSave = true;
             revisionService.onChildDisableSaveAnswer();
-            if (disableSaveSub != undefined) {
+            if (disableSaveSub) {
                 disableSaveSub.unsubscribe();
             }
         });
@@ -71,7 +71,7 @@ export abstract class RevisionBase implements OnInit {
         return new Promise<any>((resolve, reject) => {
             const permissionSub = this.revisionService.fatherReturnPermissions$.subscribe(permissions => {
                 resolve(permissions);
-                if (permissionSub != undefined) {
+                if (permissionSub) {
                     permissionSub.unsubscribe();
                 }
             });
@@ -139,9 +139,9 @@ export abstract class RevisionBase implements OnInit {
                 if (returnVal) {
                     resolve();
                 } else {
-                    reject(returnVal);
+                    reject();
                 }
-                if (sub != undefined) {
+                if (sub) {
                     sub.unsubscribe();
                 }
             });
@@ -150,9 +150,9 @@ export abstract class RevisionBase implements OnInit {
 
     protected processUrl(form: FormGroup) {
         const value = this.getControlValue(form);
-        if (value != null && value != "") {
+        if (value != null && value !== "") {
             let wSite = "http";
-            if (value.toLowerCase().indexOf("://") == -1) {
+            if (value.toLowerCase().indexOf("://") === -1) {
                 wSite += "://" + value;
             } else {
                 wSite = value;
@@ -164,9 +164,7 @@ export abstract class RevisionBase implements OnInit {
     }
 
     protected processFormDate(form: FormGroup) {
-        if (form && form.valid) {
-            return parseDate(form.value) || null;
-        } else { return null; }
+        return parseDate(this.getControlValue(form)) || null;
     }
 
     protected processSimpleDate(value) {
@@ -184,12 +182,7 @@ export abstract class RevisionBase implements OnInit {
     protected getFormArrayValues(form_array: FormArray): any[] {
         const obj: any[] = [];
         for (const c of form_array.controls) {
-            const p: any = {};
-            const contr = <FormGroup>c;
-            for (const prop in contr.controls) {
-                p[prop] = this.getControlValue(<FormGroup>contr.controls[prop]);
-            }
-            obj.push(p);
+            obj.push(this.getFormValues(<FormGroup>c));
         }
         return obj;
     }
@@ -200,7 +193,7 @@ export abstract class RevisionBase implements OnInit {
 
     protected checkPermission(permissions): boolean {
         if (permissions && permissions.length > 0) {
-            if (permissions.find(obj => obj == this.MENU_SECTION) > -1) {
+            if (permissions.find(obj => obj === this.MENU_SECTION) > -1) {
                 return true;
             } else {
                 return false;
@@ -215,4 +208,12 @@ export abstract class RevisionBase implements OnInit {
             return input.replace(/\w\S*/g, (txt => txt[0].toUpperCase() + txt.substr(1))).replace(/_/g, " ");
         }
     }
+
+   /* protected createDataObjectFromForm() {
+        for (const control in this.maskForm.controls) {
+            if (this.maskForm.controls.hasOwnProperty(control)) {
+                shelter[control] = this.maskForm.controls[control].value || null;
+            }
+        }
+    }*/
 }

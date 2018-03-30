@@ -8,14 +8,14 @@ import 'rxjs/add/operator/catch';
 import * as L from 'leaflet';
 import { Map } from 'leaflet';
 import { IPagedResults, IShelter, IMarker, IFile } from '../shared/types/interfaces';
-import { Enums  } from '../shared/types/enums';
+import { Enums } from '../shared/types/enums';
 
 @Injectable()
 export class ShelterService {
 
-    private sheltersBaseUrl: string = '/api/shelters';
-    //private sheltersBaseUrl: string = 'http://localhost:27010/api/shelters';
-    //private sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
+    private sheltersBaseUrl = '/api/shelters';
+    // private sheltersBaseUrl: string = 'http://localhost:27010/api/shelters';
+    // private sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: Http) { }
 
@@ -28,8 +28,8 @@ export class ShelterService {
             .catch(this.handleError.bind(this));
     }
 
-    getNewId():Observable<{id:string}>{
-        return this.http.put(this.sheltersBaseUrl + '/confirm/newId',{new:true})
+    getNewId(): Observable<{ id: string }> {
+        return this.http.put(this.sheltersBaseUrl + '/confirm/newId', { new: true })
             .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
@@ -56,7 +56,7 @@ export class ShelterService {
             .catch(this.handleError.bind(this));
     }
 
-    getConutryMarkersNumber(countryName:String): Observable<any>{
+    getConutryMarkersNumber(countryName: String): Observable<any> {
         return this.http.get(this.sheltersBaseUrl + `/country/${countryName}`)
             .map((res: Response) => {
                 const markers = res.json();
@@ -65,74 +65,74 @@ export class ShelterService {
             .catch(this.handleError.bind(this));
     }
 
-    getSheltersAroundPoint(point:L.LatLng,range:number):Observable<IShelter[]>{
-        let query='?lat='+ point.lat +"&lng="+ point.lng+"&range="+range;
+    getSheltersAroundPoint(point: L.LatLng, range: number): Observable<IShelter[]> {
+        const query = '?lat=' + point.lat + "&lng=" + point.lng + "&range=" + range;
 
         return this.http.get(this.sheltersBaseUrl + '/point' + query)
             .map((res: Response) => {
-                let shelter = res.json();
+                const shelter = res.json();
                 return shelter;
             })
             .catch(this.handleError.bind(this));
-    }      
+    }
 
-    getShelterSection(id: String,section: string): Observable<IShelter> {
+    getShelterSection(id: String, section: string): Observable<IShelter> {
         return this.http.get(this.sheltersBaseUrl + `/${id}/${section}`)
             .map((res: Response) => {
-                let shelter = res.json();
+                const shelter = res.json();
                 return shelter;
             })
             .catch(this.handleError.bind(this));
     }
 
-    getFile(id):Observable<IFile>{
-        return this.http.get(this.sheltersBaseUrl+`/file/${id}`)
-            .map((res:Response)=>res.json())
+    getFile(id): Observable<IFile> {
+        return this.http.get(this.sheltersBaseUrl + `/file/${id}`)
+            .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
-    getAllFiles():Observable<IFile[]>{
-        return this.http.get(this.sheltersBaseUrl+"/file/all")
-            .map((res:Response)=>res.json())
+    getAllFiles(): Observable<IFile[]> {
+        return this.http.get(this.sheltersBaseUrl + "/file/all")
+            .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
-    getFilesByShelterId(id):Observable<IFile[]>{
-        return this.http.get(this.sheltersBaseUrl+`/file/byshel/${id}`)
-            .map((res:Response)=>res.json())
+    getFilesByShelterId(id): Observable<IFile[]> {
+        return this.http.get(this.sheltersBaseUrl + `/file/byshel/${id}`)
+            .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
-    getAllImages():Observable<IFile[]>{
-        return this.http.get(this.sheltersBaseUrl+"/image/all")
-            .map((res:Response)=>res.json())
+    getAllImages(): Observable<IFile[]> {
+        return this.http.get(this.sheltersBaseUrl + "/image/all")
+            .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
-    getImagesByShelterId(id):Observable<IFile[]>{
-        return this.http.get(this.sheltersBaseUrl+`/image/byshel/${id}`)
-            .map((res:Response)=>res.json())
+    getImagesByShelterId(id): Observable<IFile[]> {
+        return this.http.get(this.sheltersBaseUrl + `/image/byshel/${id}`)
+            .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
-    insertFile(file:IFile):Observable<string>{
-        let formData:FormData=new FormData();
-        let b=(new Blob([JSON.stringify(file)]))
-        formData.append("file",b);
-        return this.http.post(this.sheltersBaseUrl+"/file/confirm", formData)
-            .map((res:Response)=>res.json())
+    insertFile(file: IFile): Observable<string> {
+        const formData: FormData = new FormData();
+        const b = (new Blob([JSON.stringify(file)]))
+        formData.append("file", b);
+        return this.http.post(this.sheltersBaseUrl + "/file/confirm", formData)
+            .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
-    removeFile(id,shelId):Observable<boolean>{
-        return this.http.delete(this.sheltersBaseUrl+`/file/confirm/${id}/${shelId}`)
-            .map((res:Response)=>res.json())
+    removeFile(id, shelId): Observable<boolean> {
+        return this.http.delete(this.sheltersBaseUrl + `/file/confirm/${id}/${shelId}`)
+            .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
-    updateFile(file:IFile):Observable<boolean>{
-        return this.http.put(this.sheltersBaseUrl+`/file/${file._id}`,{file:file})
-            .map((res:Response)=>res.json())
+    updateFile(file: IFile): Observable<boolean> {
+        return this.http.put(this.sheltersBaseUrl + `/file/${file._id}`, { file: file })
+            .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
@@ -142,22 +142,22 @@ export class ShelterService {
             .catch(this.handleError.bind(this));
     }
 
-    confirmShelter(shelterId:String,confirm:boolean): Observable<boolean>{
-        return this.http.put(this.sheltersBaseUrl + `/confirm/${shelterId}`,{confirm:confirm})
+    confirmShelter(shelterId: String, confirm: boolean): Observable<boolean> {
+        return this.http.put(this.sheltersBaseUrl + `/confirm/${shelterId}`, { confirm: confirm })
             .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
-    preventiveUpdateShelter(shelter: IShelter,section:string): Observable<boolean> {
+    preventiveUpdateShelter(shelter: IShelter, section: string): Observable<boolean> {
         return this.http.put(this.sheltersBaseUrl + `/confirm/${section}/${shelter._id}`, shelter)
             .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }
 
-    updateShelter(shelter: IShelter,confirm?:boolean): Observable<boolean> {
-        let query="";
-        if(confirm){
-            query="?confirm="+confirm;
+    updateShelter(shelter: IShelter, confirm?: boolean): Observable<boolean> {
+        let query = "";
+        if (confirm) {
+            query = "?confirm=" + confirm;
         }
         return this.http.put(this.sheltersBaseUrl + `/${shelter._id}` + query, shelter)
             .map((res: Response) => res.json())
@@ -172,8 +172,8 @@ export class ShelterService {
 
     handleError(error: any) {
         console.error('server error:', error);
-        if(error&&error.status==500){
-          //  location.href="/pageNotFound"
+        if (error && error.status === 500) {
+            //  location.href="/pageNotFound"
         }
 
         if (error instanceof Response) {

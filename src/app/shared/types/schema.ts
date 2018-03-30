@@ -177,10 +177,13 @@ export namespace Schema {
         type: { type: Enums.Shelter_Type },
         branch: String,
         owner: String,
+        status: String,
         regional_type: { type: Enums.Regional_Type },
         category: { type: Enums.Shelter_Category },
         insertDate: { type: Date, default: Date.now },
         updateDate: { type: Date, default: new Date(Date.now()) },
+        updateSubject: { type: Enums.Auth_Permissions.User_Role, required: true },
+
         geoData: { type: geographicSchema },
         services: [{
             type: mongoose.Schema.Types.ObjectId,

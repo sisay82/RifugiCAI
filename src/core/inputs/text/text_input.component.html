@@ -3,8 +3,9 @@
         <div *ngIf="required" class="bc-text-input-required">*</div>
     </div>
     <div>
-        <input [placeholder]="placeholder" [bc-enable-error]="invalid" [disabled]="isDisabled" type="text" style="text-overflow: ellipsis; text-decoration: inherit;"
-            class="form-control" (keyup)="onKey($event)" [value]="getValue()">
+        <textarea [rows]="getLines()" [placeholder]="placeholder" [bc-enable-error]="invalid" [disabled]="isDisabled" 
+            style="resize:none; overflow:hidden; text-overflow: ellipsis; text-decoration: inherit;"
+            class="form-control" (keyup)="onKey($event)" [value]="getValue()"></textarea>
         <div [hidden]="!(displayError&&enableBlock&&invalid)" class="bc-alert">{{errorMessage||'Invalid!'}}</div>
     </div>
 </div>
