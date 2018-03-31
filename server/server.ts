@@ -23,9 +23,9 @@ import { appRoute } from './API/shelters.api';
 import { authRoute, getUserData } from './API/auth.api';
 const MongoStore = require('connect-mongo')(session);
 
-const SERVER_URL = "app-cai.herokuapp.com";
+const SERVER_URL = "localhost:";
 export const APP_PORT = process.env.PORT || 8000;
-export const APP_BASE_URL = 'http://' + SERVER_URL;
+export const APP_BASE_URL = 'http://' + SERVER_URL + APP_PORT;
 export const PARSED_URL = encodeURIComponent(APP_BASE_URL + '/j_spring_cas_security_check');
 const app = express();
 const Users: String[] = [];
