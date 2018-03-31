@@ -8,9 +8,8 @@
 @import "./images/images.component";
 @import "./management/management.component";
 @import "./services/services.component";
-
-@mixin bc-revision-theme ($theme){
-    .bc-revision{
+@mixin bc-revision-theme ($theme) {
+    .bc-revision {
         @include bc-catastal-revision($theme);
         @include bc-contacts-revision($theme);
         @include bc-contributions-revision($theme);

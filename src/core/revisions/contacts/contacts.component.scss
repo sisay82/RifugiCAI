@@ -1,27 +1,21 @@
 @import '../../style/typography';
 @import '../../style/theme';
-
-@mixin bc-contacts-revision($theme){
+@mixin bc-contacts-revision($theme) {
   $accent: map-get($theme, accent);
-   
-  &-contact{
-    width:30%;
-    margin-right:1%;
-
-    &-add-tag{
-      &:hover{
-        color:bc-color($accent);
+  &-contact {
+    width: 30%;
+    margin-right: 1%;
+    &-add-tag {
+      &:hover {
+        color: bc-color($accent);
         cursor: pointer;
       }
-      
       font-weight: bold;
       margin-left:1%;
     }
-
-    &-title{
+    &-title {
       margin-bottom: 4px;
-      color:bc-color($accent);
+      color: bc-color($accent);
     }
-
   }
 }

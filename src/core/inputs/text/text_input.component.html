@@ -3,7 +3,7 @@
         <div *ngIf="required" class="bc-text-input-required">*</div>
     </div>
     <div>
-        <textarea [rows]="getLines()" [placeholder]="placeholder" [bc-enable-error]="invalid" [disabled]="isDisabled" 
+        <textarea [rows]="getLines()" [placeholder]="placeholder" [bc-enable-error]="invalid" [bc-single-line]="isSingleLine()" [disabled]="isDisabled" 
             style="resize:none; overflow:hidden; text-overflow: ellipsis; text-decoration: inherit;"
             class="form-control" (keyup)="onKey($event)" [value]="getValue()"></textarea>
         <div [hidden]="!(displayError&&enableBlock&&invalid)" class="bc-alert">{{errorMessage||'Invalid!'}}</div>

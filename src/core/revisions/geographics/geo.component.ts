@@ -52,10 +52,15 @@ import {
 export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
     geoForm: FormGroup;
     private newTagForm: FormGroup;
-    private data: IGeographic;
     private tagChange = false
     private hiddenTag = true;
-    constructor(shelterService: ShelterService, authService: BcAuthService, shared: BcSharedService, _route: ActivatedRoute, router: Router, private fb: FormBuilder, revisionService: BcRevisionsService) {
+    constructor(shelterService: ShelterService,
+        authService: BcAuthService,
+        shared: BcSharedService,
+        _route: ActivatedRoute,
+        router: Router,
+        private fb: FormBuilder,
+        revisionService: BcRevisionsService) {
         super(shelterService, shared, revisionService, _route, router, authService);
         this.geoForm = fb.group({
             region: [""],
@@ -82,7 +87,7 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
         });
 
         this.formValidSub = this.geoForm.statusChanges.subscribe((value) => {
-            if (value == "VALID") {
+            if (value === "VALID") {
                 if (!this.maskError) {
                     this.displayError = false;
                 }
@@ -193,12 +198,11 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
         }
     }
 
-    initForm(shelter) {
-        this.name = shelter.name;
+    protected initForm(shelter: IShelter) {
         this.data = shelter.geoData;
-
-        if (this.data != undefined) {
-            if (this.data.location != undefined) {
+        this.name = shelter.name;
+        if (this.data) {
+            if (this.data.location) {
                 for (const prop in this.data.location) {
                     if (this.data.location.hasOwnProperty(prop)) {
                         if (this.geoForm.contains(prop)) {
@@ -208,7 +212,30 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
                     }
                 }
             }
-            if (this.data.tags != undefined) {
+            if (this.data.tags) {
+                for (const tag of this.data.tags) {
+                    this.addTag(tag.key, tag.value);
+                }
+            }
+        }
+    }
+
+    initGeoForm(shelter) {
+        this.name = shelter.name;
+        this.data = shelter.geoData;
+
+        if (this.data) {
+            if (this.data.location) {
+                for (const prop in this.data.location) {
+                    if (this.data.location.hasOwnProperty(prop)) {
+                        if (this.geoForm.contains(prop)) {
+                            this.geoForm.controls[prop].setValue(this.data.location[prop]);
+                            this.geoForm.controls[prop].markAsTouched();
+                        }
+                    }
+                }
+            }
+            if (this.data.tags) {
                 for (const tag of this.data.tags) {
                     this.addTag(tag.key, tag.value);
                 }
@@ -223,13 +250,13 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
             }
 
         }
-        if (this.maskSaveSub != undefined) {
+        if (this.maskSaveSub) {
             this.maskSaveSub.unsubscribe();
         }
-        if (this.maskInvalidSub != undefined) {
+        if (this.maskInvalidSub) {
             this.maskInvalidSub.unsubscribe();
         }
-        if (this.maskValidSub != undefined) {
+        if (this.maskValidSub) {
             this.maskValidSub.unsubscribe();
         }
 
@@ -238,27 +265,27 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
     getGeoData(id): Promise<IShelter> {
         return new Promise<IShelter>((resolve, reject) => {
             const revSub = this.revisionService.load$.subscribe(shelter => {
-                if (shelter != null && shelter.geoData != undefined) {
-                    if (revSub != undefined) {
+                if (shelter && shelter.geoData) {
+                    if (revSub) {
                         revSub.unsubscribe();
                     }
                     resolve(shelter);
                 } else {
-                    const shelSub = this.shelterService.getShelterSection(id, "geoData").subscribe(shelter => {
-                        if (shelter.geoData == undefined) {
-                            shelter.geoData = {
+                    const shelSub = this.shelterService.getShelterSection(id, "geoData").subscribe(shel => {
+                        if (!shel.geoData) {
+                            shel.geoData = {
                                 location: {},
                                 tags: [] as [ITag]
                             };
                         }
-                        this.revisionService.onChildSave(shelter, "geoData");
-                        if (shelSub != undefined) {
+                        this.revisionService.onChildSave(shel, "geoData");
+                        if (shelSub) {
                             shelSub.unsubscribe();
                         }
-                        if (revSub != undefined) {
+                        if (revSub) {
                             revSub.unsubscribe();
                         }
-                        resolve(shelter);
+                        resolve(shel);
                     });
                 }
             });
@@ -267,9 +294,16 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
     }
 
     init(shelId) {
-        this.getGeoData(shelId)
+        this.getData(shelId, "geoData")
             .then((shelter) => {
                 this.initForm(shelter);
             });
+    }
+
+    getEmptyObjData(section): any {
+        return {
+            location: {},
+            tags: [] as [ITag]
+        };
     }
 }

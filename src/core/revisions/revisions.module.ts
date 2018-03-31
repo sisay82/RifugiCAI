@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 // import { DetailsRoutingModule } from './revisions-routing.module';
 import { BcGeoRevisionComponentModule } from './geographics/geo.module';
-import { BcServRevisionModule } from './services/services.module';
+import { BcServRevisionComponentModule } from './services/services.module';
 import { BcContactsRevisionModule } from './contacts/contacts.module';
 import { BcManagementRevisionModule } from './management/management.module';
-import { BcCatastalRevisionModule } from './catastal/catastal.module';
+import { BcCatastalRevisionComponentModule } from './catastal/catastal.module';
 import { BcDocRevisionModule } from './documents/document.module';
 import { BcImgRevisionModule } from './images/images.module';
 import { BcFruitionRevisionModule } from './fruition/fruition.module';
@@ -20,10 +20,10 @@ import { WorkingRevisionPage } from "./pageOnWork/working-revision.module";
     imports: [HttpModule, RouterModule
         , WorkingRevisionPage
         , BcGeoRevisionComponentModule
-        , BcServRevisionModule
+        , BcServRevisionComponentModule
         , BcContactsRevisionModule
         , BcManagementRevisionModule
-        , BcCatastalRevisionModule
+        , BcCatastalRevisionComponentModule
         , BcDocRevisionModule
         , BcEconomyRevisionModule
         , BcFruitionRevisionModule

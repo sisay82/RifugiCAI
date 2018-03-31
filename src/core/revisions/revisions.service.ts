@@ -1,12 +1,12 @@
-import {Injectable } from '@angular/core'
+import { Injectable } from '@angular/core'
 import { Subject } from 'rxjs/Subject';
-import { IShelter,IFile } from '../../app/shared/types/interfaces';
+import { IShelter, IFile } from '../../app/shared/types/interfaces';
 
 @Injectable()
-export class BcRevisionsService{
-    private localPermissions:any[];
+export class BcRevisionsService {
+    private localPermissions: any[];
 
-    private childSaveSource = new Subject<{shelter:IShelter,section:string}>();
+    private childSaveSource = new Subject<{ shelter: IShelter, section: string }>();
     save$ = this.childSaveSource.asObservable();
 
     private childLoadSource = new Subject<IShelter>();
@@ -24,7 +24,7 @@ export class BcRevisionsService{
     private childDisableSaveAnswerSource = new Subject<void>();
     childDisableSaveAnswer$ = this.childDisableSaveAnswerSource.asObservable();
 
-    private childSaveFileSource = new Subject<{file:IFile,remove?:Boolean}>();
+    private childSaveFileSource = new Subject<{ file: IFile, remove?: Boolean }>();
     saveFile$ = this.childSaveFileSource.asObservable();
 
     private childSaveFilesSource = new Subject<IFile[]>();
@@ -42,52 +42,52 @@ export class BcRevisionsService{
     private fatherReturnPermissionsSource = new Subject<any[]>();
     fatherReturnPermissions$ = this.fatherReturnPermissionsSource.asObservable();
 
-    onChildGetPermissions(){
+    onChildGetPermissions() {
         this.childGetPermissionsSource.next();
     }
-    
-    onFatherReturnPermissions(permissions){
+
+    onFatherReturnPermissions(permissions) {
         this.fatherReturnPermissionsSource.next(permissions);
     }
 
-    onChildSaveFile(file:IFile,remove?:Boolean){
-        this.childSaveFileSource.next({file:file,remove:remove});
+    onChildSaveFile(file: IFile, remove?: Boolean) {
+        this.childSaveFileSource.next({ file: file, remove: remove });
     }
 
-    onChildSaveFiles(files:IFile[]){
+    onChildSaveFiles(files: IFile[]) {
         this.childSaveFilesSource.next(files);
     }
 
-    onChildLoadFiles(files:IFile[]){
+    onChildLoadFiles(files: IFile[]) {
         this.childLoadFilesSource.next(files);
     }
 
-    onChildLoadFilesRequest(types:any[]){
+    onChildLoadFilesRequest(types: any[]) {
         this.childLoadFilesSourceRequest.next(types);
     }
 
-    onChildDisableSaveRequest(){
+    onChildDisableSaveRequest() {
         this.childDisableSaveRequestSource.next();
     }
 
-    onChildDisableSaveAnswer(){
+    onChildDisableSaveAnswer() {
         this.childDisableSaveAnswerSource.next();
     }
 
-    onChildSave(shelter:IShelter,section:string){
-        this.childSaveSource.next({shelter:shelter,section:section});
+    onChildSave(shelter: IShelter, section: string) {
+        this.childSaveSource.next({ shelter: shelter, section: section });
     }
 
-    onChildLoadRequest(section:string){
+    onChildLoadRequest(section: string) {
         this.childLoadRequestSource.next(section);
     }
 
-    onChildLoad(shelter:IShelter){
+    onChildLoad(shelter: IShelter) {
         this.childLoadSource.next(shelter);
     }
 
-    onChildDelete(section:string){
+    onChildDelete(section: string) {
         this.childDeleteSource.next(section);
     }
-    
+
 }

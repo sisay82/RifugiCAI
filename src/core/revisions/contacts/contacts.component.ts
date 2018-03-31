@@ -55,11 +55,17 @@ import {
 export class BcContactsRevision extends RevisionBase implements OnDestroy {
     contactForm: FormGroup;
     private newOpeningForm: FormGroup;
-    private contacts: IContacts;
-    private openings: IOpening[];
+    /*private contacts: IContacts;
+    private openings: IOpening[];*/
     private openingChange = false;
     private hiddenOpening = true;
-    constructor(shared: BcSharedService, shelterService: ShelterService, authService: BcAuthService, router: Router, _route: ActivatedRoute, private fb: FormBuilder, revisionService: BcRevisionsService) {
+    constructor(shared: BcSharedService,
+        shelterService: ShelterService,
+        authService: BcAuthService,
+        router: Router,
+        _route: ActivatedRoute,
+        private fb: FormBuilder,
+        revisionService: BcRevisionsService) {
         super(shelterService, shared, revisionService, _route, router, authService);
         this.contactForm = fb.group({
             fixedPhone: [""],
@@ -68,7 +74,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             emailAddress: [""],
             prenotation_link: [""],
             webAddress: [""],
-            openings: fb.array([])
+            openingTime: fb.array([])
         });
 
         this.newOpeningForm = fb.group({
@@ -78,7 +84,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         });
 
         this.formValidSub = this.contactForm.statusChanges.subscribe((value) => {
-            if (value == "VALID") {
+            if (value === "VALID") {
                 if (!this.maskError) {
                     this.displayError = false;
                 }
@@ -119,17 +125,21 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
 
     removeOpening(index) {
         this.openingChange = true;
-        const control = <FormArray>this.contactForm.controls['openings'];
+        const control = <FormArray>this.contactForm.controls['openingTime'];
         control.removeAt(index);
     }
 
     addNewOpening() {
         this.openingChange = true;
-        if (this.newOpeningForm.controls['newOpeningStartDate'].valid && this.newOpeningForm.controls['newOpeningEndDate'].valid && this.newOpeningForm.controls['newOpeningType'].valid) {
+        if (this.newOpeningForm.controls['newOpeningStartDate'].valid
+            && this.newOpeningForm.controls['newOpeningEndDate'].valid
+            && this.newOpeningForm.controls['newOpeningType'].valid) {
             let startDate;
             let endDate;
-            if (this.newOpeningForm.controls['newOpeningStartDate'].value != null && this.newOpeningForm.controls['newOpeningStartDate'].value != "" &&
-                this.newOpeningForm.controls['newOpeningEndDate'].value != null && this.newOpeningForm.controls['newOpeningEndDate'].value != "") {
+            if (this.newOpeningForm.controls['newOpeningStartDate'].value != null
+                && this.newOpeningForm.controls['newOpeningStartDate'].value !== ""
+                && this.newOpeningForm.controls['newOpeningEndDate'].value != null
+                && this.newOpeningForm.controls['newOpeningEndDate'].value !== "") {
                 startDate = parseDate(this.newOpeningForm.controls['newOpeningStartDate'].value);
                 endDate = parseDate(this.newOpeningForm.controls['newOpeningEndDate'].value);
             } else {
@@ -137,7 +147,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                 endDate = null;
             }
             this.invalid = false;
-            const control = <FormArray>this.contactForm.controls['openings'];
+            const control = <FormArray>this.contactForm.controls['openingTime'];
             const opening: IOpening = {
                 startDate: startDate,
                 endDate: endDate,
@@ -174,17 +184,8 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                 name: this.name
             };
 
-            const contacts: IContacts = {
-                fixedPhone: this.getControlValue(<FormGroup>this.contactForm.controls.fixedPhone),
-                mobilePhone: this.getControlValue(<FormGroup>this.contactForm.controls.mobilePhone),
-                role: this.getControlValue(<FormGroup>this.contactForm.controls.role),
-                emailAddress: this.getControlValue(<FormGroup>this.contactForm.controls.emailAddress),
-                prenotation_link: this.processUrl(<FormGroup>this.contactForm.controls.prenotation_link),
-                webAddress: this.processUrl(<FormGroup>this.contactForm.controls.webAddress)
-            }
-
-
-            const op = this.getFormArrayValues(<FormArray>this.contactForm.controls.openings);
+            const contacts: IContacts = this.getFormValues(this.contactForm);
+            const op = this.getFormArrayValues(<FormArray>this.contactForm.controls.openingTime);
             const openings = op.map(val => {
                 if (val) {
                     if (val.startDate) {
@@ -218,24 +219,23 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
     }
 
     initForm(shelter) {
-        this.contacts = shelter.contacts;
-        this.openings = shelter.openingTime;
-        if (this.contacts != undefined) {
-            for (const prop in this.contacts) {
-                if (this.contacts.hasOwnProperty(prop)) {
+        this.data["contacts"] = shelter.contacts;
+        this.data["openingTime"] = shelter.openingTime;
+        if (this.data.contacts) {
+            for (const prop in this.data.contacts) {
+                if (this.data.contacts.hasOwnProperty(prop)) {
                     if (this.contactForm.contains(prop)) {
-                        this.contactForm.controls[prop].setValue(this.contacts[prop]);
+                        this.contactForm.controls[prop].setValue(this.data.contacts[prop]);
                     }
                 }
             }
         }
-        if (this.openings != undefined) {
-            const control = <FormArray>this.contactForm.controls['openings'];
-            for (const opening of this.openings) {
+        if (this.data.openingTime) {
+            const control = <FormArray>this.contactForm.controls['openingTime'];
+            for (const opening of this.data.openingTime) {
                 control.push(this.initOpening(opening));
             }
         }
-
     }
 
     ngOnDestroy() {
@@ -244,88 +244,36 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                 this.save(false);
             }
         }
-        if (this.permissionSub != undefined) {
+        if (this.permissionSub) {
             this.permissionSub.unsubscribe();
         }
-        if (this.maskSaveSub != undefined) {
+        if (this.maskSaveSub) {
             this.maskSaveSub.unsubscribe();
         }
-        if (this.maskInvalidSub != undefined) {
+        if (this.maskInvalidSub) {
             this.maskInvalidSub.unsubscribe();
         }
-        if (this.maskValidSub != undefined) {
+        if (this.maskValidSub) {
             this.maskValidSub.unsubscribe();
         }
     }
 
-    getOpening(id): Promise<IOpening[]> {
-        return new Promise<IOpening[]>((resolve, reject) => {
-            const revSub = this.revisionService.load$.subscribe(shelter => {
-                if (shelter != null && shelter.openingTime != undefined) {
-                    this.name = shelter.name;
-                    if (revSub != undefined) {
-                        revSub.unsubscribe();
-                    }
-                    resolve(shelter.openingTime);
-                } else {
-                    const openSub = this.shelterService.getShelterSection(id, "openingTime").subscribe(shelter => {
-                        if (shelter.openingTime == undefined) { shelter.openingTime = [] as [IOpening]; }
-                        this.name = shelter.name;
-                        this.revisionService.onChildSave(shelter, "openingTime");
-                        if (openSub != undefined) {
-                            openSub.unsubscribe();
-                        }
-                        if (revSub != undefined) {
-                            revSub.unsubscribe();
-                        }
-                        resolve(shelter.openingTime);
-                    });
-                }
-            });
-            this.revisionService.onChildLoadRequest("openingTime");
-        });
-    }
-
-    getContact(id): Promise<IContacts> {
-        return new Promise<IContacts>((resolve, reject) => {
-            const revSub = this.revisionService.load$.subscribe(shelter => {
-                if (shelter != null && shelter.contacts != undefined) {
-                    this.name = shelter.name;
-                    if (revSub != undefined) {
-                        revSub.unsubscribe();
-                    }
-                    resolve(shelter.contacts);
-                } else {
-                    let contSub = this.shelterService.getShelterSection(id, "contacts").subscribe(shelter => {
-                        if (shelter.contacts == undefined) { shelter.contacts = {}; }
-                        this.name = shelter.name;
-                        this.revisionService.onChildSave(shelter, "contacts");
-                        if (contSub != undefined) {
-                            contSub.unsubscribe();
-                        }
-                        if (revSub != undefined) {
-                            revSub.unsubscribe();
-                        }
-                        resolve(shelter.contacts);
-                    });
-                }
-            });
-            this.revisionService.onChildLoadRequest("contacts");
-        });
-    }
-
     init(shelId) {
-        this.getContact(shelId)
-            .then((contacts) => {
-                this.getOpening(shelId)
-                    .then((openings) => {
-                        const shelter = {
-                            _id: shelId,
-                            contacts: contacts,
-                            openingTime: openings
-                        };
-                        this.initForm(shelter);
-                    });
+        Promise.all([
+            this.getData(shelId, "contacts"),
+            this.getData(shelId, "openingTime")
+        ])
+            .then(values => {
+                const shelter = Object.assign({}, ...values);
+                this.initForm(shelter);
             });
+    }
+
+    getEmptyObjData(section) {
+        if (section === "openingTime") {
+            return [];
+        } else {
+            return {};
+        }
     }
 }

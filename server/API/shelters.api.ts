@@ -473,6 +473,7 @@ function confirmShelter(id: any): Promise<boolean> {
                 resolve(true);
             })
             .catch((err) => {
+                SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToUpdate), 1);
                 logger(LOG_TYPE.WARNING, err);
                 reject(err);
             });

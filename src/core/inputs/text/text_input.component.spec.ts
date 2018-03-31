@@ -4,7 +4,8 @@ import {
 } from '@angular/core/testing';
 import {
     BcTextInput,
-    BcTextInputErrorStyler
+    BcTextInputErrorStyler,
+    BcTextInputSingleLineDirective
 } from './text_input.component';
 import {
     createValidationFunction
@@ -16,7 +17,7 @@ import {
 describe('BcTextInput', () => {
     beforeEach(async (() => {
         TestBed.configureTestingModule({
-            declarations: [BcTextInput, BcTextInputErrorStyler]
+            declarations: [BcTextInput, BcTextInputErrorStyler, BcTextInputSingleLineDirective]
         }).compileComponents();
     }));
 

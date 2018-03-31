@@ -1,154 +1,137 @@
 import {
-    Component,Input,OnInit,OnDestroy
+    Component, Input, OnInit, OnDestroy
 } from '@angular/core';
-import { ActivatedRoute,Router } from '@angular/router';
-import { IShelter,IUse } from '../../../app/shared/types/interfaces';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IShelter, IUse } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums'
-import { FormGroup, FormBuilder,FormControl, FormArray } from '@angular/forms';
-import {ShelterService} from '../../../app/shelter/shelter.service'
+import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
-import {BcSharedService} from '../../../app/shared/shared.service';
+import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import {RevisionBase} from '../shared/revision_base';
-import {BcAuthService} from '../../../app/shared/auth.service';
+import { RevisionBase } from '../shared/revision_base';
+import { BcAuthService } from '../../../app/shared/auth.service';
 
 @Component({
     moduleId: module.id,
     selector: 'bc-fruition-revision',
     templateUrl: 'fruition.component.html',
     styleUrls: ['fruition.component.scss'],
-    providers:[ShelterService]
+    providers: [ShelterService]
 })
-export class BcFruitionRevision extends RevisionBase {
-    useForm: FormGroup; 
-    private data:IUse;
-
-    constructor(shelterService:ShelterService,authService:BcAuthService,shared:BcSharedService,router:Router,revisionService:BcRevisionsService,private fb: FormBuilder,_route:ActivatedRoute){
-        super(shelterService,shared,revisionService,_route,router,authService);
-        shared.activeComponent=Enums.Routes.Routed_Component.use;
-        this.MENU_SECTION=Enums.MenuSection.economy;
+export class BcFruitionRevision extends RevisionBase implements OnDestroy {
+    useForm: FormGroup;
+    constructor(shelterService: ShelterService,
+        authService: BcAuthService,
+        shared: BcSharedService,
+        router: Router,
+        revisionService: BcRevisionsService,
+        private fb: FormBuilder,
+        _route: ActivatedRoute) {
+        super(shelterService, shared, revisionService, _route, router, authService);
+        shared.activeComponent = Enums.Routes.Routed_Component.use;
+        this.MENU_SECTION = Enums.MenuSection.economy;
         this.useForm = fb.group({
-            stay_count_associate:[""],
-            stay_count_reciprocity:[""],
-            stay_count:[""],
-            transit_count_associate:[""],
-            transit_count_reciprocity:[""],
-            transit_count:[""]
-        }); 
+            stay_count_associate: [""],
+            stay_count_reciprocity: [""],
+            stay_count: [""],
+            transit_count_associate: [""],
+            transit_count_reciprocity: [""],
+            transit_count: [""]
+        });
 
-        this.formValidSub = this.useForm.statusChanges.subscribe((value)=>{
-            if(value=="VALID"){
-                if(!this.maskError){
-                    this.displayError=false;
+        this.formValidSub = this.useForm.statusChanges.subscribe((value) => {
+            if (value === "VALID") {
+                if (!this.maskError) {
+                    this.displayError = false;
                 }
             }
         });
 
-        this.maskSaveSub=shared.maskSave$.subscribe(()=>{
-            if(!this.maskError&&this.useForm.valid){
-                if(this.useForm.dirty){
-                    this.disableSave=true;
+        this.maskSaveSub = shared.maskSave$.subscribe(() => {
+            if (!this.maskError && this.useForm.valid) {
+                if (this.useForm.dirty) {
+                    this.disableSave = true;
                     this.save(true);
-                }else{
+                } else {
                     this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.use);
                 }
-            }else{
+            } else {
                 this.abortSave();
             }
         });
     }
 
-    save(confirm){
-        if(!confirm||this.useForm.valid){
-            let shelter:IShelter={_id:this._id,name:this.name};
-            let use:IUse=<IUse>this.getFormValues(this.useForm);
-            use.year=this.data.year;
-            
-            shelter.use=[use];
-            this.processSavePromise(shelter,"use")
-            .then(()=>{
-                this.displayError=false;
-                if(confirm){
-                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.use);
-                }
-            })
-            .catch(err=>{
-                this.abortSave();
-                console.log(err);
-            });
-        }else{
+    save(confirm) {
+        if (!confirm || this.useForm.valid) {
+            const shelter: IShelter = { _id: this._id, name: this.name };
+            const use: IUse = <IUse>this.getFormValues(this.useForm);
+            use.year = this.data.year;
+
+            shelter.use = [use];
+            this.processSavePromise(shelter, "use")
+                .then(() => {
+                    this.displayError = false;
+                    if (confirm) {
+                        this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.use);
+                    }
+                })
+                .catch(err => {
+                    this.abortSave();
+                    console.log(err);
+                });
+        } else {
             this.abortSave();
         }
     }
 
-    initForm(shelter:IShelter){
-        this.name=shelter.name;
-        if(shelter.use){
-            this.data=shelter.use.find(obj=>obj.year==(new Date()).getFullYear());
+    initForm(shelter: IShelter) {
+        this.name = shelter.name;
+        let use;
+        if (shelter.use) {
+            use = shelter.use.find(obj => obj.year === (new Date()).getFullYear());
+            this.data = use;
         }
-        if(!this.data){
-            this.data={year:(new Date()).getFullYear()};
+        if (!this.data) {
+            this.data = { year: (new Date()).getFullYear() };
         }
-        this.useForm.controls.stay_count_associate.setValue(this.data.stay_count_associate||null);
-        this.useForm.controls.stay_count_reciprocity.setValue(this.data.stay_count_reciprocity||null);
-        this.useForm.controls.stay_count.setValue(this.data.stay_count||null);
-        this.useForm.controls.transit_count_associate.setValue(this.data.transit_count_associate||null);
-        this.useForm.controls.transit_count_reciprocity.setValue(this.data.transit_count_reciprocity||null);
-        this.useForm.controls.transit_count.setValue(this.data.transit_count||null);
-    }   
+        for (const control in use) {
+            if (this.useForm.contains(control)) {
+                this.useForm.controls[control].setValue(use[control] || null);
+            }
+        }
+    }
 
-    ngOnDestroy(){
-        if(this.useForm.dirty){
-            if(!this.disableSave){
+    ngOnDestroy() {
+        if (this.useForm.dirty) {
+            if (!this.disableSave) {
                 this.save(false);
             }
-                
+
         }
-        if(this.maskSaveSub!=undefined){
+        if (this.maskSaveSub) {
             this.maskSaveSub.unsubscribe();
         }
-        if(this.maskInvalidSub!=undefined){
+        if (this.maskInvalidSub) {
             this.maskInvalidSub.unsubscribe();
         }
-        if(this.maskValidSub!=undefined){
+        if (this.maskValidSub) {
             this.maskValidSub.unsubscribe();
         }
-        
     }
 
-    getUse(id):Promise<IShelter>{
-        return new Promise<IShelter>((resolve,reject)=>{
-            let revSub=this.revisionService.load$.subscribe(shelter=>{
-                if(shelter!=null){
-                    if(revSub!=undefined){
-                        revSub.unsubscribe();
-                    }
-                    resolve(shelter);
-                }else{
-                    let shelSub=this.shelterService.getShelterSection(id,"use").subscribe(shelter=>{
-                        this.revisionService.onChildSave(shelter,"use");
-                        if(shelSub!=undefined){
-                            shelSub.unsubscribe();
-                        }
-                        if(revSub!=undefined){
-                            revSub.unsubscribe();
-                        }
-                        resolve(shelter);
-                    });
-                }
+    init(shelId) {
+        this.getData(shelId, "use")
+            .then(shelter => {
+                this.initForm(shelter);
             });
-            this.revisionService.onChildLoadRequest("use");
-        });
     }
 
-    init(shelId){
-        this.getUse(shelId)
-        .then((shelter)=>{
-            this.initForm(shelter);
-        });
-    }
-
-    checkValidForm(){
+    checkValidForm() {
         return true;
+    }
+
+    getEmptyObjData(section: any) {
+        return {};
     }
 }

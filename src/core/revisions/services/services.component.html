@@ -8,7 +8,8 @@
                         <div [formGroupName]="j" style="display: flex;flex-direction:row;height:inherit;align-items:baseline">
                             <div class="bc-body" style="white-space:nowrap">{{getControl(tag,'key').value | titleCase}}:</div>
                             <div class="bc-revision-service-tags">
-                                <bc-text-input [enableBlock]="getValidator(tag.value.type)=='numberValidator'" errorMessage="Inserire sono numeri." [placeholder]="getPlaceholder(getControl(service,'category').value,getControl(tag,'key').value)" formControlName="value" [validator]="getValidator(tag.value.type)" [displayError]="displayError"></bc-text-input>
+                                <bc-text-input [enableBlock]="getValidator(tag.value.type)=='numberValidator'" errorMessage="Inserire sono numeri." [placeholder]="getPlaceholder(getControl(service,'category').value,getControl(tag,'key').value)"
+                                    formControlName="value" [validator]="getValidator(tag.value.type)" [displayError]="displayError"></bc-text-input>
                             </div>
                         </div>
                         <br>

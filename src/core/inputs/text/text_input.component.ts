@@ -31,6 +31,16 @@ export class BcTextInputErrorStyler {
     @Input('bc-enable-error') invalid: boolean;
 }
 
+@Directive({
+    selector: 'textarea[bc-single-line]',
+    host: {
+        '[class.single-line]': 'enable'
+    }
+})
+export class BcTextInputSingleLineDirective {
+    @Input('bc-single-line') enable: boolean;
+}
+
 @Component({
     moduleId: module.id,
     selector: 'bc-text-input',
@@ -107,6 +117,10 @@ export class BcTextInput extends BcBaseInput {
         }
     }
 
+    isSingleLine() {
+        return !(this.lines && this.lines > 1);
+    }
+
     getValue() {
         let returnVal;
         if (this.value === true || this.value === "true") {
@@ -114,8 +128,8 @@ export class BcTextInput extends BcBaseInput {
         } else if (this.value === "false" || (this.value === false && this.value !== "")) {
             returnVal = 'no';
         } else {
-            if (this.replaceDot) {
-                returnVal = (<String>this.value).replace(/\,/g, '.')
+            if (this.replaceDot && this.value) {
+                returnVal = (String(this.value)).replace(/\,/g, '.')
             } else {
                 returnVal = this.value;
             }

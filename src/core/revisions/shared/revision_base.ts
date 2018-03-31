@@ -7,6 +7,10 @@ import { Observable } from 'rxjs/Observable';
 import { parseDate, validators } from '../../inputs/input_base';
 import { Enums } from '../../../app/shared/types/enums';
 import { OnInit } from '@angular/core';
+import { IShelter } from 'app/shared/types/interfaces';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BcAuthService } from 'app/shared/auth.service';
+import { isArray } from 'util';
 
 const validObjectIDRegExp = validators.objectID;
 
@@ -17,6 +21,7 @@ export abstract class RevisionBase implements OnInit {
     protected invalid = false;
     protected disableSave = false;
     protected maskSaveSub: Subscription;
+    protected data: any = {};
     displayError = false;
     protected maskError = false;
     protected maskInvalidSub: Subscription;
@@ -25,7 +30,12 @@ export abstract class RevisionBase implements OnInit {
     protected userRole: Enums.Auth_Permissions.User_Type;
     protected permissionSub: Subscription;
     protected MENU_SECTION: Enums.MenuSection = Enums.MenuSection.detail;
-    constructor(protected shelterService, protected shared, protected revisionService, private _route, private router, protected auth) {
+    constructor(protected shelterService,
+        protected shared: BcSharedService,
+        protected revisionService: BcRevisionsService,
+        private _route: ActivatedRoute,
+        private router: Router,
+        protected auth: BcAuthService) {
 
         shared.onActiveOutletChange(Enums.Routes.Routed_Outlet.revision);
 
@@ -47,7 +57,6 @@ export abstract class RevisionBase implements OnInit {
                 disableSaveSub.unsubscribe();
             }
         });
-
     }
 
     getRoute(): Promise<any> {
@@ -174,7 +183,9 @@ export abstract class RevisionBase implements OnInit {
     protected getFormValues(form: FormGroup): any {
         const obj: any = {};
         for (const control in form.controls) {
-            obj[control] = this.getControlValue(<FormGroup>form.controls[control]);
+            if (form.controls.hasOwnProperty(control)) {
+                obj[control] = this.getControlValue(<FormGroup>form.controls[control]);
+            }
         }
         return obj;
     }
@@ -209,11 +220,35 @@ export abstract class RevisionBase implements OnInit {
         }
     }
 
-   /* protected createDataObjectFromForm() {
-        for (const control in this.maskForm.controls) {
-            if (this.maskForm.controls.hasOwnProperty(control)) {
-                shelter[control] = this.maskForm.controls[control].value || null;
-            }
-        }
-    }*/
+    protected abstract initForm(shelter: IShelter);
+
+    protected getData(id, section): Promise<IShelter> {
+        return new Promise<IShelter>((resolve, reject) => {
+            const revSub = this.revisionService.load$.subscribe(shelter => {
+                if (shelter != null && shelter[section]) {
+                    this.name = shelter.name;
+                    if (revSub) {
+                        revSub.unsubscribe();
+                    }
+                    resolve(shelter);
+                } else {
+                    const shelSub = this.shelterService.getShelterSection(id, section).subscribe(shel => {
+                        this.name = shel.name;
+                        if (!shel[section]) { shel[section] = this.getEmptyObjData(section) }
+                        this.revisionService.onChildSave(shel, section);
+                        if (shelSub) {
+                            shelSub.unsubscribe();
+                        }
+                        if (revSub) {
+                            revSub.unsubscribe();
+                        }
+                        resolve(shel);
+                    });
+                }
+            });
+            this.revisionService.onChildLoadRequest(section);
+        });
+    }
+
+    abstract getEmptyObjData(section): any;
 }

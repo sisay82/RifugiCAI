@@ -1,26 +1,21 @@
 @import '../../style/typography';
 @import '../../style/theme';
-
-@mixin bc-catastal-revision($theme){
-    $accent: map-get($theme, accent);
-
-    &-catastal{
-      width:40%;
-      margin-right:1%;
-
-      &-title{
-        margin-bottom: 4px;
-        color:bc-color($accent);
+@mixin bc-catastal-revision($theme) {
+  $accent: map-get($theme, accent);
+  &-catastal {
+    width: 40%;
+    margin-right: 1%;
+    &-title {
+      margin-bottom: 4px;
+      color: bc-color($accent);
+    }
+    &-add-tag {
+      font-weight: bold;
+      margin-left: 1%;
+      &:hover {
+        color: bc-color($accent);
+        cursor: pointer;
       }
-
-      &-add-tag{
-        font-weight: bold;
-        margin-left:1%;
-  
-        &:hover{
-          color:bc-color($accent);
-          cursor: pointer;
-        }
-      }
-    } 
+    }
+  }
 }

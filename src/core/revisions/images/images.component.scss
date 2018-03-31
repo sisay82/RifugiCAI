@@ -1,18 +1,14 @@
 @import '../../style/typography';
 @import '../../style/theme';
-
-@mixin bc-images-revision($theme){
+@mixin bc-images-revision($theme) {
   $accent: map-get($theme, accent);
-
-  &-img{
-    &:hover{
-      color:bc-color($accent);
+  &-img {
+    &:hover {
+      color: bc-color($accent);
       cursor: pointer;
     }
-
-    &-title{
-      color:bc-color($accent);
+    &-title {
+      color: bc-color($accent);
     }
   }
- 
 }

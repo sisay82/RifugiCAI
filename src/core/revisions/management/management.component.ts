@@ -20,14 +20,20 @@ import { parseDate } from '../../inputs/input_base';
     styleUrls: ['management.component.scss'],
     providers: [ShelterService]
 })
-export class BcManagementRevision extends RevisionBase implements OnDestroy{
+export class BcManagementRevision extends RevisionBase implements OnDestroy {
     managForm: FormGroup;
     private newSubjectForm: FormGroup;
-    private data: IManagement;
+    private ownerSubjectForm: FormGroup;
     private property: ISubject;
     private subjectChange = false;
     private hiddenSubject = true;
-    constructor(shared: BcSharedService, authService: BcAuthService, shelterService: ShelterService, router: Router, _route: ActivatedRoute, private fb: FormBuilder, revisionService: BcRevisionsService) {
+    constructor(shared: BcSharedService,
+        authService: BcAuthService,
+        shelterService: ShelterService,
+        router: Router,
+        _route: ActivatedRoute,
+        private fb: FormBuilder,
+        revisionService: BcRevisionsService) {
         super(shelterService, shared, revisionService, _route, router, authService);
         this.managForm = fb.group({
             rentType: [""],
@@ -36,38 +42,14 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy{
             pickupKey: [""],
             self_management: [""],
             subjects: fb.array([]),
-            propName: [""],
-            propTaxCode: [""],
-            propFixedPhone: [""],
-            propPec: [""],
-            propEmail: [""],
-            propWebSite: [""],
-            propContract_start_date: [""],
-            propContract_end_date: [""],
-            propContract_duration: [""],
-            propContract_fee: [""],
-            propPossessionType: [""]
         });
 
-        this.newSubjectForm = fb.group({
-            newName: [""],
-            newSurname: [""],
-            newTaxCode: [""],
-            newFixedPhone: [""],
-            newMobilePhone: [""],
-            newPec: [""],
-            newMail: [""],
-            newWebSite: [""],
-            newType: [""],
-            newContract_start_date: [""],
-            newContract_end_date: [""],
-            newContract_duration: [""],
-            newContract_fee: [""],
-            newPossessionType: [""]
-        });
+        this.ownerSubjectForm = this.getSubjectForm();
+
+        this.newSubjectForm = this.getSubjectForm();
 
         this.formValidSub = this.managForm.statusChanges.subscribe((value) => {
-            if (value == "VALID") {
+            if (value === "VALID") {
                 if (!this.maskError) {
                     this.displayError = false;
                 }
@@ -89,6 +71,25 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy{
         });
 
         shared.activeComponent = Enums.Routes.Routed_Component.management;
+    }
+
+    getSubjectForm() {
+        return this.fb.group({
+            name: [""],
+            surname: [""],
+            taxCode: [""],
+            fixedPhone: [""],
+            mobilePhone: [""],
+            pec: [""],
+            email: [""],
+            webSite: [""],
+            type: [""],
+            contract_start_date: [""],
+            contract_end_date: [""],
+            contract_duration: [""],
+            contract_fee: [""],
+            possessionType: [""]
+        });
     }
 
     getFormControls(controlName) {
@@ -118,22 +119,11 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy{
         this.subjectChange = true;
         if (this.newSubjectForm.valid) {
             const control = <FormArray>this.managForm.controls['subjects'];
-            const subject: ISubject = {
-                name: this.newSubjectForm.controls['newName'].value || null,
-                surname: this.newSubjectForm.controls['newSurname'].value || null,
-                taxCode: this.newSubjectForm.controls['newTaxCode'].value || null,
-                fixedPhone: this.newSubjectForm.controls['newFixedPhone'].value || null,
-                mobilePhone: this.newSubjectForm.controls['newMobilePhone'].value || null,
-                pec: this.newSubjectForm.controls['newPec'].value || null,
-                email: this.newSubjectForm.controls['newMail'].value || null,
-                webSite: this.newSubjectForm.controls['newWebSite'].value || null,
-                type: this.newSubjectForm.controls['newType'].value || null,
-                contract_start_date: this.newSubjectForm.controls["newContract_start_date"].value ? (parseDate(this.newSubjectForm.controls["newContract_start_date"].value) || null) : null,
-                contract_end_date: this.newSubjectForm.controls["newContract_end_date"].value ? (parseDate(this.newSubjectForm.controls["newContract_end_date"].value) || null) : null,
-                contract_duration: this.newSubjectForm.controls["newContract_duration"].value || null,
-                contract_fee: this.newSubjectForm.controls["newContract_fee"].value || null,
-                possession_type: this.newSubjectForm.controls["newPossessionType"].value || null,
-            }
+            const subject: ISubject = this.getFormValues(this.newSubjectForm);
+            subject.contract_start_date = subject.contract_start_date ?
+                (parseDate(this.newSubjectForm.controls["contract_start_date"].value) || null) : null;
+            subject.contract_end_date = subject.contract_end_date ?
+                (parseDate(this.newSubjectForm.controls["contract_start_date"].value) || null) : null;
             control.push(this.initSubject(subject));
             this.resetSubjectForm();
         } else {
@@ -142,22 +132,7 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy{
     }
 
     resetSubjectForm() {
-        this.newSubjectForm = this.fb.group({
-            newName: [""],
-            newSurname: [""],
-            newTaxCode: [""],
-            newFixedPhone: [""],
-            newMobilePhone: [""],
-            newPec: [""],
-            newMail: [""],
-            newWebSite: [""],
-            newType: [""],
-            newContract_start_date: [""],
-            newContract_end_date: [""],
-            newContract_duration: [""],
-            newContract_fee: [""],
-            newPossessionType: [""]
-        });
+        this.newSubjectForm = this.getSubjectForm();
         this.toggleSubject();
     }
 
@@ -184,52 +159,12 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy{
         if (!confirm || this.managForm.valid) {
             const shelter: IShelter = { _id: this._id, name: this.name };
 
-            const management: IManagement = {
-                rentType: this.getControlValue(<FormGroup>this.managForm.controls.rentType),
-                valuta: this.getControlValue(<FormGroup>this.managForm.controls.valuta),
-                self_management: this.getControlValue(<FormGroup>this.managForm.controls.self_management),
-                pickupKey: this.getControlValue(<FormGroup>this.managForm.controls.pickupKey),
-                reference: this.getControlValue(<FormGroup>this.managForm.controls.reference)
-            };
-
-            const prop: ISubject = {
-                name: this.getControlValue(<FormGroup>this.managForm.controls.propName),
-                taxCode: this.getControlValue(<FormGroup>this.managForm.controls.propTaxCode),
-                fixedPhone: this.getControlValue(<FormGroup>this.managForm.controls.propFixedPhone),
-                pec: this.getControlValue(<FormGroup>this.managForm.controls.propPec),
-                email: this.getControlValue(<FormGroup>this.managForm.controls.propEmail),
-                contract_start_date: this.processFormDate(<FormGroup>this.managForm.controls["propContract_start_date"]),
-                contract_end_date: this.processFormDate(<FormGroup>this.managForm.controls["propContract_end_date"]),
-                contract_duration: this.getControlValue(<FormGroup>this.managForm.controls.propContract_duration),
-                contract_fee: this.getControlValue(<FormGroup>this.managForm.controls.propContract_fee),
-                possession_type: this.getControlValue(<FormGroup>this.managForm.controls.propPossessionType),
-                webSite: this.processUrl(<FormGroup>this.managForm.controls.propWebSite),
-                type: "Proprietario"
-            }
-
+            const management: IManagement = this.getFormValues(this.managForm);
+            const prop: ISubject = this.getFormValues(this.ownerSubjectForm);
+            prop.type = "Proprietario";
             const control = <FormArray>this.managForm.controls['subjects'];
-            const subjects: ISubject[] = [];
+            const subjects: ISubject[] = this.getFormArrayValues(control);
             subjects.push(prop);
-            for (const c of control.controls) {
-                const s = {
-                    name: this.getControlValue(<FormGroup>(<FormGroup>c).controls.name),
-                    surname: this.getControlValue(<FormGroup>(<FormGroup>c).controls.surname),
-                    taxCode: this.getControlValue(<FormGroup>(<FormGroup>c).controls.taxCode),
-                    fixedPhone: this.getControlValue(<FormGroup>(<FormGroup>c).controls.fixedPhone),
-                    mobilePhone: this.getControlValue(<FormGroup>(<FormGroup>c).controls.mobilePhone),
-                    pec: this.getControlValue(<FormGroup>(<FormGroup>c).controls.pec),
-                    email: this.getControlValue(<FormGroup>(<FormGroup>c).controls.email),
-                    webSite: this.processUrl(<FormGroup>(<FormGroup>c).controls.webSite),
-                    type: this.getControlValue(<FormGroup>(<FormGroup>c).controls.type),
-                    contract_start_date: this.processFormDate(<FormGroup>(<FormGroup>c).controls.contract_start_date),
-                    contract_end_date: this.processFormDate(<FormGroup>(<FormGroup>c).controls.contract_end_date),
-                    contract_duration: this.getControlValue(<FormGroup>(<FormGroup>c).controls.contract_duration),
-                    contract_fee: this.getControlValue(<FormGroup>(<FormGroup>c).controls.contract_fee),
-                    possession_type: this.getControlValue(<FormGroup>(<FormGroup>c).controls.possession_type),
-                }
-
-                subjects.push(s);
-            }
             shelter.management = management
             shelter.management.subject = subjects as [ISubject];
             this.processSavePromise(shelter, "management")
@@ -252,34 +187,29 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy{
         this.name = shelter.name;
         this.data = shelter.management;
 
-        if (this.data != undefined) {
-            for (const prop in this.data) {
-                if (this.data.hasOwnProperty(prop)) {
+        if (shelter.management) {
+            for (const prop in shelter.management) {
+                if (shelter.management.hasOwnProperty(prop)) {
                     if (this.managForm.contains(prop)) {
-                        if (prop.indexOf("date") == -1) {
-                            this.managForm.controls[prop].setValue(this.data[prop]);
+                        if (prop.indexOf("date") === -1) {
+                            this.managForm.controls[prop].setValue(shelter.management[prop]);
                         } else {
-                            this.managForm.controls[prop].setValue(this.data[prop] ? (new Date(this.data[prop]).toLocaleDateString() || null) : null);
+                            this.managForm.controls[prop].setValue(shelter.management[prop] ?
+                                (new Date(shelter.management[prop]).toLocaleDateString() || null) : null);
                         }
                     }
                 }
             }
-            if (this.data.subject != undefined) {
+            if (shelter.management.subject) {
                 const control = <FormArray>this.managForm.controls['subjects'];
-                for (const subj of this.data.subject) {
-                    if (subj.type != undefined && subj.type.toLowerCase().indexOf("proprietario") > -1) {
+                for (const subj of shelter.management.subject) {
+                    if (subj.type && subj.type.toLowerCase().indexOf("proprietario") > -1) {
                         this.property = subj;
-                        this.managForm.controls["propName"].setValue(subj.name);
-                        this.managForm.controls["propTaxCode"].setValue(subj.taxCode);
-                        this.managForm.controls["propFixedPhone"].setValue(subj.fixedPhone);
-                        this.managForm.controls["propPec"].setValue(subj.pec);
-                        this.managForm.controls["propEmail"].setValue(subj.email);
-                        this.managForm.controls["propWebSite"].setValue(subj.webSite);
-                        this.managForm.controls["propContract_start_date"].setValue(subj.contract_start_date ? (new Date(subj.contract_start_date).toLocaleDateString()) : null);
-                        this.managForm.controls["propContract_end_date"].setValue(subj.contract_end_date ? (new Date(subj.contract_end_date).toLocaleDateString()) : null);
-                        this.managForm.controls["propContract_duration"].setValue(subj.contract_duration);
-                        this.managForm.controls["propContract_fee"].setValue(subj.contract_fee);
-                        this.managForm.controls["propPossessionType"].setValue(subj.possession_type);
+                        for (const contr in subj) {
+                            if (this.managForm.contains(contr)) {
+                                this.managForm.controls[contr].setValue(subj[contr]);
+                            }
+                        }
                     } else {
                         control.push(this.initSubject(subj));
                     }
@@ -292,50 +222,28 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy{
         if (this.subjectChange || this.managForm.dirty) {
             if (!this.disableSave) { this.save(false); }
         }
-        if (this.permissionSub != undefined) {
+        if (this.permissionSub) {
             this.permissionSub.unsubscribe();
         }
-        if (this.maskSaveSub != undefined) {
+        if (this.maskSaveSub) {
             this.maskSaveSub.unsubscribe();
         }
-        if (this.maskInvalidSub != undefined) {
+        if (this.maskInvalidSub) {
             this.maskInvalidSub.unsubscribe();
         }
-        if (this.maskValidSub != undefined) {
+        if (this.maskValidSub) {
             this.maskValidSub.unsubscribe();
         }
     }
 
-    getManagement(id): Promise<IShelter> {
-        return new Promise<IShelter>((resolve, reject) => {
-            const revSub = this.revisionService.load$.subscribe(shelter => {
-                if (shelter != null && shelter.management != undefined) {
-                    if (revSub != undefined) {
-                        revSub.unsubscribe();
-                    }
-                    resolve(shelter);
-                } else {
-                    const managSub = this.shelterService.getShelterSection(id, "management").subscribe(shelter => {
-                        if (shelter.management == undefined) { shelter.management = { subject: [] as [ISubject] }; }
-                        this.revisionService.onChildSave(shelter, "management");
-                        if (managSub != undefined) {
-                            managSub.unsubscribe();
-                        }
-                        if (revSub != undefined) {
-                            revSub.unsubscribe();
-                        }
-                        resolve(shelter);
-                    });
-                }
-            });
-            this.revisionService.onChildLoadRequest("management");
-        });
+    getEmptyObjData(section) {
+        return { subject: [] as [ISubject] };
     }
 
     init(shelId) {
-        this.getManagement(shelId)
+        this.getData(shelId, "management")
             .then(shelter => {
                 this.initForm(shelter);
-            });
+            })
     }
 }

@@ -1,26 +1,21 @@
 @import '../../style/typography';
 @import '../../style/theme';
-
-@mixin bc-document-revision($theme){
+@mixin bc-document-revision($theme) {
   $accent: map-get($theme, accent);
-  
-  &-doc{
+  &-doc {
     &-file {
       &:hover {
-        color:bc-color($accent);
+        color: bc-color($accent);
         cursor: pointer;
       }
     }
-    
-    &-title{
-      color:bc-color($accent);
+    &-title {
+      color: bc-color($accent);
     }
   }
-  
-  .disabled{
+  .disabled {
     pointer-events: none;
     opacity: 0.5;
     background: #CCC;
   }
-
 }

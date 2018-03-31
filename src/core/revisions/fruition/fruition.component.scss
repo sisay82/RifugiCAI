@@ -1,20 +1,16 @@
 @import '../../style/typography';
 @import '../../style/theme';
-
-@mixin bc-fruition-revision($theme){
+@mixin bc-fruition-revision($theme) {
     $accent: map-get($theme, accent);
-
-    &-fruition{
-        &-title{
+    &-fruition {
+        &-title {
             margin-bottom: 4px;
-            color:bc-color($accent);
-        }   
-
-        &-input{
-            position:relative;
-            width:auto;
+            color: bc-color($accent);
+        }
+        &-input {
+            position: relative;
+            width: auto;
             max-width: 30%;
         }
     }
-    
 }

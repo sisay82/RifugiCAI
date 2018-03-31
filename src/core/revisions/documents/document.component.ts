@@ -29,7 +29,7 @@ export class BcDisableDivStyler {
   styleUrls: ['document.component.scss'],
   providers: [ShelterService]
 })
-export class BcDocRevision extends RevisionBase {
+export class BcDocRevision extends RevisionBase implements OnDestroy {
   private newDocForm: FormGroup;
   private newMapForm: FormGroup;
   private newInvoiceForm: FormGroup;
@@ -40,7 +40,7 @@ export class BcDocRevision extends RevisionBase {
   invoiceFormatRegExp = /.+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+(\,|\/|\-|\\|\.|\||_).+/ //tipo, fornitore, numero, data
   docs: IFile[] = [];
   maps: IFile[] = [];
-  private invoicesChange = false;
+  private filesChange = false;
   invalid = false;
   private docFormValidSub: Subscription;
   private mapFormValidSub: Subscription;
@@ -52,7 +52,13 @@ export class BcDocRevision extends RevisionBase {
   disableSave = false;
   private currentFileToggle = -1;
   disableInvoiceGlobal = true;
-  constructor(shelterService: ShelterService, authService: BcAuthService, shared: BcSharedService, router: Router, _route: ActivatedRoute, private fb: FormBuilder, revisionService: BcRevisionsService) {
+  constructor(shelterService: ShelterService,
+    authService: BcAuthService,
+    shared: BcSharedService,
+    router: Router,
+    _route: ActivatedRoute,
+    private fb: FormBuilder,
+    revisionService: BcRevisionsService) {
     super(shelterService, shared, revisionService, _route, router, authService);
     this.MENU_SECTION = Enums.MenuSection.document;
     this.newDocForm = fb.group({
@@ -72,7 +78,7 @@ export class BcDocRevision extends RevisionBase {
     });
 
     this.docFormValidSub = this.newDocForm.statusChanges.subscribe(value => {
-      if (value == "VALID") {
+      if (value === "VALID") {
         if (!this.maskError && this.newInvoiceForm.invalid && this.newMapForm.invalid && this.invoicesForm.invalid) {
           this.setDisplayError(false);
         }
@@ -80,7 +86,7 @@ export class BcDocRevision extends RevisionBase {
     });
 
     this.invoiceFormValidSub = this.newInvoiceForm.statusChanges.subscribe(value => {
-      if (value == "VALID") {
+      if (value === "VALID") {
         if (!this.maskError && this.newDocForm.invalid && this.newMapForm.invalid && this.invoicesForm.invalid) {
           this.setDisplayError(false);
         }
@@ -88,7 +94,7 @@ export class BcDocRevision extends RevisionBase {
     });
 
     this.invoicesFormValidSub = this.invoicesForm.statusChanges.subscribe(value => {
-      if (value == "VALID") {
+      if (value === "VALID") {
         if (!this.maskError && this.newInvoiceForm.invalid && this.newMapForm.invalid && this.newDocForm.invalid) {
           this.setDisplayError(false);
         }
@@ -96,7 +102,7 @@ export class BcDocRevision extends RevisionBase {
     });
 
     this.mapFormValidSub = this.newMapForm.statusChanges.subscribe(value => {
-      if (value == "VALID") {
+      if (value === "VALID") {
         if (!this.maskError && this.newInvoiceForm.invalid && this.newDocForm.invalid && this.invoicesForm.invalid) {
           this.setDisplayError(false);
         }
@@ -106,7 +112,7 @@ export class BcDocRevision extends RevisionBase {
     this.maskSaveSub = shared.maskSave$.subscribe(() => {
       if (!this.maskError) {
         this.disableSave = true;
-        if (this.newDocForm.dirty || this.newInvoiceForm.dirty || this.newMapForm.dirty || this.invoicesForm.dirty || this.invoicesChange) {
+        if (this.newDocForm.dirty || this.newInvoiceForm.dirty || this.newMapForm.dirty || this.invoicesForm.dirty || this.filesChange) {
           this.save(true);
         } else {
           this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.documents);
@@ -121,7 +127,7 @@ export class BcDocRevision extends RevisionBase {
 
   getInvoicesFormControls(controlName: string, index?) {
     const control = (<FormArray>this.invoicesForm.controls[controlName]);
-    if (index != undefined) {
+    if (index) {
       return control.at(index);
     } else {
       return control.controls;
@@ -149,7 +155,7 @@ export class BcDocRevision extends RevisionBase {
   }
 
   toggleFile(value: number) {
-    if (this.currentFileToggle == value) {
+    if (this.currentFileToggle === value) {
       this.currentFileToggle = -1;
     } else {
       this.currentFileToggle = value;
@@ -157,8 +163,8 @@ export class BcDocRevision extends RevisionBase {
   }
 
   checkDocName(name) {
-    return (name && this.docs.concat(this.maps).find(obj => obj && obj.name == name) == undefined &&
-      (<FormArray>this.invoicesForm.controls.files).controls.find(contr => contr.value && contr.value.name == name) == undefined)
+    return !(name && this.docs.concat(this.maps).find(obj => obj && obj.name == name) &&
+      !(<FormArray>this.invoicesForm.controls.files).controls.find(contr => contr.value && contr.value.name == name))
   }
 
   toBuffer(ab) {
@@ -178,7 +184,7 @@ export class BcDocRevision extends RevisionBase {
       } else {
         this.docs.splice(this.docs.findIndex(file => file._id == id), 1);
       }
-      if (removeFileSub != undefined) {
+      if (removeFileSub) {
         removeFileSub.unsubscribe();
       }
     });
@@ -196,7 +202,7 @@ export class BcDocRevision extends RevisionBase {
       } else {
         this.maps.splice(this.maps.findIndex(file => file._id == id), 1);
       }
-      if (removeFileSub != undefined) {
+      if (removeFileSub) {
         removeFileSub.unsubscribe();
       }
     })
@@ -211,84 +217,10 @@ export class BcDocRevision extends RevisionBase {
         } else {
           (<FormArray>this.invoicesForm.controls.files).removeAt(index);
         }
-        if (removeFileSub != undefined) {
+        if (removeFileSub) {
           removeFileSub.unsubscribe();
         }
       });
-    }
-  }
-
-  addDoc() {
-    const f = <File>(<FormGroup>(this.newDocForm.controls.file)).value;
-    if (f && this.newDocForm.valid && this.checkDocName(f.name)) {
-      this.uploading = true;
-      this.setDisplayError(false);
-      const f = <File>(<FormGroup>(this.newDocForm.controls.file)).value;
-      const file: IFile = {
-        name: f.name,
-        size: f.size,
-        uploadDate: new Date(Date.now()),
-        contentType: f.type,
-        shelterId: this._id,
-        type: Enums.Files.File_Type.doc
-      }
-      const fileReader = new FileReader();
-      fileReader.onloadend = (e: any) => {
-        file.data = this.toBuffer(fileReader.result);
-        const shelServiceSub = this.shelterService.insertFile(file).subscribe(id => {
-          if (id) {
-            const f = file;
-            f._id = id;
-            this.docs.push(f);
-            this.commitToFather(f);
-          }
-          this.uploading = false;
-          if (shelServiceSub != undefined) {
-            shelServiceSub.unsubscribe();
-          }
-          this.cleanForms();
-        });
-      }
-      fileReader.readAsArrayBuffer(f);
-    } else {
-      this.setDisplayError(true);
-    }
-  }
-
-  addMap() {
-    const f = <File>(<FormGroup>(this.newMapForm.controls.file)).value;
-    if (f && this.newMapForm.valid && this.checkDocName(f.name)) {
-      this.uploading = true;
-      this.setDisplayError(false);
-      const f = <File>(<FormGroup>(this.newMapForm.controls.file)).value;
-      const file: IFile = {
-        name: f.name,
-        size: f.size,
-        uploadDate: new Date(Date.now()),
-        contentType: f.type,
-        shelterId: this._id,
-        type: Enums.Files.File_Type.map
-      }
-      const fileReader = new FileReader();
-      fileReader.onloadend = (e: any) => {
-        file.data = this.toBuffer(fileReader.result);
-        const shelServiceSub = this.shelterService.insertFile(file).subscribe(id => {
-          if (id) {
-            const f = file;
-            f._id = id;
-            this.maps.push(f);
-            this.commitToFather(f);
-          }
-          this.uploading = false;
-          if (shelServiceSub != undefined) {
-            shelServiceSub.unsubscribe();
-          }
-          this.cleanForms();
-        });
-      }
-      fileReader.readAsArrayBuffer(f);
-    } else {
-      this.setDisplayError(true);
     }
   }
 
@@ -333,19 +265,41 @@ export class BcDocRevision extends RevisionBase {
     this.disableInvoiceGlobal = false;
   }
 
-  addInvoice() {
-    const f = <File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
-    if (f && this.newInvoiceForm.valid && this.checkDocName(f.name)) {
+  initForm(shelter) { }
+
+  initFile(file, type) {
+    if (type === Enums.Files.File_Type.invoice) {
+      (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(file));
+    } else if (type === Enums.Files.File_Type.doc) {
+      this.docs.push(file);
+    } else if (type === Enums.Files.File_Type.map) {
+      this.maps.push(file);
+    } else {
+      return;
+    }
+  }
+
+  addDoc() {
+    this.addFile(this.newDocForm, Enums.Files.File_Type.doc);
+  }
+
+  addMap() {
+    this.addFile(this.newMapForm, Enums.Files.File_Type.map);
+  }
+
+  addFile(form: FormGroup, type: Enums.Files.File_Type) {
+    const f = <File>(<FormGroup>(form.controls.file)).value;
+    if (f && form.valid && this.checkDocName(f.name)) {
       this.uploading = true;
       this.setDisplayError(false);
-      const f = <File>(<FormGroup>(this.newInvoiceForm.controls.file)).value;
+      const fi = <File>(<FormGroup>(form.controls.file)).value;
       const file: IFile = {
         name: f.name,
         size: f.size,
         uploadDate: new Date(Date.now()),
         contentType: f.type,
         shelterId: this._id,
-        type: Enums.Files.File_Type.invoice
+        type: type
       }
       const fileReader = new FileReader();
       fileReader.onloadend = (e: any) => {
@@ -354,12 +308,12 @@ export class BcDocRevision extends RevisionBase {
           if (id) {
             const f = file;
             f._id = id;
-            this.invoicesChange = true;
-            (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(f));
+            this.filesChange = true;
+            this.initFile(f, type);
             this.commitToFather(f);
           }
           this.uploading = false;
-          if (shelServiceSub != undefined) {
+          if (shelServiceSub) {
             shelServiceSub.unsubscribe();
           }
           this.cleanForms();
@@ -371,28 +325,32 @@ export class BcDocRevision extends RevisionBase {
     }
   }
 
+  addInvoice() {
+    this.addFile(this.newInvoiceForm, Enums.Files.File_Type.invoice);
+  }
+
   commitToFather(file: IFile, remove?: Boolean) {
-    let f: IFile = file;
+    const f: IFile = file;
     delete (f.data);
     this.revisionService.onChildSaveFile(f, remove)
   }
 
   getEnumValues(): String[] {
-    let currentYear = (new Date()).getFullYear();
+    const currentYear = (new Date()).getFullYear();
     return [currentYear, currentYear - 1].filter(val => {
-      return this.invalidYears.indexOf(val) == -1
+      return this.invalidYears.indexOf(val) === -1
     }).map(String);
   }
 
   save(confirm) {
-    if ((!confirm || this.invoicesForm.valid) && (!this.invoicesChange || this.invoicesForm.dirty)) {
+    if (this.filesChange || (this.invoicesForm.valid && this.invoicesForm.dirty)) {
       this.setDisplayError(false);
       let i = 0;
       if (this.invoicesForm.dirty) {
         const filesToUpdate = (<FormArray>this.invoicesForm.controls.files).controls.filter(obj => obj.dirty);
         if (filesToUpdate.length > 0) {
           for (const file of filesToUpdate) {
-            if (file.dirty && this.invalidYears.indexOf(file.value.year) == -1) {
+            if (file.dirty && this.invalidYears.indexOf(file.value.year) === -1) {
               const updFile: IFile = {
                 _id: file.value._id,
                 name: file.value.name,
@@ -407,17 +365,17 @@ export class BcDocRevision extends RevisionBase {
                 invoice_year: file.value.invoice_year,
                 contribution_type: file.value.contribution_type
               }
-              if (<any>updFile.invoice_type != "Attività") {
+              if (<any>updFile.invoice_type !== "Attività") {
                 updFile.contribution_type = null;
               }
               const updateSub = this.shelterService.updateFile(updFile).subscribe((val) => {
                 if (val) {
                   i++;
-                  if (filesToUpdate.length == i && confirm) {
+                  if (filesToUpdate.length === i && confirm) {
                     this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.documents);
                   }
                 }
-                if (updateSub != undefined) {
+                if (updateSub) {
                   updateSub.unsubscribe();
                 }
               });
@@ -441,7 +399,7 @@ export class BcDocRevision extends RevisionBase {
   }
 
   checkRequired(index) {
-    const val = (<FormArray>this.invoicesForm.controls.files).controls[index].value.invoice_type == "Attività"
+    const val = (<FormArray>this.invoicesForm.controls.files).controls[index].value.invoice_type === "Attività"
     if (val) {
       (<FormGroup>(<FormArray>this.invoicesForm.controls.files).controls[index]).controls.contribution_type.enable();
     } else {
@@ -462,7 +420,7 @@ export class BcDocRevision extends RevisionBase {
         a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
         e.initEvent('click', true, false);
         a.dispatchEvent(e);
-        if (queryFileSub != undefined) {
+        if (queryFileSub) {
           queryFileSub.unsubscribe();
         }
       });
@@ -473,47 +431,47 @@ export class BcDocRevision extends RevisionBase {
     if (!this.disableSave) {
       this.save(false);
     }
-    if (this.maskSaveSub != undefined) {
+    if (this.maskSaveSub) {
       this.maskSaveSub.unsubscribe();
     }
-    if (this.permissionSub != undefined) {
+    if (this.permissionSub) {
       this.permissionSub.unsubscribe();
     }
-    if (this.docFormValidSub != undefined) {
+    if (this.docFormValidSub) {
       this.docFormValidSub.unsubscribe();
     }
-    if (this.mapFormValidSub != undefined) {
+    if (this.mapFormValidSub) {
       this.mapFormValidSub.unsubscribe();
     }
-    if (this.invoiceFormValidSub != undefined) {
+    if (this.invoiceFormValidSub) {
       this.invoiceFormValidSub.unsubscribe();
     }
-    if (this.maskInvalidSub != undefined) {
+    if (this.maskInvalidSub) {
       this.maskInvalidSub.unsubscribe();
     }
-    if (this.maskValidSub != undefined) {
+    if (this.maskValidSub) {
       this.maskValidSub.unsubscribe();
     }
-    if (this.docFormValidSub != undefined) {
+    if (this.docFormValidSub) {
       this.docFormValidSub.unsubscribe();
     }
-    if (this.mapFormValidSub != undefined) {
+    if (this.mapFormValidSub) {
       this.mapFormValidSub.unsubscribe();
     }
-    if (this.invoiceFormValidSub != undefined) {
+    if (this.invoiceFormValidSub) {
       this.invoiceFormValidSub.unsubscribe();
     }
   }
 
-  initData(files: IFile[]) {
+  initData(files: any[]) {
     this.initialData = files;
     for (const file of files) {
-      if (file.type != undefined) {
-        if (file.type == Enums.Files.File_Type.doc) {
+      if (file.type != null) {
+        if (file.type === Enums.Files.File_Type.doc) {
           this.docs.push(file);
-        } else if (file.type == Enums.Files.File_Type.map) {
+        } else if (file.type === Enums.Files.File_Type.map) {
           this.maps.push(file);
-        } else if (file.type == Enums.Files.File_Type.invoice) {
+        } else if (file.type === Enums.Files.File_Type.invoice) {
           const control = this.initInvoice(file);
           if (file.invoice_confirmed) {
             control.disable();
@@ -526,19 +484,19 @@ export class BcDocRevision extends RevisionBase {
 
   getDocs(shelId): Promise<IFile[]> {
     return new Promise<IFile[]>((resolve, reject) => {
-      const loadServiceSub = this.revisionService.loadFiles$.subscribe(files => {
-        if (!files) {
+      const loadServiceSub = this.revisionService.loadFiles$.subscribe(fs => {
+        if (!fs) {
           const queryFileSub = this.shelterService.getFilesByShelterId(shelId).subscribe(files => {
             this.revisionService.onChildSaveFiles(files);
-            if (queryFileSub != undefined) {
+            if (queryFileSub) {
               queryFileSub.unsubscribe();
             }
             resolve(files);
           });
         } else {
-          resolve(files);
+          resolve(fs);
         }
-        if (loadServiceSub != undefined) {
+        if (loadServiceSub) {
           loadServiceSub.unsubscribe();
         }
       });
@@ -546,42 +504,20 @@ export class BcDocRevision extends RevisionBase {
     });
   }
 
-  getEconomy(id): Promise<IShelter> {
-    return new Promise<IShelter>((resolve, reject) => {
-      const revSub = this.revisionService.load$.subscribe(shelter => {
-        if (shelter != null && shelter.economy != undefined) {
-          if (revSub != undefined) {
-            revSub.unsubscribe();
-          }
-          resolve(shelter);
-        } else {
-          const shelSub = this.shelterService.getShelterSection(id, "economy").subscribe(shelter => {
-            this.revisionService.onChildSave(shelter, "economy");
-            if (shelSub != undefined) {
-              shelSub.unsubscribe();
-            }
-            if (revSub != undefined) {
-              revSub.unsubscribe();
-            }
-            resolve(shelter);
-          });
+  init(shelId) {
+    Promise.all([
+      this.getData(shelId, "economy"),
+      this.getDocs(shelId)
+    ])
+      .then(values => {
+        this.initData(values[1]);
+        if (values[0].economy) {
+          this.updateInvalidYearsInvoice(values[0].economy.filter(obj => obj.confirm));
         }
       });
-      this.revisionService.onChildLoadRequest("economy");
-    });
   }
 
-  init(shelId) {
-    this.getDocs(shelId)
-      .then(files => {
-        this.initData(files);
-        this.getEconomy(shelId)
-          .then(shelter => {
-            if (shelter.economy) {
-              this.updateInvalidYearsInvoice(shelter.economy.filter(obj => obj.confirm));
-            }
-          })
-      });
+  getEmptyObjData(section: any) {
+    return {};
   }
-
 }

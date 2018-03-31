@@ -23,7 +23,6 @@ import { appRoute } from './API/shelters.api';
 import { authRoute, getUserData } from './API/auth.api';
 const MongoStore = require('connect-mongo')(session);
 
-(<any>mongoose.Promise) = global.Promise;
 const SERVER_URL = "app-cai.herokuapp.com";
 export const APP_PORT = process.env.PORT || 8000;
 export const APP_BASE_URL = 'http://' + SERVER_URL;

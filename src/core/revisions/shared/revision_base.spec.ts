@@ -15,7 +15,7 @@ import {
     BcTextInputModule
 } from '../../inputs/text/text_input.module';
 import {
-    FormsModule
+    FormsModule, FormGroup
 } from '@angular/forms';
 import {
     ReactiveFormsModule
@@ -43,6 +43,7 @@ import {
 import "rxjs/add/observable/of";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { IShelter } from 'app/shared/types/interfaces';
 
 export class FakeRouter {
     navigateByUrl() { }
@@ -62,6 +63,10 @@ const fakeActivatedRoute = new FakeActivatedRoute();
     template: ""
 })
 class FakeRevisionComponent extends RevisionBase {
+    protected initForm(shelter: IShelter) { }
+    getEmptyObjData() {
+        return {};
+    }
     constructor(
         shelterService: ShelterService,
         shared: BcSharedService,

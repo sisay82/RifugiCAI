@@ -3,39 +3,47 @@
         <div class="bc-h6 bc-revision-contact-title">Contatti del rifugio</div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-contact">
-                <bc-text-input placeholder="Es: +39 0522652347" formControlName="fixedPhone" title="Telefono" validate="stringValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input placeholder="Es: +39 0522652347" formControlName="fixedPhone" title="Telefono" validate="stringValidator"
+                    [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <bc-text-input placeholder="Es: +39 336 8956789" formControlName="mobilePhone" title="Cellulare" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input placeholder="Es: +39 336 8956789" formControlName="mobilePhone" title="Cellulare" validator="telephoneValidator"
+                    [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <bc-select-input defaultContent="Selezionare ruolo" enumName="Owner_Type" [displayError]="displayError" formControlName="role" title="Ruolo"></bc-select-input>
+                <bc-select-input defaultContent="Selezionare ruolo" enumName="Owner_Type" [displayError]="displayError" formControlName="role"
+                    title="Ruolo"></bc-select-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-contact">
-                <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: info@rifugimonterosa.it" formControlName="emailAddress" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: info@rifugimonterosa.it"
+                    formControlName="emailAddress" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo sito web valido." placeholder="Es: Sì/no/ www.caivarallo.it/prenotazione_rifugi" formControlName="prenotation_link" title="Link prenotazione" validator="urlValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo sito web valido." placeholder="Es: Sì/no/ www.caivarallo.it/prenotazione_rifugi"
+                    formControlName="prenotation_link" title="Link prenotazione" validator="urlValidator" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo sito web valido." placeholder="Es: www.caivarallo.it" formControlName="webAddress" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
+                <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo sito web valido." placeholder="Es: www.caivarallo.it"
+                    formControlName="webAddress" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <br>
         <bc-divider></bc-divider>
         <div class="bc-h6 bc-revision-contact-title">Aperture</div>
-        <div *ngFor="let open of getFormControls('openings');let i = index" formArrayName="openings">
+        <div *ngFor="let open of getFormControls('openingTime');let i = index" formArrayName="openingTime">
             <div [formGroupName]="i" style="display: flex;flex-direction:row;align-items:center">
                 <div class="bc-revision-contact">
                     <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="type" title="Tipo" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div class="bc-revision-contact">
-                    <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="startDate" title="Inizio" removeYear="true" validator="validateDate" [displayError]="displayError"></bc-text-input>
+                    <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="startDate"
+                        title="Inizio" removeYear="true" validator="validateDate" [displayError]="displayError"></bc-text-input>
                 </div>
                 <div class="bc-revision-contact">
-                    <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="endDate" title="Fine" removeYear="true" validator="validateDate" [displayError]="displayError"></bc-text-input>
+                    <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="endDate"
+                        title="Fine" removeYear="true" validator="validateDate" [displayError]="displayError"></bc-text-input>
                 </div>
                 <bc-icon (click)="removeOpening(i)" class="bc-revision-contact-add-tag" name="times" size=s></bc-icon>
             </div>
@@ -52,12 +60,14 @@
         <div style="display:flex;flex-direction:row;align-items:center">
             <div class="bc-revision-contact">
                 <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="newOpeningType" [displayError]="invalid"></bc-text-input>
-            </div>    
-            <div class="bc-revision-contact">
-                <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="newOpeningStartDate" removeYear="true" validator="validateDate" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
-                <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="newOpeningEndDate" removeYear="true" validator="validateDate" [displayError]="invalid"></bc-text-input>
+                <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="newOpeningStartDate"
+                    removeYear="true" validator="validateDate" [displayError]="invalid"></bc-text-input>
+            </div>
+            <div class="bc-revision-contact">
+                <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="newOpeningEndDate"
+                    removeYear="true" validator="validateDate" [displayError]="invalid"></bc-text-input>
             </div>
             <bc-icon tooltip="Aggiungi" (click)="addNewOpening()" class="bc-revision-contact-add-tag" name="check" size=s></bc-icon>
         </div>

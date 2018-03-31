@@ -1,26 +1,22 @@
 @import '../../style/typography';
 @import '../../style/theme';
-
-@mixin bc-geographics-revision($theme){
+@mixin bc-geographics-revision($theme) {
   $accent: map-get($theme, accent);
-
-  &-geographic{
-    &-title{
+  &-geographic {
+    &-title {
       margin-bottom: 4px;
-      color:bc-color($accent);
+      color: bc-color($accent);
     }
-
-    &-input{
-      position:relative;
-      width:30%;
-      margin-left:1%;
+    &-input {
+      position: relative;
+      width: 30%;
+      margin-left: 1%;
     }
-
-    &-add-tag{
+    &-add-tag {
       font-weight: bold;
-      margin-left:1%;
-      &:hover{
-        color:bc-color($accent);
+      margin-left: 1%;
+      &:hover {
+        color: bc-color($accent);
         cursor: pointer;
       }
     }

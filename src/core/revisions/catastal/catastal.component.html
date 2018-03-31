@@ -2,10 +2,12 @@
 <form style="position:relative" [formGroup]="catastalForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 1860" formControlName="buildYear" title="Anno di costruzione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+            <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 1860" formControlName="buildYear"
+                title="Anno di costruzione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 1982 (più recente)" formControlName="rebuildYear" title="Anno di ristrutturazione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+            <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 1982 (più recente)" formControlName="rebuildYear"
+                title="Anno di ristrutturazione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -18,10 +20,12 @@
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Selezionare regolarità anticendio" enumName="Fire_Regulation_Type" formControlName="fireRegulation" title="Regolarità antincendio"></bc-select-input>
+            <bc-select-input defaultContent="Selezionare regolarità anticendio" enumName="Fire_Regulation_Type" formControlName="fireRegulation"
+                title="Regolarità antincendio"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Selezionare Coerenza tipologica" enumName="Typo_consistency" formControlName="typologicalCoherence" [displayError]="displayError" title="Coerenza tipologica"></bc-select-input>
+            <bc-select-input defaultContent="Selezionare Coerenza tipologica" enumName="Typo_consistency" formControlName="typologicalCoherence"
+                [displayError]="displayError" title="Coerenza tipologica"></bc-select-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -44,13 +48,16 @@
 <form style="position:relative" [formGroup]="energyForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Selezionare classe energetica" enumName="Energy_Class_Type" formControlName="class" title="Classe energetica" [displayError]="displayError"></bc-select-input>
+            <bc-select-input defaultContent="Selezionare classe energetica" enumName="Energy_Class_Type" formControlName="class" title="Classe energetica"
+                [displayError]="displayError"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-text-input placeholder="KW come da targa impianto. Es: 7500" formControlName="energy" validator="numberValidator" title="Quantità (KW)" [displayError]="displayError"></bc-text-input>
+            <bc-text-input placeholder="KW come da targa impianto. Es: 7500" formControlName="energy" validator="numberValidator" title="Quantità (KW)"
+                [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Selezionare tipo riscaldamento" enumName="Heating_Type" formControlName="heating_type" [displayError]="displayError" title="Tipo riscaldamento"></bc-select-input>
+            <bc-select-input defaultContent="Selezionare tipo riscaldamento" enumName="Heating_Type" formControlName="heating_type" [displayError]="displayError"
+                title="Tipo riscaldamento"></bc-select-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -64,18 +71,22 @@
 <form style="position:relative" [formGroup]="drainForm">
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Selezionare tipo scarico" enumName="Drain_Type" formControlName="type" title="Tipo di scarico" [displayError]="displayError"></bc-select-input>
+            <bc-select-input defaultContent="Selezionare tipo scarico" enumName="Drain_Type" formControlName="type" title="Tipo di scarico"
+                [displayError]="displayError"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Selezionare acqua" enumName="Water_Type" formControlName="water_type" [displayError]="displayError" title="Acqua"></bc-select-input>
+            <bc-select-input defaultContent="Selezionare acqua" enumName="Water_Type" formControlName="water_type" [displayError]="displayError"
+                title="Acqua"></bc-select-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Selezionare disponibilità acqua" enumName="Water_Availability" formControlName="water_availability" [displayError]="displayError" title="Disponibilità acqua"></bc-select-input>
+            <bc-select-input defaultContent="Selezionare disponibilità acqua" enumName="Water_Availability" formControlName="water_availability"
+                [displayError]="displayError" title="Disponibilità acqua"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-select-input defaultContent="Seleziore periodi di siccità" enumName="Seasons" formControlName="droughts" [displayError]="displayError" title="Periodi di siccità"></bc-select-input>
+            <bc-select-input defaultContent="Seleziore periodi di siccità" enumName="Seasons" formControlName="droughts" [displayError]="displayError"
+                title="Periodi di siccità"></bc-select-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
