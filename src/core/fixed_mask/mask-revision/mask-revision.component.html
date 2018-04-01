@@ -38,17 +38,17 @@
                 <bc-select-input one-line enumName="Regional_Type" [displayError]="displayError" defaultContent="Selezionare categoria per la Regione" formControlName="regional_type" title="Categoria per la Regione"></bc-select-input>
             </div>
             <div class="bc-mask-revision-control">
-                <div class="bc-mask-title bc-body-strong" style="white-space: nowrap;margin-right:1%">Inserito il:</div>
-                <div class="bc-mask-content bc-body">{{shelter?(shelter.insertDate?(shelter.insertDate | date:"dd/MM/yy"):'----'): '----'}}</div>
-            </div>
-            <div class="bc-mask-revision-control">
-                <div class="bc-mask-title bc-body-strong" style="white-space: nowrap;margin-right:1%">Aggiornato il:</div>
-                <div class="bc-mask-content bc-body">{{shelter?(shelter.updateDate?(shelter.updateDate | date:"dd/MM/yy"):'----'): '----'}}</div>
+                <bc-select-input one-line enumName="Shelter_Status" [displayError]="displayError" defaultContent="Seleziona stato struttura" formControlName="status" title="Stato"></bc-select-input>
             </div>
         </div>
         <div class="bc-mask-line" style="margin-left:15px">
-            <div class="bc-mask-revision-control">
-                <bc-select-input one-line enumName="Shelter_Status" [displayError]="displayError" defaultContent="Seleziona stato struttura" formControlName="status" title="Stato"></bc-select-input>
+            <div class="bc-mask-line-content">
+                <div class="bc-mask-title bc-body-strong" style="white-space: nowrap;margin-right:1%">Inserito il:</div>
+                <div class="bc-mask-content bc-body">{{shelter?(shelter.insertDate?(shelter.insertDate | date:"dd/MM/yy"):'----'): '----'}}</div>
+            </div>
+            <div class="bc-mask-line-content">
+                <div class="bc-mask-title bc-body-strong" style="white-space: nowrap;margin-right:1%">Aggiornato il:</div>
+                <div class="bc-mask-content bc-body">{{shelter?(shelter.updateDate?(shelter.updateDate | date:"dd/MM/yy"):'----'): '----'}}</div>
             </div>
             <div class="bc-mask-line-content">
                 <div class="bc-mask-title  bc-body-strong">Aggiornato da:</div>
