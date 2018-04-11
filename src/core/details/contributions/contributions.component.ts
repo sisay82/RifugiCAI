@@ -1,24 +1,24 @@
 import {
-  Component,Input,OnInit,Directive
+  Component, Input, OnInit, Directive
 } from '@angular/core';
-import { ActivatedRoute,Router } from '@angular/router';
-import { IShelter,IContribution,IFileRef,IFile } from '../../../app/shared/types/interfaces';
-import {Enums } from '../../../app/shared/types/enums';
-import {ShelterService} from '../../../app/shelter/shelter.service'
+import { ActivatedRoute, Router } from '@angular/router';
+import { IShelter, IContribution, IFileRef, IFile } from '../../../app/shared/types/interfaces';
+import { Enums } from '../../../app/shared/types/enums';
+import { ShelterService } from '../../../app/shelter/shelter.service'
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
-import {BcSharedService} from '../../../app/shared/shared.service'
-import {BcDetailsService} from '../details.service';
+import { BcSharedService } from '../../../app/shared/shared.service'
+import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
 
 @Directive({
-  selector:"div[active]",
-  host:{
-    "[class.bc-detail-contributions-tab-active]":"active"
+  selector: "div[active]",
+  host: {
+    "[class.bc-detail-contributions-tab-active]": "active"
   }
 })
-export class BcActiveTabStyler{
-  @Input("active") active:boolean=false;
+export class BcActiveTabStyler {
+  @Input("active") active: boolean = false;
 }
 
 @Component({
@@ -26,75 +26,58 @@ export class BcActiveTabStyler{
   selector: 'bc-contributions',
   templateUrl: 'contributions.component.html',
   styleUrls: ['contributions.component.scss'],
-  providers:[ShelterService]
+  providers: [ShelterService]
 })
-export class BcContributions extends DetailBase{
-  activeYear:Number;
-  activeTab:{year:Number,contributions:IFile[]};
-  data:{year:Number,contributions:IFile[]}[]=<any>[];
-  
-  constructor(private shelterService:ShelterService,_route:ActivatedRoute,shared:BcSharedService,router:Router,private detailsService:BcDetailsService){
-    super(_route,shared,router);
-    shared.activeComponent=Enums.Routes.Routed_Component.contribution;
+export class BcContributions extends DetailBase {
+  activeYear: Number;
+  activeTab: { year: Number, contributions: IFile[] };
+  data: { year: Number, contributions: IFile[] }[] = <any>[];
+
+  constructor(shelterService: ShelterService,
+    _route: ActivatedRoute,
+    shared: BcSharedService,
+    router: Router,
+    detailsService: BcDetailsService
+  ) {
+    super(_route, shared, router, detailsService, shelterService);
+    shared.activeComponent = Enums.Routes.Routed_Component.contribution;
   }
 
-  isActive(year){
-    return year==this.activeYear;
+  isActive(year) {
+    return year == this.activeYear;
   }
 
-  showTab(year){
-    if(year!=this.activeYear){
+  showTab(year) {
+    if (year != this.activeYear) {
       this.changeActiveTab(year);
     }
   }
 
-  changeActiveTab(year){
-    this.activeYear=year;
-    this.activeTab=this.data.find(obj=>obj.year==year);
+  changeActiveTab(year) {
+    this.activeYear = year;
+    this.activeTab = this.data.find(obj => obj.year == year);
   }
 
-  getDocs(shelId):Promise<IFile[]>{
-    return new Promise<IFile[]>((resolve,reject)=>{
-        let loadServiceSub=this.detailsService.loadFiles$.subscribe(files=>{
-            if(!files){
-              let queryFileSub=this.shelterService.getFilesByShelterId(shelId).subscribe(files=>{
-                  this.detailsService.onChildSaveFiles(files);
-                  if(queryFileSub!=undefined){
-                      queryFileSub.unsubscribe();
-                  }
-                  resolve(files.filter(obj=>obj.type==Enums.Files.File_Type.contribution));
-              });
-            }else{
-                resolve(files.filter(obj=>obj.type==Enums.Files.File_Type.contribution));
-            }
-            if(loadServiceSub!=undefined){
-                loadServiceSub.unsubscribe();
-            }
-        });
-        this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.contribution]);
-    });
-}
-
-  groupByYear(list:IFile[]):{year:Number,contributions:IFile[]}[]{
-    let result = list.reduce(function (r, a) {
+  groupByYear(list: IFile[]): { year: Number, contributions: IFile[] }[] {
+    const result = list.reduce(function (r, a) {
       r[<any>a.invoice_year] = r[<any>a.invoice_year] || [];
       r[<any>a.invoice_year].push(a);
       return r;
     }, Object.create(null));
-    let ret:{year:Number,contributions:IFile[]}[]=[];
-    for(let y in result){
-      ret.push({year:new Number(y),contributions:result[y]});
+    const ret: { year: Number, contributions: IFile[] }[] = [];
+    for (let y in result) {
+      ret.push({ year: new Number(y), contributions: result[y] });
     }
     return ret;
   }
 
-  downloadFile(id:any){
-    if(id){
-      let queryFileSub=this.shelterService.getFile(id).subscribe(file=>{
-        var e = document.createEvent('MouseEvents');
-        let data=Buffer.from(file.data);
-        let blob=new Blob([data],{type:"application/pdf"});
-        let a = document.createElement('a');
+  downloadFile(id: any) {
+    if (id) {
+      const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
+        const e = document.createEvent('MouseEvents');
+        const data = Buffer.from(file.data);
+        const blob = new Blob([data], { type: "application/pdf" });
+        const a = document.createElement('a');
         a.download = <string>file.name;
         a.href = window.URL.createObjectURL(blob);
         a.dataset.downloadurl = ["application/pdf", a.download, a.href].join(':');
@@ -104,14 +87,15 @@ export class BcContributions extends DetailBase{
     }
   }
 
-  init(shelId){
-    this.getDocs(shelId)
-    .then(files=>{
-      this.data=this.groupByYear(files);
-      let year:Number;
-      year=(new Date()).getFullYear();        
-      this.changeActiveTab(year);
-    });
+  init(shelId) {
+    this.getDocs(shelId, [Enums.Files.File_Type.contribution])
+      .then(files => {
+        this.data = this.groupByYear(files);
+        const year = (new Date()).getFullYear();
+        if (!this.data.find(obj => obj.year === year)) {
+          this.data.push({ year: year, contributions: [] });
+        }
+        this.changeActiveTab(year);
+      });
   }
-  
 }

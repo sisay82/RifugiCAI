@@ -42,7 +42,7 @@ export class BcDisableDivStyler {
 export class BcEconomyRevision extends RevisionBase implements OnDestroy {
   economy: [IEconomy] = <any>[];
   private files: IFile[] = [];
-  private activeYear: number;
+  private activeYear: Number;
   maskSaveSub: Subscription;
   name: String;
   activeTab: IEconomy;
@@ -152,7 +152,7 @@ export class BcEconomyRevision extends RevisionBase implements OnDestroy {
   getContributionSumPerType(type: Enums.Contribution_Type) {
     let total: any = 0;
     this.revenuesFiles.concat(
-      this.files.filter(obj => obj.type == Enums.Files.File_Type.contribution)
+      this.files.filter(obj => obj.type === Enums.Files.File_Type.contribution)
     ).filter(obj => obj.contribution_type === type && obj.invoice_year === this.activeYear).forEach((file) => {
       total += this.getTotal(file.value, file.invoice_tax);
     });
@@ -218,8 +218,8 @@ export class BcEconomyRevision extends RevisionBase implements OnDestroy {
     return total;
   }
 
-  getFilesByYear(files: any[]): any[] {
-    return files.filter(obj => obj.invoice_year == this.activeYear);
+  getFilesByYear(files: IFile[]): IFile[] {
+    return files.filter(obj => obj.invoice_year === this.activeYear);
   }
 
   analyzeDocsYear(files: IFile[]): Promise<any> {
@@ -232,28 +232,6 @@ export class BcEconomyRevision extends RevisionBase implements OnDestroy {
       });
       this.economy = this.economy.sort((a, b) => { return a.year < b.year ? -1 : a.year > b.year ? +1 : 0; })
       resolve()
-    });
-  }
-
-  getDocs(shelId): Promise<IFile[]> {
-    return new Promise<IFile[]>((resolve, reject) => {
-      const loadServiceSub = this.revisionService.loadFiles$.subscribe(files => {
-        if (!files) {
-          const queryFileSub = this.shelterService.getFilesByShelterId(shelId).subscribe(files => {
-            this.revisionService.onChildSaveFiles(files);
-            if (queryFileSub) {
-              queryFileSub.unsubscribe();
-            }
-            resolve(files.filter(obj => obj.type === Enums.Files.File_Type.invoice || obj.type === Enums.Files.File_Type.contribution));
-          });
-        } else {
-          resolve(files.filter(obj => obj.type === Enums.Files.File_Type.invoice || obj.type === Enums.Files.File_Type.contribution));
-        }
-        if (loadServiceSub) {
-          loadServiceSub.unsubscribe();
-        }
-      });
-      this.revisionService.onChildLoadFilesRequest([Enums.Files.File_Type.invoice, Enums.Files.File_Type.contribution]);
     });
   }
 
@@ -273,7 +251,13 @@ export class BcEconomyRevision extends RevisionBase implements OnDestroy {
           year = (new Date()).getFullYear();
           if (shelter.economy && shelter.economy.length > 0) {
             this.economy = shelter.economy.sort((a, b) => { return a.year < b.year ? -1 : a.year > b.year ? +1 : 0; });
-            tab = shelter.economy.find(obj => obj.year == (new Date().getFullYear()));
+            tab = shelter.economy.find(obj => obj.year === (new Date().getFullYear()));
+            if (!tab) {
+              const economy: IEconomy = { year: (new Date()).getFullYear() }
+              this.economy.push(economy);
+              tab = economy;
+              year = tab.year;
+            }
           } else {
             const economy: IEconomy = { year: (new Date()).getFullYear() }
             this.economy = [economy];
@@ -281,17 +265,17 @@ export class BcEconomyRevision extends RevisionBase implements OnDestroy {
           this.changeActiveTab(year, tab);
           return Promise.resolve();
         }),
-      this.getDocs(shelId)
+      this.getDocs(shelId, [Enums.Files.File_Type.invoice, Enums.Files.File_Type.contribution])
         .then(files => {
           return Promise.all([this.analyzeDocsYear(files), files])
         })
         .then((val) => {
           const files = val[1];
           this.files = files;
-          this.revenuesFiles = files.filter(obj =>
-            Enums.Invoice_Type[obj.invoice_type] == Enums.Invoice_Type.Attività.toString()) as [IFile];
-          this.outgosFiles = files.filter(obj =>
-            Enums.Invoice_Type[obj.invoice_type] == Enums.Invoice_Type.Passività.toString()) as [IFile];
+          this.revenuesFiles = files.filter(obj => obj.invoice_type &&
+            Enums.Invoice_Type[obj.invoice_type].toString() === Enums.Invoice_Type.Attività.toString()) as [IFile];
+          this.outgosFiles = files.filter(obj => obj.invoice_type &&
+            Enums.Invoice_Type[obj.invoice_type].toString() === Enums.Invoice_Type.Passività.toString()) as [IFile];
           this.setBalanceSheetByYear((new Date()).getFullYear());
           return Promise.resolve();
         })

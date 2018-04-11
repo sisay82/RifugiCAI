@@ -82,7 +82,7 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
       this.displayError = true;
     });
 
-    this.saveDisabled = (this.shared.activeComponent == Enums.Routes.Routed_Component.contribution);
+    this.saveDisabled = (this.shared.activeComponent === Enums.Routes.Routed_Component.contribution);
     this.shared.disableMaskSave$.subscribe((val) => {
       this.saveDisabled = val
     })
@@ -245,13 +245,9 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
     return this.authService.revisionCheck(permission || this.revisionPermission);
   }
 
-  checkValidRoute(route): boolean {
-    if (route["name"]) {
-      if (route["name"] === "newShelter") {
-        this.newShelter = true;
-      } else {
-        return false;
-      }
+  checkNewShelter(route): boolean {
+    if (route.data && route.data.newShelter) {
+      this.newShelter = true;
     } else {
       this.newShelter = false;
     }
@@ -276,11 +272,11 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     this.isCentralUser();
-    const routeSub = this._route.params.subscribe(params => {
-      if (!this.checkValidRoute(params)) {
-        this.router.navigateByUrl("list");
-      }
-    });
+    if (this._route.snapshot.data && this._route.snapshot.data.newShelter) {
+      this.newShelter = true;
+    } else {
+      this.newShelter = false;
+    }
 
     if (!this.shelterInitialized && this.shelter) {
       this.shelterInitialized = true;
@@ -296,9 +292,6 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
         }
         if (!val) {
           this.return();
-        }
-        if (routeSub) {
-          routeSub.unsubscribe();
         }
         if (authSub) {
           authSub.unsubscribe();

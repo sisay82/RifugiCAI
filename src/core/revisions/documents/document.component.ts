@@ -356,13 +356,13 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
                 name: file.value.name,
                 size: file.value.size,
                 type: file.value.type,
-                value: this.getControlValue(<FormGroup>(<FormGroup>file).controls.value),
+                value: Number(this.getControlValue(<FormGroup>(<FormGroup>file).controls.value)),
                 contentType: file.value.contentType,
                 description: this.getControlValue(<FormGroup>(<FormGroup>file).controls.description),
                 shelterId: this._id,
-                invoice_tax: this.getControlValue(<FormGroup>(<FormGroup>file).controls.invoice_tax),
+                invoice_tax: Number(this.getControlValue(<FormGroup>(<FormGroup>file).controls.invoice_tax)),
                 invoice_type: file.value.invoice_type,
-                invoice_year: file.value.invoice_year,
+                invoice_year: Number(file.value.invoice_year),
                 contribution_type: file.value.contribution_type
               }
               if (<any>updFile.invoice_type !== "Attività") {
@@ -482,32 +482,14 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
     }
   }
 
-  getDocs(shelId): Promise<IFile[]> {
-    return new Promise<IFile[]>((resolve, reject) => {
-      const loadServiceSub = this.revisionService.loadFiles$.subscribe(fs => {
-        if (!fs) {
-          const queryFileSub = this.shelterService.getFilesByShelterId(shelId).subscribe(files => {
-            this.revisionService.onChildSaveFiles(files);
-            if (queryFileSub) {
-              queryFileSub.unsubscribe();
-            }
-            resolve(files);
-          });
-        } else {
-          resolve(fs);
-        }
-        if (loadServiceSub) {
-          loadServiceSub.unsubscribe();
-        }
-      });
-      this.revisionService.onChildLoadFilesRequest([Enums.Files.File_Type.doc, Enums.Files.File_Type.map, Enums.Files.File_Type.invoice]);
-    });
-  }
-
   init(shelId) {
     Promise.all([
       this.getData(shelId, "economy"),
-      this.getDocs(shelId)
+      this.getDocs(shelId, [
+        Enums.Files.File_Type.doc,
+        Enums.Files.File_Type.map,
+        Enums.Files.File_Type.invoice
+      ])
     ])
       .then(values => {
         this.initData(values[1]);

@@ -91,6 +91,17 @@ export class ShelterService {
             .catch(this.handleError.bind(this));
     }
 
+    getFIlesByTypes(types): Observable<IFile[]> {
+        let query = '?';
+        types.forEach(type => {
+            query += 'types[]=' + type + '&';
+        });
+        query = query.substring(0, query.length - 1);
+        return this.http.get(this.sheltersBaseUrl + "/files/byType" + query)
+            .map((res: Response) => res.json())
+            .catch(this.handleError.bind(this));
+    }
+
     getAllFiles(): Observable<IFile[]> {
         return this.http.get(this.sheltersBaseUrl + "/file/all")
             .map((res: Response) => res.json())
@@ -103,14 +114,16 @@ export class ShelterService {
             .catch(this.handleError.bind(this));
     }
 
-    getAllImages(): Observable<IFile[]> {
-        return this.http.get(this.sheltersBaseUrl + "/image/all")
-            .map((res: Response) => res.json())
-            .catch(this.handleError.bind(this));
-    }
-
-    getImagesByShelterId(id): Observable<IFile[]> {
-        return this.http.get(this.sheltersBaseUrl + `/image/byshel/${id}`)
+    getFilesByShelterIdAndType(id, types: Enums.Files.File_Type[]): Observable<IFile[]> {
+        let query = '';
+        if (types && types.length > 0) {
+            query = '?';
+            types.forEach(type => {
+                query += 'types[]=' + type + '&';
+            });
+            query = query.substring(0, query.length - 1);
+        }
+        return this.http.get(this.sheltersBaseUrl + `/file/byshel/${id}/bytype` + query)
             .map((res: Response) => res.json())
             .catch(this.handleError.bind(this));
     }

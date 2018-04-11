@@ -101,7 +101,11 @@ function queryShelById(id): Promise<IShelterExtended> {
 
 function queryShelSectionById(id, section): Promise<IShelterExtended> {
     return new Promise<IShelterExtended>((resolve, reject) => {
-        Shelters.findOne({ _id: id }, 'name ' + section).populate('services').exec((err, ris) => {
+        const query = Shelters.findOne({ _id: id }, 'name ' + section)
+        if (section.indexOf('services') > -1) {
+            query.populate('services');
+        }
+        query.exec((err, ris) => {
             if (err) {
                 reject(err);
             } else {
@@ -267,20 +271,20 @@ function checkPermissionAPI(req, res, next) {
                     if (user.role === Auth_Permissions.User_Type.central) {
                         next();
                     } else {
-                        res.status(500).send({ error: 'Unauthorized' });
+                        res.status(500).send({ error: 'Invalid user or request' });
                     }
                 } else if (req.method === 'PUT') {
                     if (Auth_Permissions.Revision.DetailRevisionPermission.find(obj => obj === user.role)) {
                         next();
                     } else {
-                        res.status(500).send({ error: 'Unauthorized' });
+                        res.status(500).send({ error: 'Invalid user or request' });
                     }
                 } else {
                     res.status(501).send({ error: 'Not Implemented method ' + req.method });
                 }
             }
         } else {
-            res.status(500).send({ error: 'Error request' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     }
 }
@@ -434,7 +438,6 @@ function updateShelter(id: any, params: any, isNew?: Boolean): Promise<boolean> 
             if (!params.updateDate) {
                 params.updateDate = new Date(Date.now());
             }
-            params.updateSubject = 
             Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
                 if (err) {
                     logger(LOG_TYPE.WARNING, err);
@@ -559,13 +562,13 @@ appRoute.route('/shelters')
                         }
                     })
                     .catch((err) => {
-                        res.status(500).send(err);
+                        res.status(500).send({ error: 'Invalid user or request' });
                     });
             } catch (e) {
-                res.status(500).send({ error: 'Error Undefined' });
+                res.status(500).send({ error: 'Invalid user or request' });
             }
         } else {
-            res.status(500).send({ error: 'User undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     })
     .post(function (req, res) {
@@ -576,7 +579,8 @@ appRoute.route('/shelters')
                 res.status(200).send({ id: id, shelter: shelter });
             })
             .catch((err) => {
-                res.status(500).send(err);
+                logger(LOG_TYPE.ERROR, err);
+                res.status(500).send({ error: 'Invalid user or request' });
             });
     });
 
@@ -592,14 +596,14 @@ appRoute.route('/shelters/country/:name')
                     })
                     .catch((err) => {
                         logger(LOG_TYPE.WARNING, err);
-                        res.status(500).send(err);
+                        res.status(500).send({ error: 'Invalid user or request' });
                     });
             } catch (e) {
                 logger(LOG_TYPE.ERROR, e);
-                res.status(500).send({ error: 'Error Undefined' });
+                res.status(500).send({ error: 'Invalid user or request' });
             }
         } else {
-            res.status(500).send({ error: 'User undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     });
 
@@ -617,17 +621,17 @@ appRoute.route('/shelters/point')
                         })
                         .catch((err) => {
                             logger(LOG_TYPE.WARNING, err);
-                            res.status(500).send(err);
+                            res.status(500).send({ error: 'Invalid user or request' });
                         });
                 } else {
-                    res.status(500).send({ error: 'Query error, parameters not found' });
+                    res.status(500).send({ error: 'Invalid user or request' });
                 }
             } catch (e) {
                 logger(LOG_TYPE.ERROR, e);
-                res.status(500).send({ error: 'Error Undefined' });
+                res.status(500).send({ error: 'Invalid user or request' });
             }
         } else {
-            res.status(500).send({ error: 'User undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     });
 
@@ -644,13 +648,13 @@ appRoute.route('/shelters/:id')
                         }
                     })
                     .catch((err) => {
-                        res.status(500).send(err);
+                        res.status(500).send({ error: 'Invalid user or request' });
                     });
             } else {
-                res.status(500).send({ error: 'Error ID' });
+                res.status(500).send({ error: 'Invalid user or request' });
             }
         } catch (e) {
-            res.status(500).send({ error: 'Error Undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     })
     .put(function (req, res) {
@@ -679,7 +683,7 @@ appRoute.route('/shelters/:id')
                 })
                 .catch((err) => {
                     logger(LOG_TYPE.WARNING, err);
-                    res.status(500).send(err);
+                    res.status(500).send({ error: 'Invalid user or request' });
                 });
         }
     })
@@ -689,7 +693,7 @@ appRoute.route('/shelters/:id')
                 res.status(200).send(true);
             })
             .catch((err) => {
-                res.status(500).send(err);
+                res.status(500).send({ error: 'Invalid user or request' });
             });
     });
 
@@ -706,7 +710,7 @@ appRoute.route('/shelters/confirm/:id')
                                 res.status(200).send(true);
                             })
                             .catch((err) => {
-                                res.status(500).send(err);
+                                res.status(500).send({ error: 'Invalid user or request' });
                             });
                     } else {
                         SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelToConfirm), 1);
@@ -721,11 +725,11 @@ appRoute.route('/shelters/confirm/:id')
                 addShelterToUpdate({ watchDog: new Date(Date.now()), shelter: newShelter, files: null, isNew: true }, req.body.user);
                 res.status(200).send({ id: id });
             } else {
-                res.status(500).send({ error: 'command not found' });
+                res.status(500).send({ error: 'Invalid user or request' });
             }
 
         } catch (e) {
-            res.status(500).send({ error: 'Error Undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     });
 
@@ -744,7 +748,7 @@ appRoute.route('/shelters/confirm/:section/:id')
             }
             res.status(200).send(true);
         } catch (e) {
-            res.status(500).send({ error: 'Error Undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     })
 
@@ -759,7 +763,7 @@ appRoute.route('/shelters/page/:pageSize')
                     res.status(500).send(err);
                 })
         } catch (e) {
-            res.status(500).send({ error: 'Error Undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     });
 
@@ -771,10 +775,10 @@ appRoute.route('/shelters/page/:pageNumber/:pageSize')
                     res.status(200).send(ris);
                 })
                 .catch((err) => {
-                    res.status(500).send(err);
+                    res.status(500).send({ error: 'Invalid user or request' });
                 })
         } catch (e) {
-            res.status(500).send({ error: 'Error Undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     });
 
@@ -795,11 +799,11 @@ appRoute.route('/shelters/:id/:name')
                         }
                     })
                     .catch((err) => {
-                        res.status(500).send(err);
+                        res.status(500).send({ error: 'Invalid user or request' });
                     });
             }
         } catch (e) {
-            res.status(500).send({ error: 'Error Undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     })
     .delete(function (req, res) {
@@ -808,6 +812,6 @@ appRoute.route('/shelters/:id/:name')
                 res.status(200).send(true);
             })
             .catch((err) => {
-                res.status(500).send(err);
+                res.status(500).send({ error: 'Invalid user or request' });
             });
     });

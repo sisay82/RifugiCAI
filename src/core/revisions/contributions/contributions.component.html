@@ -107,14 +107,14 @@
             <bc-select-input defaultContent="Selezione il nome di un documento" style="flex:1" [enumValues]="filesEnum" formControlName="newValue"
                 [displayError]="displayError"></bc-select-input>
         </div>
-        <bc-icon tooltip="Aggiungi" (click)="addNewAttachment()" class="bc-revision-contributions-icon" name="check" size=s></bc-icon>
+        <bc-icon *ngIf="checkRole()" tooltip="Aggiungi" (click)="addNewAttachment()" class="bc-revision-contributions-icon" name="check" size=s></bc-icon>
     </div>
 </form>
 <br/>
 <div style="float:right">
     <div align="right" *ngIf="loading" class="bc-body">Caricamento...</div>
     <div style="display: flex;flex-direction:row">
-        <a (click)="accept(false)" data-bc-button [disabled]="loading" data-type="solid">Salva e modifica in seguito</a>
-        <a (click)="accept(true)" data-bc-button [disabled]="loading" data-type="solid">Salva e crea pdf</a>
+        <a (click)="accept(false)" data-bc-button [disabled]="loading||!checkRole()" data-type="solid">Salva e modifica in seguito</a>
+        <a (click)="accept(true)" data-bc-button [disabled]="loading||!checkRole()" data-type="solid">Salva e crea pdf</a>
     </div>
 </div>

@@ -28,19 +28,24 @@ export class BcMaskController implements OnInit, OnDestroy {
   activeOutletSub: Subscription;
   shelIdRequest: Subscription;
   revisionPermission: Enums.Auth_Permissions.User_Type;
-  constructor(private shared: BcSharedService, private _route: ActivatedRoute, private router: Router, private shelterService: ShelterService, private authService: BcAuthService) {
+  constructor(private shared: BcSharedService,
+    private _route: ActivatedRoute,
+    private router: Router,
+    private shelterService: ShelterService,
+    private authService: BcAuthService
+  ) {
     this.currentOutlet = shared.activeOutlet;
     this.activeOutletSub = shared.activeOutletChange$.subscribe(outlet => {
-      if (this.currentOutlet == Enums.Routes.Routed_Outlet.revision && outlet == Enums.Routes.Routed_Outlet.content) {
+      if (this.currentOutlet === Enums.Routes.Routed_Outlet.revision && outlet === Enums.Routes.Routed_Outlet.content) {
         const shelSub = this.shelterService.getShelter(this._id).subscribe(shelter => {
           this.shelter = shelter;
           const permissionSub = this.authService.checkRevisionPermissionForShelter(shelter.idCai).subscribe(val => {
             this.revisionPermission = val;
-            if (permissionSub != undefined) {
+            if (permissionSub) {
               permissionSub.unsubscribe();
             }
           });
-          if (shelSub != undefined) {
+          if (shelSub) {
             shelSub.unsubscribe();
           }
         });
@@ -50,7 +55,7 @@ export class BcMaskController implements OnInit, OnDestroy {
   }
 
   checkOutlet(check: string) {
-    return Enums.Routes.Routed_Outlet[check] == this.currentOutlet;
+    return Enums.Routes.Routed_Outlet[check] === this.currentOutlet;
   }
 
   getRoute(): Promise<any> {
@@ -71,7 +76,7 @@ export class BcMaskController implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.shelter == undefined) {
+    if (!this.shelter) {
       this.getRoute()
         .then(shelId => {
           const shelSub = this.shelterService.getShelter(shelId).subscribe(shelter => {
@@ -83,10 +88,10 @@ export class BcMaskController implements OnInit, OnDestroy {
 
             const permissionSub = this.authService.checkRevisionPermissionForShelter(shelter.idCai).subscribe(val => {
               this.revisionPermission = val;
-              if (permissionSub != undefined) {
+              if (permissionSub) {
                 permissionSub.unsubscribe();
               }
-              if (shelSub != undefined) {
+              if (shelSub) {
                 shelSub.unsubscribe();
               }
             });
@@ -99,10 +104,10 @@ export class BcMaskController implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.activeOutletSub != undefined) {
+    if (this.activeOutletSub) {
       this.activeOutletSub.unsubscribe();
     }
-    if (this.shelIdRequest != undefined) {
+    if (this.shelIdRequest) {
       this.shelIdRequest.unsubscribe();
     }
   }

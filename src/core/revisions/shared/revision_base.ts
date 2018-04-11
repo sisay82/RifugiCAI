@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { parseDate, validators } from '../../inputs/input_base';
 import { Enums } from '../../../app/shared/types/enums';
 import { OnInit } from '@angular/core';
-import { IShelter } from 'app/shared/types/interfaces';
+import { IShelter, IFile } from 'app/shared/types/interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BcAuthService } from 'app/shared/auth.service';
 import { isArray } from 'util';
@@ -30,7 +30,7 @@ export abstract class RevisionBase implements OnInit {
     protected userRole: Enums.Auth_Permissions.User_Type;
     protected permissionSub: Subscription;
     protected MENU_SECTION: Enums.MenuSection = Enums.MenuSection.detail;
-    constructor(protected shelterService,
+    constructor(protected shelterService: ShelterService,
         protected shared: BcSharedService,
         protected revisionService: BcRevisionsService,
         private _route: ActivatedRoute,
@@ -247,6 +247,29 @@ export abstract class RevisionBase implements OnInit {
                 }
             });
             this.revisionService.onChildLoadRequest(section);
+        });
+    }
+
+    protected getDocs(shelId, categories: Enums.Files.File_Type[]): Promise<IFile[]> {
+        return new Promise<IFile[]>((resolve, reject) => {
+            const loadServiceSub = this.revisionService.loadFiles$.subscribe(files => {
+                if (!files) {
+                    const queryFileSub = this.shelterService.getFilesByShelterIdAndType(shelId, categories)
+                    .subscribe(fs => {
+                        this.revisionService.onChildSaveFiles(fs);
+                        if (queryFileSub) {
+                            queryFileSub.unsubscribe();
+                        }
+                        resolve(fs.filter(obj => categories.indexOf(obj.type) > -1));
+                    });
+                } else {
+                    resolve(files.filter(obj => categories.indexOf(obj.type) > -1));
+                }
+                if (loadServiceSub) {
+                    loadServiceSub.unsubscribe();
+                }
+            });
+            this.revisionService.onChildLoadFilesRequest(categories);
         });
     }
 

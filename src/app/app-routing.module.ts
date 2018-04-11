@@ -5,9 +5,9 @@ import { BcPageNotFound } from "./pageNotFound/pageNotFound.component";
 import { BcAccessDenied } from "./accessDenied/access-denied.component";
 
 const appRoutes: Routes = [
-    { path: '', redirectTo:'list', pathMatch:'full'},
-    { path: '**', outlet:"access-denied", component: BcAccessDenied },
-    { path: '**', component: BcPageNotFound }
+  { path: '', redirectTo: 'list', pathMatch: 'full' },
+  { path: '**', outlet: "access-denied", component: BcAccessDenied },
+  { path: '**', component: BcPageNotFound }
 ];
 
 @NgModule({

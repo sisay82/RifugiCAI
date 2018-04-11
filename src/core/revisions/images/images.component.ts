@@ -288,31 +288,8 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
     }
   }
 
-  getDocs(id): Promise<IFile[]> {
-    return new Promise<IFile[]>((resolve, reject) => {
-      const loadServiceSub = this.revisionService.loadFiles$.subscribe(fs => {
-        if (!fs) {
-          const queryFileSub = this.shelterService.getImagesByShelterId(id).subscribe(files => {
-            resolve(files);
-            this.revisionService.onChildSaveFiles(files);
-            if (queryFileSub) {
-              queryFileSub.unsubscribe();
-            }
-          });
-        } else {
-          resolve(fs);
-        }
-        if (loadServiceSub) {
-          loadServiceSub.unsubscribe();
-        }
-      });
-      this.revisionService.onChildLoadFilesRequest([Enums.Files.File_Type.image]);
-
-    });
-  }
-
   init(shelId) {
-    this.getDocs(shelId)
+    this.getDocs(shelId, [Enums.Files.File_Type.image])
       .then(files => {
         this.initDocs(files);
       })

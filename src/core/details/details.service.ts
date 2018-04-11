@@ -1,10 +1,10 @@
-import {Injectable } from '@angular/core'
+import { Injectable } from '@angular/core'
 import { Subject } from 'rxjs/Subject';
-import { IShelter,IFile } from '../../app/shared/types/interfaces';
+import { IShelter, IFile } from '../../app/shared/types/interfaces';
 
 @Injectable()
-export class BcDetailsService{
-    private childSaveSource = new Subject<{shelter:IShelter,section:string}>();
+export class BcDetailsService {
+    private childSaveSource = new Subject<{ shelter: IShelter, section: string }>();
     save$ = this.childSaveSource.asObservable();
 
     private childLoadSource = new Subject<IShelter>();
@@ -22,28 +22,28 @@ export class BcDetailsService{
     private childLoadFilesSourceRequest = new Subject<any[]>();
     loadFilesRequest$ = this.childLoadFilesSourceRequest.asObservable();
 
-    onChildSave(shelter:IShelter,section:string){
-        this.childSaveSource.next({shelter:shelter,section:section});
+    onChildSave(shelter: IShelter, section: string) {
+        this.childSaveSource.next({ shelter: shelter, section: section });
     }
 
-    onChildLoadRequest(section:string){
+    onChildLoadRequest(section: string) {
         this.childLoadRequestSource.next(section);
     }
 
-    onChildLoad(shelter:IShelter){
+    onChildLoad(shelter: IShelter) {
         this.childLoadSource.next(shelter);
     }
 
-    onChildSaveFiles(files:IFile[]){
+    onChildSaveFiles(files: IFile[]) {
         this.childSaveFilesSource.next(files);
     }
 
-    onChildLoadFiles(files:IFile[]){
+    onChildLoadFiles(files: IFile[]) {
         this.childLoadFilesSource.next(files);
     }
 
-    onChildLoadFilesRequest(types:any[]){
+    onChildLoadFilesRequest(types: any[]) {
         this.childLoadFilesSourceRequest.next(types);
     }
-    
+
 }

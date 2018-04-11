@@ -15,26 +15,25 @@ import { BcEconomy } from "./economy/economy.component";
 import { BcWorkingDetailPage } from "./pageOnWork/working-detail.component";
 
 export const detailsRoutes: Routes = [
-  { path: 'geographic',component:BcGeo,outlet:'content'},
-  { path: 'services', component: BcServ,outlet:'content' },
-  { path: 'contacts', component: BcContact,outlet:'content' },
-  { path: 'management', component: BcManage,outlet:'content' },
-  { path: 'catastal', component: BcCatastal,outlet:'content' },
-  { path: 'documents', component: BcDoc,outlet:'content' },
-  { path: 'images', component: BcImg,outlet:'content' },
-  { path: 'economy', component: BcEconomy,outlet:'content' },
-  { path: 'contribution', component: BcContributions,outlet:'content' },
-  { path: 'use', component: BcFruition,outlet:'content' }
+  { path: 'geographic', component: BcGeo, outlet: 'content' },
+  { path: 'services', component: BcServ, outlet: 'content' },
+  { path: 'contacts', component: BcContact, outlet: 'content' },
+  { path: 'management', component: BcManage, outlet: 'content' },
+  { path: 'catastal', component: BcCatastal, outlet: 'content' },
+  { path: 'documents', component: BcDoc, outlet: 'content' },
+  { path: 'images', component: BcImg, outlet: 'content' },
+  { path: 'economy', component: BcEconomy, outlet: 'content' },
+  { path: 'contribution', component: BcContributions, outlet: 'content' },
+  { path: 'use', component: BcFruition, outlet: 'content' }
 ];
+
 
 @NgModule({
   imports: [RouterModule],
-  declarations:[],
+  declarations: [],
   exports: [
     RouterModule
   ]
 })
 
-export class DetailsRoutingModule {
-  
-}
+export class DetailsRoutingModule { }

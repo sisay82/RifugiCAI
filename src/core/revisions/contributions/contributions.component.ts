@@ -231,6 +231,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
             }
         } else {
             this.contrForm.disable();
+            this.newAttachmentForm.disable();
         }
 
     }
@@ -300,32 +301,6 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
         }
     }
 
-    getDocs(shelId): Promise<IFile[]> {
-        return new Promise<IFile[]>((resolve, reject) => {
-            const loadServiceSub = this.revisionService.loadFiles$.subscribe(files => {
-                if (!files) {
-                    const queryFileSub = this.shelterService.getFilesByShelterId(shelId).subscribe(files => {
-                        this.revisionService.onChildSaveFiles(files);
-                        if (queryFileSub) {
-                            queryFileSub.unsubscribe();
-                        }
-                        resolve(files.filter(obj => obj.type != Enums.Files.File_Type.contribution));
-                    });
-                } else {
-                    resolve(files);
-                }
-                if (loadServiceSub) {
-                    loadServiceSub.unsubscribe();
-                }
-            });
-            this.revisionService.onChildLoadFilesRequest([
-                Enums.Files.File_Type.invoice,
-                Enums.Files.File_Type.doc,
-                Enums.Files.File_Type.map
-            ]);
-        });
-    }
-
     initDocs(docs) {
         this.docs = docs;
         docs.forEach(doc => {
@@ -342,7 +317,11 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
     init(shelId) {
         Promise.all([
             this.getData(shelId, "contributions"),
-            this.getDocs(shelId).then((docs) => {
+            this.getDocs(shelId, [
+                Enums.Files.File_Type.invoice,
+                Enums.Files.File_Type.doc,
+                Enums.Files.File_Type.map
+            ]).then((docs) => {
                 this.initDocs(docs);
                 return Promise.resolve();
             })

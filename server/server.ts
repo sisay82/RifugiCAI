@@ -66,7 +66,8 @@ app.use('/api', function (req, res, next) {
                 next();
             })
             .catch(err => {
-                res.status(500).send({ error: err });
+                logger(LOG_TYPE.ERROR, err);
+                res.status(500).send({ error: 'Invalid user or request' });
             });
     }
 }, fileRoute, appRoute);

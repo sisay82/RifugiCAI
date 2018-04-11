@@ -31,7 +31,7 @@ export class BcActiveTabStyler {
 })
 export class BcEconomy extends DetailBase {
   economy: [IEconomy] = <any>[];
-  activeYear;
+  activeYear: Number;
   activeTab: IEconomy;
   balanceSheet = 0;
   files: IFile[] = [];
@@ -39,8 +39,13 @@ export class BcEconomy extends DetailBase {
   outgosFiles: [IFile] = [] as [IFile];
   revenues = 0;
   outgos = 0;
-  constructor(private shelterService: ShelterService, _route: ActivatedRoute, shared: BcSharedService, router: Router, private detailsService: BcDetailsService) {
-    super(_route, shared, router);
+  constructor(shelterService: ShelterService,
+    _route: ActivatedRoute,
+    shared: BcSharedService,
+    router: Router,
+    detailsService: BcDetailsService
+  ) {
+    super(_route, shared, router, detailsService, shelterService);
     shared.activeComponent = Enums.Routes.Routed_Component.economy;
   }
 
@@ -57,8 +62,8 @@ export class BcEconomy extends DetailBase {
   getContributionSumPerType(type: Enums.Contribution_Type) {
     let total: any = 0;
     this.revenuesFiles.concat(
-      this.files.filter(obj => obj.type == Enums.Files.File_Type.contribution)
-    ).filter(obj => obj.contribution_type == type && obj.invoice_year == this.activeYear).forEach((file) => {
+      this.files.filter(obj => obj.type === Enums.Files.File_Type.contribution)
+    ).filter(obj => obj.contribution_type === type && obj.invoice_year === this.activeYear).forEach((file) => {
       total += this.getTotal(file.value, file.invoice_tax);
     });
     return total;
@@ -120,7 +125,7 @@ export class BcEconomy extends DetailBase {
   analyzeDocsYear(files: IFile[]): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       files.forEach(file => {
-        if (!this.economy.find(obj => obj.year == file.invoice_year)) {
+        if (!this.economy.find(obj => obj.year === file.invoice_year)) {
           this.economy.push({ year: file.invoice_year, accepted: false, confirm: false });
         }
 
@@ -130,105 +135,46 @@ export class BcEconomy extends DetailBase {
     });
   }
 
-  getFilesByYear(files: any[]): any[] {
-    return files.filter(obj => obj.invoice_year == this.activeYear);
-  }
-
-  getDocs(shelId): Promise<IFile[]> {
-    return new Promise<IFile[]>((resolve, reject) => {
-      const loadServiceSub = this.detailsService.loadFiles$.subscribe(files => {
-        if (!files) {
-          const queryFileSub = this.shelterService.getFilesByShelterId(shelId).subscribe(files => {
-            this.detailsService.onChildSaveFiles(files);
-            if (queryFileSub != undefined) {
-              queryFileSub.unsubscribe();
-            }
-            resolve(files.filter(obj => obj.type == Enums.Files.File_Type.invoice || obj.type == Enums.Files.File_Type.contribution));
-          });
-        } else {
-          resolve(files.filter(obj => obj.type == Enums.Files.File_Type.invoice || obj.type == Enums.Files.File_Type.contribution));
-        }
-        if (loadServiceSub != undefined) {
-          loadServiceSub.unsubscribe();
-        }
-      });
-      this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.invoice, Enums.Files.File_Type.contribution]);
-    });
-  }
-
-  getEconomy(id): Promise<IShelter> {
-    return new Promise<IShelter>((resolve, reject) => {
-      const revSub = this.detailsService.load$.subscribe(shelter => {
-        if (shelter != null && shelter.use != undefined) {
-          if (revSub != undefined) {
-            revSub.unsubscribe();
-          }
-          resolve(shelter);
-        } else {
-          const shelSub = this.shelterService.getShelterSection(id, "economy").subscribe(shelter => {
-            this.detailsService.onChildSave(shelter, "economy");
-            if (shelSub != undefined) {
-              shelSub.unsubscribe();
-            }
-            if (revSub != undefined) {
-              revSub.unsubscribe();
-            }
-            resolve(shelter);
-          });
-        }
-      });
-      this.detailsService.onChildLoadRequest("economy");
-    });
-  }
-
-  getContributions(id): Promise<IShelter> {
-    return new Promise<IShelter>((resolve, reject) => {
-      const revSub = this.detailsService.load$.subscribe(shelter => {
-        if (shelter != null && shelter.use != undefined) {
-          if (revSub != undefined) {
-            revSub.unsubscribe();
-          }
-          resolve(shelter);
-        } else {
-          const shelSub = this.shelterService.getShelterSection(id, "contributions").subscribe(shelter => {
-            this.detailsService.onChildSave(shelter, "contributions");
-            if (shelSub != undefined) {
-              shelSub.unsubscribe();
-            }
-            if (revSub != undefined) {
-              revSub.unsubscribe();
-            }
-            resolve(shelter);
-          });
-        }
-      });
-      this.detailsService.onChildLoadRequest("contributions");
-    });
+  getFilesByYear(files: IFile[]): IFile[] {
+    return files.filter(obj => obj.invoice_year === this.activeYear);
   }
 
   init(shelId) {
-    this.getEconomy(shelId)
-      .then((shelter) => {
-        this.getDocs(shelId)
-          .then(files => {
-            this.analyzeDocsYear(files)
-              .then(() => { });
-            this.files = files;
-            this.revenuesFiles = files.filter(obj => Enums.Invoice_Type[obj.invoice_type] == Enums.Invoice_Type.Attività.toString()) as [IFile];
-            this.outgosFiles = files.filter(obj => Enums.Invoice_Type[obj.invoice_type] == Enums.Invoice_Type.Passività.toString()) as [IFile];
-            this.setBalanceSheetByYear((new Date()).getFullYear());
-          });
+    Promise.all([
+      this.getData(shelId, "economy"),
+      this.getDocs(shelId, [Enums.Files.File_Type.invoice, Enums.Files.File_Type.contribution])
+        .then(files => {
+          this.files = files;
+          this.revenuesFiles = <[IFile]>files.filter(obj => obj.invoice_type &&
+            Enums.Invoice_Type[obj.invoice_type].toString() === Enums.Invoice_Type.Attività.toString());
+
+          this.outgosFiles = <[IFile]>files.filter(obj => obj.invoice_type &&
+            Enums.Invoice_Type[obj.invoice_type].toString() === Enums.Invoice_Type.Passività.toString());
+
+          this.setBalanceSheetByYear((new Date()).getFullYear());
+          return this.analyzeDocsYear(files);
+        })
+    ])
+      .then(values => {
+        const shelter = values["0"];
+        const files = values["1"];
         let tab;
         let year;
         year = (new Date()).getFullYear();
         if (shelter.economy && shelter.economy.length > 0) {
           this.economy = shelter.economy.sort((a, b) => { return a.year < b.year ? -1 : a.year > b.year ? +1 : 0; });
-          tab = shelter.economy.find(obj => obj.year == (new Date().getFullYear()));
+          tab = shelter.economy.find(obj => obj.year === (new Date().getFullYear()));
+          if (!tab) {
+            const economy: IEconomy = { year: (new Date()).getFullYear() }
+            this.economy.push(economy);
+            tab = economy;
+            year = tab.year;
+          }
         } else {
           const economy: IEconomy = { year: (new Date()).getFullYear() }
           this.economy = [economy];
         }
         this.changeActiveTab(year, tab);
-      });
+      })
   }
 }

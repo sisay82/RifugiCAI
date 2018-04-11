@@ -23,8 +23,13 @@ export class BcDoc extends DetailBase {
     docs: IFile[] = [];
     maps: IFile[] = [];
     invoices: IFile[] = [];
-    constructor(private shelterService: ShelterService, shared: BcSharedService, _route: ActivatedRoute, router: Router, private detailsService: BcDetailsService) {
-        super(_route, shared, router);
+    constructor(shelterService: ShelterService,
+        shared: BcSharedService,
+        _route: ActivatedRoute,
+        router: Router,
+        detailsService: BcDetailsService
+    ) {
+        super(_route, shared, router, detailsService, shelterService);
         shared.activeComponent = Enums.Routes.Routed_Component.documents;
     }
 
@@ -39,7 +44,7 @@ export class BcDoc extends DetailBase {
             a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
             e.initEvent('click', true, false);
             a.dispatchEvent(e);
-            if (queryFileSub != undefined) {
+            if (queryFileSub) {
                 queryFileSub.unsubscribe();
             }
         });
@@ -100,12 +105,12 @@ export class BcDoc extends DetailBase {
 
     initDocs(files) {
         for (const file of files) {
-            if (file.type != undefined) {
-                if (file.type == Enums.Files.File_Type.contribution || file.type == Enums.Files.File_Type.doc) {
+            if (file.type != null) {
+                if (file.type === Enums.Files.File_Type.contribution || file.type === Enums.Files.File_Type.doc) {
                     this.docs.push(file);
-                } else if (file.type == Enums.Files.File_Type.map) {
+                } else if (file.type === Enums.Files.File_Type.map) {
                     this.maps.push(file);
-                } else if (file.type == Enums.Files.File_Type.invoice) {
+                } else if (file.type === Enums.Files.File_Type.invoice) {
                     this.invoices.push(file);
                 }
             }
@@ -113,7 +118,18 @@ export class BcDoc extends DetailBase {
     }
 
     init(shelId) {
-        const loadServiceSub = this.detailsService.loadFiles$.subscribe(files => {
+        this.getDocs(shelId,
+            [
+                Enums.Files.File_Type.doc,
+                Enums.Files.File_Type.map,
+                Enums.Files.File_Type.invoice,
+                Enums.Files.File_Type.contribution
+            ]
+        )
+        .then(files => {
+            this.initDocs(files);
+        });
+        /*const loadServiceSub = this.detailsService.loadFiles$.subscribe(files => {
             if (!files) {
                 const queryFileSub = this.shelterService.getFilesByShelterId(shelId).subscribe(files => {
                     this.initDocs(files);
@@ -129,6 +145,7 @@ export class BcDoc extends DetailBase {
                 loadServiceSub.unsubscribe();
             }
         });
-        this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.doc, Enums.Files.File_Type.map, Enums.Files.File_Type.invoice, Enums.Files.File_Type.contribution]);
+        this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.doc,
+            Enums.Files.File_Type.map, Enums.Files.File_Type.invoice, Enums.Files.File_Type.contribution]);*/
     }
 }

@@ -99,13 +99,8 @@ export function resolveFilesForShelter(shelter): Promise<any> {
 
 function queryAllFiles(): Promise<IFileExtended[]> {
     return new Promise<IFileExtended[]>((resolve, reject) => {
-        Files.find({
-            type:
-                {
-                    $not:
-                        { $in: [Files_Enum.File_Type.image] }
-                }
-        }, 'name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type')
+        Files.find({},
+            'name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type')
             .exec((err, ris) => {
                 if (err) {
                     reject(err);
@@ -128,14 +123,11 @@ function queryFileByid(id): Promise<IFileExtended> {
     });
 }
 
-function queryFilesByshelterId(id): Promise<IFileExtended[]> {
+function queryFilesByshelterId(id, types?: Enums.Files.File_Type[]): Promise<IFileExtended[]> {
     return new Promise<IFileExtended[]>((resolve, reject) => {
         Files.find({
             'shelterId': id,
-            type: {
-                $not:
-                    { $in: [Files_Enum.File_Type.image] }
-            }
+            type: { $in: types }
         },
             'name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type')
             .exec((err, ris) => {
@@ -145,32 +137,6 @@ function queryFilesByshelterId(id): Promise<IFileExtended[]> {
                     resolve(ris);
                 }
             })
-    });
-}
-
-function queryImagesByshelterId(id): Promise<IFileExtended[]> {
-    return new Promise<IFileExtended[]>((resolve, reject) => {
-        Files.find({ 'shelterId': id, type: Files_Enum.File_Type.image }, 'name size contentType type description').exec((err, ris) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(ris);
-            }
-        })
-    });
-}
-
-
-
-function queryAllImages(): Promise<IFileExtended[]> {
-    return new Promise<IFileExtended[]>((resolve, reject) => {
-        Files.find({ type: Files_Enum.File_Type.image }, 'name size contentType type description').exec((err, ris) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(ris);
-            }
-        })
     });
 }
 
@@ -214,6 +180,18 @@ function deleteFile(id): Promise<boolean> {
     });
 }
 
+function queryAllFilesByType(types): Promise<IFileExtended[]> {
+    return new Promise<IFileExtended[]>((resolve, reject) => {
+        Files.find({ type: { $in: types } }, 'name size contentType type description').exec((err, ris) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(ris);
+            }
+        })
+    });
+}
+
 function checkPermissionAPI(req, res, next) {
     if (DISABLE_AUTH) {
         next();
@@ -227,18 +205,17 @@ function checkPermissionAPI(req, res, next) {
                     if (Auth_Permissions.Revision.DocRevisionPermission.find(obj => obj === user.role)) {
                         next();
                     } else {
-                        res.status(500).send({ error: 'Unauthorized' });
+                        res.status(500).send({ error: 'Invalid user or request' });
                     }
                 } else {
                     res.status(501).send({ error: 'Not Implemented method ' + req.method });
                 }
             }
         } else {
-            res.status(500).send({ error: 'Error request' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     }
 }
-
 export const fileRoute = express.Router();
 fileRoute.all('*', checkPermissionAPI);
 
@@ -247,7 +224,7 @@ fileRoute.route('/shelters/file')
         const upload = multer().single('file')
         upload(req, res, function (err) {
             if (err) {
-                res.status(500).send({ error: 'Error in file upload' })
+                res.status(500).send({ error: 'Invalid user or request' })
             } else {
                 const file = JSON.parse(req.file.buffer.toString());
                 if (file.size < 1024 * 1024 * 16) {
@@ -263,11 +240,23 @@ fileRoute.route('/shelters/file')
                         })
                         .catch((e) => {
                             logger(LOG_TYPE.WARNING, e);
-                            res.status(500).send(e);
+                            res.status(500).send({ error: 'Invalid user or request' });
                         })
                 }
             }
         });
+    });
+
+fileRoute.route('/shelters/file/byType')
+    .get(function (req, res) {
+        queryAllFilesByType(req.query.types)
+            .then((file) => {
+                res.status(200).send(file);
+            })
+            .catch((err) => {
+                logger(LOG_TYPE.WARNING, err);
+                res.status(500).send({ error: 'Invalid user or request' });
+            })
     });
 
 fileRoute.route('/shelters/file/all')
@@ -278,19 +267,7 @@ fileRoute.route('/shelters/file/all')
             })
             .catch((err) => {
                 logger(LOG_TYPE.WARNING, err);
-                res.status(500).send(err);
-            })
-    });
-
-fileRoute.route('/shelters/image/all')
-    .get(function (req, res) {
-        queryAllImages()
-            .then((file) => {
-                res.status(200).send(file);
-            })
-            .catch((err) => {
-                logger(LOG_TYPE.WARNING, err);
-                res.status(500).send(err);
+                res.status(500).send({ error: 'Invalid user or request' });
             })
     });
 
@@ -300,7 +277,7 @@ fileRoute.route('/shelters/file/confirm')
             const upload = multer().single('file')
             upload(req, res, function (err) {
                 if (err) {
-                    res.status(500).send({ error: 'Error in file upload' })
+                    res.status(500).send({ error: 'Invalid user or request' })
                 } else {
                     const file = JSON.parse(req.file.buffer.toString());
                     if (file.size < 1024 * 1024 * 16) {
@@ -325,7 +302,8 @@ fileRoute.route('/shelters/file/confirm')
                                             shelUpdate[0].watchDog = new Date(Date.now());
                                             res.status(200).send(fileid);
                                         } else {
-                                            res.status(500).send({ error: 'Max ' + maxImages + ' images' });
+                                            logger(LOG_TYPE.ERROR, 'Max ' + maxImages + ' images');
+                                            res.status(500).send({ error: 'Invalid user or request' });
                                         }
                                     } else {
                                         if (images.length < maxImages) {
@@ -337,7 +315,8 @@ fileRoute.route('/shelters/file/confirm')
                                             SheltersToUpdate.push(newShelter);
                                             res.status(200).send(fileid);
                                         } else {
-                                            res.status(500).send({ error: 'Max ' + maxImages + ' images' });
+                                            logger(LOG_TYPE.ERROR, 'Max ' + maxImages + ' images');
+                                            res.status(500).send({ error: 'Invalid user or request' });
                                         }
                                     }
                                 })
@@ -352,7 +331,8 @@ fileRoute.route('/shelters/file/confirm')
                                             shelUpdate[0].watchDog = new Date(Date.now());
                                             res.status(200).send(fileid);
                                         } else {
-                                            res.status(500).send({ error: 'Max ' + maxImages + ' images' });
+                                            logger(LOG_TYPE.ERROR, 'Max ' + maxImages + ' images');
+                                            res.status(500).send({ error: 'Invalid user or request' });
                                         }
                                     } else {
                                         const newShelter: any = { _id: id };
@@ -375,13 +355,14 @@ fileRoute.route('/shelters/file/confirm')
                             res.status(200).send(fileid);
                         }
                     } else {
-                        res.status(500).send({ error: 'File size over limit' });
+                        logger(LOG_TYPE.ERROR, 'File size over limit');
+                        res.status(500).send({ error: 'Invalid user or request' });
                     }
                 }
             });
         } catch (e) {
             logger(LOG_TYPE.ERROR, e);
-            res.status(500).send({ error: 'Error undefined' });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     });
 
@@ -422,7 +403,7 @@ fileRoute.route('/shelters/file/:id')
             })
             .catch((err) => {
                 logger(LOG_TYPE.WARNING, err);
-                res.status(500).send(err);
+                res.status(500).send({ error: 'Invalid user or request' });
             })
     })
     .put(function (req, res) {
@@ -471,11 +452,11 @@ fileRoute.route('/shelters/file/:id')
                 }
                 res.status(200).send(true);
             } else {
-                res.status(500).send({ error: 'Incorrect request' });
+                res.status(500).send({ error: 'Invalid user or request' });
             }
         } catch (e) {
             logger(LOG_TYPE.ERROR, e);
-            res.status(500).send({ error: e });
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     })
     .delete(function (req, res) {
@@ -485,80 +466,75 @@ fileRoute.route('/shelters/file/:id')
             })
             .catch(err => {
                 logger(LOG_TYPE.WARNING, err);
-                res.status(500).send(err);
+                res.status(500).send({ error: 'Invalid user or request' });
             });
     });
 
 fileRoute.route('/shelters/file/byshel/:id')
     .get(function (req, res) {
         const shel = SheltersToUpdate.filter(obj => String(obj.shelter._id) === req.params.id)[0];
-        if (!shel) {
+        if (shel && shel.files != null) {
+            queryFilesByshelterId(req.params.id)
+                .then((files) => {
+                    for (const f of shel.files.filter(obj => obj.type !== Files_Enum.File_Type.image)) {
+                        if (f.remove) {
+                            const fi = files.filter(obj => String(obj._id) === f._id)[0];
+                            files.splice(files.indexOf(fi), 1);
+                        } else if (f.new) {
+                            files.push(f);
+                        } else {
+                            const fi = files.filter(obj => String(obj._id) === f._id)[0];
+                            files[files.indexOf(fi)] = f;
+                        }
+                    }
+                    res.status(200).send(files);
+                })
+                .catch((err) => {
+                    res.status(500).send({ error: 'Invalid user or request' });
+                });
+        } else {
             queryFilesByshelterId(req.params.id)
                 .then((file) => {
                     res.status(200).send(file);
                 })
                 .catch((err) => {
-                    res.status(500).send(err);
-                });
-        } else {
-            queryFilesByshelterId(req.params.id)
-                .then((files) => {
-                    if (shel.files != null) {
-                        for (const f of shel.files.filter(obj => obj.type !== Files_Enum.File_Type.image)) {
-                            if (f.remove) {
-                                const fi = files.filter(obj => String(obj._id) === f._id)[0];
-                                files.splice(files.indexOf(fi), 1);
-                            } else if (f.new) {
-                                files.push(f);
-                            } else {
-                                const fi = files.filter(obj => String(obj._id) === f._id)[0];
-                                files[files.indexOf(fi)] = f;
-                            }
-                        }
-                        res.status(200).send(files);
-                    } else {
-                        res.status(200).send(files);
-                    }
-                })
-                .catch((err) => {
-                    res.status(500).send(err);
+                    res.status(500).send({ error: 'Invalid user or request' });
                 });
         }
     });
 
-fileRoute.route('/shelters/image/byshel/:id')
+fileRoute.route('/shelters/file/byshel/:id/bytype')
     .get(function (req, res) {
         const shel = SheltersToUpdate.filter(obj => String(obj.shelter._id) === req.params.id)[0];
-        if (!shel) {
-            queryImagesByshelterId(req.params.id)
+        const types = req.query.types.map(t => Number(t));
+        if (shel && shel.files != null) {
+            queryFilesByshelterId(req.params.id, types)
+                .then((files) => {
+                    const shelFiles = shel.files.filter(file => types.indexOf(file.type));
+                    for (const f of shelFiles) {
+                        if (f.remove) {
+                            const fi = files.filter(obj => String(obj._id) === f._id)[0];
+                            files.splice(files.indexOf(fi), 1);
+                        } else if (f.new) {
+                            files.push(f);
+                        } else {
+                            const fi = files.filter(obj => String(obj._id) === f._id)[0];
+                            files[files.indexOf(fi)] = f;
+                        }
+                    }
+
+                    res.status(200).send(files);
+                })
+                .catch((err) => {
+                    res.status(500).send({ error: 'Invalid user or request' });
+                });
+        } else {
+            queryFilesByshelterId(req.params.id, types)
                 .then((file) => {
                     res.status(200).send(file);
                 })
                 .catch((err) => {
-                    res.status(500).send(err);
-                });
-        } else {
-            queryImagesByshelterId(req.params.id)
-                .then((file) => {
-                    if (shel.files != null) {
-                        for (const f of shel.files.filter(obj => obj.type === Files_Enum.File_Type.image)) {
-                            if (f.remove) {
-                                const fi = file.filter(obj => String(obj._id) === f._id)[0];
-                                file.splice(file.indexOf(fi), 1);
-                            } else if (f.new) {
-                                file.push(f);
-                            } else {
-                                const fi = file.filter(obj => String(obj._id) === f._id)[0];
-                                file[file.indexOf(fi)] = f;
-                            }
-                        }
-                        res.status(200).send(file);
-                    } else {
-                        res.status(200).send(file);
-                    }
-                })
-                .catch((err) => {
-                    res.status(500).send(err);
+                    res.status(500).send({ error: 'Invalid user or request' });
                 });
         }
     });
