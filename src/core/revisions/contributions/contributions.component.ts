@@ -11,7 +11,7 @@ import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { RevisionBase } from '../shared/revision_base';
 import { BcAuthService } from '../../../app/shared/auth.service';
-import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
+import { CUSTOM_PATTERN_VALIDATORS, createValueValidator } from '../../inputs/input_base';
 
 @Directive({
     selector: "[data-bc-button],[bc-button]",
@@ -62,8 +62,8 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
             totCharges: [""],
             IVAincluded: [""],
             totalProjectCost: [""],
-            externalFinancing: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
-            selfFinancing: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            externalFinancing: ["", [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator), createValueValidator(0, null, 0)]],
+            selfFinancing: ["", [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator), createValueValidator(0, null, 0)]],
             red: [""],
             attachments: fb.array([]),
             type: ["", Validators.required],

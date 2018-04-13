@@ -72,11 +72,6 @@ export class BcTextInput extends BcBaseInput {
     @Input() removeYear = false;
     @Input() replaceDot = false;
     value = null;
-    @Input() minLength: number;
-    @Input() maxLength: number;
-    @Input() minValue: number;
-    @Input() maxValue: number;
-    @Input() except: number;
     @Input() lines: number;
     _validator: Function = createValidationFunction("stringValidator");
 
@@ -152,20 +147,7 @@ export class BcTextInput extends BcBaseInput {
 
     validatorFn(c?: FormControl) {
         const value = c ? (c.value || this.value) : this.value;
-        if (
-            //(!this.required || value) &&
-            //((!this.required && !value) ||
-            (
-                //(this._validator(value) === null) &&
-                (!this.minLength || (value && value.length >= this.minLength)) &&
-                (!this.maxLength || (value && value.length <= this.maxLength)) &&
-                (!this.minValue || (value && value >= this.minValue)) &&
-                (!this.maxValue || (value && value <= this.maxValue)) &&
-                (!this.removeYear || CUSTOM_PATTERN_VALIDATORS.dateWithoutYearValidator.test(value)) &&
-                (!this.except || (value && value !== this.except))
-            )
-            //)
-        ) {
+        if (!this.removeYear || CUSTOM_PATTERN_VALIDATORS.dateWithoutYearValidator.test(value)) {
             if (c && c.value !== null) {
                 this.setValue(c.value);
             }
@@ -176,7 +158,7 @@ export class BcTextInput extends BcBaseInput {
                 this.invalid = true;
             }
             return {
-                valid: false
+                removeYear: true
             };
         }
     }

@@ -9,7 +9,7 @@ import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { BcAuthService } from '../../../app/shared/auth.service';
-import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
+import { CUSTOM_PATTERN_VALIDATORS, createLengthValidator } from '../../inputs/input_base';
 
 @Directive({
   selector: "[disabled]",
@@ -56,7 +56,7 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
     this.maskForm = fb.group({
       name: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]],
       alias: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
-      idCai: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)]],
+      idCai: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator), createLengthValidator(8, 10)]],
       type: ["", Validators.required],
       branch: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]],
       owner: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]],

@@ -59,8 +59,6 @@ export class BcFileInputErrorStyler {
     encapsulation: ViewEncapsulation.None
 })
 export class BcFileInput extends BcBaseInput {
-    /*@Input() validator: RegExp;*/
-    /*@Input() sizeLimit: number = 1024 * 1024 * 16;*/
     @Input() optionalMessage: string;
     messageBlock: string;
     _contentType: String;
@@ -100,44 +98,9 @@ export class BcFileInput extends BcBaseInput {
         }
     }
 
-    /*testName(value: string) {
-        if (this.validator) {
-            if (value.indexOf(".") > -1) {
-                const parts = value.split(".");
-                let name = "";
-                for (let i = 0; i < (parts.length - 1); i++) {
-                    name += parts[i] + ".";
-                }
-                name = name.substr(0, name.length - 1);
-                return this.validator.test(name);
-            } else {
-                return false;
-            }
-        } else {
-            return true;
-        }
-    }*/
-
     validatorFn(c: FormControl) {
         if (c.value) {
-            if (
-                // (this.testName(c.value.name)) &&
-                // (c.value.size > 0) &&
-                (this.checkExtension(this.getExtension(c.value.name)))
-            ) {
-                /*if (c.value.size > this.sizeLimit) {
-                    if (this.displayError) {
-                        this.invalid = true;
-                    }
-                this.messageBlock = this.optionalMessage;
-                return {
-                    extension: true
-                };
-                } else {
-                    this.setValue(c.value);
-                    this.invalid = false;
-                    return null;
-                }*/
+            if (this.checkExtension(this.getExtension(c.value.name))) {
                 this.invalid = false;
                 return null;
             } else {
