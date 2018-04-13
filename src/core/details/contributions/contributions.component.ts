@@ -92,7 +92,8 @@ export class BcContributions extends DetailBase {
       .then(files => {
         this.data = this.groupByYear(files);
         const year = (new Date()).getFullYear();
-        if (!this.data.find(obj => obj.year === year)) {
+        const tab = this.data.find(obj => obj.year == year);
+        if (!tab) {
           this.data.push({ year: year, contributions: [] });
         }
         this.changeActiveTab(year);

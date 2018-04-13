@@ -1,13 +1,13 @@
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
-import { validators } from '../../inputs/input_base';
+import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 import { Enums } from '../../../app/shared/types/enums';
 import { OnInit } from '@angular/core';
 import { IShelter, IFile } from 'app/shared/types/interfaces';
 import { BcDetailsService } from '../details.service';
 import { ShelterService } from 'app/shelter/shelter.service';
 
-const validObjectIDRegExp = validators.objectID;
+const validObjectIDRegExp = CUSTOM_PATTERN_VALIDATORS.objectID;
 
 export abstract class DetailBase implements OnInit {
     _id: String;

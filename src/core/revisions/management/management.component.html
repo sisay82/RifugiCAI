@@ -10,7 +10,7 @@
             </div>
             <div class="bc-revision-management">
                 <bc-text-input placeholder="Es: +39 0522 652347" enableBlock="true" errorMessage="Inserire sono numeri." formControlName="fixedPhone"
-                    title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
+                    title="Telefono" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
@@ -19,31 +19,31 @@
             </form>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: proprietario@info.it"
-                    formControlName="email" title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
+                    formControlName="email" title="Mail" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: proprietario@pec.it" formControlName="pec"
-                    title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
+                    title="PEC" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo sito web valido." placeholder="Es: www.proprietarioimmobile.it"
-                    formControlName="webSite" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
+                    formControlName="webSite" title="Sito web" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 10000" formControlName="contract_fee"
-                    title="Canone annuale (€, da contratto)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                    title="Canone annuale (€, da contratto)" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm/aaaa" formControlName="contract_start_date"
-                    validator="validateDate" title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
+                    title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm/aaaa" formControlName="contract_end_date"
-                    validator="validateDate" title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
+                    title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-select-input defaultContent="Selezionare tipo possesso" enumName="Possession_Type" formControlName="possessionType" title="Tipo possesso"
@@ -69,28 +69,28 @@
                     </div>
                     <div class="bc-revision-management">
                         <bc-text-input placeholder="Es: +39 0522 652347" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="fixedPhone"
-                            title="Telefono" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
+                            title="Telefono" [displayError]="displayError"></bc-text-input>
                     </div>
                     <bc-icon (click)="removeSubject(i)" class="bc-revision-management-add-tag" name="times" size=s></bc-icon>
                 </div>
                 <div style="display: flex;flex-direction:row">
                     <div class="bc-revision-management">
                         <bc-text-input placeholder="Es: +39 335 6745896" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="mobilePhone"
-                            title="Cellulare" validator="telephoneValidator" [displayError]="displayError"></bc-text-input>
+                            title="Cellulare" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
                         <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: custode@info.it" formControlName="email"
-                            title="Mail" validator="mailValidator" [displayError]="displayError"></bc-text-input>
+                            title="Mail" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
                         <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: custode@pec.it" formControlName="pec"
-                            title="PEC" validator="mailValidator" [displayError]="displayError"></bc-text-input>
+                            title="PEC" [displayError]="displayError"></bc-text-input>
                     </div>
                 </div>
                 <div style="display: flex;flex-direction:row">
                     <div class="bc-revision-management">
                         <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo sito web valido." placeholder="Es: www.gestoreimmobile.it"
-                            formControlName="webSite" title="Sito web" validator="urlValidator" [displayError]="displayError"></bc-text-input>
+                            formControlName="webSite" title="Sito web" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
                         <bc-text-input placeholder="Custodia o gestione" formControlName="type" title="Tipo" [displayError]="displayError"></bc-text-input>
@@ -102,7 +102,7 @@
                 <div style="display: flex;flex-direction:row">
                     <div class="bc-revision-management">
                         <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 10000" formControlName="contract_fee"
-                            title="Canone annuale (€, da contratto)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                            title="Canone annuale (€, da contratto)" [displayError]="displayError"></bc-text-input>
                     </div>
                     <div class="bc-revision-management">
                         <bc-select-input defaultContent="Selezionare tipo possesso" enumName="Possession_Type" formControlName="possession_type"
@@ -110,13 +110,13 @@
                     </div>
                     <div class="bc-revision-management">
                         <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm/aaaa" formControlName="contract_start_date"
-                            validator="validateDate" title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
+                            title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
                     </div>
                 </div>
                 <div style="display: flex;flex-direction:row">
                     <div class="bc-revision-management">
                         <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm/aaaa" formControlName="contract_end_date"
-                            validator="validateDate" title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
+                            title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
                     </div>
                 </div>
             </div>
@@ -139,28 +139,28 @@
             </div>
             <div class="bc-revision-management">
                 <bc-text-input placeholder="Es: +39 0522 652347" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="fixedPhone"
-                    title="Telefono" validator="telephoneValidator" [displayError]="invalid"></bc-text-input>
+                    title="Telefono" [displayError]="invalid"></bc-text-input>
             </div>
             <bc-icon tooltip="Aggiungi" (click)="addNewSubject()" class="bc-revision-management-add-tag" name="check" size=s></bc-icon>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input placeholder="Es: +39 335 6745896" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="mobilePhone"
-                    title="Cellulare" validator="telephoneValidator" [displayError]="invalid"></bc-text-input>
+                    title="Cellulare" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: custode@info.it" formControlName="email"
-                    title="Mail" validator="mailValidator" [displayError]="invalid"></bc-text-input>
+                    title="Mail" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: custode@pec.it" formControlName="pec"
-                    title="PEC" validator="mailValidator" [displayError]="invalid"></bc-text-input>
+                    title="PEC" [displayError]="invalid"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo sito web valido." placeholder="Es: www.gestoreimmobile.it"
-                    formControlName="webSite" title="Sito web" validator="urlValidator" [displayError]="invalid"></bc-text-input>
+                    formControlName="webSite" title="Sito web" [displayError]="invalid"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input placeholder="Custodia o gestione" formControlName="type" title="Tipo" [displayError]="invalid"></bc-text-input>
@@ -172,7 +172,7 @@
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 10000" formControlName="contract_fee"
-                    title="Canone annuale (€, da contratto)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                    title="Canone annuale (€, da contratto)" [displayError]="displayError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-select-input defaultContent="Selezionare tipo possesso" enumName="Possession_Type" formControlName="possessionType" title="Tipo possesso"
@@ -180,13 +180,13 @@
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm/aaaa" formControlName="contract_start_date"
-                    validator="validateDate" title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
+                    title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm/aaaa" formControlName="contract_end_date"
-                    validator="validateDate" title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
+                    title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
             </div>
         </div>
     </form>

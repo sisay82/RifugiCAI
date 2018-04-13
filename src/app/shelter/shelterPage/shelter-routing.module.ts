@@ -5,11 +5,11 @@ import { detailsRoutes } from '../../../core/details/details-routing.module';
 import { revisionsRoutes } from '../../../core/revisions/revisions-routing.module';
 
 import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivate, Router } from '@angular/router';
-import { validators } from '../../../core/inputs/input_base';
+import { CUSTOM_PATTERN_VALIDATORS } from '../../../core/inputs/input_base';
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/first';
 import { Observable } from 'rxjs/Observable';
-const validObjectIDRegExp = validators.objectID;
+const validObjectIDRegExp = CUSTOM_PATTERN_VALIDATORS.objectID;
 
 @Injectable()
 export class CheckIDGuard implements CanActivate {

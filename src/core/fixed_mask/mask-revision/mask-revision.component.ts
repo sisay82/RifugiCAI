@@ -4,12 +4,12 @@ import {
 import { IShelter } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder, FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
 import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
-import { createValidationFunction } from '../../inputs/input_base';
 import { BcAuthService } from '../../../app/shared/auth.service';
+import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 
 @Directive({
   selector: "[disabled]",
@@ -54,16 +54,15 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
     private authService: BcAuthService) {
 
     this.maskForm = fb.group({
-      name: [""],
-      alias: [""],
-      idCai: [""],
-      type: [""],
-      branch: [""],
-      owner: [""],
+      name: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]],
+      alias: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+      idCai: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)]],
+      type: ["", Validators.required],
+      branch: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]],
+      owner: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]],
       category: [""],
       regional_type: [""],
-      status: [""],
-      updateSubject: [""]
+      status: [""]
     });
 
     this.maskSaveTriggerSub = this.shared.sendMaskSave$.subscribe(() => {

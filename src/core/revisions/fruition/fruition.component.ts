@@ -4,13 +4,14 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { IShelter, IUse } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums'
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
 import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { RevisionBase } from '../shared/revision_base';
 import { BcAuthService } from '../../../app/shared/auth.service';
+import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 
 @Component({
     moduleId: module.id,
@@ -32,12 +33,12 @@ export class BcFruitionRevision extends RevisionBase implements OnDestroy {
         shared.activeComponent = Enums.Routes.Routed_Component.use;
         this.MENU_SECTION = Enums.MenuSection.economy;
         this.useForm = fb.group({
-            stay_count_associate: [""],
-            stay_count_reciprocity: [""],
-            stay_count: [""],
-            transit_count_associate: [""],
-            transit_count_reciprocity: [""],
-            transit_count: [""]
+            stay_count_associate: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            stay_count_reciprocity: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            stay_count: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            transit_count_associate: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            transit_count_reciprocity: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            transit_count: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)]
         });
 
         this.formValidSub = this.useForm.statusChanges.subscribe((value) => {
@@ -97,7 +98,7 @@ export class BcFruitionRevision extends RevisionBase implements OnDestroy {
         }
         for (const control in use) {
             if (this.useForm.contains(control)) {
-                this.useForm.controls[control].setValue(use[control] || null);
+                this.useForm.get(control).setValue(use[control] || null);
             }
         }
     }

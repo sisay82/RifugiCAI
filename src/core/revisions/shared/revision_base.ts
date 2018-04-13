@@ -4,7 +4,7 @@ import { BcSharedService } from '../../../app/shared/shared.service';
 import { FormGroup, FormArray } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
-import { parseDate, validators } from '../../inputs/input_base';
+import { parseDate, CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 import { Enums } from '../../../app/shared/types/enums';
 import { OnInit } from '@angular/core';
 import { IShelter, IFile } from 'app/shared/types/interfaces';
@@ -12,7 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BcAuthService } from 'app/shared/auth.service';
 import { isArray } from 'util';
 
-const validObjectIDRegExp = validators.objectID;
+const validObjectIDRegExp = CUSTOM_PATTERN_VALIDATORS.objectID;
 
 export abstract class RevisionBase implements OnInit {
     protected _id: String;
@@ -184,7 +184,7 @@ export abstract class RevisionBase implements OnInit {
         const obj: any = {};
         for (const control in form.controls) {
             if (form.controls.hasOwnProperty(control)) {
-                obj[control] = this.getControlValue(<FormGroup>form.controls[control]);
+                obj[control] = this.getControlValue(<FormGroup>form.get(control));
             }
         }
         return obj;

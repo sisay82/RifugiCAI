@@ -3,23 +3,23 @@
         Richiesta contributi
     </div>
     <div style="width:auto">
-        <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio." title="Tipo" required="true" defaultContent="Selezione il tipo di contributo"
+        <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio." title="Tipo" defaultContent="Selezione il tipo di contributo"
             [enumValues]="getEnumValues()" formControlName="type" [displayError]="displayError"></bc-select-input>
     </div>
     <bc-divider style="margin-top:2%"></bc-divider>
     <div style="display: flex;flex-direction:row">
         <div style="width:auto;margin-right:2%">
-            <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Lavori a corpo (€)" validator="numberValidator"
-                placeholder="Es: 1000 (solo numeri)" formControlName="handWorks" [displayError]="displayError"></bc-text-input>
+            <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Lavori a corpo (€)" placeholder="Es: 1000 (solo numeri)"
+                formControlName="handWorks" [displayError]="displayError"></bc-text-input>
         </div>
         <div style="width:auto">
-            <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Lavori a misura (€)" validator="numberValidator"
-                placeholder="Es: 1000 (solo numeri)" formControlName="customizedWorks" [displayError]="displayError"></bc-text-input>
+            <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Lavori a misura (€)" placeholder="Es: 1000 (solo numeri)"
+                formControlName="customizedWorks" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="width:auto">
-        <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Oneri di sicurezza (€)" validator="numberValidator"
-            placeholder="Es: 1000 (solo numeri)" formControlName="safetyCharges" [displayError]="displayError"></bc-text-input>
+        <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Oneri di sicurezza (€)" placeholder="Es: 1000 (solo numeri)"
+            formControlName="safetyCharges" [displayError]="displayError"></bc-text-input>
     </div>
     <bc-list style="padding-bottom: 0">
         <bc-list-header>
@@ -29,25 +29,25 @@
     </bc-list>
     <div style="width:auto">
         <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Spese per indagini, rilievi, ecc. (€)"
-            validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="surveyorsCharges" [displayError]="displayError"></bc-text-input>
+            placeholder="Es: 1000 (solo numeri)" formControlName="surveyorsCharges" [displayError]="displayError"></bc-text-input>
     </div>
     <div style="width:auto">
         <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Spese per allacciamenti a reti di distribuzione (€)"
-            validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="connectionsCharges" [displayError]="displayError"></bc-text-input>
+            placeholder="Es: 1000 (solo numeri)" formControlName="connectionsCharges" [displayError]="displayError"></bc-text-input>
     </div>
     <div style="display: flex;flex-direction:row">
         <div style="width:auto;margin-right:2%">
-            <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Spese tecniche (€)" validator="numberValidator"
-                placeholder="Es: 1000 (solo numeri)" formControlName="technicalCharges" [displayError]="displayError"></bc-text-input>
+            <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Spese tecniche (€)" placeholder="Es: 1000 (solo numeri)"
+                formControlName="technicalCharges" [displayError]="displayError"></bc-text-input>
         </div>
         <div style="width:auto">
-            <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Spese di collaudo (€)" validator="numberValidator"
-                placeholder="Es: 1000 (solo numeri)" formControlName="testCharges" [displayError]="displayError"></bc-text-input>
+            <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Spese di collaudo (€)" placeholder="Es: 1000 (solo numeri)"
+                formControlName="testCharges" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="width:auto">
-        <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Tasse e oneri (€)" validator="numberValidator"
-            placeholder="Es: 1000 (solo numeri)" formControlName="taxes" [displayError]="displayError"></bc-text-input>
+        <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri." replaceDot="true" title="Tasse e oneri (€)" placeholder="Es: 1000 (solo numeri)"
+            formControlName="taxes" [displayError]="displayError"></bc-text-input>
     </div>
     <bc-list style="padding-bottom: 0">
         <bc-list-header>
@@ -65,13 +65,11 @@
     <div style="display: flex;flex-direction:row">
         <div style="width:auto;margin-right:2%">
             <bc-text-input enableBlock="true" errorMessage="Questo campo non può essere 0." replaceDot="true" except="0" minValue="0"
-                title="Finanziamento esterno (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="externalFinancing"
-                [displayError]="displayError"></bc-text-input>
+                title="Finanziamento esterno (€)" placeholder="Es: 1000 (solo numeri)" formControlName="externalFinancing" [displayError]="displayError"></bc-text-input>
         </div>
         <div style="width:auto">
             <bc-text-input enableBlock="true" errorMessage="Questo campo non può essere 0." replaceDot="true" except="0" minValue="0"
-                title="Autofinanziamento (€)" validator="numberValidator" placeholder="Es: 1000 (solo numeri)" formControlName="selfFinancing"
-                [displayError]="displayError"></bc-text-input>
+                title="Autofinanziamento (€)" placeholder="Es: 1000 (solo numeri)" formControlName="selfFinancing" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <bc-list style="padding-bottom: 0">
@@ -107,7 +105,8 @@
             <bc-select-input defaultContent="Selezione il nome di un documento" style="flex:1" [enumValues]="filesEnum" formControlName="newValue"
                 [displayError]="displayError"></bc-select-input>
         </div>
-        <bc-icon *ngIf="checkRole()" tooltip="Aggiungi" (click)="addNewAttachment()" class="bc-revision-contributions-icon" name="check" size=s></bc-icon>
+        <bc-icon *ngIf="checkRole()" tooltip="Aggiungi" (click)="addNewAttachment()" class="bc-revision-contributions-icon" name="check"
+            size=s></bc-icon>
     </div>
 </form>
 <br/>

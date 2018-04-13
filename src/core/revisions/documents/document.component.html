@@ -76,18 +76,17 @@
                 </div>
                 <div style="flex:1;display: flex;flex-direction:row;align-items:baseline;white-space:nowrap">
                     <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri. Campo obbligatorio." replaceDot="true" placeholder="Es: 321 (solo numeri)"
-                        required="true" title="Imponibile" formControlName="value" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                        title="Imponibile" formControlName="value" [displayError]="displayError"></bc-text-input>
                     <bc-text-input enableBlock="true" errorMessage="Inserire solo numeri. Campo obbligatorio." replaceDot="true" placeholder="Es: 21 (solo numeri)"
-                        required="true" title="IVA (in percentuale)" formControlName="invoice_tax" validator="numberValidator"
-                        [displayError]="displayError"></bc-text-input>
-                    <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio." defaultContent="Selezionare anno" required="true"
-                        [enumValues]="getEnumValues()" title="Anno" formControlName="invoice_year" [displayError]="displayError"></bc-select-input>
+                        title="IVA (in percentuale)" formControlName="invoice_tax" [displayError]="displayError"></bc-text-input>
+                    <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio." defaultContent="Selezionare anno" [enumValues]="getEnumValues()"
+                        title="Anno" formControlName="invoice_year" [displayError]="displayError"></bc-select-input>
                 </div>
                 <div style="flex:1;display: flex;flex-direction:row;align-items:baseline;white-space:nowrap">
-                    <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio." defaultContent="Selezionare tipo di fattura" required="true"
-                        title="Tipo di fattura" enumName="Invoice_Type" formControlName="invoice_type" [displayError]="displayError"></bc-select-input>
-                    <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio." defaultContent="Selezionare tipo di contributo" [required]="checkRequired(i)"
-                        title="Tipo di contributo" enumName="Contribution_Type" formControlName="contribution_type" [displayError]="displayError"></bc-select-input>
+                    <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio." defaultContent="Selezionare tipo di fattura" title="Tipo di fattura"
+                        enumName="Invoice_Type" formControlName="invoice_type" [displayError]="displayError"></bc-select-input>
+                    <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio." defaultContent="Selezionare tipo di contributo" title="Tipo di contributo"
+                        enumName="Contribution_Type" formControlName="contribution_type" [displayError]="displayError"></bc-select-input>
                 </div>
             </div>
         </div>
@@ -101,7 +100,7 @@
     <form [formGroup]="newInvoiceForm">
         <div style="display:inline-block">
             <bc-file-input enableBlock="true" optionalMessage="Caricare fino a un massimo di 16MB" errorMessage='Caricare documento rinominato in "Tipo-fornitore-numero-data"'
-                [contentType]="getKeys('Invoices_Type')" [validator]="invoiceFormatRegExp" formControlName="file" [displayError]="displayError"></bc-file-input>
+                [contentType]="getKeys('Invoices_Type')" formControlName="file" [displayError]="displayError"></bc-file-input>
         </div>
     </form>
     <a (click)="addInvoice()" style="margin-left:1%" data-bc-button data-type="solid">Invia</a>

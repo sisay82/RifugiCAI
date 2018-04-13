@@ -11,7 +11,7 @@
                     <div style="margin-left:1%" class="bc-body"> ({{file.value.size | formatsize}})</div>
                 </div>
                 <div style="flex:1;margin-right:1%">
-                    <bc-text-input [displayError]=true title="Didascalia" formControlName="description"></bc-text-input>
+                    <bc-text-input [displayError]="displayError" title="Didascalia" formControlName="description"></bc-text-input>
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@
                     <bc-file-input [contentType]="getContentType()" formControlName="file"></bc-file-input>
                     <a (click)="addDoc()" style="margin-left:1%" data-bc-button data-type="solid">Invia</a>
                 </div>
-                <bc-text-input placeholder="Breve descrizione dell'immagine caricata." [displayError]=true title="Didascalia" formControlName="description"></bc-text-input>
+                <bc-text-input placeholder="Breve descrizione dell'immagine caricata." [displayError]="displayError" title="Didascalia" formControlName="description"></bc-text-input>
             </div>
             <div *ngIf="isUploading()" style="margin-left:1%">Caricamento...</div>
         </div>

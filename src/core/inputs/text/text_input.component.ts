@@ -8,18 +8,24 @@ import {
 import {
     NG_VALUE_ACCESSOR,
     FormControl,
-    NG_VALIDATORS
+    NG_VALIDATORS,
+    AbstractControl,
+    ControlContainer,
+    NG_ASYNC_VALIDATORS
 } from '@angular/forms';
 import {
     Subscription
 } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
 import {
     BcBaseInput,
     parseDate,
-    createValidationFunction,
-    validators,
-    trimYear
+    CUSTOM_PATTERN_VALIDATORS,
+    trimYear,
+    createValidationFunction
 } from '../input_base';
+import { Observer } from 'rxjs/Observer';
+import { ValidationError } from 'mongoose';
 
 @Directive({
     selector: 'textarea[bc-enable-error]',
@@ -117,6 +123,10 @@ export class BcTextInput extends BcBaseInput {
         }
     }
 
+    isRequired() {
+        return this.required
+    }
+
     isSingleLine() {
         return !(this.lines && this.lines > 1);
     }
@@ -140,28 +150,26 @@ export class BcTextInput extends BcBaseInput {
         return returnVal;
     }
 
-    validate(c?: FormControl): null | {
-        valid?: Boolean,
-        err?: String
-    } {
+    validatorFn(c?: FormControl) {
         const value = c ? (c.value || this.value) : this.value;
         if (
-            (!this.required || value) &&
-            ((!this.required && !value) ||
-                (
-                    (this._validator(value) === null) &&
-                    (!this.minLength || (value && value.length >= this.minLength)) &&
-                    (!this.maxLength || (value && value.length <= this.maxLength)) &&
-                    (!this.minValue || (value && value >= this.minValue)) &&
-                    (!this.maxValue || (value && value <= this.maxValue)) &&
-                    (!this.removeYear || validators.dateWithoutYearValidator.test(value)) &&
-                    (!this.except || (value && value !== this.except))
-                ))
+            //(!this.required || value) &&
+            //((!this.required && !value) ||
+            (
+                //(this._validator(value) === null) &&
+                (!this.minLength || (value && value.length >= this.minLength)) &&
+                (!this.maxLength || (value && value.length <= this.maxLength)) &&
+                (!this.minValue || (value && value >= this.minValue)) &&
+                (!this.maxValue || (value && value <= this.maxValue)) &&
+                (!this.removeYear || CUSTOM_PATTERN_VALIDATORS.dateWithoutYearValidator.test(value)) &&
+                (!this.except || (value && value !== this.except))
+            )
+            //)
         ) {
-            this.invalid = false;
             if (c && c.value !== null) {
                 this.setValue(c.value);
             }
+            this.invalid = false;
             return null;
         } else {
             if (this.displayError) {
@@ -171,6 +179,5 @@ export class BcTextInput extends BcBaseInput {
                 valid: false
             };
         }
-
     }
 }

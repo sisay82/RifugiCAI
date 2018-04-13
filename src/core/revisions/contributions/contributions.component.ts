@@ -4,13 +4,14 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { IShelter, IContribution, IFile, IContributionData, IFileRef } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
 import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { RevisionBase } from '../shared/revision_base';
 import { BcAuthService } from '../../../app/shared/auth.service';
+import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 
 @Directive({
     selector: "[data-bc-button],[bc-button]",
@@ -49,23 +50,23 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
         super(shelterService, shared, revisionService, _route, router, authService);
         this.MENU_SECTION = Enums.MenuSection.economy;
         this.contrForm = fb.group({
-            handWorks: [""],
-            customizedWorks: [""],
-            safetyCharges: [""],
+            handWorks: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            customizedWorks: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            safetyCharges: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
             totWorks: [""],
-            surveyorsCharges: [""],
-            connectionsCharges: [""],
-            technicalCharges: [""],
-            testCharges: [""],
-            taxes: [""],
+            surveyorsCharges: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            connectionsCharges: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            technicalCharges: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            testCharges: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            taxes: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
             totCharges: [""],
             IVAincluded: [""],
             totalProjectCost: [""],
-            externalFinancing: [""],
-            selfFinancing: [""],
+            externalFinancing: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            selfFinancing: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
             red: [""],
             attachments: fb.array([]),
-            type: [],
+            type: ["", Validators.required],
             value: [""]
         });
 
@@ -114,20 +115,20 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
     }
 
     addAttachment(value, id) {
-        const control = <FormArray>this.contrForm.controls['attachments'];
+        const control = <FormArray>this.contrForm.get('attachments');
         control.push(this.initAttachment(value, id));
     }
 
     removeAttachment(index) {
         this.statusChange = true;
-        const control = <FormArray>this.contrForm.controls['attachments'];
+        const control = <FormArray>this.contrForm.get('attachments');
         control.removeAt(index);
     }
 
     addNewAttachment() {
         this.statusChange = true;
-        const control = <FormArray>this.contrForm.controls['attachments'];
-        let name: String = this.newAttachmentForm.controls["newValue"].value;
+        const control = <FormArray>this.contrForm.get('attachments');
+        let name: String = this.newAttachmentForm.get("newValue").value;
         let id;
         if (name) {
             if (name.indexOf(":") > -1) {
@@ -137,7 +138,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
                 id = this.docs.find(obj => obj.name === name)._id;
             }
             if (!control.controls.find(obj => obj.value.id == id)) {
-                this.filesEnum.splice(this.filesEnum.indexOf(this.newAttachmentForm.controls["newValue"].value), 1)
+                this.filesEnum.splice(this.filesEnum.indexOf(this.newAttachmentForm.get("newValue").value), 1)
                 control.push(this.initAttachment(name, id));
                 this.resetAttachmentForm();
             }
@@ -169,17 +170,17 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
     }
 
     getTotalWorks(): number {
-        return (this.getNumber(this.contrForm.controls.handWorks.value) +
-            this.getNumber(this.contrForm.controls.customizedWorks.value) +
-            this.getNumber(this.contrForm.controls.safetyCharges.value));
+        return (this.getNumber(this.contrForm.get('handWorks').value) +
+            this.getNumber(this.contrForm.get('customizedWorks').value) +
+            this.getNumber(this.contrForm.get('safetyCharges').value));
     }
 
     getTotalCharges(): number {
-        return (this.getNumber(this.contrForm.controls.surveyorsCharges.value) +
-            this.getNumber(this.contrForm.controls.connectionsCharges.value) +
-            this.getNumber(this.contrForm.controls.technicalCharges.value) +
-            this.getNumber(this.contrForm.controls.testCharges.value) +
-            this.getNumber(this.contrForm.controls.taxes.value));
+        return (this.getNumber(this.contrForm.get('surveyorsCharges').value) +
+            this.getNumber(this.contrForm.get('connectionsCharges').value) +
+            this.getNumber(this.contrForm.get('technicalCharges').value) +
+            this.getNumber(this.contrForm.get('testCharges').value) +
+            this.getNumber(this.contrForm.get('taxes').value));
     }
 
     getTotalCost(): number {
@@ -188,8 +189,8 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
 
     getRedValue(): number {
         return this.getTotalCost() - (
-            this.getNumber(this.contrForm.controls.externalFinancing.value) +
-            this.getNumber(this.contrForm.controls.selfFinancing.value)
+            this.getNumber(this.contrForm.get('externalFinancing').value) +
+            this.getNumber(this.contrForm.get('selfFinancing').value)
         )
     }
 
@@ -210,22 +211,22 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
             if (this.checkPermission && contributions && !contributions.accepted) {
                 for (const control in contributions.data) {
                     if (this.contrForm.contains(control)) {
-                        this.contrForm.controls[control].setValue(contributions.data[control] || null);
+                        this.contrForm.get(control).setValue(contributions.data[control] || null);
                     }
                 }
                 for (const control in contributions) {
                     if (this.contrForm.contains(control)) {
-                        this.contrForm.controls[control].setValue(contributions[control] || null);
+                        this.contrForm.get(control).setValue(contributions[control] || null);
                     }
                 }
-                this.contrForm.controls.totWorks.setValue(this.getTotalWorks());
-                this.contrForm.controls.totCharges.setValue(this.getTotalCharges());
-                this.contrForm.controls.totalProjectCost.setValue(this.getTotalCost());
-                this.contrForm.controls.red.setValue(this.getRedValue());
-                this.contrForm.controls.value.setValue(this.roundValue(this.getRedValue()));
+                this.contrForm.get('totWorks').setValue(this.getTotalWorks());
+                this.contrForm.get('totCharges').setValue(this.getTotalCharges());
+                this.contrForm.get('totalProjectCost').setValue(this.getTotalCost());
+                this.contrForm.get('red').setValue(this.getRedValue());
+                this.contrForm.get('value').setValue(this.roundValue(this.getRedValue()));
                 if (attachments) {
                     for (const att of attachments) {
-                        (<FormArray>this.contrForm.controls.attachments).controls.push(this.initAttachment(att.name, att.id))
+                        (<FormArray>this.contrForm.get('attachments')).controls.push(this.initAttachment(att.name, att.id))
                     }
                 }
             }
@@ -245,7 +246,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
                 type: this.contrForm.value.type,
                 accepted: this.accepted || false,
                 data: this.getFormValues(this.contrForm),
-                attachments: <[IFileRef]>this.getFormArrayValues(<FormArray>this.contrForm.controls.attachments)
+                attachments: <[IFileRef]>this.getFormArrayValues(<FormArray>this.contrForm.get('attachments'))
                     .map(item => {
                         if (item) { return { name: item.value, id: item.id } }
                     })

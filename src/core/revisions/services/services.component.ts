@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IShelter, IService, ITag } from '../../../app/shared/types/interfaces';
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
@@ -12,6 +12,7 @@ import { Enums } from '../../../app/shared/types/enums';
 import { Subscription } from 'rxjs/Subscription';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { RevisionBase } from '../shared/revision_base';
+import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 
 @Component({
     moduleId: module.id,
@@ -49,17 +50,17 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
         });
 
         this.newServiceForm = fb.group({
-            newServiceName: ["Nome Nuovo Servizio"],
-            newServiceDescription: ["Descrizione Nuovo Servizio"],
-            newServiceCategory: ["Nuova categoria"],
+            newServiceName: ["Nome Nuovo Servizio", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            newServiceDescription: ["Descrizione Nuovo Servizio", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            newServiceCategory: ["Nuova categoria", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
             newServiceTags: fb.array([]),
-            newServiceTagKey: ["Informazione"],
-            newServiceTagValue: ["Valore"]
+            newServiceTagKey: ["Informazione", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            newServiceTagValue: ["Valore", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
         });
 
         this.newTagForm = fb.group({
-            newTagKey: ["Informazione"],
-            newTagValue: ["Valore"],
+            newTagKey: ["Informazione", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            newTagValue: ["Valore", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
         });
 
         this.formValidSub = this.servForm.statusChanges.subscribe((value) => {
@@ -87,11 +88,11 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
     }
 
     getFormControls(controlName) {
-        return (<FormGroup>this.servForm.controls[controlName]).controls;
+        return (<FormGroup>this.servForm.get(controlName)).controls;
     }
 
     getControl(control: FormGroup, controlName) {
-        return control.controls[controlName];
+        return control.get(controlName);
     }
 
     getFormControlsByControl(control: FormGroup, controlName) {
@@ -132,7 +133,7 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
 
     removeService(serviceIndex) {
         this.serviceListChange = true;
-        const services = <FormArray>this.servForm.controls.services;
+        const services = <FormArray>this.servForm.get('services');
         if (this.serviceList[serviceIndex]) {
             const service = this.serviceList[serviceIndex];
             if (service) {
@@ -150,29 +151,29 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
         this.newServiceAdded = true;
 
         if (this.newServiceForm.valid) {
-            const control = (<FormArray>this.servForm.controls.services);
+            const control = (<FormArray>this.servForm.get('services'));
 
             const service: IService = {
-                name: this.newServiceForm.controls.newServiceName.value || null,
-                category: this.newServiceForm.controls.newServiceCategory.value,
-                description: this.newServiceForm.controls.newServiceDescription.value || null
+                name: this.newServiceForm.get('newServiceName').value || null,
+                category: this.newServiceForm.get('newServiceCategory').value,
+                description: this.newServiceForm.get('newServiceDescription').value || null
             }
             const tags: any = [];
 
-            for (const tag of (<FormArray>this.newServiceForm.controls.newServiceTags).controls) {
+            for (const tag of (<FormArray>this.newServiceForm.get('newServiceTags')).controls) {
                 const t = <FormGroup>tag
-                tags.push({ key: t.controls.key.value, value: t.controls.value.value });
+                tags.push({ key: t.get('key').value, value: t.get('value').value });
             }
             service.tags = tags;
             const currentService: FormGroup = <FormGroup>control.controls.find(ser =>
-                ser.value.category.toLowerCase().indexOf(this.newServiceForm.controls.newServiceCategory.value.toLowerCase()) > -1);
+                ser.value.category.toLowerCase().indexOf(this.newServiceForm.get('newServiceCategory').value.toLowerCase()) > -1);
 
             if (currentService) {
                 for (const tag of tags) {
-                    const currentTag: FormGroup = <FormGroup>(<FormArray>currentService.controls.tags).controls.find(t =>
+                    const currentTag: FormGroup = <FormGroup>(<FormArray>currentService.get('tags')).controls.find(t =>
                         t.value.key.toLowerCase().indexOf(tag.key.toLowerCase()) > -1);
                     if (currentTag == null) {
-                        (<FormArray>currentService.controls.tags).push(this.initTag(tag.key, tag.value));
+                        (<FormArray>currentService.get('tags')).push(this.initTag(tag.key, tag.value));
                     }
                 }
             } else {
@@ -187,12 +188,12 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
 
     resetServiceForm() {
         this.newServiceForm = this.fb.group({
-            newServiceName: ["Nome Nuovo Servizio"],
-            newServiceDescription: ["Descrizione Nuovo Servizio"],
-            newServiceCategory: ["Nuova categoria"],
+            newServiceName: ["Nome Nuovo Servizio", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            newServiceDescription: ["Descrizione Nuovo Servizio", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            newServiceCategory: ["Nuova categoria", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
             newServiceTags: this.fb.array([]),
-            newServiceTagKey: ["Informazione"],
-            newServiceTagValue: ["Valore"]
+            newServiceTagKey: ["Informazione", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            newServiceTagValue: ["Valore", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
         });
         this.toggleNewService();
     }
@@ -204,7 +205,7 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
             tags: this.fb.array([])
         });
         for (const tag of service.tags) {
-            (<FormArray>group.controls.tags).push(this.initTag(tag.key, tag.value, tag.type));
+            (<FormArray>group.get('tags')).push(this.initTag(tag.key, tag.value, tag.type));
         }
 
         return group;
@@ -212,8 +213,8 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
 
     removeTag(serviceIndex: number, tagIndex: number) {
         this.serviceListChange = true;
-        const control = <FormGroup>(<FormArray>this.servForm.controls.services).at(serviceIndex);
-        const tags = <FormArray>control.controls.tags;
+        const control = <FormGroup>(<FormArray>this.servForm.get('services')).at(serviceIndex);
+        const tags = <FormArray>control.get('tags');
         if (tags.length === 1) {
             this.removeService(serviceIndex);
         } else {
@@ -224,35 +225,35 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
     resetTagForm(serviceIndex) {
         if (serviceIndex > -1) {
             this.newTagForm = this.fb.group({
-                newTagKey: ["Informazione"],
-                newTagValue: ["Valore"],
+                newTagKey: ["Informazione", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+                newTagValue: ["Valore", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
             });
             this.toggleTag(serviceIndex);
         } else {
-            this.newServiceForm.controls.newServiceTagKey.setValue("Informazione");
-            this.newServiceForm.controls.newServiceTagValue.setValue("Valore");
+            this.newServiceForm.get('newServiceTagKey').setValue("Informazione");
+            this.newServiceForm.get('newServiceTagValue').setValue("Valore");
 
             this.toggleNewTag();
         }
     }
 
     removeNewTag(tagIndex: number) {
-        const control = <FormArray>this.newServiceForm.controls['newServiceTags'];
+        const control = <FormArray>this.newServiceForm.get('newServiceTags');
         control.removeAt(tagIndex);
     }
 
     addNewTag(serviceIndex: number) {
         this.serviceListChange = true;
-        const service = <FormGroup>(<FormArray>this.servForm.controls.services).at(serviceIndex);
+        const service = <FormGroup>(<FormArray>this.servForm.get('services')).at(serviceIndex);
         if (this.newTagForm.valid) {
-            const control = <FormArray>service.controls['tags'];
+            const control = <FormArray>service.get('tags');
             for (const c of control.controls) {
-                if (c.value.key.toLowerCase().indexOf(this.newTagForm.controls["newTagKey"].value.toLowerCase()) > -1) {
+                if (c.value.key.toLowerCase().indexOf(this.newTagForm.get("newTagKey").value.toLowerCase()) > -1) {
                     this.invalidTag = true;
                     return;
                 }
             }
-            control.push(this.initTag(this.newTagForm.controls["newTagKey"].value, this.newTagForm.controls["newTagValue"].value));
+            control.push(this.initTag(this.newTagForm.get("newTagKey").value, this.newTagForm.get("newTagValue").value));
             this.resetTagForm(serviceIndex);
         } else {
             this.invalidTag = true;
@@ -260,17 +261,17 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
     }
 
     addNewServiceTag() {
-        if (this.newServiceForm.controls['newServiceTagKey'].valid && this.newServiceForm.controls['newServiceTagValue'].valid) {
-            const control = <FormArray>this.newServiceForm.controls['newServiceTags'];
+        if (this.newServiceForm.get('newServiceTagKey').valid && this.newServiceForm.get('newServiceTagValue').valid) {
+            const control = <FormArray>this.newServiceForm.get('newServiceTags');
             for (const c of control.controls) {
-                if (c.value.key.toLowerCase().indexOf(this.newServiceForm.controls["newServiceTagKey"].value.toLowerCase()) > -1) {
+                if (c.value.key.toLowerCase().indexOf(this.newServiceForm.get("newServiceTagKey").value.toLowerCase()) > -1) {
                     this.invalidService = true;
                     return;
                 }
             }
             control.push(
-                this.initTag(this.newServiceForm.controls["newServiceTagKey"].value,
-                    this.newServiceForm.controls["newServiceTagValue"].value)
+                this.initTag(this.newServiceForm.get("newServiceTagKey").value,
+                    this.newServiceForm.get("newServiceTagValue").value)
             );
             this.resetTagForm(-1);
         } else {
@@ -281,14 +282,14 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
     initTag(key: String, value: String, type?: String) {
         if (type) {
             return this.fb.group({
-                key: [key],
-                value: [value],
+                key: [key, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+                value: [value, Validators.pattern(CUSTOM_PATTERN_VALIDATORS[this.getValidator(type)])],
                 type: type
             });
         } else {
             return this.fb.group({
-                key: [key],
-                value: [value]
+                key: [key, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+                value: [value, Validators.pattern(CUSTOM_PATTERN_VALIDATORS[this.getValidator(type)])]
             });
         }
     }
@@ -298,7 +299,7 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
             const shelter: any = { _id: this._id, name: this.name };
             const services: IService[] = []
 
-            for (const s of (<FormArray>this.servForm.controls.services).controls) {
+            for (const s of (<FormArray>this.servForm.get('services')).controls) {
                 const serv = <FormGroup>s;
                 const service: IService = {
                     name: serv.value.name,
@@ -308,7 +309,7 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
                 if (serv.value.id) {
                     service._id = serv.value.id;
                 }
-                const tags: ITag[] = this.getFormArrayValues(<FormArray>serv.controls.tags).filter(val => val.key && val.value);
+                const tags: ITag[] = this.getFormArrayValues(<FormArray>serv.get('tags')).filter(val => val.key && val.value);
                 service.tags = tags as [ITag];
                 services.push(service);
             }
@@ -412,7 +413,7 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
                 s.tags.push(tag);
             }
             this.serviceList.push(s);
-            (<FormArray>this.servForm.controls.services).push(this.initService(s));
+            (<FormArray>this.servForm.get('services')).push(this.initService(s));
         }
         const servRemove: IService[] = shelter.services.filter(obj => {
             if (obj._id) {

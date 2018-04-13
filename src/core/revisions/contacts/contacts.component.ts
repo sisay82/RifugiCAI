@@ -20,7 +20,8 @@ import {
     FormGroup,
     FormBuilder,
     FormControl,
-    FormArray
+    FormArray,
+    Validators
 } from '@angular/forms';
 import {
     ShelterService
@@ -39,7 +40,9 @@ import {
 } from '../../../app/shared/auth.service';
 import {
     trimYear,
-    parseDate
+    parseDate,
+    CUSTOM_PATTERN_VALIDATORS,
+    customDateValidator
 } from '../../inputs/input_base';
 import {
     RevisionBase
@@ -68,19 +71,19 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         revisionService: BcRevisionsService) {
         super(shelterService, shared, revisionService, _route, router, authService);
         this.contactForm = fb.group({
-            fixedPhone: [""],
-            mobilePhone: [""],
+            fixedPhone: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            mobilePhone: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.telephoneValidator)],
             role: [""],
-            emailAddress: [""],
-            prenotation_link: [""],
-            webAddress: [""],
+            emailAddress: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.mailValidator)],
+            prenotation_link: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.urlValidator)],
+            webAddress: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.urlValidator)],
             openingTime: fb.array([])
         });
 
         this.newOpeningForm = fb.group({
-            newOpeningStartDate: [""],
-            newOpeningEndDate: [""],
-            newOpeningType: [""]
+            newOpeningStartDate: ["", customDateValidator],
+            newOpeningEndDate: ["", customDateValidator],
+            newOpeningType: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
         });
 
         this.formValidSub = this.contactForm.statusChanges.subscribe((value) => {
@@ -108,7 +111,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
     }
 
     getFormControls(controlName) {
-        return (<FormGroup>this.contactForm.controls[controlName]).controls;
+        return (<FormGroup>this.contactForm.get(controlName)).controls;
     }
 
     checkValidForm() {
@@ -125,33 +128,33 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
 
     removeOpening(index) {
         this.openingChange = true;
-        const control = <FormArray>this.contactForm.controls['openingTime'];
+        const control = <FormArray>this.contactForm.get('openingTime');
         control.removeAt(index);
     }
 
     addNewOpening() {
         this.openingChange = true;
-        if (this.newOpeningForm.controls['newOpeningStartDate'].valid
-            && this.newOpeningForm.controls['newOpeningEndDate'].valid
-            && this.newOpeningForm.controls['newOpeningType'].valid) {
+        if (this.newOpeningForm.get('newOpeningStartDate').valid
+            && this.newOpeningForm.get('newOpeningEndDate').valid
+            && this.newOpeningForm.get('newOpeningType').valid) {
             let startDate;
             let endDate;
-            if (this.newOpeningForm.controls['newOpeningStartDate'].value != null
-                && this.newOpeningForm.controls['newOpeningStartDate'].value !== ""
-                && this.newOpeningForm.controls['newOpeningEndDate'].value != null
-                && this.newOpeningForm.controls['newOpeningEndDate'].value !== "") {
-                startDate = parseDate(this.newOpeningForm.controls['newOpeningStartDate'].value);
-                endDate = parseDate(this.newOpeningForm.controls['newOpeningEndDate'].value);
+            if (this.newOpeningForm.get('newOpeningStartDate').value != null
+                && this.newOpeningForm.get('newOpeningStartDate').value !== ""
+                && this.newOpeningForm.get('newOpeningEndDate').value != null
+                && this.newOpeningForm.get('newOpeningEndDate').value !== "") {
+                startDate = parseDate(this.newOpeningForm.get('newOpeningStartDate').value);
+                endDate = parseDate(this.newOpeningForm.get('newOpeningEndDate').value);
             } else {
                 startDate = null;
                 endDate = null;
             }
             this.invalid = false;
-            const control = <FormArray>this.contactForm.controls['openingTime'];
+            const control = <FormArray>this.contactForm.get('openingTime');
             const opening: IOpening = {
                 startDate: startDate,
                 endDate: endDate,
-                type: this.newOpeningForm.controls['newOpeningType'].value
+                type: this.newOpeningForm.get('newOpeningType').value
             }
             control.push(this.initOpening(opening));
             this.resetOpeningForm();
@@ -162,9 +165,9 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
 
     resetOpeningForm() {
         this.newOpeningForm = this.fb.group({
-            newOpeningStartDate: [""],
-            newOpeningEndDate: [""],
-            newOpeningType: [""]
+            newOpeningStartDate: ["", customDateValidator],
+            newOpeningEndDate: ["", customDateValidator],
+            newOpeningType: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
         });
         this.toggleOpenings();
     }
@@ -185,7 +188,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             };
 
             const contacts: IContacts = this.getFormValues(this.contactForm);
-            const op = this.getFormArrayValues(<FormArray>this.contactForm.controls.openingTime);
+            const op = this.getFormArrayValues(<FormArray>this.contactForm.get('openingTime'));
             const openings = op.map(val => {
                 if (val) {
                     if (val.startDate) {
@@ -225,13 +228,13 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             for (const prop in this.data.contacts) {
                 if (this.data.contacts.hasOwnProperty(prop)) {
                     if (this.contactForm.contains(prop)) {
-                        this.contactForm.controls[prop].setValue(this.data.contacts[prop]);
+                        this.contactForm.get(prop).setValue(this.data.contacts[prop]);
                     }
                 }
             }
         }
         if (this.data.openingTime) {
-            const control = <FormArray>this.contactForm.controls['openingTime'];
+            const control = <FormArray>this.contactForm.get('openingTime');
             for (const opening of this.data.openingTime) {
                 control.push(this.initOpening(opening));
             }

@@ -3,11 +3,11 @@
     <div style="display: flex;flex-direction:row">
         <div class="bc-revision-catastal">
             <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 1860" formControlName="buildYear"
-                title="Anno di costruzione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                title="Anno di costruzione" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
             <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 1982 (più recente)" formControlName="rebuildYear"
-                title="Anno di ristrutturazione" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                title="Anno di ristrutturazione" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display: flex;flex-direction:row">
@@ -52,8 +52,7 @@
                 [displayError]="displayError"></bc-select-input>
         </div>
         <div class="bc-revision-catastal">
-            <bc-text-input placeholder="KW come da targa impianto. Es: 7500" formControlName="energy" validator="numberValidator" title="Quantità (KW)"
-                [displayError]="displayError"></bc-text-input>
+            <bc-text-input placeholder="KW come da targa impianto. Es: 7500" formControlName="energy" title="Quantità (KW)" [displayError]="displayError"></bc-text-input>
         </div>
         <div class="bc-revision-catastal">
             <bc-select-input defaultContent="Selezionare tipo riscaldamento" enumName="Heating_Type" formControlName="heating_type" [displayError]="displayError"

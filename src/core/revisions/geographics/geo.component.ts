@@ -21,7 +21,8 @@ import {
     FormGroup,
     FormBuilder,
     FormControl,
-    FormArray
+    FormArray,
+    Validators
 } from '@angular/forms';
 import {
     ShelterService
@@ -41,6 +42,7 @@ import {
 import {
     RevisionBase
 } from '../shared/revision_base';
+import { BcBaseInput, CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 
 @Component({
     moduleId: module.id,
@@ -63,27 +65,27 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
         revisionService: BcRevisionsService) {
         super(shelterService, shared, revisionService, _route, router, authService);
         this.geoForm = fb.group({
-            region: [""],
-            province: [""],
-            municipality: [""],
-            locality: [""],
+            region: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            province: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            municipality: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            locality: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
             ownerRegion: [""],
-            regional_commission: [""],
-            authorityJurisdiction: [""],
-            altitude: [""],
-            latitude: [""],
-            longitude: [""],
-            massif: [""],
-            valley: [""],
-            ski_area: [""],
-            protected_area: [""],
-            site: [""],
+            regional_commission: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            authorityJurisdiction: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            altitude: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            latitude: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            longitude: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            massif: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            valley: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            ski_area: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            protected_area: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            site: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
             tags: fb.array([])
         });
 
         this.newTagForm = fb.group({
-            newKey: ["Informazione"],
-            newValue: ["Valore"]
+            newKey: ["Informazione", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            newValue: ["Valore", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
         });
 
         this.formValidSub = this.geoForm.statusChanges.subscribe((value) => {
@@ -123,28 +125,28 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
     }
 
     addTag(key: String, value: String) {
-        const control = <FormArray>this.geoForm.controls['tags'];
+        const control = <FormArray>this.geoForm.get('tags');
         control.push(this.initTag(key, value));
     }
 
     removeTag(index) {
         this.tagChange = true;
-        const control = <FormArray>this.geoForm.controls['tags'];
+        const control = <FormArray>this.geoForm.get('tags');
         control.removeAt(index);
     }
 
     addNewTag() {
         this.tagChange = true;
-        if (this.newTagForm.controls['newKey'].valid && this.newTagForm.controls['newValue'].valid) {
-            const control = <FormArray>this.geoForm.controls['tags'];
+        if (this.newTagForm.get('newKey').valid && this.newTagForm.get('newValue').valid) {
+            const control = <FormArray>this.geoForm.get('tags');
             for (const c of control.controls) {
-                if (c.value.key.toLowerCase().indexOf(this.newTagForm.controls["newKey"].value.toLowerCase()) > -1) {
+                if (c.value.key.toLowerCase().indexOf(this.newTagForm.get("newKey").value.toLowerCase()) > -1) {
                     this.invalid = true;
                     return;
                 }
             }
             this.invalid = false;
-            control.push(this.initTag(this.newTagForm.controls["newKey"].value, this.newTagForm.controls["newValue"].value));
+            control.push(this.initTag(this.newTagForm.get("newKey").value, this.newTagForm.get("newValue").value));
             this.resetTagForm();
         } else {
             this.invalid = true;
@@ -153,16 +155,16 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
 
     resetTagForm() {
         this.newTagForm = this.fb.group({
-            newKey: ["Informazione"],
-            newValue: ["Valore"]
+            newKey: ["Informazione", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            newValue: ["Valore", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
         });
         this.toggleTag();
     }
 
     initTag(key: String, value: String) {
         return this.fb.group({
-            key: [key],
-            value: [value]
+            key: [key, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            value: [value, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
         });
     }
 
@@ -177,7 +179,7 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
             };
             const location: ILocation = <ILocation>this.getFormValues(this.geoForm);
 
-            const a: any[] = this.getFormArrayValues(<FormArray>this.geoForm.controls.tags);
+            const a: any[] = this.getFormArrayValues(<FormArray>this.geoForm.get('tags'));
             const tags: ITag[] = a.filter(val => val.key && val.value);
 
             shelter.geoData.tags = tags as [ITag];
@@ -206,8 +208,8 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
                 for (const prop in this.data.location) {
                     if (this.data.location.hasOwnProperty(prop)) {
                         if (this.geoForm.contains(prop)) {
-                            this.geoForm.controls[prop].setValue(this.data.location[prop]);
-                            this.geoForm.controls[prop].markAsTouched();
+                            this.geoForm.get(prop).setValue(this.data.location[prop]);
+                            this.geoForm.get(prop).markAsTouched();
                         }
                     }
                 }
@@ -229,8 +231,8 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
                 for (const prop in this.data.location) {
                     if (this.data.location.hasOwnProperty(prop)) {
                         if (this.geoForm.contains(prop)) {
-                            this.geoForm.controls[prop].setValue(this.data.location[prop]);
-                            this.geoForm.controls[prop].markAsTouched();
+                            this.geoForm.get(prop).setValue(this.data.location[prop]);
+                            this.geoForm.get(prop).markAsTouched();
                         }
                     }
                 }

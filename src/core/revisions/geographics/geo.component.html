@@ -22,7 +22,7 @@
         </div>
         <div class="bc-revision-geographic-input">
             <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 3611 (solo numeri)" formControlName="altitude"
-                title="Quota (m slm)" validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                title="Quota (m slm)" [displayError]="displayError"></bc-text-input>
         </div>
     </div>
     <div style="display:flex;flex-direction:row">
@@ -34,11 +34,11 @@
             <div style="display:flex;flex-direction:row">
                 <div>
                     <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 45.675" formControlName="latitude"
-                        validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                        [displayError]="displayError"></bc-text-input>
                 </div>
                 <div>
                     <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 6.986" formControlName="longitude"
-                        validator="numberValidator" [displayError]="displayError"></bc-text-input>
+                        [displayError]="displayError"></bc-text-input>
                 </div>
             </div>
         </div>

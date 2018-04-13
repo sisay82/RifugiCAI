@@ -1,16 +1,17 @@
 import {
-  Component, Input, OnInit, OnDestroy, Directive
+  Component, Input, OnDestroy, Directive
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IShelter, IFile, IEconomy } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { RevisionBase } from '../shared/revision_base';
+import { CUSTOM_PATTERN_VALIDATORS, createFileNameValidator, FILE_SIZE_LIMIT, createfileSizeValidator } from '../../inputs/input_base';
 
 @Directive({
   selector: "div[disabled]",
@@ -46,6 +47,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
   private mapFormValidSub: Subscription;
   private invoicesFormValidSub: Subscription;
   private invoiceFormValidSub: Subscription;
+  private invoiceTypeChangesSub: Subscription[];
   private invalidYears: Number[] = [];
   hiddenTag = true;
   uploading = false;
@@ -62,15 +64,15 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
     super(shelterService, shared, revisionService, _route, router, authService);
     this.MENU_SECTION = Enums.MenuSection.document;
     this.newDocForm = fb.group({
-      file: []
+      file: ["", createfileSizeValidator(0, FILE_SIZE_LIMIT)]
     });
 
     this.newMapForm = fb.group({
-      file: []
+      file: ["", createfileSizeValidator(0, FILE_SIZE_LIMIT)]
     });
 
     this.newInvoiceForm = fb.group({
-      file: []
+      file: ["", [createFileNameValidator(this.invoiceFormatRegExp), createfileSizeValidator(0, FILE_SIZE_LIMIT)]]
     });
 
     this.invoicesForm = fb.group({
@@ -126,7 +128,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
   }
 
   getInvoicesFormControls(controlName: string, index?) {
-    const control = (<FormArray>this.invoicesForm.controls[controlName]);
+    const control = (<FormArray>this.invoicesForm.get(controlName));
     if (index) {
       return control.at(index);
     } else {
@@ -164,7 +166,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
 
   checkDocName(name) {
     return !(name && this.docs.concat(this.maps).find(obj => obj && obj.name == name) &&
-      !(<FormArray>this.invoicesForm.controls.files).controls.find(contr => contr.value && contr.value.name == name))
+      !(<FormArray>this.invoicesForm.get('files')).controls.find(contr => contr.value && contr.value.name == name))
   }
 
   toBuffer(ab) {
@@ -209,13 +211,13 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
   }
 
   removeInvoice(index, id) {
-    if (!(<FormArray>this.invoicesForm.controls.files).at(index).disabled) {
+    if (!(<FormArray>this.invoicesForm.get('files')).at(index).disabled) {
       this.commitToFather({ _id: id, type: Enums.Files.File_Type.invoice }, true);
       const removeFileSub = this.shelterService.removeFile(id, this._id).subscribe(value => {
         if (!value) {
           console.log(value);
         } else {
-          (<FormArray>this.invoicesForm.controls.files).removeAt(index);
+          (<FormArray>this.invoicesForm.get('files')).removeAt(index);
         }
         if (removeFileSub) {
           removeFileSub.unsubscribe();
@@ -232,19 +234,41 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
   }
 
   initInvoice(file: IFile) {
-    return this.fb.group({
+    const invoice = this.fb.group({
       _id: [file._id],
       contentType: [file.contentType],
       type: [file.type],
       description: [file.description],
       name: [file.name],
       size: [file.size],
-      invoice_type: [file.invoice_type || ""],
-      invoice_tax: [file.invoice_tax || ""],
-      invoice_year: [file.invoice_year || ""],
-      contribution_type: [file.contribution_type || ""],
-      value: [file.value || ""]
+      invoice_type: [file.invoice_type || "", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]],
+      invoice_tax: [file.invoice_tax || "", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]],
+      invoice_year: [file.invoice_year || "", Validators.required],
+      contribution_type: [file.contribution_type || "", Validators.required],
+      value: [file.value || "", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]]
     });
+
+    invoice.get('invoice_type').valueChanges.subscribe((val: any) => {
+      if (val === 'Attività') {
+        invoice.get('contribution_type').setValidators([
+          Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)
+        ]);
+        if (!invoice.disabled) {
+          invoice.get('contribution_type').enable();
+        }
+      } else {
+        invoice.get('contribution_type').setValidators(null);
+        invoice.get('contribution_type').setValue(null);
+        invoice.get('contribution_type').disable();
+      }
+    });
+
+    if (invoice.get('invoice_type').value !== 'Attività') {
+      invoice.get('contribution_type').setValidators(null);
+      invoice.get('contribution_type').disable();
+    }
+
+    return invoice;
   }
 
   updateInvalidYearsInvoice(confirmedEconomies?: IEconomy[]) {
@@ -269,7 +293,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
 
   initFile(file, type) {
     if (type === Enums.Files.File_Type.invoice) {
-      (<FormArray>this.invoicesForm.controls.files).push(this.initInvoice(file));
+      (<FormArray>this.invoicesForm.get('files')).push(this.initInvoice(file));
     } else if (type === Enums.Files.File_Type.doc) {
       this.docs.push(file);
     } else if (type === Enums.Files.File_Type.map) {
@@ -288,11 +312,11 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
   }
 
   addFile(form: FormGroup, type: Enums.Files.File_Type) {
-    const f = <File>(<FormGroup>(form.controls.file)).value;
+    const f = <File>(<FormGroup>(form.get('file'))).value;
     if (f && form.valid && this.checkDocName(f.name)) {
       this.uploading = true;
       this.setDisplayError(false);
-      const fi = <File>(<FormGroup>(form.controls.file)).value;
+      const fi = <File>(<FormGroup>(form.get('file'))).value;
       const file: IFile = {
         name: f.name,
         size: f.size,
@@ -347,7 +371,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
       this.setDisplayError(false);
       let i = 0;
       if (this.invoicesForm.dirty) {
-        const filesToUpdate = (<FormArray>this.invoicesForm.controls.files).controls.filter(obj => obj.dirty);
+        const filesToUpdate = (<FormArray>this.invoicesForm.get('files')).controls.filter(obj => obj.dirty);
         if (filesToUpdate.length > 0) {
           for (const file of filesToUpdate) {
             if (file.dirty && this.invalidYears.indexOf(file.value.year) === -1) {
@@ -356,11 +380,11 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
                 name: file.value.name,
                 size: file.value.size,
                 type: file.value.type,
-                value: Number(this.getControlValue(<FormGroup>(<FormGroup>file).controls.value)),
+                value: Number(this.getControlValue(<FormGroup>(<FormGroup>file).get('value'))),
                 contentType: file.value.contentType,
-                description: this.getControlValue(<FormGroup>(<FormGroup>file).controls.description),
+                description: this.getControlValue(<FormGroup>(<FormGroup>file).get('description')),
                 shelterId: this._id,
-                invoice_tax: Number(this.getControlValue(<FormGroup>(<FormGroup>file).controls.invoice_tax)),
+                invoice_tax: Number(this.getControlValue(<FormGroup>(<FormGroup>file).get('invoice_tax'))),
                 invoice_type: file.value.invoice_type,
                 invoice_year: Number(file.value.invoice_year),
                 contribution_type: file.value.contribution_type
@@ -398,16 +422,6 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
     }
   }
 
-  checkRequired(index) {
-    const val = (<FormArray>this.invoicesForm.controls.files).controls[index].value.invoice_type === "Attività"
-    if (val) {
-      (<FormGroup>(<FormArray>this.invoicesForm.controls.files).controls[index]).controls.contribution_type.enable();
-    } else {
-      (<FormGroup>(<FormArray>this.invoicesForm.controls.files).controls[index]).controls.contribution_type.disable();
-    }
-    return val;
-  }
-
   downloadFile(id) {
     if (id && this.initialData.findIndex(obj => obj._id == id) > -1) {
       const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
@@ -428,6 +442,9 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.invoiceTypeChangesSub) {
+      this.invoiceTypeChangesSub.forEach(sub => sub.unsubscribe());
+    }
     if (!this.disableSave) {
       this.save(false);
     }
@@ -476,7 +493,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
           if (file.invoice_confirmed) {
             control.disable();
           }
-          (<FormArray>this.invoicesForm.controls.files).push(control);
+          (<FormArray>this.invoicesForm.get('files')).push(control);
         }
       }
     }

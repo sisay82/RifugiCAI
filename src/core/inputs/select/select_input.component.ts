@@ -8,17 +8,22 @@ import {
 import {
     NG_VALUE_ACCESSOR,
     FormControl,
-    NG_VALIDATORS
+    NG_VALIDATORS,
+    NG_ASYNC_VALIDATORS
 } from '@angular/forms';
 import {
     Subscription
 } from 'rxjs/Subscription';
+import { Observer } from 'rxjs/Observer';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
 import {
     Enums
 } from '../../../app/shared/types/enums';
 import {
     BcBaseInput
 } from '../input_base';
+import { ValidationError } from 'mongoose';
 
 @Directive({
     selector: 'select[bc-enable-error]',
@@ -65,8 +70,8 @@ export class BcSelectInput extends BcBaseInput {
     }
 
     getEnumNames() {
-        if (this.isDisabled) {
-            return []
+        if (this.isDisabled && this.value) {
+            return [this.value];
         } else {
             if (this.enumName) {
                 const names: any[] = [];
@@ -108,5 +113,9 @@ export class BcSelectInput extends BcBaseInput {
             }
         }
         this.updateValue(value);
+    }
+
+    protected validatorFn(c: FormControl) {
+        return null;
     }
 }

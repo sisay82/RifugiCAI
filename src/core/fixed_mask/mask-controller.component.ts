@@ -8,9 +8,9 @@ import { BcSharedService } from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { ShelterService } from '../../app/shelter/shelter.service'
 import { BcAuthService } from '../../app/shared/auth.service';
-import { validators } from '../inputs/input_base';
+import { CUSTOM_PATTERN_VALIDATORS } from '../inputs/input_base';
 
-const validObjectIDRegExp = validators.objectID;
+const validObjectIDRegExp = CUSTOM_PATTERN_VALIDATORS.objectID;
 
 @Component({
   moduleId: module.id,

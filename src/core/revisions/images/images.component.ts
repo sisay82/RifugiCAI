@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IShelter, IFile } from '../../../app/shared/types/interfaces';
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { BcRevisionsService } from '../revisions.service';
@@ -11,6 +11,7 @@ import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { RevisionBase } from '../shared/revision_base';
+import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 
 const maxImages: Number = 10;
 
@@ -39,7 +40,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
     this.MENU_SECTION = Enums.MenuSection.document;
     this.newDocForm = fb.group({
       file: [],
-      description: [""]
+      description: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
     });
 
     this.docsForm = fb.group({
@@ -79,7 +80,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
   }
 
   getFormControls(controlName) {
-    return (<FormGroup>this.docsForm.controls[controlName]).controls;
+    return (<FormGroup>this.docsForm.get(controlName)).controls;
   }
 
   checkValidForm() {
@@ -93,7 +94,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
       contentType: [file.contentType],
       name: [file.name],
       size: [file.size],
-      description: [file.description]
+      description: [file.description, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
     });
   }
 
@@ -124,8 +125,8 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
       if (!value) {
         console.log(value);
       } else {
-        (<FormArray>this.docsForm.controls.files).controls
-          .splice((<FormArray>this.docsForm.controls.files).controls
+        (<FormArray>this.docsForm.get('files')).controls
+          .splice((<FormArray>this.docsForm.get('files')).controls
             .findIndex(f => f.value.id == id), 1);
       }
       if (removeFileSub) {
@@ -139,17 +140,17 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
   }
 
   addDoc() {
-    if (this.newDocForm.valid && (<FormArray>this.docsForm.controls.files).controls.length < maxImages) {
+    if (this.newDocForm.valid && (<FormArray>this.docsForm.get('files')).controls.length < maxImages) {
       this.uploading = true;
       this.displayError = false;
-      const f = <File>(<FormGroup>(this.newDocForm.controls.file)).value;
+      const f = <File>(<FormGroup>(this.newDocForm.get('file'))).value;
       const file: IFile = {
         name: f.name,
         size: f.size,
         uploadDate: new Date(Date.now()),
         contentType: f.type,
         shelterId: this._id,
-        description: this.getControlValue(<FormGroup>(<FormGroup>this.newDocForm).controls.description),
+        description: this.getControlValue(<FormGroup>(<FormGroup>this.newDocForm).get('description')),
         type: Enums.Files.File_Type.image
       }
       const fileReader = new FileReader();
@@ -159,7 +160,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
           if (id) {
             const f = file;
             f._id = id;
-            (<FormArray>this.docsForm.controls.files).push(this.initFile(f));
+            (<FormArray>this.docsForm.get('files')).push(this.initFile(f));
             this.commitToFather(f);
           }
           this.uploading = false;
@@ -187,17 +188,17 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
     if (!confirm || this.docsForm.valid) {
       this.displayError = false;
       let i = 0;
-      for (const file of (<FormArray>this.docsForm.controls.files).controls) {
+      for (const file of (<FormArray>this.docsForm.get('files')).controls) {
         if (file.dirty) {
           const updFile: IFile = {
             _id: file.value.id,
             shelterId: this._id,
-            description: this.getControlValue(<FormGroup>(<FormGroup>file).controls.description)
+            description: this.getControlValue(<FormGroup>(<FormGroup>file).get('description'))
           }
           const updateSub = this.shelterService.updateFile(updFile).subscribe((val) => {
             if (val) {
               i++;
-              if ((<FormArray>this.docsForm.controls.files).controls.length === i && confirm) {
+              if ((<FormArray>this.docsForm.get('files')).controls.length === i && confirm) {
                 this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.images);
               }
             }
@@ -218,7 +219,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
           this.revisionService.onChildSaveFile(f);
         } else {
           i++;
-          if ((<FormArray>this.docsForm.controls.files).controls.length === i && confirm) {
+          if ((<FormArray>this.docsForm.get('files')).controls.length === i && confirm) {
             this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.images);
           }
         }
@@ -284,7 +285,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
 
   initDocs(files: IFile[]) {
     for (const file of files) {
-      (<FormArray>this.docsForm.controls.files).push(this.initFile(file));
+      (<FormArray>this.docsForm.get('files')).push(this.initFile(file));
     }
   }
 

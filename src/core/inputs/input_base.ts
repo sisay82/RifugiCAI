@@ -1,14 +1,26 @@
 import {
-    Input
+    Input, Inject, Optional, Host, SkipSelf, OnInit
 } from '@angular/core';
 import {
     ControlValueAccessor,
-    FormControl
+    FormControl,
+    ValidatorFn,
+    AsyncValidatorFn,
+    NG_ASYNC_VALIDATORS,
+    NG_VALIDATORS,
+    AbstractControl,
+    ControlContainer
 } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { ValidationError } from 'mongoose';
 
-function validateDate(value) {
-    if (value) {
-        const date = parseDate(value);
+function dateValidator(value) {
+    return customDateValidator(<any>{ value: value });
+}
+
+export function customDateValidator(c: FormControl) {
+    if (c.value) {
+        const date = parseDate(c.value);
         if (date != null && !isNaN(date.valueOf())) {
             return null;
         } else {
@@ -20,7 +32,7 @@ function validateDate(value) {
     return null;
 }
 
-function customDateParser(val, month ? , day ? ) {
+function customDateParser(val, month?, day?) {
     if (val) {
         let retVal: Date;
         if (typeof val === "number") {
@@ -92,11 +104,31 @@ export function trimYear(input: Date): string {
     }
 }
 
+export function createLengthValidator(minLength?, maxLength?, exceptLength?) {
+    return (control: FormControl) => {
+        const val = (control == null || control.value == null ||
+            (minLength == null || control.value.length >= minLength)
+            && (maxLength == null || control.value.length <= maxLength)
+            && (exceptLength == null || control.value.length !== exceptLength));
+        return val ? null : { lenghtError: true };
+    };
+}
+
+export function createValueValidator(minValue?, maxValue?, exceptValue?) {
+    return (control: FormControl) => {
+        const val = (control == null || control.value == null ||
+            (minValue == null || control.value >= minValue)
+            && (maxValue == null || control.value <= maxValue)
+            && (exceptValue == null || control.value != exceptValue));
+        return val ? null : { sizeError: true };
+    };
+}
+
 export function createValidationFunction(validator: string) {
     if (validator.indexOf("validateDate") > -1) {
-        return validateDate;
+        return dateValidator;
     } else {
-        const regExp: RegExp = < RegExp > validators[validator];
+        const regExp: RegExp = <RegExp>CUSTOM_PATTERN_VALIDATORS[validator];
         return function validationFunction(value) {
             return regExp.test(value) ? null : {
                 valid: false
@@ -105,43 +137,140 @@ export function createValidationFunction(validator: string) {
     }
 }
 
-export const validators = {
-    stringValidator: < RegExp > /^([A-Za-z0-99À-ÿ� ,.:/';+!?|)(_-]*)*$/,
-    telephoneValidator: < RegExp > /^([+]([0-9][0-9][\s])?)?([0-9]*(\s)?[0-9]*)$/,
-    mailValidator: < RegExp > /(^$|^.*@.*\..*$)/,
-    numberValidator: < RegExp > /^(-)?[0-9]*([.][0-9]*)?$/,
-    urlValidator: < RegExp > /(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
-    dateWithoutYearValidator: < RegExp > /^[0-9]{1,2}(-|\/)?[0-9]{1,2}$/,
-    objectID: < RegExp > /^[0-9a-fA-F]{24}$/
+export const CUSTOM_PATTERN_VALIDATORS = {
+    stringValidator: <RegExp>/^([A-Za-z0-99À-ÿ� ,.:/';+!?|)(_-]*)*$/,
+    telephoneValidator: <RegExp>/^([+]([0-9][0-9][\s])?)?([0-9]*(\s)?[0-9]*)$/,
+    mailValidator: <RegExp>/(^$|^.*@.*\..*$)/,
+    numberValidator: <RegExp>/^(-)?[0-9]*([.][0-9]*)?$/,
+    urlValidator: <RegExp>/(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+    dateWithoutYearValidator: <RegExp>/^[0-9]{1,2}(-|\/)?[0-9]{1,2}$/,
+    objectID: <RegExp>/^[0-9a-fA-F]{24}$/
 }
 
-export abstract class BcBaseInput implements ControlValueAccessor {
+export function createFileNameValidator(pattern: RegExp) {
+    return (c: FormControl) => {
+        if (pattern && c.value && c.value.name) {
+            if (c.value.name.indexOf(".") > -1) {
+                const parts = c.value.name.split(".");
+                let name = "";
+                for (let i = 0; i < (parts.length - 1); i++) {
+                    name += parts[i] + ".";
+                }
+                name = name.substr(0, name.length - 1);
+                return pattern.test(name) ? null : { fileName: true };
+            } else {
+                return { fileName: true };
+            }
+        } else {
+            return null;
+        }
+    }
+}
+
+export function createfileSizeValidator(minValue?, maxValue?, exceptValue?) {
+    const validator = createValueValidator(minValue, maxValue, exceptValue);
+    return (c: FormControl) => {
+        if (c && c.value) {
+            return validator(<any>{ value: c.value.size });
+        } else {
+            return null;
+        }
+    }
+}
+
+export const FILE_SIZE_LIMIT = 1024 * 1024 * 16;
+
+function hasRequiredValidator(control: AbstractControl, newValidators?: ValidatorFn | ValidatorFn[]): boolean {
+    if (newValidators !== undefined) {
+        if (newValidators !== null) {
+            if (Array.isArray(newValidators)) {
+                const errors = newValidators.map(val => val({} as AbstractControl));
+                if (errors.find(err => err.required)) {
+                    return true;
+                }
+            } else {
+                const errors = newValidators({} as AbstractControl);
+                if (errors && errors.required) {
+                    return true;
+                }
+            }
+        }
+    } else if (control.validator) {
+        const errors = control.validator({} as AbstractControl);
+        if (errors && errors.required) {
+            return true;
+        }
+    }
+    return false;
+}
+
+export abstract class BcBaseInput implements ControlValueAccessor, OnInit {
     invalid = false;
+    @Input() formControlName;
     @Input() value;
     @Input() enableBlock = false;
     @Input() title = "";
     isDisabled = false;
     private _placeholder;
-    @Input() required = false;
+    /*@Input() */required = false;
     @Input() defaultContent = "";
     @Input() noName = false;
     @Input() errorMessage: string;
     _displayError = false;
+    protected self: BcBaseInput;
+    protected control: AbstractControl;
+    propagateChange = (_: any) => { };
 
-    propagateChange = (_: any) => {};
+    constructor(@Optional() @Host() @SkipSelf()
+    private controlContainer: ControlContainer) { }
+
+    updateValidators(control: AbstractControl, newValidators?: ValidatorFn | ValidatorFn[]) {
+        this.required = hasRequiredValidator(control, newValidators);
+        control.updateValueAndValidity()
+    }
+
+    ngOnInit() {
+        if (this.controlContainer) {
+            if (this.formControlName) {
+                this.control = <AbstractControl>this.controlContainer.control.get(this.formControlName);
+                this.control.statusChanges.subscribe(status => {
+                    if (status === 'INVALID') {
+                        if (this.displayError) {
+                            this.invalid = true;
+                        }
+                    } else if (status === 'VALID') {
+                        this.invalid = false;
+                    }
+                });
+
+                const originalFn = this.control.setValidators;
+                this.control.setValidators = (newValidators: ValidatorFn | ValidatorFn[]) => {
+                    const result = originalFn.apply(this.control, newValidators);
+                    this.updateValidators(this.control, newValidators);
+                    return result;
+
+                }
+                this.updateValidators(this.control);
+            } else {
+                console.warn('Missing FormControlName directive from host element of the component');
+            }
+        } else {
+            console.warn('Can\'t find parent FormGroup directive');
+        }
+    }
 
     @Input() set displayError(enable: boolean) {
         this._displayError = enable;
-        if (this.required && this.value === "") {
-            if (enable) {
-                this.invalid = true;
-            }
+        let val;
+        if (this.control && this.control.validator) {
+            val = this.control.validator(<any>{ value: this.value });
         } else {
-            this.invalid = false;
+            val = this.validatorFn(<any>{ value: this.value });
         }
-        this.validate( < FormControl > {
-            value: this.value
-        });
+        if (val != null && enable) {
+            this.invalid = true;
+
+        }
     }
 
     get displayError() {
@@ -174,9 +303,9 @@ export abstract class BcBaseInput implements ControlValueAccessor {
         }
     }
 
-    registerOnTouched(fn: any): void {}
+    registerOnTouched(fn: any): void { }
 
-    setDisabledState ? (isDisabled: boolean): void {
+    setDisabledState?(isDisabled: boolean): void {
         this.isDisabled = isDisabled;
     }
 
@@ -193,11 +322,10 @@ export abstract class BcBaseInput implements ControlValueAccessor {
         }
     }
 
-    protected validate(c: FormControl): null | {
-        valid ?: Boolean,
-        err ?: String
-    } {
-        this.updateValue(c.value)
-        return null;
+    protected validate(c: FormControl) {
+        // this.updateValue(c.value);
+        return this.validatorFn(c);
     }
+
+    protected abstract validatorFn(c: FormControl);
 }

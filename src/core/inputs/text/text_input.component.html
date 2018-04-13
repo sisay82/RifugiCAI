@@ -1,6 +1,6 @@
 <div class="bc-text-input-content">
     <div class="bc-body bc-text-input-title">{{title}}
-        <div *ngIf="required" class="bc-text-input-required">*</div>
+        <div *ngIf="isRequired()" class="bc-text-input-required">*</div>
     </div>
     <div>
         <textarea [rows]="getLines()" [placeholder]="placeholder" [bc-enable-error]="invalid" [bc-single-line]="isSingleLine()" [disabled]="isDisabled" 

@@ -6,11 +6,19 @@ import {
 } from '@angular/core';
 import {
     NG_VALUE_ACCESSOR,
-    FormControl
+    FormControl,
+    NG_VALIDATORS,
+    NG_ASYNC_VALIDATORS,
+    FormGroup
 } from '@angular/forms';
+import { Observer } from 'rxjs/Observer';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+
 import {
     BcBaseInput
 } from '../input_base';
+import { ValidationError } from 'mongoose';
 
 @Component({
     moduleId: module.id,
@@ -29,7 +37,8 @@ import {
     encapsulation: ViewEncapsulation.None
 })
 export class BcCheckboxInput extends BcBaseInput {
-    isChecked(value ? ) {
+
+    isChecked(value?) {
         const val = ((value === undefined || value === null) ? this.value : value) || false;
         if (val) {
             if (val === "true" || val === true) {
@@ -43,5 +52,9 @@ export class BcCheckboxInput extends BcBaseInput {
 
     onChange(event: any) {
         this.updateValue(this.isChecked(event.target.checked));
+    }
+
+    protected validatorFn(c: FormControl) {
+        return null;
     }
 }

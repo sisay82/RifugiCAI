@@ -4,13 +4,14 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { IDrain, IEnergy, ICatastal, IShelter } from '../../../app/shared/types/interfaces'
 import { Enums } from '../../../app/shared/types/enums'
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
 import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { RevisionBase } from '../shared/revision_base';
+import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 
 function validateDate(c: FormControl) {
     if (c.value) {
@@ -48,22 +49,22 @@ export class BcCatastalRevisionComponent extends RevisionBase implements OnDestr
         super(shelterService, shared, revisionService, _route, router, authService);
         this.catastalForm = fb.group({
             buildingRegulation: [""],
-            buildYear: [""],
-            rebuildYear: [""],
-            class: [""],
-            code: [""],
+            buildYear: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            rebuildYear: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
+            class: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            code: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
             typologicalCoherence: [""],
             matericalCoherence: [""],
             cityPlanRegulation: [""],
-            mainBody: [""],
-            secondaryBody: [""],
+            mainBody: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
+            secondaryBody: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
             fireRegulation: [""],
             ISO14001: [""]
         });
 
         this.energyForm = fb.group({
             class: [""],
-            energy: [""],
+            energy: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
             greenCertification: [""],
             powerGenerator: [""],
             photovoltaic: [""],
@@ -180,7 +181,7 @@ export class BcCatastalRevisionComponent extends RevisionBase implements OnDestr
             for (const prop in this.data[section]) {
                 if (this.data[section].hasOwnProperty(prop)) {
                     if (form.contains(prop)) {
-                        form.controls[prop].setValue(this.data[section][prop]);
+                        form.get(prop).setValue(this.data[section][prop]);
                     }
                 }
             }

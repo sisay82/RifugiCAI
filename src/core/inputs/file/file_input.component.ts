@@ -8,17 +8,25 @@ import {
 import {
     NG_VALUE_ACCESSOR,
     FormControl,
-    NG_VALIDATORS
+    NG_VALIDATORS,
+    AbstractControl,
+    ValidatorFn,
+    AsyncValidatorFn,
+    NG_ASYNC_VALIDATORS
 } from '@angular/forms';
 import {
     Subscription
 } from 'rxjs/Subscription';
+import { Observer } from 'rxjs/Observer';
+import { Observable } from 'rxjs/Observable';
 import {
     Enums
 } from '../../../app/shared/types/enums';
 import {
     BcBaseInput
 } from '../input_base';
+import { AbstractControlOptions } from '@angular/forms/src/model';
+import { ValidationError } from 'mongoose';
 
 @Directive({
     selector: 'input[bc-enable-error]',
@@ -51,8 +59,8 @@ export class BcFileInputErrorStyler {
     encapsulation: ViewEncapsulation.None
 })
 export class BcFileInput extends BcBaseInput {
-    @Input() validator: RegExp;
-    @Input() sizeLimit: number = 1024 * 1024 * 16;
+    /*@Input() validator: RegExp;*/
+    /*@Input() sizeLimit: number = 1024 * 1024 * 16;*/
     @Input() optionalMessage: string;
     messageBlock: string;
     _contentType: String;
@@ -92,7 +100,7 @@ export class BcFileInput extends BcBaseInput {
         }
     }
 
-    testName(value: string) {
+    /*testName(value: string) {
         if (this.validator) {
             if (value.indexOf(".") > -1) {
                 const parts = value.split(".");
@@ -108,27 +116,30 @@ export class BcFileInput extends BcBaseInput {
         } else {
             return true;
         }
-    }
+    }*/
 
-    validate(c: FormControl): null | { valid?: Boolean, err?: String } {
+    validatorFn(c: FormControl) {
         if (c.value) {
             if (
-                (this.testName(c.value.name)) &&
-                (c.value.size > 0) &&
-                (this.checkExtension(this.getExtension(c.value.name)))) {
-                if (c.value.size > this.sizeLimit) {
+                // (this.testName(c.value.name)) &&
+                // (c.value.size > 0) &&
+                (this.checkExtension(this.getExtension(c.value.name)))
+            ) {
+                /*if (c.value.size > this.sizeLimit) {
                     if (this.displayError) {
                         this.invalid = true;
                     }
-                    this.messageBlock = this.optionalMessage;
-                    return {
-                        err: "Size over limit"
-                    };
+                this.messageBlock = this.optionalMessage;
+                return {
+                    extension: true
+                };
                 } else {
                     this.setValue(c.value);
                     this.invalid = false;
                     return null;
-                }
+                }*/
+                this.invalid = false;
+                return null;
             } else {
                 if (this.displayError) {
                     this.invalid = true;
