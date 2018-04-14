@@ -24,7 +24,6 @@ import {
     trimYear,
     createValidationFunction
 } from '../input_base';
-import { Observer } from 'rxjs/Observer';
 import { ValidationError } from 'mongoose';
 
 @Directive({

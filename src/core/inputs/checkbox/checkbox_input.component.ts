@@ -11,7 +11,6 @@ import {
     NG_ASYNC_VALIDATORS,
     FormGroup
 } from '@angular/forms';
-import { Observer } from 'rxjs/Observer';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 

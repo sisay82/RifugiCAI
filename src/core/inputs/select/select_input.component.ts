@@ -14,7 +14,6 @@ import {
 import {
     Subscription
 } from 'rxjs/Subscription';
-import { Observer } from 'rxjs/Observer';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import {

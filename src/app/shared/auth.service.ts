@@ -12,8 +12,9 @@ import {
 } from '@angular/http';
 import {
     Observable
-} from 'rxjs/Observable';
+} from 'rxjs/Rx';
 import "rxjs/add/observable/of";
+import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {
@@ -32,18 +33,17 @@ import Revision = Auth_Permissions.Revision;
 import {
     getAllDebugNodes
 } from '@angular/core/src/debug/debug_node';
-import 'rxjs/add/operator/map'
 
 function getRegion(code: String): String {
-    return code.substr(2, 2);
+    return code ? String(code).substr(2, 2) : code;
 }
 
 function getSection(code: String): String {
-    return code.substr(4, 3);
+    return code ? String(code).substr(4, 3) : code;
 }
 
 function getArea(code: String): String {
-    return code.substr(2, 2);
+    return code ? String(code).substr(2, 2) : code;
 }
 
 function getRegionsArea(area): Auth_Permissions.Region_Code[] {
@@ -166,12 +166,8 @@ export class BcAuthService {
     }
 
     isCentralUser(): Observable<boolean> {
-        return Observable.create(observer => {
-            this.getUserProfile().subscribe(profile => {
-                observer.next(profile && isCentralRole(profile.role));
-                observer.complete();
-            });
-        });
+        return this.getUserProfile()
+            .map(profile => profile && isCentralRole(profile.role));
     }
 
     getRegions(role, code): string[] {
@@ -224,7 +220,7 @@ export class BcAuthService {
 
     revisionCheck(permission?) {
         return permission == Auth_Permissions.User_Type.superUser
-        || (Revision.DetailRevisionPermission.find(obj => obj == permission) != null);
+            || (Revision.DetailRevisionPermission.find(obj => obj == permission) != null);
     }
 
     private updateProfile(): Observable<any> {
@@ -279,63 +275,43 @@ export class BcAuthService {
         if (this.localPermissions) {
             return Observable.of(this.localPermissions);
         } else {
-            const permissions: any[] = [];
-            return Observable.create(observer => {
-                const getSectionCodeSub = this.getUserProfile().subscribe(profile => {
-                    const getShelIdSub = this.shelId$.subscribe(shelId => {
-                        if (this.checkEnumPermission(Revision.DetailRevisionPermission, shelId, profile)) {
-                            permissions.push(Enums.MenuSection.detail);
-                        }
-                        if (this.checkEnumPermission(Revision.DocRevisionPermission, shelId, profile)) {
-                            permissions.push(Enums.MenuSection.document);
-                        }
-                        if (this.checkEnumPermission(Revision.EconomyRevisionPermission, shelId, profile)) {
-                            permissions.push(Enums.MenuSection.economy);
-                        }
-                        this.localPermissions = permissions
-                        observer.next(permissions);
-                        observer.complete();
-                        if (getShelIdSub != undefined) {
-                            getShelIdSub.unsubscribe();
-                        }
-                        if (getSectionCodeSub != undefined) {
-                            getSectionCodeSub.unsubscribe();
-                        }
-                    });
-                    this.onShelIdRequest()
+            this.onShelIdRequest();
+            return Observable.forkJoin(
+                this.getUserProfile().first(),
+                this.shelId$.first()
+            )
+                .map((value) => {
+                    const shelId = value['1'];
+                    const profile = value['0'];
+                    const permissions: any[] = [];
+                    if (this.checkEnumPermission(Revision.DetailRevisionPermission, shelId, profile)) {
+                        permissions.push(Enums.MenuSection.detail);
+                    }
+                    if (this.checkEnumPermission(Revision.DocRevisionPermission, shelId, profile)) {
+                        permissions.push(Enums.MenuSection.document);
+                    }
+                    if (this.checkEnumPermission(Revision.EconomyRevisionPermission, shelId, profile)) {
+                        permissions.push(Enums.MenuSection.economy);
+                    }
+                    this.localPermissions = permissions
+                    return permissions;
                 });
-            });
         }
     }
 
     checkRevisionPermissionForShelter(shelId: String): Observable<Auth_Permissions.User_Type> {
         this.onShelId(shelId);
-        return Observable.create(observer => {
-            const sectionCodeInit = this.getUserProfile().subscribe(profile => {
-                if (checkEnumPermissionForShelter(profile, shelId, profile.role)) {
-                    observer.next(profile.role);
-                } else {
-                    observer.next(null);
-                }
-                if (sectionCodeInit != undefined) {
-                    sectionCodeInit.unsubscribe();
-                }
-                observer.complete();
-            });
+        return this.getUserProfile().map(profile => {
+            if (checkEnumPermissionForShelter(profile, shelId, profile.role)) {
+                return profile.role;
+            } else {
+                return null;
+            }
         });
     }
 
     checkUserPermission(): Observable<Auth_Permissions.User_Type> {
-        return Observable.create(observer => {
-            const sectionCodeInit = this.getUserProfile().subscribe(profile => {
-                if (profile.role) {
-                    observer.next(profile.role);
-                } else {
-                    observer.next(null);
-                }
-                observer.complete();
-            });
-        });
+        return this.getUserProfile().map(profile => profile.role || null);
     }
 
     getRouteError(): Observable<boolean> {
@@ -347,7 +323,7 @@ export class BcAuthService {
     }
 
     private handleError(error: any) {
-        if (!this.route.children.find(child => child.outlet == "access-denied")) {
+        if (!this.route.children.find(child => child.outlet === "access-denied")) {
             this.router.navigate([{
                 outlets: ({
                     'access-denied': '',
