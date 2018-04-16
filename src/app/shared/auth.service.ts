@@ -27,7 +27,7 @@ import {
     ActivatedRoute,
     Router
 } from '@angular/router';
-
+import { Tools } from '../shared/tools/common.tools';
 import Auth_Permissions = Enums.Auth_Permissions;
 import Revision = Auth_Permissions.Revision;
 import {
@@ -43,49 +43,16 @@ export function hasDeletePermission(profile: IUserProfile): boolean {
     return profile && (Auth_Permissions.Edit.DeleteShelterPermission[profile.role]);
 }
 
-/*function getRegion(code: String): String {
-    return code ? String(code).substr(2, 2) : code;
-}
-
-function getSection(code: String): String {
-    return code ? String(code).substr(4, 3) : code;
-}
-
-function getArea(code: String): String {
-    return code ? String(code).substr(2, 2) : code;
-}*/
-
-function getCodeSection(code: String, codeSection: Auth_Permissions.Codes.CodeSection): String {
-    return code.substr(codeSection[0], codeSection[1]);
-}
-
-function getAreaRegions(area: string): any {
-    return Auth_Permissions.Regions_Area[Number(area)];
-}
-
-export function getShelterFilter(type?: Auth_Permissions.User_Type): (code: String) => String {
-    if (type) {
-        const codeSections: Auth_Permissions.Codes.CodeSection[] = Auth_Permissions.Codes.UserTypeCodes[type];
-
-        return (code: String) => {
-            return codeSections.reduce((value, codeSection) => value.concat(<string>getCodeSection(code, codeSection)), '');
-        }
-    } else {
-        return function (code) {
-            return null
-        };
-    }
-}
-
-function getShelterProfileCheck(filterFn, type: Auth_Permissions.User_Type): any {
+function getShelterProfileCheck(filterFn, type: Auth_Permissions.User_Type): (shel: String, user: String) => boolean {
     if (type === Auth_Permissions.User_Type.area) {
         return (shel: String, user: String) => {
-            const areaRegions = getAreaRegions(<string>getCodeSection(user, Auth_Permissions.Codes.CodeSection.REGION))
+            // const areaRegions = getAreaRegions(<string>getCodeSection(user, Auth_Permissions.Codes.CodeSection.REGION))
+            const areaRegions = Tools.getAreaRegionsFromCode(user);
             return areaRegions.reduce((previous, current) =>
                 previous || (String(current) === filterFn(shel)), false);
         }
     } else {
-        return (a: String, b: String) => filterFn(a) === filterFn(b);
+        return (shel: String, user: String) => filterFn(shel) === filterFn(shel);
     }
 }
 
@@ -95,7 +62,7 @@ function isCentralRole(role: Auth_Permissions.User_Type): boolean {
 
 export function checkEnumPermissionForShelter(profile: IUserProfile, shelId, enum_value?: Auth_Permissions.User_Type) {
     if (!enum_value || profile.role === enum_value) {
-        const filterFunction = getShelterFilter(profile.role);
+        const filterFunction = Tools.getShelterFilter(profile.role);
         const shelterProfileCheck = getShelterProfileCheck(filterFunction, profile.role);
         return shelterProfileCheck(shelId, profile.code);
     } else {
@@ -174,16 +141,11 @@ export class BcAuthService {
             if (isCentralRole(role)) {
                 return Object.keys(Auth_Permissions.Region_Code);
             } else if (role === Auth_Permissions.User_Type.area) {
-                const areaRegions = getAreaRegions(<string>getCodeSection(code, Auth_Permissions.Codes.CodeSection.REGION));
-                if (areaRegions) {
-                    return Object.keys(areaRegions);
-                } else {
-                    return null;
-                }
+                return Tools.getAreaRegionsFromCode(code).map(val => Enums.Auth_Permissions.Region_Code[val]) || [];
             } else {
                 return [
                     Auth_Permissions.Region_Code[
-                    <string>getCodeSection(code, Auth_Permissions.Codes.CodeSection.REGION)]
+                    <string>Tools.getCodeSection(code, Auth_Permissions.Codes.CodeSection.REGION)]
                 ];
             }
         } else {
@@ -191,15 +153,11 @@ export class BcAuthService {
         }
     }
 
-    processUserProfileCode(profile: IUserProfile): {} {
+    processUserProfileCode(profile: IUserProfile): Tools.ICodeInfo {
         const sections = {};
 
         if (Auth_Permissions.User_Type[profile.role]) {
-            const codeSections: Auth_Permissions.Codes.CodeSection[] = Auth_Permissions.Codes.UserTypeCodes[profile.role];
-            for (const codeSection of codeSections) {
-                sections[codeSection] = getCodeSection(profile.code, codeSection);
-            }
-            return sections;
+            return Tools.getCodeSections(profile.role, profile.code);
         } else {
             return null;
         }

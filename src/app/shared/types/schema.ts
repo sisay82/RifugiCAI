@@ -1,8 +1,8 @@
-import * as mongoose from 'mongoose';
+import { Schema } from 'mongoose';
 import { Enums } from './enums';
 
-export namespace Schema {
-    export const locationSchema = new mongoose.Schema({
+export namespace BCSchema {
+    export const locationSchema = new Schema({
         region: String,
         province: String,
         municipality: String,
@@ -20,30 +20,30 @@ export namespace Schema {
         site: String
     });
 
-    export const tagSchema = new mongoose.Schema({
+    export const tagSchema = new Schema({
         key: { type: String, required: true },
         value: String
     });
 
-    export const geographicSchema = new mongoose.Schema({
+    export const geographicSchema = new Schema({
         location: { type: locationSchema },
         tags: [tagSchema]
     });
 
-    export const serviceSchema = new mongoose.Schema({
+    export const serviceSchema = new Schema({
         name: String,
         category: String,
         description: String,
         tags: [tagSchema]
     });
 
-    export const openingaSchema = new mongoose.Schema({
+    export const openingaSchema = new Schema({
         startDate: Date,
         endDate: Date,
         type: String
     });
 
-    export const contactsSchema = new mongoose.Schema({
+    export const contactsSchema = new Schema({
         name: String,
         role: String,
         fixedPhone: String,
@@ -54,7 +54,7 @@ export namespace Schema {
         webAddress: String,
     });
 
-    export const subjectSchema = new mongoose.Schema({
+    export const subjectSchema = new Schema({
         name: String,
         surname: String,
         taxCode: String,
@@ -71,7 +71,7 @@ export namespace Schema {
         possession_type: { type: Enums.Possession_Type },
     });
 
-    export const managementSchema = new mongoose.Schema({
+    export const managementSchema = new Schema({
         reference: String,
         webSite: String,
         valuta: { type: String, default: "Euro" },
@@ -81,7 +81,7 @@ export namespace Schema {
         subject: [subjectSchema]
     });
 
-    export const catastalSchema = new mongoose.Schema({
+    export const catastalSchema = new Schema({
         buildingRegulation: Boolean,
         buildYear: String,
         rebuildYear: String,
@@ -96,7 +96,7 @@ export namespace Schema {
         ISO14001: Boolean
     });
 
-    export const energySchema = new mongoose.Schema({
+    export const energySchema = new Schema({
         class: { type: Enums.Energy_Class_Type },
         energy: Number,
         greenCertification: Boolean,
@@ -107,7 +107,7 @@ export namespace Schema {
         sourceName: String
     });
 
-    export const drainSchema = new mongoose.Schema({
+    export const drainSchema = new Schema({
         type: { type: Enums.Drain_Type },
         regulation: Boolean,
         oilSeparator: Boolean,
@@ -118,13 +118,13 @@ export namespace Schema {
         droughts: { type: Enums.Seasons }
     });
 
-    export const economySchema = new mongoose.Schema({
+    export const economySchema = new Schema({
         year: { type: Number, required: true },
         confirm: Boolean,
         accepted: Boolean
     });
 
-    export const useSchema = new mongoose.Schema({
+    export const useSchema = new Schema({
         year: { type: Number, required: true },
         stay_count_associate: Number,
         stay_count_reciprocity: Number,
@@ -134,16 +134,16 @@ export namespace Schema {
         transit_count: Number
     });
 
-    export const fileRefSchema = new mongoose.Schema({
+    export const fileRefSchema = new Schema({
         name: { type: String, required: true },
         id: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Files',
             required: true
         }
     });
 
-    export const contributionData = new mongoose.Schema({
+    export const contributionData = new Schema({
         handWorks: Number,
         customizedWorks: Number,
         safetyCharges: Number,
@@ -161,7 +161,7 @@ export namespace Schema {
         red: Number
     });
 
-    export const contributionSchema = new mongoose.Schema({
+    export const contributionSchema = new Schema({
         year: { type: Number, required: true },
         data: { type: contributionData },
         attachments: [fileRefSchema],
@@ -170,7 +170,7 @@ export namespace Schema {
         type: { type: Enums.Contribution_Type }
     });
 
-    export const shelterSchema = new mongoose.Schema({
+    export const shelterSchema = new Schema({
         name: String,
         alias: String,
         idCai: String,
@@ -186,7 +186,7 @@ export namespace Schema {
 
         geoData: { type: geographicSchema },
         services: [{
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Services'
         }],
         contacts: { type: contactsSchema },
@@ -200,9 +200,9 @@ export namespace Schema {
         contributions: { type: contributionSchema }
     });
 
-    export const fileSchema = new mongoose.Schema({
+    export const fileSchema = new Schema({
         size: Number,
-        shelterId: { type: mongoose.Schema.Types.ObjectId },
+        shelterId: { type: Schema.Types.ObjectId },
         uploadDate: { type: Date, default: new Date(Date.now()) },
         md5: String,
         name: String,

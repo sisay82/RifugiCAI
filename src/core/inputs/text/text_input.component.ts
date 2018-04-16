@@ -24,7 +24,6 @@ import {
     trimYear,
     createValidationFunction
 } from '../input_base';
-import { ValidationError } from 'mongoose';
 
 @Directive({
     selector: 'textarea[bc-enable-error]',

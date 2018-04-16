@@ -140,7 +140,7 @@ function getUserPermissions(data): { role: Auth_Permissions.User_Type, code: Str
 function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Type, code: String }> {
     logger(LOG_TYPE.INFO, 'CHECKUSER');
     return new Promise<{ role: Auth_Permissions.User_Type, code: String }>((resolve, reject) => {
-        //resolve({ role: Auth_Permissions.User_Type.area, code: "9350000" });
+        resolve({ role: Auth_Permissions.User_Type.area, code: "9350000" });
 
         if (DISABLE_AUTH) {
             resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });

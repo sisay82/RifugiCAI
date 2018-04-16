@@ -1,10 +1,8 @@
 import * as mongoose from 'mongoose';
-(<any>mongoose.Promise) = global.Promise;
 import * as session from 'express-session';
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { IOpening, IContribution } from '../src/app/shared/types/interfaces';
-import { Schema } from '../src/app/shared/types/schema';
 import { Enums } from '../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import https = require('https');
@@ -23,6 +21,7 @@ import { fileRoute } from './API/files.api';
 import { appRoute } from './API/shelters.api';
 import { authRoute, getUserData } from './API/auth.api';
 const MongoStore = require('connect-mongo')(session);
+(<any>mongoose.Promise) = global.Promise;
 
 const SERVER_URL = "localhost:";
 export const APP_PORT = process.env.PORT || 8000;

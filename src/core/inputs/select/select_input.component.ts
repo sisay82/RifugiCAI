@@ -22,7 +22,6 @@ import {
 import {
     BcBaseInput
 } from '../input_base';
-import { ValidationError } from 'mongoose';
 
 @Directive({
     selector: 'select[bc-enable-error]',

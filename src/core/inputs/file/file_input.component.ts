@@ -25,7 +25,6 @@ import {
     BcBaseInput
 } from '../input_base';
 import { AbstractControlOptions } from '@angular/forms/src/model';
-import { ValidationError } from 'mongoose';
 
 @Directive({
     selector: 'input[bc-enable-error]',

@@ -358,7 +358,7 @@ export namespace Enums {
                 [User_Type.regional]: <CodeSection[]>[CodeSection.REGION],
                 [User_Type.sectional]: <CodeSection[]>[CodeSection.REGION, CodeSection.SECTION],
                 [User_Type.area]: <CodeSection[]>[CodeSection.REGION],
-                [User_Type.test]: <CodeSection[]>[CodeSection.CODETYPE, CodeSection.SUBSECTION]
+                [User_Type.test]: <CodeSection[]>[CodeSection.CODETYPE, CodeSection.SUBSECTION],
             }
 
         }

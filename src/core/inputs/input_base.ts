@@ -12,7 +12,6 @@ import {
     ControlContainer
 } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
-import { ValidationError } from 'mongoose';
 
 function dateValidator(value) {
     return customDateValidator(<any>{ value: value });

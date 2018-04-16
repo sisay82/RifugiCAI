@@ -3,9 +3,9 @@ import * as express from 'express';
 import { Enums } from '../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import { SheltersToUpdate, addShelterToUpdate, IShelterExtended, IServiceExtended } from '../tools/common';
-import * as mongoose from 'mongoose';
+import { model } from 'mongoose';
 import { IOpening } from '../../src/app/shared/types/interfaces';
-import { Schema } from '../../src/app/shared/types/schema';
+import { BCSchema } from '../../src/app/shared/types/schema';
 import {
     UserData,
     getUserDataFilters,
@@ -19,9 +19,10 @@ import {
 import { DISABLE_AUTH } from './auth.api';
 import { createContributionPDF } from './pdf.api';
 import { resolveFilesForShelter } from './files.api';
+import { Tools } from '../../src/app/shared/tools/common.tools';
 
-const Services = mongoose.model<IServiceExtended>('Services', Schema.serviceSchema);
-const Shelters = mongoose.model<IShelterExtended>('Shelters', Schema.shelterSchema);
+const Services = model<IServiceExtended>('Services', BCSchema.serviceSchema);
+const Shelters = model<IShelterExtended>('Shelters', BCSchema.shelterSchema);
 
 function getRegionFilter(region: String) {
     if (region && String(region).length === 2) {
@@ -74,7 +75,9 @@ function getQueryFilters(regions, sections) {
     return query;
 }
 
-function getAllIdsHead(regions: any[], sections: any[]): Promise<IShelterExtended[]> {
+function getAllIdsHead(userData: Tools.ICodeInfo): Promise<IShelterExtended[]> {
+    const regions = Tools.getRegions(userData);
+    const sections = Tools.getSections(userData);
     const query = getQueryFilters(regions, sections);
 
     return new Promise<IShelterExtended[]>((resolve, reject) => {
@@ -132,7 +135,7 @@ function queryShelSectionById(id, section): Promise<IShelterExtended> {
     });
 }
 
-function queryShelByRegion(region: string, regionFilters: any[], sectionFilters: any[]): Promise<number> {
+function queryShelByRegion(region: string, userData: Tools.ICodeInfo): Promise<number> {
     return new Promise<number>((resolve, reject) => {
         let query: any = {};
         if (region && /[0-9]{2,2}/g.test(region)) {
@@ -141,7 +144,9 @@ function queryShelByRegion(region: string, regionFilters: any[], sectionFilters:
         if (region) {
             query['geoData.location.region'] = { $in: [region.toLowerCase(), region.toUpperCase(), toTitleCase(region), region] };
         }
-        query = Object.assign({}, query, getQueryFilters(regionFilters, sectionFilters));
+        const regions = Tools.getRegions(userData);
+        const sections = Tools.getSections(userData);
+        query = Object.assign({}, query, getQueryFilters(regions, sections));
 
         Shelters.count(query).exec((err, ris: number) => {
             if (err) {
@@ -153,14 +158,16 @@ function queryShelByRegion(region: string, regionFilters: any[], sectionFilters:
     });
 }
 
-function queryShelAroundPoint(point: { lat: number, lng: number }, range: number, regionFilters: any[], sectionFilters: any[])
+function queryShelAroundPoint(point: { lat: number, lng: number }, range: number, userData: Tools.ICodeInfo)
     : Promise<IShelterExtended[]> {
     return new Promise<IShelterExtended[]>((resolve, reject) => {
         const query: any = {};
+        const regions = Tools.getRegions(userData);
+        const sections = Tools.getSections(userData);
         query.$and = [
             { 'geoData.location.latitude': { $gt: (point.lat - range), $lt: (point.lat + range) } },
             { 'geoData.location.longitude': { $gt: (point.lng - range), $lt: (point.lng + range) } }
-        ].concat(getQueryFilters(regionFilters, sectionFilters).$and);
+        ].concat(getQueryFilters(regions, sections).$and);
 
         Shelters.find(query,
             `name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude
@@ -536,10 +543,10 @@ appRoute.all('*', checkPermissionAPI);
 appRoute.route('/shelters')
     .get(function (req, res) {
         const user: UserData = req.body.user;
-        const userData = getUserDataFilters(user);
+        const userData: Tools.ICodeInfo = getUserDataFilters(user);
         if (userData) {
             try {
-                getAllIdsHead(userData["REGION"], userData["SECTION"])
+                getAllIdsHead(userData)
                     .then((rif) => {
                         if (rif) {
                             res.status(200).send(rif);
@@ -578,7 +585,7 @@ appRoute.route('/shelters/country/:name')
         const userData = getUserDataFilters(user);
         if (userData) {
             try {
-                queryShelByRegion(req.params.name, userData["REGION"], userData["SECTION"])
+                queryShelByRegion(req.params.name, userData)
                     .then((ris) => {
                         res.status(200).send({ num: ris });
                     })
@@ -603,7 +610,7 @@ appRoute.route('/shelters/point')
             try {
                 if (req.query.lat && req.query.lng && req.query.range) {
                     queryShelAroundPoint({ lat: Number(req.query.lat), lng: Number(req.query.lng) }
-                        , Number(req.query.range), userData["REGION"], userData["SECTION"])
+                        , Number(req.query.range), userData)
                         .then((ris) => {
                             res.status(200).send(ris);
                         })

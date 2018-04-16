@@ -4,12 +4,12 @@ import Auth_Permissions = Enums.Auth_Permissions;
 import Files_Enum = Enums.Files;
 import multer = require('multer');
 import { SheltersToUpdate, IFileExtended, ObjectId, UpdatingShelter, logger, LOG_TYPE } from '../tools/common';
-import * as mongoose from 'mongoose';
+import { model } from 'mongoose';
 import { IFile } from '../../src/app/shared/types/interfaces';
-import { Schema } from '../../src/app/shared/types/schema';
+import { BCSchema } from '../../src/app/shared/types/schema';
 import { DISABLE_AUTH } from './auth.api';
 
-const Files = mongoose.model<IFileExtended>('Files', Schema.fileSchema);
+const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
 const maxImages = 10;
 
 export function countContributionFilesByShelter(shelid): Promise<Number> {

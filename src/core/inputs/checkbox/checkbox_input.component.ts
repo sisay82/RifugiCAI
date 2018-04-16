@@ -17,7 +17,6 @@ import 'rxjs/add/observable/of';
 import {
     BcBaseInput
 } from '../input_base';
-import { ValidationError } from 'mongoose';
 
 @Component({
     moduleId: module.id,

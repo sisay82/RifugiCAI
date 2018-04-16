@@ -1,19 +1,20 @@
 import { IShelter, IService, IFile } from '../../src/app/shared/types/interfaces';
-import * as mongoose from 'mongoose';
+import { Types, Document } from 'mongoose';
 import * as path from 'path';
 import { Enums } from '../../src/app/shared/types/enums';
+import { Tools } from '../../src/app/shared/tools/common.tools';
 import Auth_Permissions = Enums.Auth_Permissions;
 import request = require('request');
 
-export interface IServiceExtended extends IService, mongoose.Document {
+export interface IServiceExtended extends IService, Document {
     _id: String;
 }
 
-export interface IShelterExtended extends IShelter, mongoose.Document {
+export interface IShelterExtended extends IShelter, Document {
     _id: String;
 }
 
-export interface IFileExtended extends IFile, mongoose.Document {
+export interface IFileExtended extends IFile, Document {
     _id: String;
 }
 
@@ -40,7 +41,7 @@ export const SheltersToUpdate = new Proxy(ShelUpdate, {
     get(target, name) { return target[name] }
 });
 
-export const ObjectId = mongoose.Types.ObjectId;
+export const ObjectId = Types.ObjectId;
 
 const DISABLE_LOG = false;
 const MAX_TIME = 1000 * 60 * 10;
@@ -67,43 +68,15 @@ export function addShelterToUpdate(updatingShelter: UpdatingShelter, user: UserD
     return true;
 }
 
-function getAreaRegions(area: string): any {
+function getAreaRegions(area): any {
     return Auth_Permissions.Regions_Area[Number(area)];
 }
 
-function getCodeSection(code: String, codeSection: Auth_Permissions.Codes.CodeSection): String {
-    return code.substr(codeSection[0], codeSection[1]);
-}
-
-export function getShelterFilter(type?: Auth_Permissions.User_Type): (code: String) => String {
-    if (type) {
-        const codeSections: Auth_Permissions.Codes.CodeSection[] = Auth_Permissions.Codes.UserTypeCodes[type];
-        return (code: String) => {
-            return codeSections.reduce((value, codeSection) => value.concat(<string>getCodeSection(code, codeSection)), '');
-        }
-    } else {
-        return function (code) {
-            return null
-        };
-    }
-}
-
-export function getUserDataFilters(user: UserData): {} {
+export function getUserDataFilters(user: UserData): Tools.ICodeInfo {
     if (user && user.code && user.role) {
         const sections: {} = {};
         if (Auth_Permissions.User_Type[user.role]) {
-            const codeSections: Auth_Permissions.Codes.CodeSection[] = Auth_Permissions.Codes.UserTypeCodes[user.role];
-
-            if (user.role === Auth_Permissions.User_Type.area) {
-                sections["REGION"] = getAreaRegions(<string>getCodeSection(user.code, Auth_Permissions.Codes.CodeSection.REGION));
-            } else {
-                for (const codeSection of codeSections) {
-                    const section = Auth_Permissions.Codes.CodeSection[codeSection];
-                    const csection = getCodeSection(user.code, codeSection);
-                    sections[section] = [csection];
-                }
-            }
-            return sections;
+            return Tools.getCodeSections(user.role, user.code);
         } else {
             return null;
 
@@ -119,7 +92,7 @@ export function performRequestGET(url: String, authorization?: String, timeout: 
         const headers = authorization ? { 'Authorization': authorization } : null;
         const time = Date.now();
         request.get({
-            url: url,
+            url: <string>url,
             method: 'GET',
             headers: headers,
             timeout: timeout
