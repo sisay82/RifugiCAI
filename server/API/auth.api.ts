@@ -94,12 +94,12 @@ function checkInclude(source: any[], target: any[], attribute): boolean {
 
 function getRole(data): Auth_Permissions.User_Type {
     if (data) {
-        if (checkInclude(data.aggregatedAuthorities, Auth_Permissions.getUserRolesByType(Auth_Permissions.User_Type.central), 'role')) {
+        if (checkInclude(data.aggregatedAuthorities, Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.central], 'role')) {
             return Auth_Permissions.User_Type.central;
-        } else if (checkInclude(data.userGroups, Auth_Permissions.getUserRolesByType(Auth_Permissions.User_Type.regional), 'name')) {
+        } else if (checkInclude(data.userGroups, Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.regional], 'name')) {
             return Auth_Permissions.User_Type.regional;
         } else if (checkInclude(data.aggregatedAuthorities,
-            Auth_Permissions.getUserRolesByType(Auth_Permissions.User_Type.sectional), 'role')) {
+            Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.sectional], 'role')) {
             return Auth_Permissions.User_Type.sectional;
         } else {
             return null;
@@ -140,8 +140,7 @@ function getUserPermissions(data): { role: Auth_Permissions.User_Type, code: Str
 function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Type, code: String }> {
     logger(LOG_TYPE.INFO, 'CHECKUSER');
     return new Promise<{ role: Auth_Permissions.User_Type, code: String }>((resolve, reject) => {
-        //resolve({ role: Auth_Permissions.User_Type.visualization, code: "9300002" });
-
+        //resolve({ role: Auth_Permissions.User_Type.area, code: "9350000" });
 
         if (DISABLE_AUTH) {
             resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });
@@ -151,7 +150,6 @@ function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Type, cod
                     try {
                         const data = JSON.parse(value.body);
                         const user: { role: Auth_Permissions.User_Type, code: String } = getUserPermissions(data);
-
                         if (user.role) {
                             if (user.code) {
                                 resolve(user);
@@ -222,7 +220,7 @@ authRoute.get('/logout', function (req, res) {
         res.redirect('/list');
     } else {
         const user = userList.findIndex(obj => String(obj.id) === req.session.id);
-        logger(LOG_TYPE.INFO, 'Logging out');
+        logger(LOG_TYPE.INFO, 'Logging out user ' + user);
 
         if (user > -1) {
             userList.splice(user, 1);

@@ -8,7 +8,7 @@ import { IOpening } from '../../src/app/shared/types/interfaces';
 import { Schema } from '../../src/app/shared/types/schema';
 import {
     UserData,
-    checkUserData,
+    getUserDataFilters,
     logger,
     LOG_TYPE,
     toTitleCase,
@@ -24,8 +24,8 @@ const Services = mongoose.model<IServiceExtended>('Services', Schema.serviceSche
 const Shelters = mongoose.model<IShelterExtended>('Shelters', Schema.shelterSchema);
 
 function getRegionFilter(region: String) {
-    if (region && region.length === 2) {
-        const regionQuery = { 'idCai': new RegExp('^[0-9-]{2,2}' + region + '[0-9-]{4,6}') };
+    if (region && String(region).length === 2) {
+        const regionQuery = { 'idCai': new RegExp('^[0-9-]{2,2}' + String(region) + '[0-9-]{4,6}') };
         return regionQuery;
     } else {
         return null;
@@ -41,24 +41,41 @@ function getSectionFilter(section: String) {
     }
 }
 
-function getAllIdsHead(regions: any[], section: String): Promise<IShelterExtended[]> {
+function getQueryFilters(regions, sections) {
     const query: any = {};
-    if ((regions && regions.length > 0) || section) {
+    if ((regions && regions.length > 0) || (sections && sections.length > 0)) {
         query.$and = [];
         query.$and.push({ idCai: { '$ne': null } });
-        for (const region of regions) {
-            const regionFilter = getRegionFilter(region);
-            if (regionFilter) {
-                query.$and.push(regionFilter);
+
+        let subQuery: any = {};
+        if (regions) {
+            for (const region of regions) {
+                const regionFilter = getRegionFilter(region);
+                if (regionFilter) {
+                    if (!subQuery.$or) { subQuery.$or = []; }
+                    subQuery.$or.push(regionFilter);
+                }
             }
+            query.$and.push(subQuery);
+            subQuery = {};
         }
 
-        const sectionFilter = getSectionFilter(section);
-        if (sectionFilter) {
-            query.$and.push(sectionFilter);
+        if (sections) {
+            for (const section of sections) {
+                const sectionFilter = getSectionFilter(section);
+                if (sectionFilter) {
+                    if (!subQuery.$or) { subQuery.$or = []; }
+                    subQuery.$or.push(sectionFilter);
+                }
+            }
+            query.$and.push(subQuery);
         }
-
     }
+    return query;
+}
+
+function getAllIdsHead(regions: any[], sections: any[]): Promise<IShelterExtended[]> {
+    const query = getQueryFilters(regions, sections);
 
     return new Promise<IShelterExtended[]>((resolve, reject) => {
         Shelters.find(query,
@@ -115,32 +132,16 @@ function queryShelSectionById(id, section): Promise<IShelterExtended> {
     });
 }
 
-function queryShelByRegion(region: string, regionFilters: any[], sectionFilter: String): Promise<number> {
+function queryShelByRegion(region: string, regionFilters: any[], sectionFilters: any[]): Promise<number> {
     return new Promise<number>((resolve, reject) => {
-        const query: any = {};
+        let query: any = {};
         if (region && /[0-9]{2,2}/g.test(region)) {
             region = Auth_Permissions.Region_Code[region];
         }
         if (region) {
             query['geoData.location.region'] = { $in: [region.toLowerCase(), region.toUpperCase(), toTitleCase(region), region] };
         }
-        if ((regionFilters && regionFilters.length > 0) || sectionFilter) {
-            query.$and = [];
-            query.$and.push({ 'idCai': { '$ne': null } });
-
-            for (const regionFilter of regionFilters) {
-                const r = getRegionFilter(regionFilter);
-                if (r) {
-                    query.$and.push(r);
-                }
-            }
-
-            const section = getSectionFilter(sectionFilter);
-            if (section) {
-                query.$and.push(section);
-            }
-
-        }
+        query = Object.assign({}, query, getQueryFilters(regionFilters, sectionFilters));
 
         Shelters.count(query).exec((err, ris: number) => {
             if (err) {
@@ -152,30 +153,15 @@ function queryShelByRegion(region: string, regionFilters: any[], sectionFilter: 
     });
 }
 
-function queryShelAroundPoint(point: { lat: number, lng: number }, range: number, regionFilters: any[], sectionFilter: String)
+function queryShelAroundPoint(point: { lat: number, lng: number }, range: number, regionFilters: any[], sectionFilters: any[])
     : Promise<IShelterExtended[]> {
     return new Promise<IShelterExtended[]>((resolve, reject) => {
         const query: any = {};
         query.$and = [
             { 'geoData.location.latitude': { $gt: (point.lat - range), $lt: (point.lat + range) } },
             { 'geoData.location.longitude': { $gt: (point.lng - range), $lt: (point.lng + range) } }
-        ];
-        if ((regionFilters && regionFilters.length > 0) || sectionFilter) {
-            query.$and.push({ 'idCai': { '$ne': null } });
+        ].concat(getQueryFilters(regionFilters, sectionFilters).$and);
 
-            for (const regionFilter of regionFilters) {
-                const region = getRegionFilter(regionFilter);
-                if (region) {
-                    query.$and.push(region);
-                }
-            }
-
-            const section = getSectionFilter(sectionFilter);
-            if (section) {
-                query.$and.push(section);
-            }
-
-        }
         Shelters.find(query,
             `name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude
              geoData.location.municipality geoData.location.region geoData.location.province`)
@@ -550,10 +536,10 @@ appRoute.all('*', checkPermissionAPI);
 appRoute.route('/shelters')
     .get(function (req, res) {
         const user: UserData = req.body.user;
-        const userData = checkUserData(user);
+        const userData = getUserDataFilters(user);
         if (userData) {
             try {
-                getAllIdsHead(userData.regions, userData.section)
+                getAllIdsHead(userData["REGION"], userData["SECTION"])
                     .then((rif) => {
                         if (rif) {
                             res.status(200).send(rif);
@@ -562,9 +548,11 @@ appRoute.route('/shelters')
                         }
                     })
                     .catch((err) => {
+                        logger(LOG_TYPE.ERROR, err);
                         res.status(500).send({ error: 'Invalid user or request' });
                     });
             } catch (e) {
+                logger(LOG_TYPE.ERROR, e);
                 res.status(500).send({ error: 'Invalid user or request' });
             }
         } else {
@@ -587,10 +575,10 @@ appRoute.route('/shelters')
 appRoute.route('/shelters/country/:name')
     .get(function (req, res) {
         const user: UserData = req.body.user;
-        const userData = checkUserData(user);
+        const userData = getUserDataFilters(user);
         if (userData) {
             try {
-                queryShelByRegion(req.params.name, userData.regions, userData.section)
+                queryShelByRegion(req.params.name, userData["REGION"], userData["SECTION"])
                     .then((ris) => {
                         res.status(200).send({ num: ris });
                     })
@@ -610,12 +598,12 @@ appRoute.route('/shelters/country/:name')
 appRoute.route('/shelters/point')
     .get(function (req, res) {
         const user: UserData = req.body.user;
-        const userData = checkUserData(user);
+        const userData = getUserDataFilters(user);
         if (userData) {
             try {
                 if (req.query.lat && req.query.lng && req.query.range) {
                     queryShelAroundPoint({ lat: Number(req.query.lat), lng: Number(req.query.lng) }
-                        , Number(req.query.range), userData.regions, userData.section)
+                        , Number(req.query.range), userData["REGION"], userData["SECTION"])
                         .then((ris) => {
                             res.status(200).send(ris);
                         })

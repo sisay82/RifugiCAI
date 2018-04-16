@@ -179,7 +179,7 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
             };
             const location: ILocation = <ILocation>this.getFormValues(this.geoForm);
 
-            const a: any[] = this.getFormArrayValues(<FormArray>this.geoForm.get('tags'));
+            const a: any[] = this.getFormArrayValues(<FormArray>this.geoForm.controls['tags']);
             const tags: ITag[] = a.filter(val => val.key && val.value);
 
             shelter.geoData.tags = tags as [ITag];

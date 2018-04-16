@@ -184,7 +184,7 @@ export abstract class RevisionBase implements OnInit {
         const obj: any = {};
         for (const control in form.controls) {
             if (form.controls.hasOwnProperty(control)) {
-                obj[control] = this.getControlValue(<FormGroup>form.get(control));
+                obj[control] = this.getControlValue(<FormGroup>form.controls[control]);
             }
         }
         return obj;

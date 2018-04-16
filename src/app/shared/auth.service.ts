@@ -34,7 +34,16 @@ import {
     getAllDebugNodes
 } from '@angular/core/src/debug/debug_node';
 
-function getRegion(code: String): String {
+
+export function hasInsertPermission(profile: IUserProfile): boolean {
+    return profile && (Auth_Permissions.Edit.InsertShelterPermission[profile.role]);
+}
+
+export function hasDeletePermission(profile: IUserProfile): boolean {
+    return profile && (Auth_Permissions.Edit.DeleteShelterPermission[profile.role]);
+}
+
+/*function getRegion(code: String): String {
     return code ? String(code).substr(2, 2) : code;
 }
 
@@ -44,30 +53,22 @@ function getSection(code: String): String {
 
 function getArea(code: String): String {
     return code ? String(code).substr(2, 2) : code;
+}*/
+
+function getCodeSection(code: String, codeSection: Auth_Permissions.Codes.CodeSection): String {
+    return code.substr(codeSection[0], codeSection[1]);
 }
 
-function getRegionsArea(area): Auth_Permissions.Region_Code[] {
-    return Auth_Permissions.Regions_Area[Auth_Permissions.Region_Code[area]]
+function getAreaRegions(area: string): any {
+    return Auth_Permissions.Regions_Area[Number(area)];
 }
 
-function getShelterFilter(type: Auth_Permissions.User_Type): (code: String) => String {
+export function getShelterFilter(type?: Auth_Permissions.User_Type): (code: String) => String {
     if (type) {
-        if (type == Auth_Permissions.User_Type.regional) {
-            return getRegion;
-        } else if (type == Auth_Permissions.User_Type.sectional) {
-            return (code: String) => {
-                return getRegion(code).concat(<string>getSection(code))
-            }
-        } else if (type == Auth_Permissions.User_Type.area) {
-            return getArea;
-        } else if (isCentralRole(type)) {
-            return function (code) {
-                return ''
-            };
-        } else {
-            return function (code) {
-                return null
-            };
+        const codeSections: Auth_Permissions.Codes.CodeSection[] = Auth_Permissions.Codes.UserTypeCodes[type];
+
+        return (code: String) => {
+            return codeSections.reduce((value, codeSection) => value.concat(<string>getCodeSection(code, codeSection)), '');
         }
     } else {
         return function (code) {
@@ -76,42 +77,35 @@ function getShelterFilter(type: Auth_Permissions.User_Type): (code: String) => S
     }
 }
 
-function isCentralRole(role: Auth_Permissions.User_Type): boolean {
-    return (role == Auth_Permissions.User_Type.central || role == Auth_Permissions.User_Type.superUser);
-}
-
-function getShelterProfileCheck(role: Auth_Permissions.User_Type): (shelId, code) => Boolean {
-    if (role) {
-        if (role == Auth_Permissions.User_Type.area) {
-            return (shelId, code) => {
-                let val: Boolean = false;
-                for (const regionCode of getRegionsArea(code)) {
-                    val = (regionCode == shelId) || val;
-                }
-                return val;
-            }
-        } else if (isCentralRole(role)) {
-            return (shelId, code) => true;
-        } else {
-            return (shelId, code) => shelId == code;
+function getShelterProfileCheck(filterFn, type: Auth_Permissions.User_Type): any {
+    if (type === Auth_Permissions.User_Type.area) {
+        return (shel: String, user: String) => {
+            const areaRegions = getAreaRegions(<string>getCodeSection(user, Auth_Permissions.Codes.CodeSection.REGION))
+            return areaRegions.reduce((previous, current) =>
+                previous || (String(current) === filterFn(shel)), false);
         }
     } else {
-        return (shelId, code) => null;
+        return (a: String, b: String) => filterFn(a) === filterFn(b);
     }
 }
 
-function checkEnumPermissionForShelter(profile, shelId, enum_value: Auth_Permissions.User_Type) {
-    if (profile.role == enum_value) {
+function isCentralRole(role: Auth_Permissions.User_Type): boolean {
+    return (role === Auth_Permissions.User_Type.central || role === Auth_Permissions.User_Type.superUser);
+}
+
+export function checkEnumPermissionForShelter(profile: IUserProfile, shelId, enum_value?: Auth_Permissions.User_Type) {
+    if (!enum_value || profile.role === enum_value) {
         const filterFunction = getShelterFilter(profile.role);
-        const shelterProfileCheck = getShelterProfileCheck(profile.role);
-        if (shelterProfileCheck(filterFunction(shelId), filterFunction(profile.code))) {
-            return true;
-        } else {
-            return false;
-        }
+        const shelterProfileCheck = getShelterProfileCheck(filterFunction, profile.role);
+        return shelterProfileCheck(shelId, profile.code);
     } else {
         return false;
     }
+}
+
+export interface IUserProfile {
+    code: String;
+    role: Auth_Permissions.User_Type;
 }
 
 @Injectable()
@@ -128,14 +122,8 @@ export class BcAuthService {
     shelIdRequest$ = this.shelIdRequestSource.asObservable();
     private shelIdSource = new Subject<String>();
     shelId$ = this.shelIdSource.asObservable();
-    private userProfile: {
-        code: String,
-        role: Auth_Permissions.User_Type
-    };
-    private userProfileSource = new Subject<{
-        code: String,
-        role: Auth_Permissions.User_Type
-    }>();
+    private userProfile: IUserProfile;
+    private userProfileSource = new Subject<IUserProfile>();
 
     constructor(private http: Http, private route: ActivatedRoute, private router: Router) {
         this.userSectionCodeSub = this.updateProfile().subscribe(profile => {
@@ -165,62 +153,61 @@ export class BcAuthService {
         }
     }
 
-    isCentralUser(): Observable<boolean> {
-        return this.getUserProfile()
-            .map(profile => profile && isCentralRole(profile.role));
+    hasInsertPermission(profile?: IUserProfile): Observable<boolean> {
+        if (profile) {
+            return Observable.of(hasInsertPermission(profile));
+        } else {
+            return this.getUserProfile().map(p => hasInsertPermission(p));
+        }
     }
 
-    getRegions(role, code): string[] {
+    hasDeletePermission(profile?: IUserProfile): Observable<boolean> {
+        if (profile) {
+            return Observable.of(hasDeletePermission(profile));
+        } else {
+            return this.getUserProfile().map(p => hasDeletePermission(p));
+        }
+    }
+
+    getRegions(role: Auth_Permissions.User_Type, code: String): string[] {
         if (role) {
             if (isCentralRole(role)) {
                 return Object.keys(Auth_Permissions.Region_Code);
-            } else if (role == Auth_Permissions.User_Type.area) {
-                return Object.keys(getRegionsArea(getArea(code)));
+            } else if (role === Auth_Permissions.User_Type.area) {
+                const areaRegions = getAreaRegions(<string>getCodeSection(code, Auth_Permissions.Codes.CodeSection.REGION));
+                if (areaRegions) {
+                    return Object.keys(areaRegions);
+                } else {
+                    return null;
+                }
             } else {
-                return [Auth_Permissions.Region_Code[<string>getRegion(code)]];
+                return [
+                    Auth_Permissions.Region_Code[
+                    <string>getCodeSection(code, Auth_Permissions.Codes.CodeSection.REGION)]
+                ];
             }
         } else {
             return null;
         }
     }
 
-    processUserProfileCode(profile): {
-        section: String,
-        region: String,
-        area: String
-    } {
-        if (profile.role == Auth_Permissions.User_Type.superUser) {
-            return {
-                section: null,
-                region: null,
-                area: null
-            };
-        } else {
-            let section;
-            let region;
-            let area;
-            if (profile.role == Auth_Permissions.User_Type.regional) {
-                region = getRegion(profile.code);
-            } else if (profile.role == Auth_Permissions.User_Type.sectional) {
-                section = getSection(profile.code);
-                region = getRegion(profile.code);
-            } else if (profile.role == Auth_Permissions.User_Type.area) {
-                section = getSection(profile.code);
-                area = getArea(profile.code);
-            } else if (profile.role != Auth_Permissions.User_Type.central) {
-                return null;
+    processUserProfileCode(profile: IUserProfile): {} {
+        const sections = {};
+
+        if (Auth_Permissions.User_Type[profile.role]) {
+            const codeSections: Auth_Permissions.Codes.CodeSection[] = Auth_Permissions.Codes.UserTypeCodes[profile.role];
+            for (const codeSection of codeSections) {
+                sections[codeSection] = getCodeSection(profile.code, codeSection);
             }
-            return {
-                section: section,
-                region: region,
-                area: area
-            };
+            return sections;
+        } else {
+            return null;
         }
     }
 
-    revisionCheck(permission?) {
-        return permission == Auth_Permissions.User_Type.superUser
-            || (Revision.DetailRevisionPermission.find(obj => obj == permission) != null);
+    revisionCheck(permission?: Enums.Auth_Permissions.User_Type) {
+        return permission === Auth_Permissions.User_Type.superUser
+            || (Revision.DetailRevisionPermission.find(obj => obj === permission) != null);
     }
 
     private updateProfile(): Observable<any> {
@@ -253,22 +240,9 @@ export class BcAuthService {
         this.newShelter = true;
     }
 
-    private checkEnumPermission(names: any[], shelId, profile) {
-        let permission = false;
-        if (profile.role == Auth_Permissions.User_Type.superUser) {
-            permission = true;
-        } else {
-            names.forEach(name => {
-                if (name == Auth_Permissions.User_Type.central) {
-                    if (profile.role == Auth_Permissions.User_Type.central) {
-                        permission = true;
-                    }
-                } else if (shelId) {
-                    permission = permission || checkEnumPermissionForShelter(profile, shelId, name);
-                }
-            });
-        }
-        return permission;
+    private checkEnumPermission(enumName: string, shelId, profile: IUserProfile) {
+        return Revision[enumName].includes(profile.role)
+            && checkEnumPermissionForShelter(profile, shelId);
     }
 
     getPermissions(): Observable<any[]> {
@@ -284,14 +258,13 @@ export class BcAuthService {
                     const shelId = value['1'];
                     const profile = value['0'];
                     const permissions: any[] = [];
-                    if (this.checkEnumPermission(Revision.DetailRevisionPermission, shelId, profile)) {
-                        permissions.push(Enums.MenuSection.detail);
-                    }
-                    if (this.checkEnumPermission(Revision.DocRevisionPermission, shelId, profile)) {
-                        permissions.push(Enums.MenuSection.document);
-                    }
-                    if (this.checkEnumPermission(Revision.EconomyRevisionPermission, shelId, profile)) {
-                        permissions.push(Enums.MenuSection.economy);
+                    for (const name in Revision) {
+                        if (Array.isArray(Revision[name])) {
+                            if (this.checkEnumPermission(name, shelId, profile)) {
+                                permissions.push(Revision.RevisionPermissionType[name]);
+                            }
+                        }
+
                     }
                     this.localPermissions = permissions
                     return permissions;

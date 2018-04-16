@@ -168,6 +168,7 @@ export function createFileNameValidator(pattern: RegExp) {
 }
 
 export function createfileSizeValidator(minValue?, maxValue?, exceptValue?) {
+    maxValue = maxValue || FILE_SIZE_LIMIT;
     const validator = createValueValidator(minValue, maxValue, exceptValue);
     return (c: FormControl) => {
         if (c && c.value) {
@@ -180,7 +181,7 @@ export function createfileSizeValidator(minValue?, maxValue?, exceptValue?) {
 
 export const FILE_SIZE_LIMIT = 1024 * 1024 * 16;
 
-function hasRequiredValidator(control: AbstractControl, newValidators?: ValidatorFn | ValidatorFn[]): boolean {
+export function hasRequiredValidator(control: AbstractControl, newValidators?: ValidatorFn | ValidatorFn[]): boolean {
     if (newValidators !== undefined) {
         if (newValidators !== null) {
             if (Array.isArray(newValidators)) {
@@ -212,7 +213,7 @@ export abstract class BcBaseInput implements ControlValueAccessor, OnInit {
     @Input() title = "";
     isDisabled = false;
     private _placeholder;
-    /*@Input() */required = false;
+    required = false;
     @Input() defaultContent = "";
     @Input() noName = false;
     @Input() errorMessage: string;
@@ -224,9 +225,13 @@ export abstract class BcBaseInput implements ControlValueAccessor, OnInit {
     constructor(@Optional() @Host() @SkipSelf()
     private controlContainer: ControlContainer) { }
 
-    updateValidators(control: AbstractControl, newValidators?: ValidatorFn | ValidatorFn[]) {
-        this.required = hasRequiredValidator(control, newValidators);
-        control.updateValueAndValidity()
+    updateValidators(control?: AbstractControl, newValidators?: ValidatorFn | ValidatorFn[]) {
+        if (control) {
+            this.required = hasRequiredValidator(control, newValidators);
+            control.updateValueAndValidity()
+        } else {
+            this.control.updateValueAndValidity();
+        }
     }
 
     ngOnInit() {

@@ -116,7 +116,7 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
   }
 
   private isCentralUser() {
-    this.authService.isCentralUser().subscribe(val => {
+    this.authService.hasDeletePermission().subscribe(val => {
       this.isCentral = val;
     });
 
@@ -240,7 +240,7 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  reviseCheck(permission?) {
+  reviseCheck(permission?: Enums.Auth_Permissions.User_Type) {
     return this.authService.revisionCheck(permission || this.revisionPermission);
   }
 

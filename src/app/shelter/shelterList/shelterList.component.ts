@@ -15,7 +15,7 @@ import {
     BcSharedService
 } from '../../shared/shared.service';
 import {
-    BcAuthService
+    BcAuthService, IUserProfile
 } from '../../shared/auth.service';
 import {
     Subscription
@@ -37,19 +37,16 @@ function getProperty(item, prop: String) {
     styleUrls: ['shelterList.component.scss'],
     providers: [ShelterService, BcSharedService]
 })
-export class BcShelterList {
+export class BcShelterList implements OnInit {
     filterText = "";
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
-    private profile: {
-        code: String,
-        role: Enums.Auth_Permissions.User_Type
-    };
+    private profile: IUserProfile;
     isCentral: boolean;
     constructor(private shelterService: ShelterService, private shared: BcSharedService, private authService: BcAuthService) {}
 
     private isCentralUser() {
-        this.authService.isCentralUser().subscribe(val => {
+        this.authService.hasInsertPermission().subscribe(val => {
             this.isCentral = val;
         });
     }
@@ -73,7 +70,7 @@ export class BcShelterList {
                 this.filteredShelter = shelters;
                 this.filterChanged("");
 
-                if (shelSub != undefined) {
+                if (shelSub) {
                     shelSub.unsubscribe();
                 }
                 if (permissionSub) {
@@ -89,7 +86,7 @@ export class BcShelterList {
             const newShelSub = this.shelterService.getNewId().subscribe((obj) => {
                 this.shared.activeOutlet = Enums.Routes.Routed_Outlet.revision;
                 this.shared.activeComponent = Enums.Routes.Routed_Component.geographic;
-                if (newShelSub != undefined) {
+                if (newShelSub) {
                     newShelSub.unsubscribe();
                 }
                 location.href = "newShelter/" + obj.id + "/(revision:geographic)";

@@ -249,32 +249,26 @@ export namespace Enums {
             sectional = 3,
             superUser = 4,
             visualization = 5,
-            area = 6
+            area = 6,
+            test = 7
         }
 
-        export enum User_Role {
-            "Centrale" = 1,
-            "Regionale" = 2,
-            "Sezionale" = 3,
-            "SuperUser" = 4,
-            "Visualizzazione" = 5,
-            "Area" = 6
+        export const UserTypeName = {
+            [User_Type.central]: "Centrale",
+            [User_Type.regional]: "Regionale",
+            [User_Type.sectional]: "Sezionale",
+            [User_Type.superUser]: "SUPERUSER",
+            [User_Type.visualization]: "Visualization",
+            [User_Type.area]: "Area",
+            [User_Type.test]: "TEST"
         }
 
-        export function getUserRolesByType(type: User_Type): String[] {
-            if (type === User_Type.central) {
-                return ['ROLE_RIFUGI_ADMIN'];
-            } else if (type === User_Type.regional) {
-                return ['PGR'];
-            } else if (type === User_Type.sectional) {
-                return ['ROLE_MEMBERS_VIEW', 'ROLE_MEMBERSHIP'/*,'Responsabile Esterno Sezione','Operatore Sezione Esteso'*/];
-            } else if (type === User_Type.visualization) {
-                return [''];
-            } else if (type === User_Type.area) {
-                return [''];
-            } else {
-                return null;
-            }
+        export const getUserRolesByType = {
+            [User_Type.central]: ['ROLE_RIFUGI_ADMIN'],
+            [User_Type.sectional]: ['ROLE_MEMBERS_VIEW', 'ROLE_MEMBERSHIP'],
+            [User_Type.area]: [''],
+            [User_Type.visualization]: [''],
+            [User_Type.regional]: ['PGR']
         }
 
         export enum Region_Code {
@@ -311,7 +305,7 @@ export namespace Enums {
         }
 
         export const Regions_Area = {
-            "C.M.I.": <Region_Code[]>[
+            [Area_Code["C.M.I."]]: <Region_Code[]>[
                 Region_Code.Abruzzo,
                 Region_Code.Basilicata,
                 Region_Code.Calabria,
@@ -324,29 +318,59 @@ export namespace Enums {
                 Region_Code.Sicilia,
                 Region_Code.Umbria
             ],
-            "Lombardo": <Region_Code[]>[
+            [Area_Code["Lombardo"]]: <Region_Code[]>[
                 Region_Code.Lombardia
             ],
-            "L.P.V.": <Region_Code[]>[
+            [Area_Code["L.P.V."]]: <Region_Code[]>[
                 Region_Code.Liguria,
                 Region_Code.Piemonte,
                 Region_Code["Valle d'Aosta"]
             ],
-            "T.A.A.": <Region_Code[]>[
+            [Area_Code["T.A.A."]]: <Region_Code[]>[
                 Region_Code["Trentino Alto Adige"],
                 Region_Code["Alto Adige"]
             ],
-            "T.E.R.": <Region_Code[]>[
+            [Area_Code["T.E.R."]]: <Region_Code[]>[
                 Region_Code["Emilia Romagna"],
                 Region_Code.Toscana
             ],
-            "V.F.G.": <Region_Code[]>[
+            [Area_Code["V.F.G."]]: <Region_Code[]>[
                 Region_Code["Friuli-Venezia Giulia"],
                 Region_Code.Veneto
             ]
         }
 
+        export namespace Codes {
+            /**
+            [starting_position, count]
+            */
+            export enum CodeSection {
+                "CODETYPE" = <any>[0, 2],
+                "REGION" = <any>[2, 2],
+                "SECTION" = <any>[4, 3],
+                "SUBSECTION" = <any>[7, 3]
+            }
+
+            export const UserTypeCodes = <any>{
+                [User_Type.central]: <CodeSection[]>[],
+                [User_Type.superUser]: <CodeSection[]>[],
+                [User_Type.visualization]: <CodeSection[]>[],
+                [User_Type.regional]: <CodeSection[]>[CodeSection.REGION],
+                [User_Type.sectional]: <CodeSection[]>[CodeSection.REGION, CodeSection.SECTION],
+                [User_Type.area]: <CodeSection[]>[CodeSection.REGION],
+                [User_Type.test]: <CodeSection[]>[CodeSection.CODETYPE, CodeSection.SUBSECTION]
+            }
+
+        }
+
+
         export namespace Revision {
+            export const RevisionPermissionType = {
+                "DocRevisionPermission": MenuSection.document,
+                "EconomyRevisionPermission": MenuSection.economy,
+                "DetailRevisionPermission": MenuSection.detail
+            }
+
             export const DocRevisionPermission: any[] = [
                 User_Type.superUser,
                 User_Type.central,

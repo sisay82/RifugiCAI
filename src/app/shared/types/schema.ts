@@ -182,7 +182,7 @@ export namespace Schema {
         category: { type: Enums.Shelter_Category },
         insertDate: { type: Date, default: Date.now },
         updateDate: { type: Date, default: new Date(Date.now()) },
-        updateSubject: { type: Enums.Auth_Permissions.User_Role, required: true },
+        updateSubject: { type: Enums.Auth_Permissions.User_Type, required: true },
 
         geoData: { type: geographicSchema },
         services: [{

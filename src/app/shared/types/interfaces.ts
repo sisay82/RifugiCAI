@@ -209,7 +209,7 @@ export interface IShelter {
     regional_type?: Enums.Regional_Type;
     insertDate?: Date;
     updateDate?: Date;
-    updateSubject?: Enums.Auth_Permissions.User_Role;
+    updateSubject?: Enums.Auth_Permissions.User_Type;
 
     geoData?: IGeographic;
     services?: [IService];

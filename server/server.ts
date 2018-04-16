@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+(<any>mongoose.Promise) = global.Promise;
 import * as session from 'express-session';
 import * as bodyParser from 'body-parser';
 import * as express from 'express';

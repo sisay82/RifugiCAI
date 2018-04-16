@@ -15,7 +15,7 @@ interface IFakeFile {
     size: Number;
 }
 
-describe('BcSelectInput', () => {
+describe('BcFileInput', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [BcFileInput, BcFileInputErrorStyler]
@@ -38,19 +38,6 @@ describe('BcSelectInput', () => {
         expect(app.value).toBe(oldVal);
     });
 
-    it('Should validate file names', () => {
-        const fixture = TestBed.createComponent(BcFileInput);
-        const app = fixture.debugElement.componentInstance;
-        const fakeFile: IFakeFile = { name: "roba.txt", size: 10 };
-        const customValidator = /(^t).*/g;
-        expect(app.validate({ value: fakeFile })).toBe(null);
-        app.validator = customValidator;
-        expect(app.validator).toBe(customValidator);
-        expect(app.validate({ value: fakeFile })).not.toBe(null);
-        fakeFile.name = "troba.txt";
-        expect(app.validate({ value: fakeFile })).toBe(null);
-    });
-
     it('Should validate extensions', () => {
         const fixture = TestBed.createComponent(BcFileInput);
         const app = fixture.debugElement.componentInstance;
@@ -61,17 +48,6 @@ describe('BcSelectInput', () => {
         expect(app.types).toBe(types);
         expect(app.validate({ value: fakeFile })).not.toBe(null);
         fakeFile.name = "troba.txt";
-        expect(app.validate({ value: fakeFile })).toBe(null);
-    });
-
-    it('Should validate file size', () => {
-        const fixture = TestBed.createComponent(BcFileInput);
-        const app = fixture.debugElement.componentInstance;
-        const fakeFile: IFakeFile = { name: "roba.pdf", size: 10 };
-        expect(app.validate({ value: fakeFile })).toBe(null);
-        app.sizeLimit = 5;
-        expect(app.validate({ value: fakeFile })).not.toBe(null);
-        fakeFile.size = 2;
         expect(app.validate({ value: fakeFile })).toBe(null);
     });
 });

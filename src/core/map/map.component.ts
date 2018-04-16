@@ -252,8 +252,6 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
         }
     }
 
-
-
     markRegions() {
         const permissionSub = this.authService.getUserProfile().subscribe(profile => {
             const processedUser = this.authService.processUserProfileCode(profile);

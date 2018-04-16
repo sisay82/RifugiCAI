@@ -60,43 +60,54 @@ export function addShelterToUpdate(updatingShelter: UpdatingShelter, user: UserD
         return false;
     }
 
-    updatingShelter.shelter.updateSubject = <any>Enums.Auth_Permissions.User_Role[user.role];
+    updatingShelter.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
     updatingShelter.watchDog = new Date(Date.now());
 
     ShelUpdate.push(updatingShelter);
     return true;
 }
 
-function getArea(code: String): String {
-    return code.substr(2, 2);
-}
-
-function getRegion(code: String): String {
-    return code.substr(2, 2);
-}
-
-function getSection(code: String): String {
-    return code.substr(4, 3);
-}
-
 function getAreaRegions(area: string): any {
-    return Auth_Permissions.Regions_Area[Auth_Permissions.Area_Code[area]];
+    return Auth_Permissions.Regions_Area[Number(area)];
 }
 
-export function checkUserData(user: UserData): { section: String, regions: any[] } {
+function getCodeSection(code: String, codeSection: Auth_Permissions.Codes.CodeSection): String {
+    return code.substr(codeSection[0], codeSection[1]);
+}
+
+export function getShelterFilter(type?: Auth_Permissions.User_Type): (code: String) => String {
+    if (type) {
+        const codeSections: Auth_Permissions.Codes.CodeSection[] = Auth_Permissions.Codes.UserTypeCodes[type];
+        return (code: String) => {
+            return codeSections.reduce((value, codeSection) => value.concat(<string>getCodeSection(code, codeSection)), '');
+        }
+    } else {
+        return function (code) {
+            return null
+        };
+    }
+}
+
+export function getUserDataFilters(user: UserData): {} {
     if (user && user.code && user.role) {
-        let regions: any[] = [];
-        let section: String;
-        if (user.role === Auth_Permissions.User_Type.area) {
-            regions = getAreaRegions(<string>getArea(user.code))
-        } else if (user.role === Auth_Permissions.User_Type.regional ||
-            user.role === Auth_Permissions.User_Type.sectional) {
-            regions = [getRegion(user.code)];
+        const sections: {} = {};
+        if (Auth_Permissions.User_Type[user.role]) {
+            const codeSections: Auth_Permissions.Codes.CodeSection[] = Auth_Permissions.Codes.UserTypeCodes[user.role];
+
+            if (user.role === Auth_Permissions.User_Type.area) {
+                sections["REGION"] = getAreaRegions(<string>getCodeSection(user.code, Auth_Permissions.Codes.CodeSection.REGION));
+            } else {
+                for (const codeSection of codeSections) {
+                    const section = Auth_Permissions.Codes.CodeSection[codeSection];
+                    const csection = getCodeSection(user.code, codeSection);
+                    sections[section] = [csection];
+                }
+            }
+            return sections;
+        } else {
+            return null;
+
         }
-        if (user.role === Auth_Permissions.User_Type.sectional) {
-            section = getSection(user.code);
-        }
-        return { section: section, regions: regions };
     } else {
         return null;
     }
