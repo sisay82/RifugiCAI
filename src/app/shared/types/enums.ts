@@ -344,21 +344,32 @@ export namespace Enums {
             /**
             [starting_position, count]
             */
-            export enum CodeSection {
-                "CODETYPE" = <any>[0, 2],
-                "REGION" = <any>[2, 2],
-                "SECTION" = <any>[4, 3],
-                "SUBSECTION" = <any>[7, 3]
+
+            export enum CodeNames {
+                "CODETYPE" = <any>Symbol("CODETYPE"),
+                "REGION" = <any>Symbol("REGION"),
+                "AREA" = <any>Symbol("AREA"),
+                "GR" = <any>Symbol("GR"),
+                "SECTION" = <any>Symbol("SECTION"),
+                "SUBSECTION" = <any>Symbol("SUBSECTION"),
+            }
+
+            export const CodeSection = {
+                [CodeNames.CODETYPE]: <any>[0, 2],
+                [CodeNames.REGION]: <any>[2, 2],
+                [CodeNames.AREA]: <any>[4, 3],
+                [CodeNames.SECTION]: <any>[4, 3],
+                [CodeNames.SUBSECTION]: <any>[7, 3],
             }
 
             export const UserTypeCodes = <any>{
-                [User_Type.central]: <CodeSection[]>[],
-                [User_Type.superUser]: <CodeSection[]>[],
-                [User_Type.visualization]: <CodeSection[]>[],
-                [User_Type.regional]: <CodeSection[]>[CodeSection.REGION],
-                [User_Type.sectional]: <CodeSection[]>[CodeSection.REGION, CodeSection.SECTION],
-                [User_Type.area]: <CodeSection[]>[CodeSection.REGION],
-                [User_Type.test]: <CodeSection[]>[CodeSection.CODETYPE, CodeSection.SUBSECTION],
+                [User_Type.central]: <CodeNames[]>[],
+                [User_Type.superUser]: <CodeNames[]>[],
+                [User_Type.visualization]: <CodeNames[]>[],
+                [User_Type.regional]: <CodeNames[]>[CodeNames.GR],
+                [User_Type.sectional]: <CodeNames[]>[CodeNames.REGION, CodeNames.SECTION],
+                [User_Type.area]: <CodeNames[]>[CodeNames.AREA],
+                [User_Type.test]: <CodeNames[]>[CodeNames.CODETYPE, CodeNames.SUBSECTION],
             }
 
         }

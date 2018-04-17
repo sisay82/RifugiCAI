@@ -35,24 +35,23 @@ import {
 } from '@angular/core/src/debug/debug_node';
 
 
-export function hasInsertPermission(profile: IUserProfile): boolean {
+export function hasInsertPermission(profile: Tools.IUserProfile): boolean {
     return profile && (Auth_Permissions.Edit.InsertShelterPermission[profile.role]);
 }
 
-export function hasDeletePermission(profile: IUserProfile): boolean {
+export function hasDeletePermission(profile: Tools.IUserProfile): boolean {
     return profile && (Auth_Permissions.Edit.DeleteShelterPermission[profile.role]);
 }
 
 function getShelterProfileCheck(filterFn, type: Auth_Permissions.User_Type): (shel: String, user: String) => boolean {
     if (type === Auth_Permissions.User_Type.area) {
         return (shel: String, user: String) => {
-            // const areaRegions = getAreaRegions(<string>getCodeSection(user, Auth_Permissions.Codes.CodeSection.REGION))
             const areaRegions = Tools.getAreaRegionsFromCode(user);
-            return areaRegions.reduce((previous, current) =>
+            return areaRegions && areaRegions.reduce((previous, current) =>
                 previous || (String(current) === filterFn(shel)), false);
         }
     } else {
-        return (shel: String, user: String) => filterFn(shel) === filterFn(shel);
+        return (shel: String, user: String) => filterFn(shel) === filterFn(user);
     }
 }
 
@@ -60,7 +59,7 @@ function isCentralRole(role: Auth_Permissions.User_Type): boolean {
     return (role === Auth_Permissions.User_Type.central || role === Auth_Permissions.User_Type.superUser);
 }
 
-export function checkEnumPermissionForShelter(profile: IUserProfile, shelId, enum_value?: Auth_Permissions.User_Type) {
+export function checkEnumPermissionForShelter(profile: Tools.IUserProfile, shelId, enum_value?: Auth_Permissions.User_Type) {
     if (!enum_value || profile.role === enum_value) {
         const filterFunction = Tools.getShelterFilter(profile.role);
         const shelterProfileCheck = getShelterProfileCheck(filterFunction, profile.role);
@@ -68,11 +67,6 @@ export function checkEnumPermissionForShelter(profile: IUserProfile, shelId, enu
     } else {
         return false;
     }
-}
-
-export interface IUserProfile {
-    code: String;
-    role: Auth_Permissions.User_Type;
 }
 
 @Injectable()
@@ -89,8 +83,8 @@ export class BcAuthService {
     shelIdRequest$ = this.shelIdRequestSource.asObservable();
     private shelIdSource = new Subject<String>();
     shelId$ = this.shelIdSource.asObservable();
-    private userProfile: IUserProfile;
-    private userProfileSource = new Subject<IUserProfile>();
+    private userProfile: Tools.IUserProfile;
+    private userProfileSource = new Subject<Tools.IUserProfile>();
 
     constructor(private http: Http, private route: ActivatedRoute, private router: Router) {
         this.userSectionCodeSub = this.updateProfile().subscribe(profile => {
@@ -120,7 +114,7 @@ export class BcAuthService {
         }
     }
 
-    hasInsertPermission(profile?: IUserProfile): Observable<boolean> {
+    hasInsertPermission(profile?: Tools.IUserProfile): Observable<boolean> {
         if (profile) {
             return Observable.of(hasInsertPermission(profile));
         } else {
@@ -128,7 +122,7 @@ export class BcAuthService {
         }
     }
 
-    hasDeletePermission(profile?: IUserProfile): Observable<boolean> {
+    hasDeletePermission(profile?: Tools.IUserProfile): Observable<boolean> {
         if (profile) {
             return Observable.of(hasDeletePermission(profile));
         } else {
@@ -145,7 +139,7 @@ export class BcAuthService {
             } else {
                 return [
                     Auth_Permissions.Region_Code[
-                    <string>Tools.getCodeSection(code, Auth_Permissions.Codes.CodeSection.REGION)]
+                    <string>Tools.getCodeSection(code, Auth_Permissions.Codes.CodeNames.REGION)]
                 ];
             }
         } else {
@@ -153,7 +147,7 @@ export class BcAuthService {
         }
     }
 
-    processUserProfileCode(profile: IUserProfile): Tools.ICodeInfo {
+    processUserProfileCode(profile: Tools.IUserProfile): Tools.ICodeInfo {
         const sections = {};
 
         if (Auth_Permissions.User_Type[profile.role]) {
@@ -198,7 +192,7 @@ export class BcAuthService {
         this.newShelter = true;
     }
 
-    private checkEnumPermission(enumName: string, shelId, profile: IUserProfile) {
+    private checkEnumPermission(enumName: string, shelId, profile: Tools.IUserProfile) {
         return Revision[enumName].includes(profile.role)
             && checkEnumPermissionForShelter(profile, shelId);
     }

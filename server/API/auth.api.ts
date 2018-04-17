@@ -6,6 +6,7 @@ import { OUT_DIR } from '../tools/constants';
 import { PARSED_URL, APP_BASE_URL } from '../server';
 import xmldom = require('xmldom');
 import * as path from 'path';
+import { Tools } from '../../src/app/shared/tools/common.tools';
 const DOMParser = xmldom.DOMParser;
 
 export const DISABLE_AUTH = false;
@@ -118,20 +119,17 @@ function getCode(type: Auth_Permissions.User_Type, data): String {
             }
         } else {
             if (data.regionaleGroupCode) {
-                const tmpCode = data.regionaleGroupCode;
-                if (tmpCode) {
-                    code = tmpCode.substr(0, 2) + tmpCode.substr(5, 2) + tmpCode.substr(2, 3);
-                }
+                return data.regionaleGroupCode;
             }
         }
     }
     return code;
 }
 
-function getUserPermissions(data): { role: Auth_Permissions.User_Type, code: String } {
+function getUserPermissions(data): Tools.IUserProfile {
     let role = getRole(data);
     const code = getCode(role, data);
-    if (role === Auth_Permissions.User_Type.regional && code.substr(0, 2) === '93') {
+    if (role === Auth_Permissions.User_Type.regional && Tools.getCodeSection(code, Auth_Permissions.Codes.CodeNames.CODETYPE) === '93') {
         role = Auth_Permissions.User_Type.area;
     }
     return { role: role, code: code };
@@ -140,7 +138,7 @@ function getUserPermissions(data): { role: Auth_Permissions.User_Type, code: Str
 function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Type, code: String }> {
     logger(LOG_TYPE.INFO, 'CHECKUSER');
     return new Promise<{ role: Auth_Permissions.User_Type, code: String }>((resolve, reject) => {
-        resolve({ role: Auth_Permissions.User_Type.area, code: "9350000" });
+        //resolve({ role: Auth_Permissions.User_Type.visualization, code: "9500050" });
 
         if (DISABLE_AUTH) {
             resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });

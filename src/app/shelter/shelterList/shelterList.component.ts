@@ -15,11 +15,12 @@ import {
     BcSharedService
 } from '../../shared/shared.service';
 import {
-    BcAuthService, IUserProfile
+    BcAuthService
 } from '../../shared/auth.service';
 import {
     Subscription
 } from 'rxjs/Subscription';
+import { Tools } from '../../shared/tools/common.tools';
 
 function getProperty(item, prop: String) {
     const props = prop.split('.');
@@ -41,7 +42,7 @@ export class BcShelterList implements OnInit {
     filterText = "";
     filteredShelter: IShelter[] = [];
     rifugiSample: IShelter[] = [];
-    private profile: IUserProfile;
+    private profile: Tools.IUserProfile;
     isCentral: boolean;
     constructor(private shelterService: ShelterService, private shared: BcSharedService, private authService: BcAuthService) {}
 
