@@ -6,6 +6,7 @@ export namespace Tools {
     export interface ICodeInfo {
         CODETYPE?: String,
         REGION?: String,
+        GR?: String,
         SECTION?: String,
         SUBSECTION?: String,
         AREA?: String
@@ -20,17 +21,29 @@ export namespace Tools {
         const code = Number(sectionCode);
         if (Enums.Auth_Permissions.Area_Code[code]) {
             return Enums.Auth_Permissions.Regions_Area[code]
-        } else if (Enums.Auth_Permissions.Region_Code[code]) {
-            return [code];
         } else {
             return null;
         }
     }
 
+    export function getShelterProfileCheck(filterFn, type: User_Type): (shel: String, user: String) => boolean {
+        if (type === User_Type.area || type === User_Type.regional) {
+            return (shel: String, user: String) => {
+                const regions: any[] = Tools.getRegions(Tools.getCodeSections(type, user));
+                return regions && regions.reduce((previous, current) =>
+                    previous || (String(current) === filterFn(shel)), false);
+            }
+        } else {
+            return (shel: String, user: String) => filterFn(shel) === filterFn(user);
+        }
+    }
+
     export function getShelterFilter(type?: User_Type): (code: String) => String {
         if (type) {
-            if (type === User_Type.area) {
-                return getShelterFilter(User_Type.regional);
+            if (type === User_Type.area || type === User_Type.regional) {
+                return (code: String) => {
+                    return Tools.getCodeSection(code, Codes.CodeNames.REGION);
+                }
             } else {
                 const codeSections: Codes.CodeNames[] = Codes.UserTypeCodes[type];
                 return (code: String) => {
@@ -44,13 +57,25 @@ export namespace Tools {
         }
     }
 
+    export function filterRegions(type: User_Type, code: String): string[] {
+        const userInfo = getCodeSections(type, code);
+        const regions: any[] = getRegions(userInfo);
+        if (!regions || !Array.isArray(regions)) {
+            return Object.keys(Enums.Auth_Permissions.Region_Code);
+        } else {
+            return Object.keys(Enums.Auth_Permissions.Region_Code).filter(i => regions.indexOf(i) < 0);
+        }
+    }
+
     export function getAreaRegionsFromCode(code: String) {
         const section = getCodeSection(code, Codes.CodeNames.AREA);
         return getRegionsFromAreaCode(section);
     }
 
     export function getRegions(userInfo: ICodeInfo) {
-        return getRegionsFromAreaCode(userInfo.AREA) || [userInfo.REGION];
+        return getRegionsFromAreaCode(userInfo.AREA)
+            || (userInfo.GR ? [userInfo.GR] : null)
+                || (userInfo.REGION ? [userInfo.REGION] : null);
     }
 
     export function getSections(userInfo: ICodeInfo) {
@@ -68,9 +93,6 @@ export namespace Tools {
             const section = Codes.CodeNames[ct];
             codeInfo[section] = getCodeSection(code, ct);
         }
-        /*if (userType === User_Type.area) {
-            codeInfo["AREA"] = getCodeSection(code, Codes.CodeNames.SECTION);
-        }*/
         return codeInfo;
     }
 

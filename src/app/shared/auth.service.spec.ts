@@ -4,7 +4,6 @@ import {
 } from '@angular/core/testing';
 import {
     BcAuthService,
-    getShelterFilter,
     checkEnumPermissionForShelter
 } from './auth.service';
 import {
@@ -14,6 +13,7 @@ import { HttpModule, Http } from '@angular/http';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs/Observable';
 import { Enums } from './types/enums';
+import { Tools } from './tools/common.tools';
 
 class HttpMockService {
     get(any: any) {
@@ -34,21 +34,21 @@ describe('BcAuthService', () => {
     // const service = new BcAuthService(<any>(new HttpMockService()), <any>new RouteMockService(), <any>new RouterMockService());
 
     it("Should get filters based on usertype", function () {
-        let filter = getShelterFilter(Enums.Auth_Permissions.User_Type.central);
+        let filter = Tools.getShelterFilter(Enums.Auth_Permissions.User_Type.central);
         expect(filter(shelCode)).toBe('');
-        filter = getShelterFilter(Enums.Auth_Permissions.User_Type.visualization);
+        filter = Tools.getShelterFilter(Enums.Auth_Permissions.User_Type.visualization);
         expect(filter(shelCode)).toBe('');
-        filter = getShelterFilter(Enums.Auth_Permissions.User_Type.superUser);
+        filter = Tools.getShelterFilter(Enums.Auth_Permissions.User_Type.superUser);
         expect(filter(shelCode)).toBe('');
-        filter = getShelterFilter(Enums.Auth_Permissions.User_Type.area);
-        expect(filter(shelCode)).toBe('16');
-        filter = getShelterFilter(Enums.Auth_Permissions.User_Type.sectional);
+        filter = Tools.getShelterFilter(Enums.Auth_Permissions.User_Type.area);
+        expect(filter(shelCode)).toBe('16'); ////
+        filter = Tools.getShelterFilter(Enums.Auth_Permissions.User_Type.sectional);
         expect(filter(shelCode)).toBe('16001');
-        filter = getShelterFilter(Enums.Auth_Permissions.User_Type.regional);
-        expect(filter(shelCode)).toBe('16');
-        filter = getShelterFilter(null);
+        filter = Tools.getShelterFilter(Enums.Auth_Permissions.User_Type.regional);
+        expect(filter(shelCode)).toBe('16'); ////
+        filter = Tools.getShelterFilter(null);
         expect(filter(shelCode)).toBe(null);
-        filter = getShelterFilter(Enums.Auth_Permissions.User_Type.test);
+        filter = Tools.getShelterFilter(Enums.Auth_Permissions.User_Type.test);
         expect(filter(shelCode)).toBe('92002');
     });
 
@@ -70,14 +70,16 @@ describe('BcAuthService', () => {
         expect(checkEnumPermissionForShelter(userProfile, shelCode))
             .toBe(true);
         userProfile.role = Enums.Auth_Permissions.User_Type.regional;
-        expect(checkEnumPermissionForShelter(userProfile, '9216002002'))
-            .toBe(true);
-        expect(checkEnumPermissionForShelter(userProfile, '9217001002'))
+        userProfile.code = "9500020";
+        expect(checkEnumPermissionForShelter(userProfile, '9200002002'))
             .toBe(false);
-        userProfile.role = Enums.Auth_Permissions.User_Type.area;
-        expect(checkEnumPermissionForShelter(userProfile, '9216002002'))
+        expect(checkEnumPermissionForShelter(userProfile, '9220011002'))
             .toBe(true);
-        expect(checkEnumPermissionForShelter(userProfile, '9217001002'))
+        userProfile.role = Enums.Auth_Permissions.User_Type.area;
+        userProfile.code = "9300050";
+        expect(checkEnumPermissionForShelter(userProfile, '9234011002'))
+            .toBe(true);
+        expect(checkEnumPermissionForShelter(userProfile, '9200001002'))
             .toBe(false);
     });
 

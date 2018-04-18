@@ -358,6 +358,7 @@ function updateShelterUse(shelter: IShelterExtended, uses: any[]): Promise<any> 
     return new Promise<any>((resolve, reject) => {
         if (uses) {
             for (const use of uses) {
+                if (!shelter.use) { shelter.use = <any>[] }
                 const u = shelter.use.filter(obj => obj.year === use.year)[0];
                 if (u) {
                     shelter.use.splice(shelter.use.indexOf(u), 1);

@@ -358,6 +358,7 @@ export namespace Enums {
                 [CodeNames.CODETYPE]: <any>[0, 2],
                 [CodeNames.REGION]: <any>[2, 2],
                 [CodeNames.AREA]: <any>[4, 3],
+                [CodeNames.GR]: <any>[5, 2],
                 [CodeNames.SECTION]: <any>[4, 3],
                 [CodeNames.SUBSECTION]: <any>[7, 3],
             }

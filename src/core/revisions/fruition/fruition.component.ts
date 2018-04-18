@@ -90,6 +90,9 @@ export class BcFruitionRevision extends RevisionBase implements OnDestroy {
         this.name = shelter.name;
         let use;
         if (shelter.use) {
+            if (!Array.isArray(shelter.use)) {
+                shelter.use = <any>[];
+            }
             use = shelter.use.find(obj => obj.year === (new Date()).getFullYear());
             this.data = use;
         }

@@ -43,18 +43,6 @@ export function hasDeletePermission(profile: Tools.IUserProfile): boolean {
     return profile && (Auth_Permissions.Edit.DeleteShelterPermission[profile.role]);
 }
 
-function getShelterProfileCheck(filterFn, type: Auth_Permissions.User_Type): (shel: String, user: String) => boolean {
-    if (type === Auth_Permissions.User_Type.area) {
-        return (shel: String, user: String) => {
-            const areaRegions = Tools.getAreaRegionsFromCode(user);
-            return areaRegions && areaRegions.reduce((previous, current) =>
-                previous || (String(current) === filterFn(shel)), false);
-        }
-    } else {
-        return (shel: String, user: String) => filterFn(shel) === filterFn(user);
-    }
-}
-
 function isCentralRole(role: Auth_Permissions.User_Type): boolean {
     return (role === Auth_Permissions.User_Type.central || role === Auth_Permissions.User_Type.superUser);
 }
@@ -62,7 +50,7 @@ function isCentralRole(role: Auth_Permissions.User_Type): boolean {
 export function checkEnumPermissionForShelter(profile: Tools.IUserProfile, shelId, enum_value?: Auth_Permissions.User_Type) {
     if (!enum_value || profile.role === enum_value) {
         const filterFunction = Tools.getShelterFilter(profile.role);
-        const shelterProfileCheck = getShelterProfileCheck(filterFunction, profile.role);
+        const shelterProfileCheck = Tools.getShelterProfileCheck(filterFunction, profile.role);
         return shelterProfileCheck(shelId, profile.code);
     } else {
         return false;
@@ -131,20 +119,7 @@ export class BcAuthService {
     }
 
     getRegions(role: Auth_Permissions.User_Type, code: String): string[] {
-        if (role) {
-            if (isCentralRole(role)) {
-                return Object.keys(Auth_Permissions.Region_Code);
-            } else if (role === Auth_Permissions.User_Type.area) {
-                return Tools.getAreaRegionsFromCode(code).map(val => Enums.Auth_Permissions.Region_Code[val]) || [];
-            } else {
-                return [
-                    Auth_Permissions.Region_Code[
-                    <string>Tools.getCodeSection(code, Auth_Permissions.Codes.CodeNames.REGION)]
-                ];
-            }
-        } else {
-            return null;
-        }
+        return Tools.filterRegions(role, code);
     }
 
     processUserProfileCode(profile: Tools.IUserProfile): Tools.ICodeInfo {

@@ -138,7 +138,7 @@ function getUserPermissions(data): Tools.IUserProfile {
 function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Type, code: String }> {
     logger(LOG_TYPE.INFO, 'CHECKUSER');
     return new Promise<{ role: Auth_Permissions.User_Type, code: String }>((resolve, reject) => {
-        //resolve({ role: Auth_Permissions.User_Type.visualization, code: "9500050" });
+        //resolve({ role: Auth_Permissions.User_Type., code: "9500034" });
 
         if (DISABLE_AUTH) {
             resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });
