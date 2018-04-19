@@ -254,7 +254,7 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.newShelter && !this.shelterInitialized && this.shelter) {
+    if (!this.shelterInitialized && (this.newShelter || this.shelter)) {
       this.shelterInitialized = true;
       const authSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val => {
         if (val && this.reviseCheck(val)) {

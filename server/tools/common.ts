@@ -37,9 +37,14 @@ export interface UserData {
 }
 
 const ShelUpdate: UpdatingShelter[] = [];
-export const SheltersToUpdate = new Proxy(ShelUpdate, {
-    get(target, name) { return target[name] }
-});
+
+export function removeShelterToUpdate(shelUpdate: UpdatingShelter) {
+    ShelUpdate.splice(ShelUpdate.indexOf(shelUpdate), 1);
+}
+
+export function getShelterToUpdateById(id: String) {
+    return ShelUpdate.find(shelter => String(shelter.shelter._id) === id);
+}
 
 export const ObjectId = Types.ObjectId;
 

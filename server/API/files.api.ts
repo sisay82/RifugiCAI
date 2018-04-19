@@ -3,7 +3,16 @@ import { Enums } from '../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import Files_Enum = Enums.Files;
 import multer = require('multer');
-import { SheltersToUpdate, IFileExtended, ObjectId, UpdatingShelter, logger, LOG_TYPE } from '../tools/common';
+import {
+    IFileExtended,
+    ObjectId,
+    UpdatingShelter,
+    logger,
+    LOG_TYPE,
+    removeShelterToUpdate,
+    getShelterToUpdateById,
+    addShelterToUpdate
+} from '../tools/common';
 import { model } from 'mongoose';
 import { IFile } from '../../src/app/shared/types/interfaces';
 import { BCSchema } from '../../src/app/shared/types/schema';
@@ -83,7 +92,7 @@ export function resolveFilesForShelter(shelter): Promise<any> {
 
             Promise.all(promises)
                 .then(() => {
-                    SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelter), 1);
+                    removeShelterToUpdate(shelter);
                     resolve();
                 })
                 .catch(err => {
@@ -91,7 +100,7 @@ export function resolveFilesForShelter(shelter): Promise<any> {
                     reject(err);
                 });
         } else {
-            SheltersToUpdate.splice(SheltersToUpdate.indexOf(shelter), 1);
+            removeShelterToUpdate(shelter);
             resolve();
         }
     })
@@ -274,7 +283,8 @@ fileRoute.route('/shelters/file/all')
 fileRoute.route('/shelters/file/confirm')
     .post(function (req, res) {
         try {
-            const upload = multer().single('file')
+            const upload = multer().single('file');
+            const user = req.body.user;
             upload(req, res, function (err) {
                 if (err) {
                     res.status(500).send({ error: 'Invalid user or request' })
@@ -283,23 +293,23 @@ fileRoute.route('/shelters/file/confirm')
                     if (file.size < 1024 * 1024 * 16) {
                         const id = file.shelterId;
                         const fileid = new ObjectId();
-                        const shelUpdate = SheltersToUpdate.filter(obj => String(obj.shelter._id) === id);
+                        const shelUpdate = getShelterToUpdateById(id);
                         file._id = fileid;
                         file.new = true;
                         if (file.type === Files_Enum.File_Type.image) {
                             const shelFiles = queryFilesByshelterId(id)
                                 .then(files => {
                                     const images = files.filter(obj => obj.type === Files_Enum.File_Type.image);
-                                    if (shelUpdate && shelUpdate.length > 0) {
+                                    if (shelUpdate) {
                                         if (images.length < maxImages &&
-                                            (!shelUpdate[0].files || images.length + shelUpdate[0].files.length < maxImages)
+                                            (!shelUpdate.files || images.length + shelUpdate.files.length < maxImages)
                                         ) {
-                                            if (shelUpdate[0].files) {
-                                                shelUpdate[0].files.push(file);
+                                            if (shelUpdate.files) {
+                                                shelUpdate.files.push(file);
                                             } else {
-                                                shelUpdate[0].files = [file];
+                                                shelUpdate.files = [file];
                                             }
-                                            shelUpdate[0].watchDog = new Date(Date.now());
+                                            shelUpdate.watchDog = new Date(Date.now());
                                             res.status(200).send(fileid);
                                         } else {
                                             logger(LOG_TYPE.ERROR, 'Max ' + maxImages + ' images');
@@ -312,7 +322,7 @@ fileRoute.route('/shelters/file/confirm')
                                                 watchDog: new Date(Date.now()),
                                                 files: [file]
                                             };
-                                            SheltersToUpdate.push(newShelter);
+                                            addShelterToUpdate(newShelter, user);
                                             res.status(200).send(fileid);
                                         } else {
                                             logger(LOG_TYPE.ERROR, 'Max ' + maxImages + ' images');
@@ -321,14 +331,14 @@ fileRoute.route('/shelters/file/confirm')
                                     }
                                 })
                                 .catch(e => {
-                                    if (shelUpdate && shelUpdate.length > 0) {
-                                        if (!shelUpdate[0].files || shelUpdate[0].files.length < maxImages) {
-                                            if (shelUpdate[0].files) {
-                                                shelUpdate[0].files.push(file);
+                                    if (shelUpdate) {
+                                        if (!shelUpdate.files || shelUpdate.files.length < maxImages) {
+                                            if (shelUpdate.files) {
+                                                shelUpdate.files.push(file);
                                             } else {
-                                                shelUpdate[0].files = [file];
+                                                shelUpdate.files = [file];
                                             }
-                                            shelUpdate[0].watchDog = new Date(Date.now());
+                                            shelUpdate.watchDog = new Date(Date.now());
                                             res.status(200).send(fileid);
                                         } else {
                                             logger(LOG_TYPE.ERROR, 'Max ' + maxImages + ' images');
@@ -336,21 +346,29 @@ fileRoute.route('/shelters/file/confirm')
                                         }
                                     } else {
                                         const newShelter: any = { _id: id };
-                                        SheltersToUpdate.push({ watchDog: new Date(Date.now()), shelter: newShelter, files: [file] });
+                                        addShelterToUpdate({
+                                            watchDog: new Date(Date.now()),
+                                            shelter: newShelter,
+                                            files: [file]
+                                        }, user);
                                         res.status(200).send(fileid);
                                     }
                                 });
                         } else {
-                            if (shelUpdate && shelUpdate.length > 0) {
-                                if (shelUpdate[0].files) {
-                                    shelUpdate[0].files.push(file);
+                            if (shelUpdate) {
+                                if (shelUpdate.files) {
+                                    shelUpdate.files.push(file);
                                 } else {
-                                    shelUpdate[0].files = [file];
+                                    shelUpdate.files = [file];
                                 }
-                                shelUpdate[0].watchDog = new Date(Date.now());
+                                shelUpdate.watchDog = new Date(Date.now());
                             } else {
                                 const newShelter: any = { _id: id };
-                                SheltersToUpdate.push({ watchDog: new Date(Date.now()), shelter: newShelter, files: [file] });
+                                addShelterToUpdate({
+                                    watchDog: new Date(Date.now()),
+                                    shelter: newShelter,
+                                    files: [file]
+                                }, user);
                             }
                             res.status(200).send(fileid);
                         }
@@ -368,29 +386,30 @@ fileRoute.route('/shelters/file/confirm')
 
 fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
     .delete(function (req, res) {
-        const shelUpdate = SheltersToUpdate.filter(obj => String(obj.shelter._id) === req.params.shelid);
-        if (shelUpdate && shelUpdate.length > 0) {
+        const shelUpdate = getShelterToUpdateById(req.params.shelid);
+        const user = req.body.user;
+        if (shelUpdate) {
             let fileToDelete;
-            if (shelUpdate[0].files) {
-                fileToDelete = shelUpdate[0].files.filter(f => String(f._id) === req.params.fileid);
+            if (shelUpdate.files) {
+                fileToDelete = shelUpdate.files.filter(f => String(f._id) === req.params.fileid);
             } else {
-                shelUpdate[0].files = [];
+                shelUpdate.files = [];
             }
             if (fileToDelete && fileToDelete.length > 0) {
-                shelUpdate[0].files.splice(shelUpdate[0].files.indexOf(fileToDelete[0]), 1);
+                shelUpdate.files.splice(shelUpdate.files.indexOf(fileToDelete[0]), 1);
                 delete (fileToDelete[0].data);
                 fileToDelete[0].remove = true;
             } else {
-                shelUpdate[0].files.push({ _id: req.params.fileid, remove: true });
+                shelUpdate.files.push({ _id: req.params.fileid, remove: true });
             }
             res.status(200).send(true);
         } else {
             const newShelter: any = {};
             newShelter._id = req.params.shelid;
-            SheltersToUpdate.push({
+            addShelterToUpdate({
                 watchDog: new Date(Date.now()),
                 shelter: newShelter, files: [{ _id: req.params.fileid, remove: true }]
-            });
+            }, user);
             res.status(200).send(true);
         }
     })
@@ -409,8 +428,9 @@ fileRoute.route('/shelters/file/:id')
     .put(function (req, res) {
         try {
             const updFile: IFile = req.body.file;
+            const user = req.body.user;
             if (updFile) {
-                const shel = SheltersToUpdate.filter(obj => obj.shelter._id && (<any>obj.shelter._id) === updFile.shelterId)[0];
+                const shel = getShelterToUpdateById(updFile.shelterId);
                 if (shel) {
                     let file;
                     if (shel.files) {
@@ -444,11 +464,11 @@ fileRoute.route('/shelters/file/:id')
                         }
                     }
                     newF.update = true;
-                    SheltersToUpdate.push({
+                    addShelterToUpdate({
                         watchDog: new Date(Date.now()),
                         shelter: shelter,
                         files: [newF]
-                    });
+                    }, user);
                 }
                 res.status(200).send(true);
             } else {
@@ -472,7 +492,7 @@ fileRoute.route('/shelters/file/:id')
 
 fileRoute.route('/shelters/file/byshel/:id')
     .get(function (req, res) {
-        const shel = SheltersToUpdate.filter(obj => String(obj.shelter._id) === req.params.id)[0];
+        const shel = getShelterToUpdateById(req.params.id);
         if (shel && shel.files != null) {
             queryFilesByshelterId(req.params.id)
                 .then((files) => {
@@ -505,7 +525,7 @@ fileRoute.route('/shelters/file/byshel/:id')
 
 fileRoute.route('/shelters/file/byshel/:id/bytype')
     .get(function (req, res) {
-        const shel = SheltersToUpdate.filter(obj => String(obj.shelter._id) === req.params.id)[0];
+        const shel = getShelterToUpdateById(req.params.id);
         const types = req.query.types.map(t => Number(t));
         if (shel && shel.files != null) {
             queryFilesByshelterId(req.params.id, types)

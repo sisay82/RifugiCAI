@@ -9,7 +9,6 @@ import https = require('https');
 import fs = require('fs');
 import * as path from 'path';
 import {
-    SheltersToUpdate,
     IServiceExtended,
     IShelterExtended,
     IFileExtended,
