@@ -266,8 +266,8 @@ export namespace Enums {
         export const getUserRolesByType = {
             [User_Type.central]: ['ROLE_RIFUGI_ADMIN'],
             [User_Type.sectional]: ['ROLE_MEMBERS_VIEW', 'ROLE_MEMBERSHIP'],
-            [User_Type.area]: [''],
-            [User_Type.visualization]: [''],
+            [User_Type.area]: ['ROLE_RIFUGI_AREA'],
+            [User_Type.visualization]: ['ROLE_RIFUGI_CC'],
             [User_Type.regional]: ['PGR']
         }
 

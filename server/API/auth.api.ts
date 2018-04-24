@@ -102,6 +102,12 @@ function getRole(data): Auth_Permissions.User_Type {
         } else if (checkInclude(data.aggregatedAuthorities,
             Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.sectional], 'role')) {
             return Auth_Permissions.User_Type.sectional;
+        } else if (checkInclude(data.aggregatedAuthorities,
+            Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.visualization], 'role')) {
+            return Auth_Permissions.User_Type.visualization;
+        } else if (checkInclude(data.aggregatedAuthorities,
+            Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.area], 'role')) {
+            return Auth_Permissions.User_Type.area;
         } else {
             return null;
         }
