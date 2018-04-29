@@ -144,7 +144,16 @@ export function createContributionPDF(shelter: IShelterExtended): Promise<{ name
                             alignment: 'right'
                         }
                     ], fontSize: bodySize
-                }
+                },
+                (contribution.attachments && contribution.attachments.length > 0) ? [
+                    getLineBreak(), {
+                        text: "Allegati:",
+                        fontSize: contentSize,
+                        bold: true
+                    }].concat(contribution.attachments.map(file => {
+                        return <any>{ text: file.name, fontSize: contentSize }
+                    }))
+                    : null
             ],
             styles: {
                 header: {
@@ -163,47 +172,34 @@ export function createContributionPDF(shelter: IShelterExtended): Promise<{ name
                 }
             }
         }
-        if (contribution.attachments && contribution.attachments.length > 0) {
-            docDescriptor.content.push(getLineBreak());
-            docDescriptor.content.push({
-                text: "Allegati:",
-                fontSize: contentSize,
-                bold: true
-            });
-            contribution.attachments.forEach(file => {
-                docDescriptor.content.push({
-                    text: file.name, fontSize: contentSize
-                });
-            });
-        }
 
-        const f: IFile = {
-            shelterId: shelter._id,
-            uploadDate: new Date(),
-            contribution_type: contribution.type,
-            contentType: 'application/pdf',
-            type: Files_Enum.File_Type.contribution,
-            invoice_year: contribution.year,
-        }
-
-        return Promise.all([
-            createPdf(docDescriptor),
-            countContributionFilesByShelter(shelter._id)
-        ])
-            .then(values => {
-                const num = values["1"];
-                const buff = values["0"];
-                f.name = getPDFContributionName(contribution.year, contribution.type, num);
-                f.value = num;
-                f.size = buff.length;
-                f.data = buff
-                return insertNewFile(<any>f);
-            })
-            .then(file => {
-                return Promise.resolve({ name: file.name, id: file._id });
-            })
-            .catch(err => Promise.reject(err))
-    } else {
-        return Promise.reject(new Error('Error contribution data'));
+    const f: IFile = {
+        shelterId: shelter._id,
+        uploadDate: new Date(),
+        contribution_type: contribution.type,
+        contentType: 'application/pdf',
+        type: Files_Enum.File_Type.contribution,
+        invoice_year: contribution.year,
     }
+
+    return Promise.all([
+        createPdf(docDescriptor),
+        countContributionFilesByShelter(shelter._id)
+    ])
+        .then(values => {
+            const num = values["1"];
+            const buff = values["0"];
+            f.name = getPDFContributionName(contribution.year, contribution.type, num);
+            f.value = num;
+            f.size = buff.length;
+            f.data = buff
+            return insertNewFile(<any>f);
+        })
+        .then(file => {
+            return Promise.resolve({ name: file.name, id: file._id });
+        })
+        .catch(err => Promise.reject(err))
+} else {
+    return Promise.reject(new Error('Error contribution data'));
+}
 }
