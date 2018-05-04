@@ -7,7 +7,7 @@ import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@ang
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
-import { BcSharedService, ServiceBase, ServicePlaceholders } from '../../../app/shared/shared.service';
+import { BcSharedService, serviceBaseList } from '../../../app/shared/shared.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { Subscription } from 'rxjs/Subscription';
 import { BcAuthService } from '../../../app/shared/auth.service';
@@ -35,7 +35,6 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
     private newServiceAdded = false;
     private newTagHidden = true;
     private serviceListChange = false;
-    private placeholders: ServicePlaceholders;
     constructor(shared: BcSharedService,
         shelterService: ShelterService,
         authService: BcAuthService,
@@ -44,7 +43,6 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
         private fb: FormBuilder,
         revisionService: BcRevisionsService) {
         super(shelterService, shared, revisionService, _route, router, authService);
-        this.placeholders = new ServicePlaceholders()
         this.servForm = fb.group({
             services: fb.array([])
         });
@@ -370,37 +368,29 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
     getPlaceholder(category, name) {
         category = this.uglifyString(category);
         name = this.uglifyString(name);
-
-        if (this.placeholders.service[category.toLowerCase()]) {
-            category = category.toLowerCase();
-        } else if (this.placeholders.service[this.decapitalize(category)]) {
-            category = this.decapitalize(category);
-        } else if (!this.placeholders.service[category]) {
-            return "";
+        const service = serviceBaseList.find(s => s.serviceName === category.toLowerCase()
+            || s.serviceName === this.decapitalize(category)
+            || s.serviceName === category
+        );
+        if (service) {
+            const tag = service.tags.find(t => t.name === name.toLowerCase()
+                || t.name === this.decapitalize(name)
+                || t.name === name
+            );
+            return tag.placeholder || "";
         }
-
-        if (this.placeholders.service[category][name.toLowerCase()]) {
-            name = name.toLowerCase();
-        } else if (this.placeholders.service[category][this.decapitalize(name)]) {
-            name = this.decapitalize(name);
-        } else if (!this.placeholders.service[category][name]) {
-            return "";
-        }
-
-        return this.placeholders.service[category][name];
-
+        return "";
     }
 
     initForm(shelter: IShelter) {
         this.name = shelter.name;
-        const serviceList = new ServiceBase();
-        for (const category of Object.getOwnPropertyNames(serviceList)) {
+        for (const serviceBaseEntry of serviceBaseList) {
             const s: IService = {};
-            s.name = s.category = category;
+            s.name = s.category = serviceBaseEntry.serviceName;
             s.tags = [] as [ITag];
-            const serv = shelter.services.find(obj => obj.category && obj.category === category);
-            for (const service of Object.getOwnPropertyNames(serviceList[category])) {
-                const tag = { key: service, value: null, type: typeof (serviceList[category][service]) };
+            const serv = shelter.services.find(obj => obj.category && obj.category === serviceBaseEntry.serviceName);
+            for (const tagBaseEntry of serviceBaseEntry.tags) {
+                const tag = { key: tagBaseEntry.name, value: null, type: tagBaseEntry.type };
                 if (serv) {
                     s._id = serv._id;
                     const t = serv.tags.find(obj => obj.key === tag.key);

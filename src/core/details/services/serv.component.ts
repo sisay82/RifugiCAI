@@ -4,7 +4,7 @@ import {
 import { IService, ITag, IShelter } from '../../../app/shared/types/interfaces';
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BcSharedService, ServiceBase } from '../../../app/shared/shared.service';
+import { BcSharedService, serviceBaseList } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs/Subscription';
 import { BcDetailsService } from '../details.service';
 import { Enums } from '../../../app/shared/types/enums';
@@ -32,20 +32,19 @@ export class BcServ extends DetailBase {
 
 
     initServices(services) {
-        const serviceList = new ServiceBase();
         if (!services) {
             services = [];
         }
-        for (const category of Object.getOwnPropertyNames(serviceList)) {
+        for (const serviceEntry of serviceBaseList) {
             const s: IService = {}
-            s.category = category;
+            s.category = serviceEntry.serviceName;
             s.tags = [] as [ITag];
-            const serv = services.find(obj => obj.category && obj.category == s.category);
-            for (const service of Object.getOwnPropertyNames(serviceList[category])) {
-                const tag = { key: service, value: null, type: typeof (serviceList[category][service]) };
+            const serv = services.find(obj => obj.category && obj.category === s.category);
+            for (const tagEntry of serviceEntry.tags) {
+                const tag = { key: tagEntry.name, value: null, type: tagEntry.type };
                 if (serv) {
                     s._id = serv._id;
-                    const t = serv.tags.find(obj => obj.key == tag.key);
+                    const t = serv.tags.find(obj => obj.key === tag.key);
                     if (t) {
                         tag.value = t.value;
                     }
