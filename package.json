@@ -38,6 +38,7 @@
     "start": "node ./out-tsc/server/server.js",
     "inspect-server": "node --inspect ./out-tsc/server/server.js",
     "build": "npm run clean && ng build && npm run build-server",
+    "build:prod": "npm run clean && ng build --prod && npm run build-server",
     "clean": "npm run clean-server && rimraf ./dist",
     "clean-server": "rimraf ./out-tsc",
     "build-server": "npm run clean-server && npm run compile-server",

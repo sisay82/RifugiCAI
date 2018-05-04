@@ -26,7 +26,7 @@ export class ShelterService {
 
     getNewId(): Observable<{ id: string }> {
         return this.http.put(this.sheltersBaseUrl + '/confirm/newId', { new: true })
-            .map(res => Array.isArray(res) ? <any>res : [])
+            .map(res => <any>res)
             .catch(this.handleError.bind(this));
     }
 

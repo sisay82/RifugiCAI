@@ -58,7 +58,6 @@ export class BcFileInputErrorStyler {
 })
 export class BcFileInput extends BcBaseInput {
     @Input() optionalMessage: string;
-    messageBlock: string;
     _contentType: String;
     types: String[];
 
@@ -105,7 +104,6 @@ export class BcFileInput extends BcBaseInput {
                 if (this.displayError) {
                     this.invalid = true;
                 }
-                this.messageBlock = this.errorMessage;
                 return {
                     err: "Invalid content"
                 };

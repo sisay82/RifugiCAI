@@ -23,7 +23,7 @@ import { parseDate, CUSTOM_PATTERN_VALIDATORS, customDateValidator } from '../..
 export class BcManagementRevision extends RevisionBase implements OnDestroy {
     managForm: FormGroup;
     private newSubjectForm: FormGroup;
-    private ownerSubjectForm: FormGroup;
+    ownerSubjectForm: FormGroup;
     private property: ISubject;
     private subjectChange = false;
     private hiddenSubject = true;
