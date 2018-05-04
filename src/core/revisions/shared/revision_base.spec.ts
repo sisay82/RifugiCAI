@@ -23,8 +23,7 @@ import {
 import {
     BcSelectInputModule
 } from '../../inputs/select/select_input.module';
-import { MockBackend } from '@angular/http/testing';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { BcAuthService } from 'app/shared/auth.service';
 import { BcSharedService } from 'app/shared/shared.service';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -107,7 +106,7 @@ describe('RevisionBase', () => {
                 provide: ActivatedRoute,
                 useValue: fakeActivatedRoute
             }],
-            imports: [HttpModule, BcTextInputModule, FormsModule, ReactiveFormsModule, BcSelectInputModule]
+            imports: [HttpClientModule, BcTextInputModule, FormsModule, ReactiveFormsModule, BcSelectInputModule]
         }).compileComponents();
     }));
 

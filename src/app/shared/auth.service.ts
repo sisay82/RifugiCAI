@@ -5,11 +5,12 @@ import {
     Subject
 } from 'rxjs/Subject';
 import {
-    Http,
+    HttpClient,
+    /*Http,
     Response,
     Headers,
-    RequestOptions
-} from '@angular/http';
+    RequestOptions*/
+} from '@angular/common/http';
 import {
     Observable
 } from 'rxjs/Rx';
@@ -74,7 +75,7 @@ export class BcAuthService {
     private userProfile: Tools.IUserProfile;
     private userProfileSource = new Subject<Tools.IUserProfile>();
 
-    constructor(private http: Http, private route: ActivatedRoute, private router: Router) {
+    constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {
         this.userSectionCodeSub = this.updateProfile().subscribe(profile => {
             this.userProfileSource.next(profile);
             if (this.userSectionCodeSub) {
@@ -154,7 +155,7 @@ export class BcAuthService {
                 .map((res: Response) => {
                     this.routeError = false;
                     this.errorRouteSource.next(false);
-                    const user = res.json();
+                    const user = <any>res;
                     user.role = (user.role ? (user.role) : Auth_Permissions.User_Type.sectional);
                     this.userProfile = user
                     return user;

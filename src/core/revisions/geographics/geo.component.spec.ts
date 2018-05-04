@@ -24,11 +24,8 @@ import {
     BcSelectInputModule
 } from '../../inputs/select/select_input.module';
 import {
-    MockBackend
-} from '@angular/http/testing';
-import {
-    HttpModule
-} from '@angular/http';
+    HttpClientModule
+} from '@angular/common/http';
 import {
     BcAuthService
 } from 'app/shared/auth.service';
@@ -72,7 +69,7 @@ describe('BcGeoRevisionComponent', () => {
                 provide: BcRevisionsService,
                 useClass: FakeRevisionService
             }],
-            imports: [HttpModule, RouterTestingModule, BcTextInputModule, FormsModule, ReactiveFormsModule, BcSelectInputModule]
+            imports: [HttpClientModule, RouterTestingModule, BcTextInputModule, FormsModule, ReactiveFormsModule, BcSelectInputModule]
         }).compileComponents();
     }));
 

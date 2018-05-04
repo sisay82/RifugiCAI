@@ -12,23 +12,25 @@ import { BcFruitionModule } from "./fruition/fruition.module";
 import { RouterModule, Routes } from '@angular/router';
 import { BcManageModule } from "./management/manage.module";
 import { BcCatastalModule } from "./catastal/cat.module";
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { WorkingDetailPage } from "./pageOnWork/working-detail.module";
 
 @NgModule({
-    imports: [HttpModule,RouterModule,WorkingDetailPage
-        ,BcImgModule
-        ,BcDocModule
-        ,BcGeoModule
-        ,BcServModule
-        ,BcContactModule
-        ,BcCatastalModule
-        ,BcManageModule
-        ,BcContributionsModule
-        ,BcEconomyModule
-        ,BcFruitionModule
+    imports: [HttpClientModule
+        , RouterModule
+        , WorkingDetailPage
+        , BcImgModule
+        , BcDocModule
+        , BcGeoModule
+        , BcServModule
+        , BcContactModule
+        , BcCatastalModule
+        , BcManageModule
+        , BcContributionsModule
+        , BcEconomyModule
+        , BcFruitionModule
     ],
-    declarations:[BcDetails],
-    exports: [BcGeoModule,BcDetails]
+    declarations: [BcDetails],
+    exports: [BcGeoModule, BcDetails]
 })
 export class BcDetailsModule { }

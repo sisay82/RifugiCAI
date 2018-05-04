@@ -9,7 +9,6 @@ import {
 import {
     Component
 } from '@angular/core';
-import { HttpModule, Http } from '@angular/http';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs/Observable';
 import { Enums } from './types/enums';

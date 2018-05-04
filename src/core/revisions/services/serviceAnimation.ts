@@ -1,4 +1,4 @@
-import { trigger, state, transition, animate, style } from '@angular/core';
+import { trigger, state, transition, animate, style } from '@angular/animations';
 
 export class Animations {
     public static slideInOut = trigger('slideInOut', [

@@ -12,12 +12,13 @@ import { BcContributionRevisionModule } from './contributions/contributions.modu
 import { BcEconomyRevisionModule } from './economy/economy.module';
 import { BcRevisions } from "./revisions.component";
 import { RouterModule, Routes } from '@angular/router';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { WorkingRevisionPage } from "./pageOnWork/working-revision.module";
 
 @NgModule({
-    imports: [HttpModule, RouterModule
+    imports: [HttpClientModule
+        , RouterModule
         , WorkingRevisionPage
         , BcGeoRevisionComponentModule
         , BcServRevisionComponentModule
