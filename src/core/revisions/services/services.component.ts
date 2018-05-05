@@ -7,7 +7,7 @@ import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@ang
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
-import { BcSharedService, serviceBaseList } from '../../../app/shared/shared.service';
+import { BcSharedService, serviceBaseList, ServiceEntry, TagEntry } from '../../../app/shared/shared.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { Subscription } from 'rxjs/Subscription';
 import { BcAuthService } from '../../../app/shared/auth.service';
@@ -365,21 +365,36 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
         return str.charAt(0).toLowerCase() + str.slice(1);
     }
 
-    getPlaceholder(category, name) {
-        category = this.uglifyString(category);
-        name = this.uglifyString(name);
-        const service = serviceBaseList.find(s => s.serviceName === category.toLowerCase()
-            || s.serviceName === this.decapitalize(category)
-            || s.serviceName === category
+    getControlName(serviceControl, tagControl?): { service: ServiceEntry, tag: TagEntry } {
+        const service = this.getControl(serviceControl, 'category').value;
+        const tag = this.getControl(tagControl, 'key').value
+
+        const serviceEntry = serviceBaseList.find(s => s.serviceName === service.toLowerCase()
+            || s.serviceName === this.decapitalize(service)
+            || s.serviceName === service
         );
-        if (service) {
-            const tag = service.tags.find(t => t.name === name.toLowerCase()
-                || t.name === this.decapitalize(name)
-                || t.name === name
+        if (serviceEntry) {
+            const tagEntry = serviceEntry.tags.find(t => t.name === tag.toLowerCase()
+                || t.name === this.decapitalize(tag)
+                || t.name === tag
             );
-            return tag.placeholder || "";
+            return { service: serviceEntry, tag: tagEntry };
         }
-        return "";
+        return null;
+    }
+
+    getPlaceholder(serviceControl, tagControl) {
+        const entry = this.getControlName(serviceControl, tagControl);
+        return entry ? (entry.tag ? entry.tag.placeholder : null) : null;
+    }
+
+    getOption(serviceControl, tagControl, optionName) {
+        const entry = this.getControlName(serviceControl, tagControl);
+        return entry ? (
+            entry.tag ? (
+                entry.tag.options ? entry.tag.options[optionName] : null
+            ) : null
+        ) : null;
     }
 
     initForm(shelter: IShelter) {

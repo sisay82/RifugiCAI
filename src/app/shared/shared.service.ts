@@ -83,7 +83,8 @@ export interface TagEntry {
     name: String,
     type: String,
     placeholder: String,
-    initialValue: any
+    initialValue: any,
+    options?: any
 }
 
 export interface ServiceEntry {
@@ -156,7 +157,7 @@ export const serviceBaseList: ServiceEntry[] = [
             { name: "convenzioni", type: "string", placeholder: "Es: ANPI, soci ACI ecc.", initialValue: "" },
             { name: "richiesta_di_rifornire_il_rifugio", type: "string", placeholder: "Sì/no", initialValue: "" },
             { name: "presidio_culturale", type: "string", placeholder: "Sì/no", initialValue: "" },
-            { name: "attività_culturali/corsi_specifici", type: "string", placeholder: "Sì/no", initialValue: "" },
+            { name: "attività_culturali/corsi_specifici", type: "string", placeholder: "Sì/no", initialValue: "", options: { lines: 2 } },
         ]
     }
 ];
