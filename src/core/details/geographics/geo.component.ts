@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IGeographic, IShelter, ITag } from '../../../app/shared/types/interfaces'
-import { BcMap, DEFAULT_CENTER } from '../../map/map.component';
+import { BcMap } from '../../map/map.component';
 import { ShelterService } from '../../../app/shelter/shelter.service'
 import { Subject, Subscription } from 'rxjs';
 import * as L from 'leaflet';

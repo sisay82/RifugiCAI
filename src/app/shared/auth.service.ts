@@ -118,8 +118,6 @@ export class BcAuthService {
     }
 
     processUserProfileCode(profile: Tools.IUserProfile): Tools.ICodeInfo {
-        const sections = {};
-
         if (Auth_Permissions.User_Type[profile.role]) {
             return Tools.getCodeSections(profile.role, profile.code);
         } else {

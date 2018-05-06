@@ -20,14 +20,6 @@ export namespace Enums {
         }
     }
 
-    /*export enum ShelterSectionType {
-        "geolocation",
-        "contacts",
-        "services",
-        "management",
-        "catastal"
-    }*/
-
     export enum Heating_Type {
         "Elettrico",
         "Gas",
