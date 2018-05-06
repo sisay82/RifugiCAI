@@ -5,7 +5,7 @@ import { IShelter } from '../../app/shared/types/interfaces';
 import { Enums } from '../../app/shared/types/enums';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BcSharedService } from '../../app/shared/shared.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { ShelterService } from '../../app/shelter/shelter.service'
 import { BcAuthService } from '../../app/shared/auth.service';
 import { CUSTOM_PATTERN_VALIDATORS } from '../inputs/input_base';

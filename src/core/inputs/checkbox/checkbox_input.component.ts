@@ -11,8 +11,8 @@ import {
     NG_ASYNC_VALIDATORS,
     FormGroup
 } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+import { Observable } from 'rxjs';
+
 
 import {
     BcBaseInput

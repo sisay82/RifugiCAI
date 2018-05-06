@@ -27,7 +27,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { BcAuthService } from 'app/shared/auth.service';
 import { BcSharedService } from 'app/shared/shared.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Subject } from 'rxjs/Subject';
 import { Enums } from 'app/shared/types/enums';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -37,11 +36,10 @@ import {
     FakeShelterService
 } from './test_base';
 import {
-    Observable
-} from 'rxjs/Observable';
-import "rxjs/add/observable/of";
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+    Subject,
+    Observable,
+    of as obsOf
+} from 'rxjs';
 import { IShelter } from 'app/shared/types/interfaces';
 
 export class FakeRouter {
@@ -53,7 +51,7 @@ export class FakeActivatedRoute {
     correctString = "507f1f77bcf86cd799439011";
 
     parent = {
-        params: Observable.of({ id: this.wrongString })
+        params: obsOf({ id: this.wrongString })
     }
 }
 const fakeActivatedRoute = new FakeActivatedRoute();
@@ -142,7 +140,7 @@ describe('RevisionBase', () => {
             })
             .catch((err) => {
                 done();
-                fakeActivatedRoute.parent.params = Observable.of({ id: fakeActivatedRoute.correctString });
+                fakeActivatedRoute.parent.params = obsOf({ id: fakeActivatedRoute.correctString });
                 return app.getRoute();
             })
             .then(() => done())

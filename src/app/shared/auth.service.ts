@@ -2,8 +2,12 @@ import {
     Injectable
 } from '@angular/core'
 import {
-    Subject
-} from 'rxjs/Subject';
+    Subject,
+    Observable,
+    Subscription,
+    of as obsOf,
+    forkJoin as obsForkJoin
+} from 'rxjs';
 import {
     HttpClient,
     /*Http,
@@ -12,18 +16,8 @@ import {
     RequestOptions*/
 } from '@angular/common/http';
 import {
-    Observable
-} from 'rxjs/Rx';
-import "rxjs/add/observable/of";
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import {
     Enums
 } from './types/enums';
-import {
-    Subscription
-} from 'rxjs/Subscription';
 import {
     ActivatedRoute,
     Router
@@ -34,7 +28,7 @@ import Revision = Auth_Permissions.Revision;
 import {
     getAllDebugNodes
 } from '@angular/core/src/debug/debug_node';
-
+import { map, first, catchError } from 'rxjs/operators';
 
 export function hasInsertPermission(profile: Tools.IUserProfile): boolean {
     return profile && (Auth_Permissions.Edit.InsertShelterPermission[profile.role]);
@@ -97,7 +91,7 @@ export class BcAuthService {
         role: Auth_Permissions.User_Type
     }> {
         if (this.userProfile) {
-            return Observable.of(this.userProfile);
+            return obsOf(this.userProfile);
         } else {
             return this.userProfileSource.asObservable();
         }
@@ -105,17 +99,17 @@ export class BcAuthService {
 
     hasInsertPermission(profile?: Tools.IUserProfile): Observable<boolean> {
         if (profile) {
-            return Observable.of(hasInsertPermission(profile));
+            return obsOf(hasInsertPermission(profile));
         } else {
-            return this.getUserProfile().map(p => hasInsertPermission(p));
+            return this.getUserProfile().pipe(map(p => hasInsertPermission(p)))
         }
     }
 
     hasDeletePermission(profile?: Tools.IUserProfile): Observable<boolean> {
         if (profile) {
-            return Observable.of(hasDeletePermission(profile));
+            return obsOf(hasDeletePermission(profile));
         } else {
-            return this.getUserProfile().map(p => hasDeletePermission(p));
+            return this.getUserProfile().pipe(map(p => hasDeletePermission(p)));
         }
     }
 
@@ -151,16 +145,16 @@ export class BcAuthService {
                 return user;
             });
         } else {
-            return this.http.get(this.userBaseUrl)
-                .map((res: Response) => {
+            return this.http.get(this.userBaseUrl).pipe(
+                map((res: Response) => {
                     this.routeError = false;
                     this.errorRouteSource.next(false);
                     const user = <any>res;
                     user.role = (user.role ? (user.role) : Auth_Permissions.User_Type.sectional);
                     this.userProfile = user
                     return user;
-                })
-                .catch(this.handleError.bind(this));
+                }),
+                catchError(this.handleError.bind(this)))
         }
     }
 
@@ -175,14 +169,14 @@ export class BcAuthService {
 
     getPermissions(): Observable<any[]> {
         if (this.localPermissions) {
-            return Observable.of(this.localPermissions);
+            return obsOf(this.localPermissions);
         } else {
             this.onShelIdRequest();
-            return Observable.forkJoin(
-                this.getUserProfile().first(),
-                this.shelId$.first()
+            return obsForkJoin(
+                this.getUserProfile().pipe(first()),
+                this.shelId$.pipe(first())
             )
-                .map((value) => {
+                .pipe(map((value) => {
                     const shelId = value['1'];
                     const profile = value['0'];
                     const permissions: any[] = [];
@@ -196,30 +190,30 @@ export class BcAuthService {
                     }
                     this.localPermissions = permissions
                     return permissions;
-                });
+                }));
         }
     }
 
     checkRevisionPermissionForShelter(shelId: String): Observable<Auth_Permissions.User_Type> {
         this.onShelId(shelId);
-        return this.getUserProfile().map(profile => {
+        return this.getUserProfile().pipe(map(profile => {
             if (checkEnumPermissionForShelter(profile, shelId, profile.role)) {
                 return profile.role;
             } else {
                 return null;
             }
-        });
+        }));
     }
 
     checkUserPermission(): Observable<Auth_Permissions.User_Type> {
-        return this.getUserProfile().map(profile => profile.role || null);
+        return this.getUserProfile().pipe(map(profile => profile.role || null));
     }
 
     getRouteError(): Observable<boolean> {
         if (!this.routeError) {
             return this.errorRoute$;
         } else {
-            return Observable.of(this.routeError);
+            return obsOf(this.routeError);
         }
     }
 

@@ -11,7 +11,7 @@ import {
     AbstractControl,
     ControlContainer
 } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 function dateValidator(value) {
     return customDateValidator(<any>{ value: value });

@@ -8,11 +8,9 @@ import {
     AfterContentInit
 } from '@angular/core';
 import {
-    Subject
-} from 'rxjs/Subject';
-import {
+    Subject,
     Subscription
-} from 'rxjs/Subscription';
+} from 'rxjs';
 import {
     ShelterService
 } from '../../app/shelter/shelter.service';

@@ -7,7 +7,7 @@ import { Enums } from '../../../app/shared/types/enums';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcSharedService } from '../../../app/shared/shared.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
 
@@ -126,9 +126,9 @@ export class BcDoc extends DetailBase {
                 Enums.Files.File_Type.contribution
             ]
         )
-        .then(files => {
-            this.initDocs(files);
-        });
+            .then(files => {
+                this.initDocs(files);
+            });
         /*const loadServiceSub = this.detailsService.loadFiles$.subscribe(files => {
             if (!files) {
                 const queryFileSub = this.shelterService.getFilesByShelterId(shelId).subscribe(files => {

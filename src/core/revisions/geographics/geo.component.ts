@@ -38,7 +38,7 @@ import {
 } from '../../../app/shared/auth.service';
 import {
     Subscription
-} from 'rxjs/Subscription';
+} from 'rxjs';
 import {
     RevisionBase
 } from '../shared/revision_base';

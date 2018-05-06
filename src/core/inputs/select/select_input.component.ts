@@ -12,10 +12,10 @@ import {
     NG_ASYNC_VALIDATORS
 } from '@angular/forms';
 import {
-    Subscription
-} from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+    Subscription,
+    Observable
+} from 'rxjs';
+
 import {
     Enums
 } from '../../../app/shared/types/enums';

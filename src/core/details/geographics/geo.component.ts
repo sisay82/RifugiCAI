@@ -5,9 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IGeographic, IShelter, ITag } from '../../../app/shared/types/interfaces'
 import { BcMap, DEFAULT_CENTER } from '../../map/map.component';
 import { ShelterService } from '../../../app/shelter/shelter.service'
-import { Subject } from 'rxjs/Subject';
+import { Subject, Subscription } from 'rxjs';
 import * as L from 'leaflet';
-import { Subscription } from 'rxjs/Subscription';
 import { BcSharedService } from '../../../app/shared/shared.service'
 import { BcDetailsService } from '../details.service';
 import { Enums } from '../../../app/shared/types/enums'
@@ -82,9 +81,9 @@ export class BcGeo extends DetailBase {
 
   init(shelId) {
     this.getData(shelId, "geoData")
-    .then(shelter => {
-      this.initGeographic(shelter.geoData);
-    })
+      .then(shelter => {
+        this.initGeographic(shelter.geoData);
+      })
 
     /*this.getGeoData(shelId)
       .then((shelter) => {

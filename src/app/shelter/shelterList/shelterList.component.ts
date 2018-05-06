@@ -19,7 +19,7 @@ import {
 } from '../../shared/auth.service';
 import {
     Subscription
-} from 'rxjs/Subscription';
+} from 'rxjs';
 import { Tools } from '../../shared/tools/common.tools';
 
 function getProperty(item, prop: String) {
@@ -44,7 +44,7 @@ export class BcShelterList implements OnInit {
     rifugiSample: IShelter[] = [];
     private profile: Tools.IUserProfile;
     isCentral: boolean;
-    constructor(private shelterService: ShelterService, private shared: BcSharedService, private authService: BcAuthService) {}
+    constructor(private shelterService: ShelterService, private shared: BcSharedService, private authService: BcAuthService) { }
 
     private isCentralUser() {
         this.authService.hasInsertPermission().subscribe(val => {
@@ -114,7 +114,7 @@ export class BcShelterList implements OnInit {
             this.filteredShelter = this.rifugiSample;
         }
         this.filteredShelter = this.filteredShelter.sort((a: IShelter, b: IShelter) => {
-            return a.name.localeCompare( < string > b.name);
+            return a.name.localeCompare(<string>b.name);
         });
     }
 }

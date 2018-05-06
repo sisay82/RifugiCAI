@@ -1,21 +1,21 @@
-import { Subject } from "rxjs/Subject";
-import { Enums } from "app/shared/types/enums";
 import {
-    Observable
-} from 'rxjs/Observable';
-import "rxjs/add/observable/of";
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+    Subject,
+    Observable,
+    of as obsOf
+} from "rxjs";
+import { Enums } from "app/shared/types/enums";
+
+
 
 export class FakeShelterService {
     preventiveUpdateShelter(shelter, section): Observable<boolean> {
-        return Observable.of(true);
+        return obsOf(true);
     }
 }
 
 export class FakeAuthService {
     checkUserPermission(): Observable<Enums.Auth_Permissions.User_Type> {
-        return Observable.of(Enums.Auth_Permissions.User_Type.sectional);
+        return obsOf(Enums.Auth_Permissions.User_Type.sectional);
     }
 }
 

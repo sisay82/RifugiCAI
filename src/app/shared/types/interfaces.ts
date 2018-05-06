@@ -23,11 +23,11 @@ export interface IMenuElement {
 
 export interface IMenuLayer {
     layerName?: String;
-    elements: [IMenuElement];
+    elements: IMenuElement[];
 }
 
 export interface IMenu {
-    layers: [IMenuLayer];
+    layers: IMenuLayer[];
 }
 
 export interface ILocation {

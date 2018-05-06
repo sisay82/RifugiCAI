@@ -6,7 +6,7 @@ import { ICatastal, IDrain, IEnergy, IShelter } from '../../../app/shared/types/
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { BcSharedService } from '../../../app/shared/shared.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
 
@@ -41,12 +41,12 @@ export class BcCatastal extends DetailBase {
             this.getData(shelId, "energy"),
             this.getData(shelId, "drain"),
         ])
-        .then(shels => {
-            const shelter = Object.assign({}, shels["0"], shels["1"], shels["2"]);
-            this.drain = shelter.drain;
-            this.energy = shelter.energy;
-            this.catastal = shelter.catastal;
-        });
+            .then(shels => {
+                const shelter = Object.assign({}, shels["0"], shels["1"], shels["2"]);
+                this.drain = shelter.drain;
+                this.energy = shelter.energy;
+                this.catastal = shelter.catastal;
+            });
     }
 
 }

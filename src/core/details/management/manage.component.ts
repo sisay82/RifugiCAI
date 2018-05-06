@@ -6,7 +6,7 @@ import { IManagement, ISubject, IShelter } from '../../../app/shared/types/inter
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { BcSharedService } from '../../../app/shared/shared.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
 
@@ -77,9 +77,9 @@ export class BcManage extends DetailBase {
 
   init(shelId) {
     this.getData(shelId, "management")
-    .then(shelter => {
-      this.initManagement(shelter.management);
-    })
+      .then(shelter => {
+        this.initManagement(shelter.management);
+      })
     /*this.getManagement(shelId)
       .then(shelter => {
         this.initManagement(shelter.management);

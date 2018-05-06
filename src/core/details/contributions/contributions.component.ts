@@ -5,8 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IShelter, IContribution, IFileRef, IFile } from '../../../app/shared/types/interfaces';
 import { Enums } from '../../../app/shared/types/enums';
 import { ShelterService } from '../../../app/shelter/shelter.service'
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Subscription } from 'rxjs';
 import { BcSharedService } from '../../../app/shared/shared.service'
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
@@ -18,7 +17,7 @@ import { DetailBase } from '../shared/detail_base';
   }
 })
 export class BcActiveTabStyler {
-  @Input("active") active: boolean = false;
+  @Input("active") active = false;
 }
 
 @Component({

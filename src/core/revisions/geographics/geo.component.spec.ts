@@ -101,7 +101,7 @@ describe('BcGeoRevisionComponent', () => {
         };
         const fakeShelter = new FakeShelterService();
         app.shelterService = fakeShelter;
-        const saveSpy = spyOn(fakeShelter, "preventiveUpdateShelter").and.returnValue(Observable.of(true));
+        const saveSpy = spyOn(fakeShelter, "preventiveUpdateShelter").and.returnValue(obsOf(true));
         app._id = "ID";
         app.name = "Nome";
         app.geoForm = form;

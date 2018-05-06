@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { IShelter, IFile } from '../../app/shared/types/interfaces';
 import { BcDetailsService } from './details.service';
 import { Enums } from '../../app/shared/types/enums';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BcSharedService } from '../../app/shared/shared.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { BcSharedService } from '../../app/shared/shared.service';
     templateUrl: 'details.component.html',
     providers: [BcDetailsService]
 })
-export class BcDetails {
+export class BcDetails implements OnDestroy {
     Shelters: IShelter;
     Docs: IFile[];
     Images: IFile[];
@@ -32,10 +32,10 @@ export class BcDetails {
         });
 
         this.saveFilesSub = detailsService.saveFiles$.subscribe(files => {
-            for (let file of files) {
+            for (const file of files) {
                 if (file.type == Enums.Files.File_Type.image) {
                     if (this.Images != undefined) {
-                        let fIndex = this.Images.findIndex(f => f._id == file._id);
+                        const fIndex = this.Images.findIndex(f => f._id == file._id);
                         if (fIndex > -1) {
                             this.Images[fIndex] = file;
                         } else {
@@ -46,7 +46,7 @@ export class BcDetails {
                     }
                 } else {
                     if (this.Docs != undefined) {
-                        let fIndex = this.Docs.findIndex(f => f._id == file._id);
+                        const fIndex = this.Docs.findIndex(f => f._id == file._id);
                         if (fIndex > -1) {
                             this.Docs[fIndex] = file;
                         } else {
@@ -64,8 +64,8 @@ export class BcDetails {
             let retNull = false;
             if (this.Docs != undefined &&
                 (types.includes(Enums.Files.File_Type.doc)
-                || types.includes(Enums.Files.File_Type.map)
-                || types.includes(Enums.Files.File_Type.invoice))
+                    || types.includes(Enums.Files.File_Type.map)
+                    || types.includes(Enums.Files.File_Type.invoice))
             ) {
                 files = files.concat(this.Docs.filter(f => types.includes(f.type)));
             } else {

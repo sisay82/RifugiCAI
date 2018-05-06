@@ -1,5 +1,4 @@
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Subscription, Observable } from 'rxjs';
 import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 import { Enums } from '../../../app/shared/types/enums';
 import { OnInit } from '@angular/core';
