@@ -1,6 +1,7 @@
 import {
-    Component, Input, OnInit, trigger, state, style, transition, animate, OnDestroy
+    Component, Input, OnInit, OnDestroy
 } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IShelter, IService, ITag } from '../../../app/shared/types/interfaces';
 import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
