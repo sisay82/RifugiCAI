@@ -7,7 +7,7 @@ import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { BcSharedService } from '../../../app/shared/shared.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
 
@@ -105,9 +105,9 @@ export class BcImg extends DetailBase {
     init(shelId) {
         this.downloading = true;
         this.getDocs(shelId, [Enums.Files.File_Type.image])
-        .then(files => {
-            this.initImages(files);
-        });
+            .then(files => {
+                this.initImages(files);
+            });
         /*let loadServiceSub = this.detailsService.loadFiles$.subscribe(files => {
             if (!files) {
                 let queryFileSub = this.shelterService.getImagesByShelterId(shelId).subscribe(files => {

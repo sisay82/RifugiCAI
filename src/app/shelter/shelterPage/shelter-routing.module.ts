@@ -7,8 +7,8 @@ import { revisionsRoutes } from '../../../core/revisions/revisions-routing.modul
 import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivate, Router } from '@angular/router';
 import { CUSTOM_PATTERN_VALIDATORS } from '../../../core/inputs/input_base';
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/first';
-import { Observable } from 'rxjs/Observable';
+
+import { Observable } from 'rxjs';
 const validObjectIDRegExp = CUSTOM_PATTERN_VALIDATORS.objectID;
 
 @Injectable()

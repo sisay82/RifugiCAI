@@ -10,13 +10,13 @@ import {
     Component
 } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of as obsOf } from 'rxjs';
 import { Enums } from './types/enums';
 import { Tools } from './tools/common.tools';
 
 class HttpMockService {
     get(any: any) {
-        return Observable.of({ json: () => ({ role: 0, code: '9999999' }) });
+        return obsOf({ json: () => ({ role: 0, code: '9999999' }) });
     }
 }
 

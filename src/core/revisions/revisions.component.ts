@@ -3,7 +3,7 @@ import { IShelter, IFile } from '../../app/shared/types/interfaces';
 import { Enums } from '../../app/shared/types/enums';
 import { BcRevisionsService } from './revisions.service';
 import { BcSharedService } from '../../app/shared/shared.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Router, RoutesRecognized } from '@angular/router';
 import { BcAuthService } from '../../app/shared/auth.service';
 

@@ -8,7 +8,7 @@ import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@ang
 import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shared/shared.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { RevisionBase } from '../shared/revision_base';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';

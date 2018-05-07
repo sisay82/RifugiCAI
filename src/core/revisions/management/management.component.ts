@@ -8,7 +8,7 @@ import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@ang
 import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shared/shared.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { RevisionBase } from '../shared/revision_base';
 import { parseDate, CUSTOM_PATTERN_VALIDATORS, customDateValidator } from '../../inputs/input_base';
@@ -207,7 +207,7 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
                 for (const subj of shelter.management.subject) {
                     if (subj.type && subj.type.toLowerCase().indexOf("proprietario") > -1) {
                         this.property = subj;
-                       // this.ownerSubjectForm.setValue(this.initSubject(subj));
+                        // this.ownerSubjectForm.setValue(this.initSubject(subj));
 
                         for (const contr in subj) {
                             if (this.ownerSubjectForm.contains(contr)) {

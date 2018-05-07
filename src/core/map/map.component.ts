@@ -8,11 +8,9 @@ import {
     AfterContentInit
 } from '@angular/core';
 import {
-    Subject
-} from 'rxjs/Subject';
-import {
+    Subject,
     Subscription
-} from 'rxjs/Subscription';
+} from 'rxjs';
 import {
     ShelterService
 } from '../../app/shelter/shelter.service';
@@ -60,10 +58,6 @@ function getTooltip(name, municipality, province, region) {
     </div>
 </div>`;
 }
-
-export const DEFAULT_CENTER: L.LatLng = new L.LatLng(
-    (<any>Enums.Defaults.Region_LanLng.lazio)[0], (<any>Enums.Defaults.Region_LanLng.lazio)[1]
-);
 
 interface Region_Marker {
     region: string;
@@ -123,6 +117,9 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
     private divIcon;
     private currentCenterSub: Subscription;
     private initCenter: L.LatLng | L.LatLngExpression;
+    private DEFAULT_CENTER: L.LatLng = new L.LatLng(
+        (<any>Enums.Defaults.Region_LanLng.lazio)[0], (<any>Enums.Defaults.Region_LanLng.lazio)[1]
+    );
 
     private checkUser(code: String): any {
         return code.substr(0, 2)
@@ -181,7 +178,7 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
     ngOnInit() {
         this.initMap('map');
         this.map.invalidateSize();
-        this.map.setView(DEFAULT_CENTER, this.initialZoom);
+        this.map.setView(this.DEFAULT_CENTER, this.initialZoom);
     }
 
     addMarker(marker: L.Marker) {

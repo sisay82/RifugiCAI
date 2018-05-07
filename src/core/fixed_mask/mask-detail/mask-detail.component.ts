@@ -24,7 +24,7 @@ import {
 } from '../../../app/shared/shared.service';
 import {
   Subscription
-} from 'rxjs/Subscription';
+} from 'rxjs';
 import {
   BcAuthService
 } from '../../../app/shared/auth.service';
@@ -73,7 +73,7 @@ export class BcMask implements OnChanges {
     }
   }
 
-  return () {
+  return() {
     this.router.navigateByUrl("list");
   }
 

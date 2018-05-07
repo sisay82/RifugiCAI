@@ -2,8 +2,7 @@ import { ShelterService } from '../../../app/shelter/shelter.service'
 import { BcRevisionsService } from '../revisions.service';
 import { BcSharedService } from '../../../app/shared/shared.service';
 import { FormGroup, FormArray } from '@angular/forms';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Subscription, Observable } from 'rxjs';
 import { parseDate, CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
 import { Enums } from '../../../app/shared/types/enums';
 import { OnInit } from '@angular/core';
@@ -255,13 +254,13 @@ export abstract class RevisionBase implements OnInit {
             const loadServiceSub = this.revisionService.loadFiles$.subscribe(files => {
                 if (!files) {
                     const queryFileSub = this.shelterService.getFilesByShelterIdAndType(shelId, categories)
-                    .subscribe(fs => {
-                        this.revisionService.onChildSaveFiles(fs);
-                        if (queryFileSub) {
-                            queryFileSub.unsubscribe();
-                        }
-                        resolve(fs.filter(obj => categories.indexOf(obj.type) > -1));
-                    });
+                        .subscribe(fs => {
+                            this.revisionService.onChildSaveFiles(fs);
+                            if (queryFileSub) {
+                                queryFileSub.unsubscribe();
+                            }
+                            resolve(fs.filter(obj => categories.indexOf(obj.type) > -1));
+                        });
                 } else {
                     resolve(files.filter(obj => categories.indexOf(obj.type) > -1));
                 }

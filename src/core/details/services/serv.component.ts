@@ -5,7 +5,7 @@ import { IService, ITag, IShelter } from '../../../app/shared/types/interfaces';
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BcSharedService, serviceBaseList } from '../../../app/shared/shared.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { DetailBase } from '../shared/detail_base';
@@ -87,9 +87,9 @@ export class BcServ extends DetailBase {
 
     init(shelId) {
         this.getData(shelId, "services")
-        .then(shelter => {
-            this.initServices(shelter.services);
-        });
+            .then(shelter => {
+                this.initServices(shelter.services);
+            });
         /*this.getService(shelId)
             .then(shelter => {
                 this.initServices(shelter.services);

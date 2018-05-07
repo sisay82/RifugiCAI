@@ -14,7 +14,7 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { BcStyler } from '../shared/types/bc-styler';
 
@@ -67,13 +67,14 @@ export class BcListThumbnailStyler { }
   providers: [ListItemService],
   encapsulation: ViewEncapsulation.None
 })
-export class BcList extends BcStyler implements OnDestroy {
+export class BcList extends BcStyler implements OnDestroy, AfterContentInit {
   private _listId: number;
   private _differ: IterableDiffer<any>;
   private _listItemSubcription: Subscription;
   private _selectionSubcription: Subscription;
   private _avatar: string;
   private _thumbnail: string;
+  @ContentChildren(BcListItem, { descendants: true }) _listItems: QueryList<BcListItem>;
 
   constructor(elementRef: ElementRef, _renderer2: Renderer2, private _ListItemService: ListItemService, private _differs: IterableDiffers) {
     super(elementRef, _renderer2);
@@ -90,17 +91,16 @@ export class BcList extends BcStyler implements OnDestroy {
 
   @ContentChild(BcListAvatarStyler)
   set avatar(value: BcListAvatarStyler) {
-    let newClassName: string = (value != null) ? "bc-list-avatar" : null;
+    const newClassName: string = (value != null) ? "bc-list-avatar" : null;
     this.updateClass("_avatar", newClassName);
   }
 
   @ContentChild(BcListThumbnailStyler)
   set thumbnail(value: BcListThumbnailStyler) {
-    let newClassName: string = (value != null) ? "bc-list-thumbnail" : null;
+    const newClassName: string = (value != null) ? "bc-list-thumbnail" : null;
     this.updateClass("_thumbnail", newClassName);
   }
 
-  @ContentChildren(BcListItem, {descendants: true}) _listItems: QueryList<BcListItem>;
 
   ngAfterContentInit(): void {
     this._listItems.forEach((item: BcListItem) => {
@@ -108,7 +108,7 @@ export class BcList extends BcStyler implements OnDestroy {
     });
 
     this._listItemSubcription = this._listItems.changes.subscribe((items) => {
-      let changeDiff = this._differ.diff(items);
+      const changeDiff = this._differ.diff(items);
       if (changeDiff) {
         changeDiff.forEachAddedItem((changeRecord: CollectionChangeRecord<BcListItem>) => {
           // added item

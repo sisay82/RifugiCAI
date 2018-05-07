@@ -5,8 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IShelter, IEconomy, IFile } from '../../../app/shared/types/interfaces'
 import { Enums } from '../../../app/shared/types/enums'
 import { ShelterService } from '../../../app/shelter/shelter.service'
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Subscription } from 'rxjs';
 import { BcSharedService } from '../../../app/shared/shared.service'
 import { BcRevisionsService } from '../revisions.service';
 import { RevisionBase } from '../shared/revision_base';

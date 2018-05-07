@@ -14,9 +14,9 @@ import {
     NG_ASYNC_VALIDATORS
 } from '@angular/forms';
 import {
-    Subscription
-} from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+    Subscription,
+    Observable
+} from 'rxjs';
 import {
     BcBaseInput,
     parseDate,

@@ -1,6 +1,7 @@
 import {
-    Component, Input, OnInit, trigger, state, style, transition, animate, OnDestroy
+    Component, Input, OnInit, OnDestroy
 } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IShelter, IService, ITag } from '../../../app/shared/types/interfaces';
 import { FormGroup, FormBuilder, FormControl, FormArray, Validators } from '@angular/forms';
@@ -9,7 +10,7 @@ import { BcRevisionsService } from '../revisions.service';
 import { Animations } from './serviceAnimation';
 import { BcSharedService, serviceBaseList, ServiceEntry, TagEntry } from '../../../app/shared/shared.service';
 import { Enums } from '../../../app/shared/types/enums';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { RevisionBase } from '../shared/revision_base';
 import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
