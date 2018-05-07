@@ -315,7 +315,7 @@ export abstract class BcBaseInput implements ControlValueAccessor, OnInit {
 
     protected setValue(value) {
         if (!this.isDisabled) {
-            this.value = value;
+            this.value = value ? value : '';
         }
     }
 
