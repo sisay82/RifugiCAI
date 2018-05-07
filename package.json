@@ -34,7 +34,7 @@
   ],
   "scripts": {
     "ng": "ng",
-    "postinstall": "",
+    "postinstall": "npm run build",
     "start": "node ./out-tsc/server/server.js",
     "inspect-server": "node --inspect ./out-tsc/server/server.js",
     "build": "npm run clean && ng build && npm run build-server",
