@@ -36,8 +36,10 @@ import {
     RouterTestingModule
 } from '@angular/router/testing';
 import {
-    Subject
-} from 'rxjs/Subject';
+    Subject,
+    Observable,
+    of as obsOf
+} from 'rxjs';
 import {
     Enums
 } from 'app/shared/types/enums';
@@ -47,10 +49,6 @@ import {
     FakeSharedService,
     FakeShelterService
 } from '../shared/test_base';
-import {
-    Observable
-} from 'rxjs/Observable';
-import "rxjs/add/observable/of";
 
 describe('BcGeoRevisionComponent', () => {
     beforeEach(async(() => {
