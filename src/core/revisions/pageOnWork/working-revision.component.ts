@@ -1,12 +1,12 @@
 import { Component, OnDestroy } from '@angular/core';
 import { BcSharedService } from '../../../app/shared/shared.service';
 import { RevisionBase } from '../shared/revision_base';
-import { ShelterService } from '../../../app/shelter/shelter.service'
 import { ActivatedRoute, Router } from '@angular/router';
 import { Enums } from '../../../app/shared/types/enums';
-import { BcRevisionsService } from 'core/revisions/revisions.service';
-import { BcAuthService } from 'app/shared/auth.service';
-import { IShelter } from 'app/shared/types/interfaces';
+import { BcRevisionsService } from '../revisions.service';
+import { BcAuthService } from '../../../app/shared/auth.service';
+import { IShelter } from '../../../app/shared/types/interfaces';
+import { ShelterService } from '../../../app/shelter/shelter.service';
 
 @Component({
     moduleId: module.id,
