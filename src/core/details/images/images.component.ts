@@ -47,7 +47,9 @@ export class BcImg extends DetailBase {
     downloadFile(id) {
         const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
             const e = document.createEvent('MouseEvents');
-            const data = Buffer.from(file.data);
+            console.log(file.data);
+            const data = new Int32Array(file.data);
+            console.log(data);
             const blob = new Blob([data], { type: <string>file.contentType });
             const a = document.createElement('a');
             a.download = <string>file.name;
@@ -83,8 +85,7 @@ export class BcImg extends DetailBase {
         if (j > 0) {
             for (const file of files) {
                 const queryFileSub = this.shelterService.getFile(file._id).subscribe(f => {
-                    const data = Buffer.from(f.data);
-                    const blob = new Blob([data], { type: <string>f.contentType });
+                    const blob = new Blob([new Uint8Array(f.data.data)], { type: <string>f.contentType });
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const src = reader.result;

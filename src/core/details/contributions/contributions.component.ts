@@ -74,8 +74,7 @@ export class BcContributions extends DetailBase {
     if (id) {
       const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
         const e = document.createEvent('MouseEvents');
-        const data = Buffer.from(file.data);
-        const blob = new Blob([data], { type: "application/pdf" });
+        const blob = new Blob([new Uint8Array(file.data.data)], { type: "application/pdf" });
         const a = document.createElement('a');
         a.download = <string>file.name;
         a.href = window.URL.createObjectURL(blob);
