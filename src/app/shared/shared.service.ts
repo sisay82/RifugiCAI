@@ -99,7 +99,7 @@ export const serviceBaseList: ServiceEntry[] = [
             { name: "camerate_da_6_posti", type: "number", placeholder: "Es: 10 (solo numeri)", initialValue: 0 },
             { name: "posti_letto", type: "number", placeholder: "Es: 13 (solo numeri)", initialValue: 0 },
             { name: "posti_letto_invernali", type: "number", placeholder: "Es: 5 (solo numeri)", initialValue: 0 },
-            { name: "tavolate", type: "number", placeholder: "Es: 6 (solo numeri)", initialValue: 0 },
+            { name: "tavolati", type: "number", placeholder: "Es: 6 (solo numeri)", initialValue: 0 },
             { name: "posti_totali", type: "number", placeholder: "Es: 23 (solo numeri)", initialValue: 0 },
             { name: "vendita_sacco_lenzuolo", type: "string", placeholder: "Sì/no, costi, tipologia ecc.", initialValue: "" },
         ]

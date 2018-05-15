@@ -6,7 +6,6 @@ import { IGeographic, IShelter, ITag } from '../../../app/shared/types/interface
 import { BcMap } from '../../map/map.component';
 import { ShelterService } from '../../../app/shelter/shelter.service'
 import { Subject, Subscription } from 'rxjs';
-import * as L from 'leaflet';
 import { BcSharedService } from '../../../app/shared/shared.service'
 import { BcDetailsService } from '../details.service';
 import { Enums } from '../../../app/shared/types/enums'
@@ -42,32 +41,6 @@ export class BcGeo extends DetailBase {
     }
   }
 
-  /*getGeoData(id): Promise<IShelter> {
-    return new Promise<IShelter>((resolve, reject) => {
-      let revSub = this.detailsService.load$.subscribe(shelter => {
-        if (shelter != null && shelter.geoData != undefined) {
-          if (revSub != undefined) {
-            revSub.unsubscribe();
-          }
-          resolve(shelter);
-        } else {
-          let shelSub = this.shelterService.getShelterSection(id, "geoData").subscribe(shelter => {
-            if (shelter.geoData == undefined) shelter.geoData = { location: {}, tags: [] as [ITag] };
-            this.detailsService.onChildSave(shelter, "geoData");
-            if (shelSub != undefined) {
-              shelSub.unsubscribe();
-            }
-            if (revSub != undefined) {
-              revSub.unsubscribe();
-            }
-            resolve(shelter);
-          });
-        }
-      });
-      this.detailsService.onChildLoadRequest("geoData");
-    });
-  }*/
-
   initGeographic(data) {
     this.data = data;
     if (this.data && this.data.location) {
@@ -84,11 +57,6 @@ export class BcGeo extends DetailBase {
       .then(shelter => {
         this.initGeographic(shelter.geoData);
       })
-
-    /*this.getGeoData(shelId)
-      .then((shelter) => {
-        this.initGeographic(shelter.geoData);
-      });*/
   }
 
   getTag(key: String) {

@@ -17,9 +17,19 @@ import {
 import {
     Router
 } from '@angular/router';
-import * as L from 'leaflet';
 import {
-    Map
+    Marker,
+    LatLng,
+    featureGroup,
+    LatLngExpression,
+    divIcon,
+    Map,
+    TileLayer,
+    tileLayer as createTileLayer,
+    DivIcon,
+    marker as createMarker,
+    Tooltip,
+    tooltip as createTooltip
 } from 'leaflet';
 import {
     IMarker,
@@ -61,7 +71,7 @@ function getTooltip(name, municipality, province, region) {
 
 interface Region_Marker {
     region: string;
-    marker: L.Marker;
+    marker: Marker;
 }
 
 function getTooltipEventHandler(shelId): (event: any) => any {
@@ -74,7 +84,7 @@ function getTooltipEventHandler(shelId): (event: any) => any {
         } else {
             this.map.eachLayer((layer) => layer.closeTooltip());
             const bound = (5000 / this.map.getZoom());
-            if (clickPosition.distanceTo(<L.LatLng>this.map.getCenter()) > bound) {
+            if (clickPosition.distanceTo(<LatLng>this.map.getCenter()) > bound) {
                 this.map.off('moveend');
                 this.map.on('moveend', (ev) => {
                     ev.target.openTooltip(tooltip);
@@ -111,15 +121,13 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
     private countryShelters: Region_Marker[] = [];
     private normalIcon;
     expanded = false;
-    private markerPane = L.featureGroup();
+    private markerPane = featureGroup();
     private base_url = "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png";
     private map: Map;
     private divIcon;
     private currentCenterSub: Subscription;
-    private initCenter: L.LatLng | L.LatLngExpression;
-    private DEFAULT_CENTER: L.LatLng = new L.LatLng(
-        (<any>Enums.Defaults.Region_LanLng.lazio)[0], (<any>Enums.Defaults.Region_LanLng.lazio)[1]
-    );
+    private initCenter: LatLng | LatLngExpression;
+    private DEFAULT_CENTER: LatLng;
 
     private checkUser(code: String): any {
         return code.substr(0, 2)
@@ -139,7 +147,11 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
         private router: Router,
         public shelterService: ShelterService
     ) {
-        this.normalIcon = L.divIcon({
+        this.DEFAULT_CENTER = new LatLng(
+            (<any>Enums.Defaults.Region_LatLng.lazio)[0], (<any>Enums.Defaults.Region_LatLng.lazio)[1]
+        );
+
+        this.normalIcon = divIcon({
             className: '',
             iconSize: null,
             iconAnchor: [this.normalIconSize / 4, this.normalIconSize],
@@ -181,13 +193,13 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
         this.map.setView(this.DEFAULT_CENTER, this.initialZoom);
     }
 
-    addMarker(marker: L.Marker) {
+    addMarker(marker: Marker) {
         this.markerPane.addLayer(marker);
     }
 
     initMap(mapElement: string) {
-        this.map = new L.Map(mapElement);
-        L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        this.map = new Map(mapElement);
+        createTileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
             attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="https://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
         }).addTo(this.map);
         this.map.on("click", function (e: any) {
@@ -202,8 +214,8 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
         this.map.on("moveend", this.moveEvent, this);
     }
 
-    createRegionDivIcon(num: number): L.DivIcon {
-        const regionIcon = L.divIcon({
+    createRegionDivIcon(num: number): DivIcon {
+        const regionIcon = divIcon({
             className: '',
             iconSize: null,
             iconAnchor: [this.regionIconSize / 4, this.regionIconSize],
@@ -213,9 +225,9 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
     }
 
     getShelterForRegion(country: string) {
-        if (country && Enums.Defaults.Region_LanLng[country.toLowerCase()]) {
+        if (country && Enums.Defaults.Region_LatLng[country.toLowerCase()]) {
             const savedMarkers = this.countryShelters.find(obj => obj.region.indexOf(country) > -1);
-            const coordinateMarker: L.LatLng = Enums.Defaults.Region_LanLng[country.toLowerCase()];
+            const coordinateMarker: LatLng = Enums.Defaults.Region_LatLng[country.toLowerCase()];
 
             if (!savedMarkers) {
                 const newCountryMarker: Region_Marker = {
@@ -226,7 +238,7 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
 
                 const countryMarkerSub = this.shelterService.getConutryMarkersNumber(country).subscribe(obj => {
                     if (obj && obj.num && obj.num > 0) {
-                        const mark: L.Marker = L.marker(coordinateMarker, {
+                        const mark: Marker = createMarker(coordinateMarker, {
                             icon: this.createRegionDivIcon(obj.num)
                         });
                         this.countryShelters.find(obj => obj == newCountryMarker).marker = mark;
@@ -289,14 +301,14 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
         return 1 + this.increaseRatio / this.map.getZoom()
     }
 
-    createTooltip(shelter: IShelter): L.Tooltip {
+    createTooltip(shelter: IShelter): Tooltip {
         const popup: string = getTooltip(
             shelter.name,
             shelter.geoData.location.municipality,
             shelter.geoData.location.province,
             shelter.geoData.location.region
         );
-        const tooltip = L.tooltip({
+        const tooltip = createTooltip({
             permanent: true,
             direction: "right",
             offset: [25, -50],
@@ -312,9 +324,9 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
 
     createShelterSingleMarker(shelter: IShelter) {
         if (shelter.geoData != undefined && shelter.geoData.location != undefined) {
-            const tooltip: L.Tooltip = this.createTooltip(shelter);
+            const tooltip: Tooltip = this.createTooltip(shelter);
 
-            const mark = L.marker([<number>shelter.geoData.location.latitude, <number>shelter.geoData.location.longitude], {
+            const mark = createMarker([<number>shelter.geoData.location.latitude, <number>shelter.geoData.location.longitude], {
                 icon: this.normalIcon
             })
                 .bindTooltip(tooltip)
@@ -330,7 +342,7 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
         }
     }
 
-    setMarkersAround(point: L.LatLng) {
+    setMarkersAround(point: LatLng) {
         const sheltersAroundSub = this.shelterService.getSheltersAroundPoint(point, this.getIncreaseRatio()).subscribe(shelters => {
             for (const shelter of shelters) {
                 this.createShelterSingleMarker(shelter);

@@ -1,7 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes } from '@angular/router';
 import { Enums } from './enums';
-import * as L from 'leaflet';
+import { LatLng } from 'leaflet';
 
 export interface IPagedResults<T> {
     totalRecords: number;
@@ -9,7 +9,7 @@ export interface IPagedResults<T> {
 }
 
 export interface IMarker {
-    latLng: L.LatLng;
+    latLng: LatLng;
     popup: string;
     optional?: any;
 }

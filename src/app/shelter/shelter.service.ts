@@ -2,11 +2,7 @@
 import { throwError as observableThrowError, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-
-
-import * as L from 'leaflet';
-import { Map } from 'leaflet';
+import { Map, LatLng } from 'leaflet';
 import { IPagedResults, IShelter, IMarker, IFile } from '../shared/types/interfaces';
 import { Enums } from '../shared/types/enums';
 import { catchError, map } from 'rxjs/operators';
@@ -61,7 +57,7 @@ export class ShelterService {
             catchError(this.handleError.bind(this)));
     }
 
-    getSheltersAroundPoint(point: L.LatLng, range: number): Observable<IShelter[]> {
+    getSheltersAroundPoint(point: LatLng, range: number): Observable<IShelter[]> {
         const query = '?lat=' + point.lat + "&lng=" + point.lng + "&range=" + range;
         return this.http.get(this.sheltersBaseUrl + '/point' + query).pipe(
             map(res => Array.isArray(res) ? <any>res : []),

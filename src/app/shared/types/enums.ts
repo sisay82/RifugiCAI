@@ -210,7 +210,7 @@ export namespace Enums {
     }
 
     export namespace Defaults {
-        export enum Region_LanLng {
+        export enum Region_LatLng {
             "valle d'aosta" = <any>[45.7372, 7.3206],
             "piemonte" = <any>[45.0667, 7.7],
             "liguria" = <any>[44.4072, 8.934],
@@ -232,6 +232,7 @@ export namespace Enums {
             "sicilia" = <any>[38.1157, 13.3639],
             "sardegna" = <any>[39.2167, 9.1167]
         }
+
     }
 
     export namespace Auth_Permissions {
@@ -246,9 +247,9 @@ export namespace Enums {
         }
 
         export const UserTypeName = {
-            [User_Type.central]: "Centrale",
-            [User_Type.regional]: "Regionale",
-            [User_Type.sectional]: "Sezionale",
+            [User_Type.central]: "CAI Centrale",
+            [User_Type.regional]: "CAI Regionale",
+            [User_Type.sectional]: "Sezione CAI",
             [User_Type.superUser]: "SUPERUSER",
             [User_Type.visualization]: "Visualization",
             [User_Type.area]: "Area",
