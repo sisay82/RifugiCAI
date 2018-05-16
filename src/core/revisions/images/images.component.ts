@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { RevisionBase } from '../shared/revision_base';
 import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
+import { Buffer } from 'buffer';
 
 const maxImages: Number = 10;
 
@@ -103,10 +104,10 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
   }
 
   toBuffer(ab) {
-    const buf = [];
+    const buf = new Buffer(ab.byteLength);
     const view = new Uint8Array(ab);
-    for (let i = 0; i < view.byteLength; ++i) {
-      buf.push(view[i])
+    for (let i = 0; i < buf.length; ++i) {
+      buf[i] = view[i];
     }
     return buf;
   }
@@ -155,7 +156,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
       }
       const fileReader = new FileReader();
       fileReader.onloadend = (e: any) => {
-        file.data = <any>this.toBuffer(fileReader.result);
+        file.data = this.toBuffer(fileReader.result);
         const shelServiceSub = this.shelterService.insertFile(file).subscribe(id => {
           if (id) {
             const f = file;
@@ -243,7 +244,8 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
   downloadFile(id) {
     const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
       const e = document.createEvent('MouseEvents');
-      const blob = new Blob([new Uint8Array((<any>file.data).data)], { type: <string>file.contentType });
+      const data = Buffer.from(file.data);
+      const blob = new Blob([data], { type: <string>file.contentType });
       const a = document.createElement('a');
       a.download = <string>file.name;
       a.href = window.URL.createObjectURL(blob);

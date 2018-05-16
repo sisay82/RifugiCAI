@@ -2,6 +2,7 @@ import { ModuleWithProviders } from '@angular/core';
 import { Routes } from '@angular/router';
 import { Enums } from './enums';
 import { LatLng } from 'leaflet';
+import { Buffer } from 'buffer';
 
 export interface IPagedResults<T> {
     totalRecords: number;

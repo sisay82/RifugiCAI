@@ -10,6 +10,7 @@ import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
+import { Buffer } from 'buffer';
 
 @Component({
     moduleId: module.id,
@@ -36,7 +37,8 @@ export class BcDoc extends DetailBase {
     downloadFile(id) {
         const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
             const e = document.createEvent('MouseEvents');
-            const blob = new Blob([new Uint8Array(file.data.data)], { type: <string>file.contentType });
+            const data = Buffer.from(file.data);
+            const blob = new Blob([data], { type: <string>file.contentType });
             const a = document.createElement('a');
             a.download = <string>file.name;
             a.href = window.URL.createObjectURL(blob);

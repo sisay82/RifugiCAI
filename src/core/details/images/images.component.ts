@@ -10,6 +10,7 @@ import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
+import { Buffer } from 'buffer';
 
 @Directive({
     selector: "[full-screen]",
@@ -47,9 +48,7 @@ export class BcImg extends DetailBase {
     downloadFile(id) {
         const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
             const e = document.createEvent('MouseEvents');
-            console.log(file.data);
-            const data = new Int32Array(file.data);
-            console.log(data);
+            const data = Buffer.from(file.data);
             const blob = new Blob([data], { type: <string>file.contentType });
             const a = document.createElement('a');
             a.download = <string>file.name;
@@ -85,7 +84,8 @@ export class BcImg extends DetailBase {
         if (j > 0) {
             for (const file of files) {
                 const queryFileSub = this.shelterService.getFile(file._id).subscribe(f => {
-                    const blob = new Blob([new Uint8Array(f.data.data)], { type: <string>f.contentType });
+                    const data = Buffer.from(f.data);
+                    const blob = new Blob([data], { type: <string>f.contentType });
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const src = reader.result;
@@ -109,22 +109,5 @@ export class BcImg extends DetailBase {
             .then(files => {
                 this.initImages(files);
             });
-        /*let loadServiceSub = this.detailsService.loadFiles$.subscribe(files => {
-            if (!files) {
-                let queryFileSub = this.shelterService.getImagesByShelterId(shelId).subscribe(files => {
-                    this.initImages(files);
-                    this.detailsService.onChildSaveFiles(files);
-                    if (queryFileSub != undefined) {
-                        queryFileSub.unsubscribe();
-                    }
-                });
-            } else {
-                this.initImages(files);
-            }
-            if (loadServiceSub != undefined) {
-                loadServiceSub.unsubscribe();
-            }
-        });
-        this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.image]);*/
     }
 }

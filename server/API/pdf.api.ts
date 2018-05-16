@@ -8,6 +8,7 @@ import Files_Enum = Enums.Files;
 import { IFile } from '../../src/app/shared/types/interfaces';
 import * as printer from 'pdfmake/src/printer';
 import { TDocumentDefinitions } from 'pdfmake/build/pdfmake';
+import { Buffer } from 'buffer';
 
 const titleSize = 16;
 const subtitleSize = 10;

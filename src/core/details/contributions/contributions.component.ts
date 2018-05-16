@@ -9,6 +9,7 @@ import { Subject, Subscription } from 'rxjs';
 import { BcSharedService } from '../../../app/shared/shared.service'
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
+import { Buffer } from 'buffer';
 
 @Directive({
   selector: "div[active]",
@@ -74,7 +75,8 @@ export class BcContributions extends DetailBase {
     if (id) {
       const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
         const e = document.createEvent('MouseEvents');
-        const blob = new Blob([new Uint8Array(file.data.data)], { type: "application/pdf" });
+        const data = Buffer.from(file.data);
+        const blob = new Blob([data], { type: "application/pdf" });
         const a = document.createElement('a');
         a.download = <string>file.name;
         a.href = window.URL.createObjectURL(blob);
