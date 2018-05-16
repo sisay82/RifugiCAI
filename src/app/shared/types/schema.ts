@@ -1,5 +1,6 @@
 import { Schema } from 'mongoose';
 import { Enums } from './enums';
+import { Buffer } from 'buffer';
 
 export namespace BCSchema {
     export const locationSchema = new Schema({

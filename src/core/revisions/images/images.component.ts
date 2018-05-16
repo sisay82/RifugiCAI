@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { RevisionBase } from '../shared/revision_base';
 import { CUSTOM_PATTERN_VALIDATORS } from '../../inputs/input_base';
+import { Buffer } from 'buffer';
 
 const maxImages: Number = 10;
 

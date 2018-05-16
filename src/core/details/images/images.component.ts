@@ -10,6 +10,7 @@ import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
+import { Buffer } from 'buffer';
 
 @Directive({
     selector: "[full-screen]",
@@ -108,22 +109,5 @@ export class BcImg extends DetailBase {
             .then(files => {
                 this.initImages(files);
             });
-        /*let loadServiceSub = this.detailsService.loadFiles$.subscribe(files => {
-            if (!files) {
-                let queryFileSub = this.shelterService.getImagesByShelterId(shelId).subscribe(files => {
-                    this.initImages(files);
-                    this.detailsService.onChildSaveFiles(files);
-                    if (queryFileSub != undefined) {
-                        queryFileSub.unsubscribe();
-                    }
-                });
-            } else {
-                this.initImages(files);
-            }
-            if (loadServiceSub != undefined) {
-                loadServiceSub.unsubscribe();
-            }
-        });
-        this.detailsService.onChildLoadFilesRequest([Enums.Files.File_Type.image]);*/
     }
 }

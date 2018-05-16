@@ -10,6 +10,7 @@ import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
+import { Buffer } from 'buffer';
 
 @Component({
     moduleId: module.id,

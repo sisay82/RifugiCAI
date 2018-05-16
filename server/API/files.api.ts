@@ -17,6 +17,7 @@ import { model } from 'mongoose';
 import { IFile } from '../../src/app/shared/types/interfaces';
 import { BCSchema } from '../../src/app/shared/types/schema';
 import { DISABLE_AUTH } from './auth.api';
+import { Buffer } from 'buffer';
 
 const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
 const maxImages = 10;

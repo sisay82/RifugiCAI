@@ -9,6 +9,7 @@ import { Subject, Subscription } from 'rxjs';
 import { BcSharedService } from '../../../app/shared/shared.service'
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
+import { Buffer } from 'buffer';
 
 @Directive({
   selector: "div[active]",

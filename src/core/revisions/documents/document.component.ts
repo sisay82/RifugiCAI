@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { RevisionBase } from '../shared/revision_base';
 import { CUSTOM_PATTERN_VALIDATORS, createFileNameValidator, FILE_SIZE_LIMIT, createfileSizeValidator } from '../../inputs/input_base';
+import { Buffer } from 'buffer';
 
 @Directive({
   selector: "div[disabled]",
