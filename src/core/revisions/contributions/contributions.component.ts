@@ -104,7 +104,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
     }
 
     getEnumValues() {
-        return Object.keys(Enums.Contributions).map(o => Enums.Contribution_Type[o]);
+        return Enums.Contributions;
     }
 
     initAttachment(value: String, id: String) {

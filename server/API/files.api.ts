@@ -54,7 +54,7 @@ function isValidFile(file): boolean {
             file.invoice_tax &&
             file.invoice_type &&
             (
-                Enums.Invoice_Type[file.invoice_type] !== <any>Enums.Invoice_Type.att ||
+                file.invoice_type !== <any>Enums.Invoice_Type.att ||
                 file.contribution_type
             )
         ) {
@@ -527,7 +527,7 @@ fileRoute.route('/shelters/file/byshel/:id')
 fileRoute.route('/shelters/file/byshel/:id/bytype')
     .get(function (req, res) {
         const shel = getShelterToUpdateById(req.params.id);
-        const types = req.query.types.map(t => Number(t));
+        const types = req.query.types.map(t => Enums.Files.File_Type[t] || Number(t) || null);
         if (shel && shel.files != null) {
             queryFilesByshelterId(req.params.id, types)
                 .then((files) => {

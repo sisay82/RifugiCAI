@@ -272,9 +272,9 @@ export class BcEconomyRevision extends RevisionBase implements OnDestroy {
           const files = val[1];
           this.files = files;
           this.revenuesFiles = files.filter(obj => obj.invoice_type &&
-            Enums.Invoice_Type[obj.invoice_type].toString() === Enums.Invoice_Type.att.toString()) as [IFile];
+            obj.invoice_type === Enums.Invoice_Type.att.toString()) as [IFile];
           this.outgosFiles = files.filter(obj => obj.invoice_type &&
-            Enums.Invoice_Type[obj.invoice_type].toString() === Enums.Invoice_Type.pass.toString()) as [IFile];
+            obj.invoice_type === Enums.Invoice_Type.pass.toString()) as [IFile];
           this.setBalanceSheetByYear((new Date()).getFullYear());
           return Promise.resolve();
         })

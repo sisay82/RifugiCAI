@@ -60,8 +60,8 @@ export module Enums {
     }
 
     export const Contributions = [
-        Contribution_Type["Ordinario"],
-        Contribution_Type["FondoStabile"]
+        Contribution_Type.ordinario,
+        Contribution_Type.fondostabile
     ]
 
     export enum Energy_Class_Type {

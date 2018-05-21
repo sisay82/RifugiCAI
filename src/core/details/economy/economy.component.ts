@@ -144,11 +144,13 @@ export class BcEconomy extends DetailBase {
       this.getDocs(shelId, [Enums.Files.File_Type.invoice, Enums.Files.File_Type.contribution])
         .then(files => {
           this.files = files;
+
           this.revenuesFiles = <[IFile]>files.filter(obj => obj.invoice_type &&
-            Enums.Invoice_Type[obj.invoice_type].toString() === Enums.Invoice_Type.att.toString());
+            obj.invoice_type === Enums.Invoice_Type.att.toString()
+          );
 
           this.outgosFiles = <[IFile]>files.filter(obj => obj.invoice_type &&
-            Enums.Invoice_Type[obj.invoice_type].toString() === Enums.Invoice_Type.pass.toString());
+            obj.invoice_type === Enums.Invoice_Type.pass.toString());
 
           this.setBalanceSheetByYear((new Date()).getFullYear());
           return this.analyzeDocsYear(files);
