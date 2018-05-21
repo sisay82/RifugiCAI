@@ -59,7 +59,7 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
 
         this.maskSaveSub = shared.maskSave$.subscribe(() => {
             if (!this.maskError && this.managForm.valid) {
-                if (this.subjectChange || this.managForm.dirty) {
+                if (this.subjectChange || this.managForm.dirty || this.ownerSubjectForm.dirty) {
                     this.disableSave = true;
                     this.save(true);
                 } else {
@@ -88,7 +88,7 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
             contract_end_date: ["", customDateValidator],
             contract_duration: [""],
             contract_fee: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator)],
-            possessionType: [""]
+            possession_type: [""]
         });
     }
 
