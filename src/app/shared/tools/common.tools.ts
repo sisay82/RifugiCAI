@@ -60,10 +60,11 @@ export namespace Tools {
     export function filterRegions(type: User_Type, code: String): string[] {
         const userInfo = getCodeSections(type, code);
         const regions: any[] = getRegions(userInfo);
+        const regionCodes = Object.keys(Enums.Auth_Permissions.Region_Code).filter(o => parseInt(o, 10));
         if (!regions || !Array.isArray(regions)) {
-            return Object.keys(Enums.Auth_Permissions.Region_Code);
+            return regionCodes;
         } else {
-            return Object.keys(Enums.Auth_Permissions.Region_Code).filter(i => regions.indexOf(i) < 0);
+            return regionCodes.filter(i => regions.indexOf(i) >= 0);
         }
     }
 

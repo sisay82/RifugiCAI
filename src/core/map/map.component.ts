@@ -148,7 +148,8 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
         public shelterService: ShelterService
     ) {
         this.DEFAULT_CENTER = new LatLng(
-            (<any>Enums.Defaults.Region_LatLng.lazio)[0], (<any>Enums.Defaults.Region_LatLng.lazio)[1]
+            (<any>Enums.Auth_Permissions.Region_LatLng[Enums.Auth_Permissions.Region_Code.Lazio])[0],
+            (<any>Enums.Auth_Permissions.Region_LatLng[Enums.Auth_Permissions.Region_Code.Lazio])[1]
         );
 
         this.normalIcon = divIcon({
@@ -225,9 +226,11 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
     }
 
     getShelterForRegion(country: string) {
-        if (country && Enums.Defaults.Region_LatLng[country.toLowerCase()]) {
+        if (country) {
             const savedMarkers = this.countryShelters.find(obj => obj.region.indexOf(country) > -1);
-            const coordinateMarker: LatLng = Enums.Defaults.Region_LatLng[country.toLowerCase()];
+            const coordinateMarker: LatLng = Enums.Auth_Permissions.Region_LatLng[
+                Enums.Auth_Permissions.Region_Code[country]
+            ];
 
             if (!savedMarkers) {
                 const newCountryMarker: Region_Marker = {
@@ -265,8 +268,9 @@ export class BcMap implements OnInit, OnDestroy, AfterContentInit {
         const permissionSub = this.authService.getUserProfile().subscribe(profile => {
             const processedUser = this.authService.processUserProfileCode(profile);
             if (processedUser) {
-                const regions = this.authService.getRegions(profile.role, profile.code);
-                for (const region of regions) {
+                const regionCodes = this.authService.getRegionsCodes(profile.role, profile.code);
+                for (const regioncode of regionCodes) {
+                    const region = Enums.Auth_Permissions.Region_Code[regioncode];
                     this.getShelterForRegion(region);
                 }
             } else {

@@ -203,7 +203,7 @@ export abstract class RevisionBase implements OnInit {
 
     protected checkPermission(permissions): boolean {
         if (permissions && permissions.length > 0) {
-            if (permissions.find(obj => obj === this.MENU_SECTION) > -1) {
+            if (permissions.find(obj => obj === this.MENU_SECTION)) {
                 return true;
             } else {
                 return false;

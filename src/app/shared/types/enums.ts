@@ -1,40 +1,62 @@
-export namespace Enums {
-    export namespace Routes {
+
+export namespace A {
+    export enum Routed_Component {
+        geographic = "geographic",
+        services = "services",
+        contacts = "contacts",
+        management = "management",
+        catastal = "catastal",
+        documents = "documents",
+        images = "images",
+        economy = "economy",
+        contribution = "contribution",
+        use = "use",
+        working = "working"
+    }
+
+    export enum Routed_Outlet {
+        "content",
+        "revision"
+    }
+}
+
+export module Enums {
+    export module Routes {
         export enum Routed_Component {
-            geographic = <any>"geographic",
-            services = <any>"services",
-            contacts = <any>"contacts",
-            management = <any>"management",
-            catastal = <any>"catastal",
-            documents = <any>"documents",
-            images = <any>"images",
-            economy = <any>"economy",
-            contribution = <any>"contribution",
-            use = <any>"use",
-            working = <any>"working"
+            geographic = "geographic",
+            services = "services",
+            contacts = "contacts",
+            management = "management",
+            catastal = "catastal",
+            documents = "documents",
+            images = "images",
+            economy = "economy",
+            contribution = "contribution",
+            use = "use",
+            working = "working"
         }
 
         export enum Routed_Outlet {
-            content = <any>"content",
-            revision = <any>"revision"
+            content = "content",
+            revision = "revision"
         }
     }
 
     export enum Heating_Type {
-        "Elettrico",
-        "Gas",
-        "Solare",
-        "Legna",
-        "Assente",
-        "Combinato"
+        elettrico = "Elettrico",
+        gas = "Gas",
+        solare = "Solare",
+        legna = "Legna",
+        assente = "Assente",
+        combinato = "Combinato"
     }
 
     export enum Contribution_Type {
-        "Ordinario",
-        "FondoStabile",
-        "Contributo Pubblico",
-        "Contributo Privato",
-        "Canone d'affitto"
+        ordinario = "Ordinario",
+        fondostabile = "FondoStabile",
+        pubblico = "Contributo Pubblico",
+        privato = "Contributo Privato",
+        canone = "Canone d'affitto"
     }
 
     export const Contributions = [
@@ -43,199 +65,172 @@ export namespace Enums {
     ]
 
     export enum Energy_Class_Type {
-        "A+", "A", "B", "C", "D", "E", "F", "G"
+        aplus = "A+",
+        a = "A",
+        b = "B",
+        c = "C",
+        d = "D",
+        e = "E",
+        f = "F",
+        g = "G"
     }
 
     export enum Fire_Regulation_Type {
-        "Sì",
-        "No",
-        "In fase di adeguamento"
+        si = "Sì",
+        no = "No",
+        adeguamento = "In fase di adeguamento"
     }
 
     export enum Possession_Type {
-        "Affitto ramo d'impresa",
-        "Affitto immobile",
-        "Affitto a gestore",
-        "Diretto",
-        "Custodia",
-        "Proprietà",
-        "Usufrutto",
-        "Concessione",
-        "Comodato"
+        affittoImpresa = "Affitto ramo d'impresa",
+        affittoImmobile = "Affitto immobile",
+        affittoGestore = "Affitto a gestore",
+        diretto = "Diretto",
+        custodia = "Custodia",
+        prop = "Proprietà",
+        usufrutto = "Usufrutto",
+        concessione = "Concessione",
+        comodato = "Comodato"
     }
 
     export enum Seasons {
-        "Primavera",
-        "Estate",
-        "Autunno",
-        "Inverno"
+        primavera = "Primavera",
+        estate = "Estate",
+        autunno = "Autunno",
+        inverno = "Inverno"
     }
 
     export enum Water_Availability {
-        "Scarsa",
-        "Costante",
-        "Media",
-        "Abbondante"
+        scarsa = "Scarsa",
+        costante = "Costante",
+        media = "Media",
+        abbondante = "Abbondante"
     }
 
     export enum Water_Type {
-        "Assente",
-        "Acquedotto",
-        "Captazione superficiale",
-        "Captazione da sorgente",
-        "Nelle vicinanze"
+        assente = "Assente",
+        acquedotto = "Acquedotto",
+        capSuperficiale = "Captazione superficiale",
+        capSorgente = "Captazione da sorgente",
+        vicinanze = "Nelle vicinanze"
     }
 
     export enum Shelter_Status {
-        "Immobile non agibile",
-        "In ristrutturazione",
-        "Momentaneamente chiuso",
-        "In attività"
+        nonAgibile = "Immobile non agibile",
+        ristrutturazione = "In ristrutturazione",
+        chiuso = "Momentaneamente chiuso",
+        attivo = "In attività"
     }
 
     export enum Shelter_Type {
-        "Bivacco",
-        "Rifugio custodito",
-        "Rifugio incustodito",
-        "Capanna sociale",
-        "Punto d'appoggio",
-        "Ricovero di emergenza"
+        bivacco = "Bivacco",
+        custodito = "Rifugio custodito",
+        incustodito = "Rifugio incustodito",
+        sociale = "Capanna sociale",
+        appoggio = "Punto d'appoggio",
+        emergenza = "Ricovero di emergenza"
     }
 
     export enum Regional_Type {
-        "Escursionistico",
-        "Alpinistico",
-        "Bivacco",
-        "Non classificabile"
+        escursionistico = "Escursionistico",
+        alpinistico = "Alpinistico",
+        bivacco = "Bivacco",
+        nc = "Non classificabile"
     }
 
     export enum Shelter_Category {
-        "A",
-        "B",
-        "C",
-        "D",
-        "E"
+        a = "A",
+        b = "B",
+        c = "C",
+        d = "D",
+        e = "E"
     }
 
     export enum Drain_Type {
-        "IMHOFF fognatura",
-        "IMHOFF pozzo perdente",
-        "IMHOFF dispersore sottosuolo",
-        "IMHOFF trasporto a valle"
+        fognatura = "IMHOFF fognatura",
+        pozzo = "IMHOFF pozzo perdente",
+        dispersore = "IMHOFF dispersore sottosuolo",
+        trasporto = "IMHOFF trasporto a valle"
     }
 
     export enum Typo_consistency {
-        "Piena",
-        "Parziale",
-        "Recuperabile",
-        "Nessuna"
+        piena = "Piena",
+        parziale = "Parziale",
+        recuperabile = "Recuperabile",
+        nessuna = "Nessuna"
     }
 
     export enum MenuSection {
-        "detail",
-        "document",
-        "economy"
+        detail = "detail",
+        document = "document",
+        economy = "economy"
     }
 
     export enum Invoice_Type {
-        "Attività",
-        "Passività"
+        att = "Attività",
+        pass = "Passività"
     }
 
     export enum Source_Type {
-        "Energetica",
-        "Idrica",
-        "Riscaldamento"
+        energetica = "Energetica",
+        idrica = "Idrica",
+        riscaldamento = "Riscaldamento"
     }
 
     export enum Owner_Type {
-        Custode,
-        Proprietario,
-        Gestore
+        custode = "Custode",
+        proprietario = "Proprietario",
+        gestore = "Gestore"
     }
 
     export enum Custody_Type {
-        "Diretta",
-        "Affitto a gestore",
-        "Affito ramo azienda",
-        "Capanna sociale",
-        "Custodia"
+        diretta = "Diretta",
+        gestore = "Affitto a gestore",
+        azienda = "Affito ramo azienda",
+        capanna = "Capanna sociale",
+        custodia = "Custodia"
     }
 
-    export namespace Files {
+    export module Files {
         export enum File_Type {
-            doc,
-            map,
-            invoice,
-            image,
-            contribution
+            doc = "doc",
+            map = "map",
+            invoice = "invoice",
+            image = "image",
+            contribution = "contribution"
         }
 
         export enum Docs_Type {
-            txt = <any>"text/plain",
-            pdf = <any>"application/pdf",
-            doc = <any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            docx = <any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            xls = <any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            xlsx = <any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            txt = "text/plain",
+            pdf = "application/pdf",
+            doc = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            docx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            xls = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         }
 
         export enum Maps_Type {
-            dwg = <any>`application/acad,
-             application/x-acad,
-              application/autocad_dwg,
-               image/x-dwg,
-                application/dwg,
-                 application/x-dwg,
-                  application/x-autocad,
-                   image/vnd.dwg,
-                    drawing/dwg`,
-            pdf = <any>"application/pdf"
+            dwg = "application/acad, application/x-acad, application/autocad_dwg, image/x-dwg, application/dwg, application/x-dwg, application/x-autocad, image/vnd.dwg, drawing/dwg",
+            pdf = "application/pdf"
         }
 
         export enum Invoices_Type {
-            txt = <any>"text/plain",
-            pdf = <any>"application/pdf",
-            doc = <any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            docx = <any>"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            xls = <any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            xlsx = <any>"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            txt = "text/plain",
+            pdf = "application/pdf",
+            doc = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            docx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            xls = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         }
 
         export enum Image_Type {
-            png = <any>"image/png",
-            jpeg = <any>"image/jpeg",
-            jpg = <any>"image/jpeg"
+            png = "image/png",
+            jpeg = "image/jpeg",
+            jpg = "image/jpeg"
         }
     }
 
-    export namespace Defaults {
-        export enum Region_LatLng {
-            "valle d'aosta" = <any>[45.7372, 7.3206],
-            "piemonte" = <any>[45.0667, 7.7],
-            "liguria" = <any>[44.4072, 8.934],
-            "lombardia" = <any>[45.4642, 9.1903],
-            "trentino alto adige" = <any>[46.0667, 11.1167],
-            "veneto" = <any>[45.4397, 12.3319],
-            "friuli-venezia giulia" = <any>[45.6361, 13.8042],
-            "emilia romagna" = <any>[44.4939, 11.3428],
-            "toscana" = <any>[43.7714, 11.2542],
-            "umbria" = <any>[43.1121, 12.3886],
-            "marche" = <any>[43.6167, 13.5167],
-            "lazio" = <any>[41.8931, 12.4828],
-            "abruzzo" = <any>[42.354, 13.3919],
-            "molise" = <any>[41.561, 14.6684],
-            "campania" = <any>[40.8333, 14.25],
-            "puglia" = <any>[41.1253, 16.8667],
-            "basilicata" = <any>[40.6333, 15.8],
-            "calabria" = <any>[38.91, 16.5875],
-            "sicilia" = <any>[38.1157, 13.3639],
-            "sardegna" = <any>[39.2167, 9.1167]
-        }
-
-    }
-
-    export namespace Auth_Permissions {
+    export module Auth_Permissions {
         export enum User_Type {
             central = 1,
             regional = 2,
@@ -288,6 +283,29 @@ export namespace Enums {
             "Sardegna" = 48
         }
 
+        export const Region_LatLng = {
+            [Region_Code["Valle d'Aosta"]]: [45.7372, 7.3206],
+            [Region_Code.Piemonte]: [45.0667, 7.7],
+            [Region_Code.Liguria]: [44.4072, 8.934],
+            [Region_Code.Lombardia]: [45.4642, 9.1903],
+            [Region_Code["Trentino Alto Adige"]]: [46.0667, 11.1167],
+            [Region_Code.Veneto]: [45.4397, 12.3319],
+            [Region_Code["Friuli-Venezia Giulia"]]: [45.6361, 13.8042],
+            [Region_Code["Emilia Romagna"]]: [44.4939, 11.3428],
+            [Region_Code.Toscana]: [43.7714, 11.2542],
+            [Region_Code.Umbria]: [43.1121, 12.3886],
+            [Region_Code.Marche]: [43.6167, 13.5167],
+            [Region_Code.Lazio]: [41.8931, 12.4828],
+            [Region_Code.Abruzzo]: [42.354, 13.3919],
+            [Region_Code.Molise]: [41.561, 14.6684],
+            [Region_Code.Campania]: [40.8333, 14.25],
+            [Region_Code.Puglia]: [41.1253, 16.8667],
+            [Region_Code.Basilicata]: [40.6333, 15.8],
+            [Region_Code.Calabria]: [38.91, 16.5875],
+            [Region_Code.Sicilia]: [38.1157, 13.3639],
+            [Region_Code.Sardegna]: [39.2167, 9.1167]
+        }
+
         export enum Area_Code {
             "C.M.I." = 50,
             "Lombardo" = 16,
@@ -333,30 +351,30 @@ export namespace Enums {
             ]
         }
 
-        export namespace Codes {
+        export module Codes {
             /**
             [starting_position, count]
             */
 
             export enum CodeNames {
-                "CODETYPE" = <any>Symbol("CODETYPE"),
-                "REGION" = <any>Symbol("REGION"),
-                "AREA" = <any>Symbol("AREA"),
-                "GR" = <any>Symbol("GR"),
-                "SECTION" = <any>Symbol("SECTION"),
-                "SUBSECTION" = <any>Symbol("SUBSECTION"),
+                CODETYPE = "CODETYPE",
+                REGION = "REGION",
+                AREA = "AREA",
+                GR = "GR",
+                SECTION = "SECTION",
+                SUBSECTION = "SUBSECTION",
             }
 
             export const CodeSection = {
-                [CodeNames.CODETYPE]: <any>[0, 2],
-                [CodeNames.REGION]: <any>[2, 2],
-                [CodeNames.AREA]: <any>[4, 3],
-                [CodeNames.GR]: <any>[5, 2],
-                [CodeNames.SECTION]: <any>[4, 3],
-                [CodeNames.SUBSECTION]: <any>[7, 3],
+                [CodeNames.CODETYPE]: [0, 2],
+                [CodeNames.REGION]: [2, 2],
+                [CodeNames.AREA]: [4, 3],
+                [CodeNames.GR]: [5, 2],
+                [CodeNames.SECTION]: [4, 3],
+                [CodeNames.SUBSECTION]: [7, 3],
             }
 
-            export const UserTypeCodes = <any>{
+            export const UserTypeCodes = {
                 [User_Type.central]: <CodeNames[]>[],
                 [User_Type.superUser]: <CodeNames[]>[],
                 [User_Type.visualization]: <CodeNames[]>[],
@@ -369,7 +387,7 @@ export namespace Enums {
         }
 
 
-        export namespace Revision {
+        export module Revision {
             export const RevisionPermissionType = {
                 "DocRevisionPermission": MenuSection.document,
                 "EconomyRevisionPermission": MenuSection.economy,
@@ -395,7 +413,7 @@ export namespace Enums {
             ]
         }
 
-        export namespace Edit {
+        export module Edit {
             export const InsertShelterPermission: any[] = [
                 User_Type.superUser,
                 User_Type.central
@@ -408,12 +426,12 @@ export namespace Enums {
         }
 
 
-        export namespace Visualization {
+        export module Visualization {
             export enum Visualization_Level {
-                section,
-                region,
-                area,
-                complete
+                section = "section",
+                region = "region",
+                area = "area",
+                complete = "complete"
             }
 
             export const Complete_Visualization = [

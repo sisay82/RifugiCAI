@@ -113,7 +113,7 @@ export class BcAuthService {
         }
     }
 
-    getRegions(role: Auth_Permissions.User_Type, code: String): string[] {
+    getRegionsCodes(role: Auth_Permissions.User_Type, code: String): string[] {
         return Tools.filterRegions(role, code);
     }
 

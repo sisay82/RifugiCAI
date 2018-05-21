@@ -54,7 +54,7 @@ function isValidFile(file): boolean {
             file.invoice_tax &&
             file.invoice_type &&
             (
-                Enums.Invoice_Type[file.invoice_type] !== <any>Enums.Invoice_Type.Attività ||
+                Enums.Invoice_Type[file.invoice_type] !== <any>Enums.Invoice_Type.att ||
                 file.contribution_type
             )
         ) {
