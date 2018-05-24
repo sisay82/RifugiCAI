@@ -13,7 +13,7 @@ import {
     getShelterToUpdateById,
     addShelterToUpdate
 } from '../tools/common';
-import { model } from 'mongoose';
+import { model, QueryCursor, QueryStream } from 'mongoose';
 import { IFile } from '../../src/app/shared/types/interfaces';
 import { BCSchema } from '../../src/app/shared/types/schema';
 import { DISABLE_AUTH } from './auth.api';
@@ -21,6 +21,20 @@ import { Buffer } from 'buffer';
 
 const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
 const maxImages = 10;
+
+function sendFile(res: express.Response, stream): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+        stream.on('error', (err) => {
+            reject();
+        })
+        stream.on('data', (chunk) => {
+            res.send(chunk);
+        });
+        stream.on('end', () => {
+            resolve();
+        });
+    })
+}
 
 export function countContributionFilesByShelter(shelid): Promise<Number> {
     return new Promise<Number>((resolve, reject) => {
@@ -36,7 +50,6 @@ export function countContributionFilesByShelter(shelid): Promise<Number> {
 
 export function insertNewFile(file: IFileExtended): Promise<IFileExtended> {
     return new Promise<IFileExtended>((resolve, reject) => {
-        file.data = Buffer.from(file.data);
         Files.create(file, (err, ris) => {
             if (err) {
                 reject(err);
@@ -121,16 +134,8 @@ function queryAllFiles(): Promise<IFileExtended[]> {
     });
 }
 
-function queryFileByid(id): Promise<IFileExtended> {
-    return new Promise<IFileExtended>((resolve, reject) => {
-        Files.findById(id).exec((err, ris) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(ris);
-            }
-        })
-    });
+function queryFileByid(id): QueryCursor<IFileExtended> {
+    return Files.findById(id).cursor();
 }
 
 function queryFilesByshelterId(id, types?: Enums.Files.File_Type[]): Promise<IFileExtended[]> {
@@ -236,7 +241,8 @@ fileRoute.route('/shelters/file')
             if (err) {
                 res.status(500).send({ error: 'Invalid user or request' })
             } else {
-                const file = JSON.parse(req.file.buffer.toString());
+                const file = <IFileExtended>JSON.parse(req.body.metadata);
+                file.data = req.file.buffer;
                 if (file.size < 1024 * 1024 * 16) {
                     insertNewFile(file)
                         .then((newFile) => {
@@ -290,13 +296,14 @@ fileRoute.route('/shelters/file/confirm')
                 if (err) {
                     res.status(500).send({ error: 'Invalid user or request' })
                 } else {
-                    const file = JSON.parse(req.file.buffer.toString());
+                    const file = <IFileExtended>JSON.parse(req.body.metadata);
+                    file.data = req.file.buffer;
                     if (file.size < 1024 * 1024 * 16) {
                         const id = file.shelterId;
                         const fileid = new ObjectId();
                         const shelUpdate = getShelterToUpdateById(id);
-                        file._id = fileid;
-                        file.new = true;
+                        (<any>file)._id = fileid;
+                        (<any>file).new = true;
                         if (file.type === Files_Enum.File_Type.image) {
                             const shelFiles = queryFilesByshelterId(id)
                                 .then(files => {
@@ -417,14 +424,20 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
 
 fileRoute.route('/shelters/file/:id')
     .get(function (req, res) {
-        queryFileByid(req.params.id)
-            .then((file) => {
-                res.status(200).send(file);
+        try {
+            const queryCursor = queryFileByid(req.params.id);
+            sendFile(res, queryCursor)
+            .then(() => {
+                res.end();
             })
-            .catch((err) => {
-                logger(LOG_TYPE.WARNING, err);
+            .catch(err => {
+                logger(LOG_TYPE.ERROR, err);
                 res.status(500).send({ error: 'Invalid user or request' });
-            })
+            });
+        } catch (e) {
+            logger(LOG_TYPE.ERROR, e);
+            res.status(500).send({ error: 'Invalid user or request' });
+        }
     })
     .put(function (req, res) {
         try {
