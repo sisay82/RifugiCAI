@@ -197,7 +197,7 @@ export function createContributionPDF(shelter: IShelterExtended): Promise<{ name
             return insertNewFile(<any>f);
         })
         .then(file => {
-            return Promise.resolve({ name: file.name, id: file._id });
+            return Promise.resolve({ name: file.name, id: file.id });
         })
         .catch(err => Promise.reject(err))
 } else {

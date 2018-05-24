@@ -48,13 +48,19 @@ export function countContributionFilesByShelter(shelid): Promise<Number> {
     });
 }
 
-export function insertNewFile(file: IFileExtended): Promise<IFileExtended> {
-    return new Promise<IFileExtended>((resolve, reject) => {
+export function insertNewFile(file: IFileExtended): Promise<{id: any, name: String, size: Number, type: any, contentType: String}> {
+    return new Promise<{id: any, name: String, size: Number, type: any, contentType: String}>((resolve, reject) => {
         Files.create(file, (err, ris) => {
             if (err) {
                 reject(err);
             } else {
-                resolve(ris);
+                resolve({
+                    id: ris._id,
+                    name: ris.name,
+                    size: ris.size,
+                    type: ris.type,
+                    contentType: ris.contentType
+                });
             }
         })
     });
@@ -246,13 +252,7 @@ fileRoute.route('/shelters/file')
                 if (file.size < 1024 * 1024 * 16) {
                     insertNewFile(file)
                         .then((newFile) => {
-                            res.status(200).send({
-                                _id: newFile._id,
-                                name: newFile.name
-                                , size: newFile.size,
-                                type: newFile.type,
-                                contentType: newFile.contentType
-                            });
+                            res.status(200).send(newFile);
                         })
                         .catch((e) => {
                             logger(LOG_TYPE.WARNING, e);
@@ -427,13 +427,13 @@ fileRoute.route('/shelters/file/:id')
         try {
             const queryCursor = queryFileByid(req.params.id);
             sendFile(res, queryCursor)
-            .then(() => {
-                res.end();
-            })
-            .catch(err => {
-                logger(LOG_TYPE.ERROR, err);
-                res.status(500).send({ error: 'Invalid user or request' });
-            });
+                .then(() => {
+                    res.end();
+                })
+                .catch(err => {
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(500).send({ error: 'Invalid user or request' });
+                });
         } catch (e) {
             logger(LOG_TYPE.ERROR, e);
             res.status(500).send({ error: 'Invalid user or request' });
