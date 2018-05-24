@@ -169,7 +169,7 @@ function updateFile(id: any, file): Promise<boolean> {
             }
         }
 
-        Files.findByIdAndUpdate(id, query).exec((err, res) => {
+        Files.findByIdAndUpdate(id, query).exec((err) => {
             if (err) {
                 reject(err);
             } else {
