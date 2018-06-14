@@ -8,7 +8,8 @@
                 <div style="white-space: nowrap;margin-right:1%">{{shelter?.name || 'Nome Rifugio'}},</div>
                 <div style="white-space: nowrap;margin-right:1%">{{shelter?.alias||'--'}}</div>
             </div>
-            <div style="display: inline;margin-left:auto;margin-right:1%">
+            <div style="display: inline;margin-left:auto;margin-right:1%;white-space:nowrap">
+                <bc-icon *ngIf="isCentral" tooltip="Scarica CSV" (click)="getCSV()" class="bc-mask-icon" name="arrow-down" size=s></bc-icon>
                 <bc-icon *ngIf="reviseCheck()" tooltip="Modalità modifica" (click)="revision()" class="bc-mask-icon" name="edit" size=s></bc-icon>
             </div>
         </div>

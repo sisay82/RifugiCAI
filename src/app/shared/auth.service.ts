@@ -38,6 +38,10 @@ export function hasDeletePermission(profile: Tools.IUserProfile): boolean {
     return profile && (Auth_Permissions.Edit.DeleteShelterPermission[profile.role]);
 }
 
+export function hasCSVGetPermission(profile: Tools.IUserProfile): boolean {
+    return profile && (Auth_Permissions.Visualization.CSVPermission.indexOf(profile.role) > -1);
+}
+
 function isCentralRole(role: Auth_Permissions.User_Type): boolean {
     return (role === Auth_Permissions.User_Type.central || role === Auth_Permissions.User_Type.superUser);
 }
@@ -110,6 +114,14 @@ export class BcAuthService {
             return obsOf(hasDeletePermission(profile));
         } else {
             return this.getUserProfile().pipe(map(p => hasDeletePermission(p)));
+        }
+    }
+
+    hasCSVGetPermission(profile?: Tools.IUserProfile): Observable<boolean> {
+        if (profile) {
+            return obsOf(hasCSVGetPermission(profile));
+        } else {
+            return this.getUserProfile().pipe(map(p => hasCSVGetPermission(p)))
         }
     }
 

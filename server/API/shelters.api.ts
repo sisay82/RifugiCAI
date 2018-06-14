@@ -7,7 +7,8 @@ import {
     IShelterExtended,
     IServiceExtended,
     removeShelterToUpdate,
-    getShelterToUpdateById
+    getShelterToUpdateById,
+    convertShelToCSV
 } from '../tools/common';
 import { model } from 'mongoose';
 import { IOpening } from '../../src/app/shared/types/interfaces';
@@ -26,6 +27,7 @@ import { DISABLE_AUTH } from './auth.api';
 import { createContributionPDF } from './pdf.api';
 import { resolveFilesForShelter } from './files.api';
 import { Tools } from '../../src/app/shared/tools/common.tools';
+import { Buffer } from 'buffer';
 
 const Services = model<IServiceExtended>('Services', BCSchema.serviceSchema);
 const Shelters = model<IShelterExtended>('Shelters', BCSchema.shelterSchema);
@@ -786,6 +788,25 @@ appRoute.route('/shelters/page/:pageNumber/:pageSize')
             res.status(500).send({ error: 'Invalid user or request' });
         }
     });
+
+appRoute.route('/shelters/csv/:id')
+    .get(function (req, res) {
+        if (req.body.user && req.body.user.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.body.user.role) > -1) {
+            queryShelById(req.params.id)
+                .then(shel => convertShelToCSV(shel))
+                .then(csv => {
+                    const buff = Buffer.from(csv);
+                    res.status(200).send({buff: buff});
+                })
+                .catch(err => {
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(500).send({ error: "Invalid user or request" });
+                });
+        } else {
+            logger(LOG_TYPE.INFO, "User not authorized")
+            res.status(500).send({ error: "Invalid user or request" });
+        }
+    })
 
 appRoute.route('/shelters/:id/:name')
     .get(function (req, res) {

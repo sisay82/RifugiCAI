@@ -1,10 +1,10 @@
 import { IShelter, IService, IFile } from '../../src/app/shared/types/interfaces';
 import { Types, Document } from 'mongoose';
-import * as path from 'path';
 import { Enums } from '../../src/app/shared/types/enums';
 import { Tools } from '../../src/app/shared/tools/common.tools';
 import Auth_Permissions = Enums.Auth_Permissions;
 import request = require('request');
+import { parse } from 'json2csv';
 
 export interface IServiceExtended extends IService, Document {
     _id: String;
@@ -47,6 +47,9 @@ export function getShelterToUpdateById(id: String) {
 }
 
 export const ObjectId = Types.ObjectId;
+
+const fields = ['_id', 'name', 'alias', 'idCai']
+// const csvParser = new JSON2CSVParser({fields});
 
 const DISABLE_LOG = false;
 const MAX_TIME = 1000 * 60 * 10;
@@ -153,6 +156,13 @@ export function getPropertiesNumber(obj): number {
         }
     }
     return c;
+}
+
+export function convertShelToCSV(shelter: IShelter): Promise<string> {
+    return new Promise<string>((resolve) => {
+        const csv = parse(shelter, {fields});
+        resolve(csv);
+    });
 }
 
 setInterval(cleanSheltersToUpdate, 1500);
