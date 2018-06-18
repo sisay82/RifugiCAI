@@ -1,10 +1,10 @@
 import { IShelter, IService, IFile } from '../../src/app/shared/types/interfaces';
 import { Types, Document } from 'mongoose';
-import * as path from 'path';
 import { Enums } from '../../src/app/shared/types/enums';
 import { Tools } from '../../src/app/shared/tools/common.tools';
 import Auth_Permissions = Enums.Auth_Permissions;
 import request = require('request');
+import { parse as parseCSV } from 'json2csv';
 
 export interface IServiceExtended extends IService, Document {
     _id: String;
@@ -153,6 +153,47 @@ export function getPropertiesNumber(obj): number {
         }
     }
     return c;
+}
+
+function concatPropNames(father: String, props: String[]): String[] {
+    return props.map(prop => father + '.' + prop);
+}
+
+function getAllSchemaNames(obj: any): String[] {
+    const names = [];
+    for (const prop in obj) {
+        if (obj.hasOwnProperty(prop) && obj[prop] != null) {
+            if (typeof obj[prop] === 'function') {
+                names.push(prop);
+            } else {
+                if (obj[prop].type) {
+                    if (obj[prop].type.obj) {
+                        const subNames = getAllSchemaNames(obj[prop].type.obj);
+                        names.push(
+                            ...concatPropNames(prop, subNames)
+                        );
+                    } else {
+                        names.push(prop);
+                    }
+                }
+            }
+
+        }
+    }
+    return names;
+}
+
+export function convertShelToCSV(shelter: IShelterExtended): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        try {
+            const originalObjSchema = shelter.schema.obj;
+            const fields: any = [...getAllSchemaNames(originalObjSchema)];
+            const csv = parseCSV(shelter, { fields });
+            resolve(csv);
+        } catch (e) {
+            reject(e);
+        }
+    });
 }
 
 setInterval(cleanSheltersToUpdate, 1500);

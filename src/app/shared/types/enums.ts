@@ -434,6 +434,11 @@ export module Enums {
                 complete = "complete"
             }
 
+            export const CSVPermission = [
+                User_Type.central,
+                User_Type.superUser
+            ]
+
             export const Complete_Visualization = [
                 User_Type.central,
                 User_Type.superUser,

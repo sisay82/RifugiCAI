@@ -28,6 +28,7 @@ import {
 import {
   BcAuthService
 } from '../../../app/shared/auth.service';
+import { Buffer } from 'buffer';
 
 @Component({
   moduleId: module.id,
@@ -44,6 +45,7 @@ export class BcMask implements OnChanges {
   @Input() shelter: IShelter;
   private revisionPermission: Enums.Auth_Permissions.User_Type;
   private shelterInitialized: Boolean = false;
+  private isCentral = false;
   constructor(
     private router: Router,
     private _route: ActivatedRoute,
@@ -65,6 +67,12 @@ export class BcMask implements OnChanges {
     return this.authService.revisionCheck(this.revisionPermission);
   }
 
+  csvCheck() {
+    return this.authService.hasCSVGetPermission().subscribe(val => {
+      this.isCentral = val;
+    });
+  }
+
   revision() {
     if (this.reviseCheck()) {
       const component = this.shared.activeComponent;
@@ -77,9 +85,27 @@ export class BcMask implements OnChanges {
     this.router.navigateByUrl("list");
   }
 
+  getCSV() {
+    const getCSVSub = this.shelterService.getCSVData(this.shelter._id).subscribe(file => {
+      const e = document.createEvent('MouseEvents');
+      const data = Buffer.from((<any>file).buff);
+      const blob = new Blob([data]);
+      const a = document.createElement('a');
+      a.download = this.shelter.name + ".csv";
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = [a.download, a.href].join(':');
+      e.initEvent('click', true, false);
+      a.dispatchEvent(e);
+      if (getCSVSub) {
+        getCSVSub.unsubscribe();
+      }
+    });
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (!this.shelterInitialized && this.shelter) {
       this.shelterInitialized = true;
+      this.csvCheck();
       const permissionSub = this.authService.checkRevisionPermissionForShelter(this.shelter.idCai).subscribe(val => {
         if (!val) {
           this.return();

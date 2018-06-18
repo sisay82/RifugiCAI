@@ -115,7 +115,7 @@ export class ShelterService {
         const formData: FormData = new FormData();
         const b = new Blob([file.data]);
         formData.append("file", b);
-        delete(file.data);
+        delete (file.data);
         formData.append('metadata', JSON.stringify(file));
         return this.http.post(this.sheltersBaseUrl + "/file/confirm", formData).pipe(
             map(res => res instanceof Object ? null : <any>res),
@@ -164,6 +164,12 @@ export class ShelterService {
     deleteShelter(id: String): Observable<{} | boolean> {
         return this.http.delete(this.sheltersBaseUrl + `/${id}`).pipe(
             catchError(this.handleError.bind(this)));
+    }
+
+    getCSVData(id: String): Observable<{} | { buff: any }> {
+        return this.http.get(this.sheltersBaseUrl + `/csv/${id}`).pipe(
+            catchError(this.handleError.bind(this))
+        );
     }
 
     handleError(error: any) {
