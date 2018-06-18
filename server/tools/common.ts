@@ -183,14 +183,16 @@ function getAllSchemaNames(obj: any): String[] {
     return names;
 }
 
-// const fields = ['_id', 'name', 'alias', 'idCai', 'geoData']
-
 export function convertShelToCSV(shelter: IShelterExtended): Promise<string> {
-    return new Promise<string>((resolve) => {
-        const originalObjSchema = shelter.schema.obj;
-        const fields: any = [...getAllSchemaNames(originalObjSchema)];
-        const csv = parseCSV(shelter, { fields });
-        resolve(csv);
+    return new Promise<string>((resolve, reject) => {
+        try {
+            const originalObjSchema = shelter.schema.obj;
+            const fields: any = [...getAllSchemaNames(originalObjSchema)];
+            const csv = parseCSV(shelter, { fields });
+            resolve(csv);
+        } catch (e) {
+            reject(e);
+        }
     });
 }
 
