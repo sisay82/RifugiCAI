@@ -8,7 +8,7 @@ import {
     IServiceExtended,
     removeShelterToUpdate,
     getShelterToUpdateById,
-    convertShelToCSV
+    convertShelsToCSV
 } from '../tools/common';
 import { model } from 'mongoose';
 import { IOpening } from '../../src/app/shared/types/interfaces';
@@ -789,11 +789,12 @@ appRoute.route('/shelters/page/:pageNumber/:pageSize')
         }
     });
 
-appRoute.route('/shelters/csv/:id')
+appRoute.route('/shelters/csv/list')
     .get(function (req, res) {
         if (req.body.user && req.body.user.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.body.user.role) > -1) {
-            queryShelById(req.params.id)
-                .then(shel => convertShelToCSV(shel))
+            getAllIdsHead(req.body.user)
+                .then(shels => Promise.all(shels.map(s => queryShelById(s))))
+                .then(shels => convertShelsToCSV(shels))
                 .then(csv => {
                     const buff = Buffer.from(csv);
                     res.status(200).send({buff: buff});
@@ -806,7 +807,26 @@ appRoute.route('/shelters/csv/:id')
             logger(LOG_TYPE.INFO, "User not authorized")
             res.status(500).send({ error: "Invalid user or request" });
         }
-    })
+    });
+
+appRoute.route('/shelters/csv/:id')
+    .get(function (req, res) {
+        if (req.body.user && req.body.user.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.body.user.role) > -1) {
+            queryShelById(req.params.id)
+                .then(shel => convertShelsToCSV([shel]))
+                .then(csv => {
+                    const buff = Buffer.from(csv);
+                    res.status(200).send({buff: buff});
+                })
+                .catch(err => {
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(500).send({ error: "Invalid user or request" });
+                });
+        } else {
+            logger(LOG_TYPE.INFO, "User not authorized")
+            res.status(500).send({ error: "Invalid user or request" });
+        }
+    });
 
 appRoute.route('/shelters/:id/:name')
     .get(function (req, res) {

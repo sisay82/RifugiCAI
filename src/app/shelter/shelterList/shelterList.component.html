@@ -10,6 +10,9 @@
       <a *ngIf="isCentral" (click)="createShel()" data-bc-button data-type="solid">
         <bc-icon data-name="plus" data-size="xs"></bc-icon> Aggiungi rifugio
       </a>
+      <div *ngIf="isCentral" (click)="getCSV()" data-bc-button data-type="solid">
+        <bc-icon tooltip="Scarica CSV" class="bc-mask-icon" name="arrow-down" size=s></bc-icon> Scarica CSV
+      </div>
       <span class="bc-navbar-filler"></span>
       <div>
         <input type="text" name="filterList" class="bc-body form-control" style="text-overflow: ellipsis;"

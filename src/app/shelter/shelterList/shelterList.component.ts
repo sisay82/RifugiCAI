@@ -21,6 +21,7 @@ import {
     Subscription
 } from 'rxjs';
 import { Tools } from '../../shared/tools/common.tools';
+import { Buffer } from 'buffer';
 
 function getProperty(item, prop: String) {
     const props = prop.split('.');
@@ -50,6 +51,23 @@ export class BcShelterList implements OnInit {
         this.authService.hasInsertPermission().subscribe(val => {
             this.isCentral = val;
         });
+    }
+
+    getCSV() {
+        const getCSVSub = this.shelterService.getCSVData().subscribe(file => {
+            const e = document.createEvent('MouseEvents');
+            const data = Buffer.from((<any>file).buff);
+            const blob = new Blob([data]);
+            const a = document.createElement('a');
+            a.download = "Rifugi.csv";
+            a.href = window.URL.createObjectURL(blob);
+            a.dataset.downloadurl = [a.download, a.href].join(':');
+            e.initEvent('click', true, false);
+            a.dispatchEvent(e);
+            if (getCSVSub) {
+              getCSVSub.unsubscribe();
+            }
+          });
     }
 
     getAuth() {

@@ -183,13 +183,25 @@ function getAllSchemaNames(obj: any): String[] {
     return names;
 }
 
-export function convertShelToCSV(shelter: IShelterExtended): Promise<string> {
+export function getCSVFields(obj): String[] {
+    if (obj && obj.schema && obj.schema.obj) {
+        const originalObjSchema = obj.schema.obj;
+        return [...getAllSchemaNames(originalObjSchema)];
+    }
+    return null;
+}
+
+export function convertShelsToCSV(shelters: IShelterExtended[], f?): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         try {
-            const originalObjSchema = shelter.schema.obj;
-            const fields: any = [...getAllSchemaNames(originalObjSchema)];
-            const csv = parseCSV(shelter, { fields });
-            resolve(csv);
+            if (shelters.length > 0) {
+                const shelter = shelters[0];
+                const fields: any = f != null ? f : getCSVFields(shelter);
+                const csv = parseCSV(shelters, { fields });
+                resolve(csv);
+            } else {
+                reject();
+            }
         } catch (e) {
             reject(e);
         }

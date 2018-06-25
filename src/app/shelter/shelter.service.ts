@@ -166,8 +166,9 @@ export class ShelterService {
             catchError(this.handleError.bind(this)));
     }
 
-    getCSVData(id: String): Observable<{} | { buff: any }> {
-        return this.http.get(this.sheltersBaseUrl + `/csv/${id}`).pipe(
+    getCSVData(id?: String): Observable<{} | { buff: any }> {
+        const req = id || 'list';
+        return this.http.get(this.sheltersBaseUrl + `/csv/${req}`).pipe(
             catchError(this.handleError.bind(this))
         );
     }
