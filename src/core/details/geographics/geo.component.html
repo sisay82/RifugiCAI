@@ -13,7 +13,9 @@
     <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Coordinate WGS84:</div> ({{data?(data.location?(data.location.latitude?(data.location.latitude | number : '1.2-3'): '----' ):'----'):'----'}},{{data?(data.location?(data.location.longitude?(data.location.longitude | number : '1.2-3'): '----' ):'----'):'----'}})</div>
     <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Comprensiorio sciistico:</div> {{data?(data.location?(data.location.ski_area||'----'):'----'):'----'}}</div>
     <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Zona tutelata:</div> {{data?(data.location?(data.location.protected_area||'----'):'----'):'----'}}</div>
-    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Sito:</div> {{data?(data.location?(data.location.site||'----'):'----'):'----'}}</div>
+    <div style="display:flex;align-items:center;flex:1;white-space:nowrap;padding-right:4px"><div style="margin-right:4px" class="bc-body-strong">Sito:</div>
+        <span style="white-space: pre-wrap">{{data?(data.location?(data.location.site||'----'):'----'):'----'}}</span>
+    </div>
     <bc-divider style="padding-bottom:4px;margin-top:8px"></bc-divider>
     <div style="width: 100%;height:256px;position:absolute;z-index:1">
         <bc-map [openTooltipCenter]=true [initialZoom]="getZoom()" [enableExpansion]=false></bc-map>
