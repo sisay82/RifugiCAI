@@ -10,6 +10,7 @@ import { IShelter, IFile } from 'app/shared/types/interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BcAuthService } from 'app/shared/auth.service';
 import { isArray } from 'util';
+import { Tools } from 'app/shared/tools/common.tools';
 
 const validObjectIDRegExp = CUSTOM_PATTERN_VALIDATORS.objectID;
 
@@ -28,6 +29,7 @@ export abstract class RevisionBase implements OnInit {
     protected formValidSub: Subscription;
     protected userRole: Enums.Auth_Permissions.User_Type;
     protected permissionSub: Subscription;
+    protected permissions: Tools.IUserProfile;
     protected MENU_SECTION: Enums.MenuSection = Enums.MenuSection.detail;
     constructor(protected shelterService: ShelterService,
         protected shared: BcSharedService,
@@ -96,6 +98,7 @@ export abstract class RevisionBase implements OnInit {
             })
             .then(() => this.getPermission())
             .then(permissions => {
+                this.permissions = permissions;
                 if (this.checkPermission(permissions)) {
                     this.init(_id);
                 } else {

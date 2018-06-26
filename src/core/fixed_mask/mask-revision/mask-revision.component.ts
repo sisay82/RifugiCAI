@@ -223,9 +223,12 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
       }
     }
 
-    if (permission != Enums.Auth_Permissions.User_Type.central && permission != Enums.Auth_Permissions.User_Type.superUser) {
-      this.maskForm.disable();
-    }
+    this.authService.isCentralUser().subscribe(val => {
+      if (!val) {
+        this.maskForm.disable();
+      }
+    });
+
   }
 
   ngOnDestroy() {

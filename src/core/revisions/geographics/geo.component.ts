@@ -220,29 +220,13 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
                 }
             }
         }
-    }
 
-    initGeoForm(shelter) {
-        this.name = shelter.name;
-        this.data = shelter.geoData;
-
-        if (this.data) {
-            if (this.data.location) {
-                for (const prop in this.data.location) {
-                    if (this.data.location.hasOwnProperty(prop)) {
-                        if (this.geoForm.contains(prop)) {
-                            this.geoForm.get(prop).setValue(this.data.location[prop]);
-                            this.geoForm.get(prop).markAsTouched();
-                        }
-                    }
-                }
+        this.auth.isCentralUser().subscribe((val) => {
+            if (!val) {
+                this.geoForm.controls.latitude.disable();
+                this.geoForm.controls.longitude.disable();
             }
-            if (this.data.tags) {
-                for (const tag of this.data.tags) {
-                    this.addTag(tag.key, tag.value);
-                }
-            }
-        }
+        });
     }
 
     ngOnDestroy() {
