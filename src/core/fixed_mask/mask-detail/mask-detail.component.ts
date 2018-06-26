@@ -45,7 +45,7 @@ export class BcMask implements OnChanges {
   @Input() shelter: IShelter;
   private revisionPermission: Enums.Auth_Permissions.User_Type;
   private shelterInitialized: Boolean = false;
-  private isCentral = false;
+  isCentral = false;
   constructor(
     private router: Router,
     private _route: ActivatedRoute,
