@@ -5,7 +5,7 @@ import { Tools } from '../../src/app/shared/tools/common.tools';
 import Auth_Permissions = Enums.Auth_Permissions;
 import request = require('request');
 import { parse as parseCSV } from 'json2csv';
-
+import { CSV_FIELDS } from './constants'
 export interface IServiceExtended extends IService, Document {
     _id: String;
 }
@@ -175,6 +175,13 @@ function getAllSchemaNames(obj: any): String[] {
                     } else {
                         names.push(prop);
                     }
+                } else if (Array.isArray(obj[prop])) {
+                    for (const p of obj[prop]) {
+                        const subNames = getAllSchemaNames(p.obj);
+                        names.push(
+                            ...concatPropNames(prop, subNames)
+                        );
+                    }
                 }
             }
 
@@ -191,14 +198,32 @@ export function getCSVFields(obj): String[] {
     return null;
 }
 
+export function trimStr(str: String, c): string {
+    const start = str.startsWith(c) ? 1 : 0;
+    const end = str[str.length - 1] === c ? str.length - 1 : str.length;
+    return str.slice(start, end);
+}
+
+export function replaceCSVHeader(header: String, fields) {
+    if (header && fields) {
+        return header.split(',')
+            .map(field => ('"' + fields[trimStr(field, '"')] + '"') || field)
+            .join(',');
+    }
+}
+
 export function convertShelsToCSV(shelters: IShelterExtended[], f?): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         try {
             if (shelters.length > 0) {
                 const shelter = shelters[0];
                 const fields: any = f != null ? f : getCSVFields(shelter);
-                const csv = parseCSV(shelters, { fields });
+                // const fields = Object.keys(CSV_FIELDS);
+                const csv = parseCSV(shelters, { fields, unwind: ['management.subject'], unwindBlank: true });
                 resolve(csv);
+                /*const rows = csv.split('\n');
+                const header = rows[0].slice(0, rows[0].length - 2);
+                resolve(replaceCSVHeader(header, CSV_FIELDS) + "\n" + rows.join('\n'));*/
             } else {
                 reject();
             }
