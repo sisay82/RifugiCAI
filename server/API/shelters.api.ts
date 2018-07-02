@@ -8,9 +8,10 @@ import {
     IServiceExtended,
     removeShelterToUpdate,
     getShelterToUpdateById,
-    convertShelsToCSV
+    convertShelsToCSV,
+    downloadCSV
 } from '../tools/common';
-import { model } from 'mongoose';
+import { model, QueryCursor } from 'mongoose';
 import { IOpening } from '../../src/app/shared/types/interfaces';
 import { BCSchema } from '../../src/app/shared/types/schema';
 import {
@@ -125,6 +126,24 @@ function queryShelById(id): Promise<IShelterExtended> {
             }
         });
     });
+}
+
+function queryAllSheCSV(): Promise<IShelterExtended[]> {
+    return new Promise<IShelterExtended[]>((resolve, reject) => {
+        Shelters.find().populate('services').exec((err, ris) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(ris);
+            }
+        });
+    });
+}
+
+function getShelByIdCSV(id): QueryCursor<IShelterExtended> {
+    return Shelters.find({ "_id": id })
+        .populate('services')
+        .cursor()
 }
 
 function queryShelSectionById(id, section): Promise<IShelterExtended> {
@@ -792,17 +811,29 @@ appRoute.route('/shelters/page/:pageNumber/:pageSize')
 appRoute.route('/shelters/csv/list')
     .get(function (req, res) {
         if (req.body.user && req.body.user.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.body.user.role) > -1) {
-            getAllIdsHead(req.body.user)
+
+            queryAllSheCSV()
+            .then(shelters => downloadCSV(shelters, res))
+            .then(csv => {
+                const buff = Buffer.from(csv);
+                res.status(200).send({ buff: buff });
+            })
+            .catch(err => {
+                logger(LOG_TYPE.ERROR, err);
+                res.status(500).send({ error: "Invalid user or request" });
+            })
+
+            /*getAllIdsHead(req.body.user)
                 .then(shels => Promise.all(shels.map(s => queryShelById(s))))
                 .then(shels => convertShelsToCSV(shels))
                 .then(csv => {
                     const buff = Buffer.from(csv);
-                    res.status(200).send({buff: buff});
+                    res.status(200).send({ buff: buff });
                 })
                 .catch(err => {
                     logger(LOG_TYPE.ERROR, err);
                     res.status(500).send({ error: "Invalid user or request" });
-                });
+                });*/
         } else {
             logger(LOG_TYPE.INFO, "User not authorized")
             res.status(500).send({ error: "Invalid user or request" });
@@ -813,15 +844,26 @@ appRoute.route('/shelters/csv/:id')
     .get(function (req, res) {
         if (req.body.user && req.body.user.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.body.user.role) > -1) {
             queryShelById(req.params.id)
+            .then(shelters => downloadCSV([shelters], res))
+            .then(csv => {
+                const buff = Buffer.from(csv);
+                res.status(200).send({ buff: buff });
+            })
+            .catch(err => {
+                logger(LOG_TYPE.ERROR, err);
+                res.status(500).send({ error: "Invalid user or request" });
+            })
+
+            /*queryShelById(req.params.id)
                 .then(shel => convertShelsToCSV([shel]))
                 .then(csv => {
                     const buff = Buffer.from(csv);
-                    res.status(200).send({buff: buff});
+                    res.status(200).send({ buff: buff });
                 })
                 .catch(err => {
                     logger(LOG_TYPE.ERROR, err);
                     res.status(500).send({ error: "Invalid user or request" });
-                });
+                });*/
         } else {
             logger(LOG_TYPE.INFO, "User not authorized")
             res.status(500).send({ error: "Invalid user or request" });

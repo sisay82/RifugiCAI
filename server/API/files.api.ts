@@ -11,7 +11,8 @@ import {
     LOG_TYPE,
     removeShelterToUpdate,
     getShelterToUpdateById,
-    addShelterToUpdate
+    addShelterToUpdate,
+    sendFile
 } from '../tools/common';
 import { model, QueryCursor, QueryStream } from 'mongoose';
 import { IFile } from '../../src/app/shared/types/interfaces';
@@ -21,20 +22,6 @@ import { Buffer } from 'buffer';
 
 const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
 const maxImages = 10;
-
-function sendFile(res: express.Response, stream): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-        stream.on('error', (err) => {
-            reject();
-        })
-        stream.on('data', (chunk) => {
-            res.send(chunk);
-        });
-        stream.on('end', () => {
-            resolve();
-        });
-    })
-}
 
 export function countContributionFilesByShelter(shelid): Promise<Number> {
     return new Promise<Number>((resolve, reject) => {
