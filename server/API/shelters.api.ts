@@ -8,7 +8,6 @@ import {
     IServiceExtended,
     removeShelterToUpdate,
     getShelterToUpdateById,
-    convertShelsToCSV,
     downloadCSV
 } from '../tools/common';
 import { model, QueryCursor } from 'mongoose';
@@ -822,18 +821,6 @@ appRoute.route('/shelters/csv/list')
                 logger(LOG_TYPE.ERROR, err);
                 res.status(500).send({ error: "Invalid user or request" });
             })
-
-            /*getAllIdsHead(req.body.user)
-                .then(shels => Promise.all(shels.map(s => queryShelById(s))))
-                .then(shels => convertShelsToCSV(shels))
-                .then(csv => {
-                    const buff = Buffer.from(csv);
-                    res.status(200).send({ buff: buff });
-                })
-                .catch(err => {
-                    logger(LOG_TYPE.ERROR, err);
-                    res.status(500).send({ error: "Invalid user or request" });
-                });*/
         } else {
             logger(LOG_TYPE.INFO, "User not authorized")
             res.status(500).send({ error: "Invalid user or request" });
@@ -853,17 +840,6 @@ appRoute.route('/shelters/csv/:id')
                 logger(LOG_TYPE.ERROR, err);
                 res.status(500).send({ error: "Invalid user or request" });
             })
-
-            /*queryShelById(req.params.id)
-                .then(shel => convertShelsToCSV([shel]))
-                .then(csv => {
-                    const buff = Buffer.from(csv);
-                    res.status(200).send({ buff: buff });
-                })
-                .catch(err => {
-                    logger(LOG_TYPE.ERROR, err);
-                    res.status(500).send({ error: "Invalid user or request" });
-                });*/
         } else {
             logger(LOG_TYPE.INFO, "User not authorized")
             res.status(500).send({ error: "Invalid user or request" });

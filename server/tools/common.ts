@@ -6,7 +6,6 @@ import Auth_Permissions = Enums.Auth_Permissions;
 import request = require('request');
 import { CSV_FIELDS, CSV_UNWINDS, CSV_ALIASES } from './constants';
 import { Response, json } from 'express';
-import { parse as parseCSV } from 'json2csv';
 
 import fastCsv = require('fast-csv');
 import { DEFAULT_ENCODING } from 'crypto';
@@ -370,24 +369,6 @@ export function downloadCSV(shelters: IShelterExtended[], response: Response): P
         }
 
         /*cursor.pipe(csvStream).pipe(response);*/
-    });
-}
-
-export function convertShelsToCSV(shelters: IShelterExtended[], f?): Promise<any> {
-    return new Promise<string>((resolve, reject) => {
-        try {
-            if (shelters.length > 0) {
-                // const fields: any = f != null ? f : getCSVFields(shelters[0]);
-
-                const csvFile = parseCSV(shelters, <any>{ fields: CSV_FIELDS, nested: true, unwinds: CSV_UNWINDS })
-
-                resolve(replaceCSVHeader(csvFile, CSV_ALIASES));
-            } else {
-                reject();
-            }
-        } catch (e) {
-            reject(e);
-        }
     });
 }
 
