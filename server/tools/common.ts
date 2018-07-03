@@ -294,6 +294,19 @@ function processArrayField(baseField, objs, fields, keyField?) {
 
 }
 
+function getValueForFieldDoc(doc, field) {
+    const parts = field.split('\.');
+    let ret = doc;
+    for (const part of parts) {
+        if (ret[part] != null) {
+            ret = ret[part];
+        } else {
+            return null;
+        }
+    }
+    return ret;
+}
+
 function transform(doc: IShelterExtended) {
     const ret = {};
 
@@ -301,7 +314,8 @@ function transform(doc: IShelterExtended) {
         const part = field.split('\.')[0];
         if (!CSV_UNWINDS.includes(part)) {
             const name = getAliasForField(field, CSV_ALIASES);
-            ret[name] = doc[field]
+            const value = getValueForFieldDoc(doc, field);
+            ret[name] = value;
         }
     }
 
