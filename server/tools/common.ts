@@ -344,9 +344,9 @@ function transform(doc: IShelterExtended) {
     return Object.assign(
         {},
         ret,
+        managFields,
         processServicesFields(doc.services),
-        openingFields,
-        managFields
+        openingFields
     );
 }
 

@@ -115,7 +115,7 @@ export const CSV_ALIASES = {
         "type": "Tipo apertura",
     },
     "management": {
-        "subject": {
+        /*"subject": {
             "name": "Nome (Proprietà e custodia)",
             "surname": "Cognome (Proprietà e custodia)",
             "taxCode": "P. IVA (Proprietà e custodia)",
@@ -130,7 +130,7 @@ export const CSV_ALIASES = {
             "contract_duration": "Durata contratto (Proprietà e custodia)",
             "contract_fee": "Canone annuale (Proprietà e custodia)",
             "possession_type": "Tipo possesso (Proprietà e custodia)",
-        },
+        },*/
         "reference": "Riferimento (Proprietà)",
         "self_management": "Autogestione",
         "pickupKey": "Ritiro chiavi",
