@@ -5,9 +5,9 @@ import {
     addShelterToUpdate,
     IShelterExtended,
     removeShelterToUpdate,
-    getShelterToUpdateById,
-    createCSV
+    getShelterToUpdateById
 } from '../../tools/common';
+import { createCSV } from './csv.logic';
 import {
     UserData,
     getUserDataFilters,

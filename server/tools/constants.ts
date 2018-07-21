@@ -17,6 +17,8 @@ export const MONTHS = [
     'dicembre'
 ];
 
+export const CLEAR_CACHE_INTERVAL = 1.5 * 1000;
+
 export const CSV_UNWINDS = [
     'services',
     'openingTime',
