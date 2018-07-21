@@ -19,7 +19,6 @@ export const MONTHS = [
 
 export const CSV_UNWINDS = [
     'services',
-    'services.tags',
     'openingTime',
     'management.subject',
     // 'economy',

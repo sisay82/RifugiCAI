@@ -260,7 +260,18 @@ function flattenArray(arr) {
     }, {})
 }
 
-function processServicesFields(services) {
+export function getFieldNameFragment(fieldName: string): string[][] {
+    const fields = CSV_FIELDS
+        .filter(f => f.indexOf(fieldName) > -1)
+        .map(f => {
+            const parts = f.split('\.')
+            const base = fieldName.split('\.');
+            return parts.filter(p => !base.includes(p));
+        })
+    return fields
+}
+
+export function processServicesFields(services) {
     const ret = {};
     for (const cat of services) {
         // let tags = "";
@@ -274,27 +285,32 @@ function processServicesFields(services) {
     return ret;
 }
 
-function processOpeningFields(openings) {
-    const ret = {};
-    for (const opening of openings) {
-        ret["openingTime." + opening.type + ".startDate"] = opening.startDate;
-        ret["openingTime." + opening.type + ".endDate"] = opening.endDate
-    }
-    return ret;
-}
+export function processArrayField(baseField, objs, useFields?) {
+    const fields = useFields == null ? getFieldNameFragment(baseField) : useFields;
 
-function processArrayField(baseField, objs, fields, keyField?) {
-    return objs.reduce((acc, val, index) => {
+    return objs ? objs.reduce((acc, val, index) => {
         const uniqueKeyObj = fields.reduce((o, k) => {
-            o[baseField + index + '.' + k] = val[k];
+            if (Array.isArray(k) && k.length !== 1) {
+                o = k.reduce((a, subK) => {
+                    const subfields = processArrayField(
+                        baseField + index + '.' + subK, val[subK],
+                        getFieldNameFragment(baseField + '.' + subK)
+                    );
+                    return Object.assign({}, a, subfields);
+                }, o)
+            } else {
+                const key = Array.isArray(k) ? k[0] : k;
+                o[baseField + index + '.' + key] = val[key];
+            }
+
             return o;
         }, {});
         return Object.assign({}, acc, uniqueKeyObj);
-    }, {})
+    }, {}) : {}
 
 }
 
-function getValueForFieldDoc(doc, field) {
+export function getValueForFieldDoc(doc, field) {
     const parts = field.split('\.');
     let ret = doc;
     for (const part of parts) {
@@ -305,6 +321,14 @@ function getValueForFieldDoc(doc, field) {
         }
     }
     return ret;
+}
+
+export function getPropertySafe(obj, prop) {
+    return prop
+        .split('\.')
+        .reduce((acc, val) => {
+            return acc != null ? acc[val] || null : acc;
+        }, obj);
 }
 
 function transform(doc: IShelterExtended) {
@@ -319,38 +343,33 @@ function transform(doc: IShelterExtended) {
         }
     }
 
+    /*const fieldsUnwinded = CSV_UNWINDS.reduce((acc, val) => {
+        const prop = getPropertySafe(doc, val);
+        return prop != null ? Object.assign({}, acc, processArrayField(val, prop)) : acc;
+    }, {})*/
+
     const managFields = doc.management ? processArrayField(
         "management.subject",
-        doc.management.subject,
-        CSV_FIELDS
-            .filter(f => f.indexOf("management.subject") > -1)
-            .map(f => {
-                const parts = f.split('\.')
-                return parts[parts.length - 1];
-            })
+        doc.management.subject
     ) : {};
 
     const openingFields = doc.openingTime ? processArrayField(
         "openingTime",
-        doc.openingTime,
-        CSV_FIELDS
-            .filter(f => f.indexOf("openingTime") > -1)
-            .map(f => {
-                const parts = f.split('\.')
-                return parts[parts.length - 1];
-            })
+        doc.openingTime
     ) : {};
+
+    const servicesFields = doc.services ? processServicesFields(doc.services) : {}
 
     return Object.assign(
         {},
         ret,
         managFields,
-        processServicesFields(doc.services),
+        servicesFields,
         openingFields
     );
 }
 
-export function downloadCSV(shelters: IShelterExtended[], response: Response): Promise<any> {
+export function createCSV(shelters: IShelterExtended[]): Promise<any> {
     return new Promise<any>((resolve, reject) => {
         try {
             let headers = {};

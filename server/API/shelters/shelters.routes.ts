@@ -6,7 +6,7 @@ import {
     IShelterExtended,
     removeShelterToUpdate,
     getShelterToUpdateById,
-    downloadCSV
+    createCSV
 } from '../../tools/common';
 import {
     UserData,
@@ -280,7 +280,7 @@ appRoute.route('/shelters/csv/list')
     .get(function (req, res) {
         if (req.body.user && req.body.user.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.body.user.role) > -1) {
             queryAllSheCSV()
-                .then(shelters => downloadCSV(shelters, res))
+                .then(shelters => createCSV(shelters))
                 .then(csv => {
                     const buff = Buffer.from(csv);
                     res.status(200).send({ buff: buff });
@@ -299,7 +299,7 @@ appRoute.route('/shelters/csv/:id')
     .get(function (req, res) {
         if (req.body.user && req.body.user.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.body.user.role) > -1) {
             queryShelById(req.params.id)
-                .then(shelters => downloadCSV([shelters], res))
+                .then(shelters => createCSV([shelters]))
                 .then(csv => {
                     const buff = Buffer.from(csv);
                     res.status(200).send({ buff: buff });
