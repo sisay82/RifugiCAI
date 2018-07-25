@@ -181,9 +181,9 @@ export function transform(doc: IShelterExtended) {
     return Object.assign(
         {},
         ret,
-        managFields,
         servicesFields,
-        openingFields
+        openingFields,
+        managFields
     );
 }
 
