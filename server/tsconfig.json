@@ -9,14 +9,11 @@
     "emitDecoratorMetadata": true,
     "module": "commonjs",
     "experimentalDecorators": true,
-    "target": "es6",
+    "target": "es2017",
     "typeRoots": [
       "node_modules/@types"
     ],
-    "lib": [
-      "es2016",
-      "dom"
-    ]
+    "lib": ["es2017", "dom"]
   },
   "exclude": [
     "**/*.spec.ts"
