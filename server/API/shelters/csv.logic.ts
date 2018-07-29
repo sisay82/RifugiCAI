@@ -150,7 +150,9 @@ export function processFlatArrayNames(obj: { [key: string]: any }, nameBase: str
         }, "");
         const fieldNames = CSV_UNWINDS_ALIASES[nameBase];
         const n = fieldNames[fragments[fragments.length - 1]] ? base + fieldNames[fragments[fragments.length - 1]] : "";
-        acc[n] = obj[val];
+        if (n) {
+            acc[n] = obj[val];
+        }
         return acc;
     }, {});
 }
