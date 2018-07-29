@@ -6,7 +6,8 @@ import {
     processServicesFields,
     transform,
     getCSVDict,
-    processFlatArrayNames
+    processFlatArrayNames,
+    transformArrayFields
 } from './csv.logic'
 import {
     CSV_UNWINDS
@@ -212,7 +213,7 @@ const TEST_SHELTER = {
 
 describe('Common tools', () => {
     it('Should parse CSV single item', () => {
-        const csvStr = `Nome,Nome comune,IDCAI,Tipo,Sezione,Proprietà,Stato,Categoria per la Regione,Categoria,Inserito il,Aggiornato il,Aggiornato da,Regione,Provincia/Città metropolitana,Comune,Località,GR (Gruppo Regionale),Commissione regionale,Ente sovracomunale di competenza,Quota (m slm),Latitudine,Longitudine,Gruppo montuoso,Valle,Comprensiorio sciistico,Zona tutelata,Sito,Nome (Contatti),Ruolo (Contatti),Telefono (Contatti),Cellulare (Contatti),PEC (Contatti),Link prenotazione (Contatti),Mail (Contatti),Sito web (Contatti),Riferimento (Proprietà),Regolarità edilizia,Anno di costruzione,Anno di ristrutturazione,Classe catastale,Codice catastale,Coerenza tipologica,Coerenza materica,Regolarità urbanistica,Consistenza corpo principale,Consistenza corpo secondario,Regolarità antincendio,Certificazione ISO 14001,Classe energetica,Quantità (KW),Green,Generatore diesel,Fotovoltaico,Tipo di riscaldamento,Tipo fonte energetica,Nome fonte energetica,Tipo di scarico,Scarico a norma,Disoleatore,Captazione certificata,Riciclo,Acqua,Disponibilità acqua,Periodi di siccità,Anno (Richiesta contributo),Lavori a corpo (€),Lavori a misura (€),Oneri di sicurezza (€),TOTALE LAVORI (€),Spese per indagini, rilievi, ecc. (€),Spese per allacciamenti a reti di distribuzione (€),Spese tecniche (€),Spese di collaudo (€),Tasse e oneri (€),TOTALE SPESE (€),IVA compresa perché non recuperabile,COSTO TOTALE DEL PROGETTO (€),Finanziamento esterno (€),Autofinanziamento (€),SCOPERTO (€),RICHIESTO (€),Contributo accettato,Tipo di contributo richiesto,services.pernottamento.camerate_da_4_posti,services.pernottamento.camerate_da_6_posti,services.pernottamento.posti_letto,services.servizi_igenici.docce,openingTime0.startDate,openingTime0.endDate,openingTime0.type,management.subject0.name,management.subject0.surname,management.subject0.taxCode,management.subject0.fixedPhone,management.subject0.mobilePhone,management.subject0.pec,management.subject0.email,management.subject0.webSite,management.subject0.type,management.subject0.contract_start_date,management.subject0.contract_end_date,management.subject0.contract_duration,management.subject0.contract_fee,management.subject0.possession_type,management.subject1.name,management.subject1.surname,management.subject1.taxCode,management.subject1.fixedPhone,management.subject1.mobilePhone,management.subject1.pec,management.subject1.email,management.subject1.webSite,management.subject1.type,management.subject1.contract_start_date,management.subject1.contract_end_date,management.subject1.contract_duration,management.subject1.contract_fee,management.subject1.possession_type\nADAME',,921606201,Capanna sociale,Cedegolo,Comune,,,,2017 - 09 - 22T21: 03: 30.663Z,2018 - 07 - 03T17: 37: 27.102Z,CAI Centrale,Lombardia,BS,SAVIORE DELL'ADAMELLO,CASINE DI MEZZO,Lombardia,LOM,,2107,46.236667,11.902778,alpi retiche,asdf,,,,,Custode,1235234523,23465264365,,,roba@roba.it,,riferimento,true,2342,2341,a12,a112,Parziale,,true,vva,vvb,Sì,true,C,24,,,,Gas,,,IMHOFF pozzo perdente,true,,,true,Acquedotto,,Primavera,,,,,,,,,,,,,,,,,,,,23,3,3,3,2018 - 02 - 01T23: 00: 00.000Z,2018 - 03 - 01T23: 00: 00.000Z,roba,gest, cognomeGest,,23452345235,134522345,,,,,,,,22323342,Affitto a gestore,enteProp,,149052345234451,234504325234,,prop@pec.it,mail@prop.it,www.sito.it,Proprietario,2002 - 02 - 01T23: 00: 00.000Z,2002 - 02 - 02T23: 00: 00.000Z,,4343,Affitto a gestore`
+        const csvStr = `Nome,Nome comune,IDCAI,Tipo,Sezione,Proprietà,Stato,Categoria per la Regione,Categoria,Inserito il,Aggiornato il,Aggiornato da,Regione,Provincia/Città metropolitana,Comune,Località,GR (Gruppo Regionale),Commissione regionale,Ente sovracomunale di competenza,Quota (m slm),Latitudine,Longitudine,Gruppo montuoso,Valle,Comprensiorio sciistico,Zona tutelata,Sito,Nome (Contatti),Ruolo (Contatti),Telefono (Contatti),Cellulare (Contatti),PEC (Contatti),Link prenotazione (Contatti),Mail (Contatti),Sito web (Contatti),Riferimento (Proprietà),Regolarità edilizia,Anno di costruzione,Anno di ristrutturazione,Classe catastale,Codice catastale,Coerenza tipologica,Coerenza materica,Regolarità urbanistica,Consistenza corpo principale,Consistenza corpo secondario,Regolarità antincendio,Certificazione ISO 14001,Classe energetica,Quantità (KW),Green,Generatore diesel,Fotovoltaico,Tipo di riscaldamento,Tipo fonte energetica,Nome fonte energetica,Tipo di scarico,Scarico a norma,Disoleatore,Captazione certificata,Riciclo,Acqua,Disponibilità acqua,Periodi di siccità,Anno (Richiesta contributo),Lavori a corpo (€),Lavori a misura (€),Oneri di sicurezza (€),TOTALE LAVORI (€),Spese per indagini, rilievi, ecc. (€),Spese per allacciamenti a reti di distribuzione (€),Spese tecniche (€),Spese di collaudo (€),Tasse e oneri (€),TOTALE SPESE (€),IVA compresa perché non recuperabile,COSTO TOTALE DEL PROGETTO (€),Finanziamento esterno (€),Autofinanziamento (€),SCOPERTO (€),RICHIESTO (€),Contributo accettato,Tipo di contributo richiesto,Camere da 4 posti,Camere da 6 posti,Posti letto,Docce,Apertura0 -> Apertura (inizio),Apertura0 -> Apertura (fine),Apertura0 -> Tipo apertura,Subject0 -> Nome (Proprietà e custodia),Subject0 -> Cognome (Proprietà e custodia),Subject0 -> P. IVA (Proprietà e custodia),Subject0 -> Telefono (Proprietà e custodia),Subject0 -> Cellulare (Proprietà e custodia),Subject0 -> PEC (Proprietà e custodia),Subject0 -> Mail (Proprietà e custodia),Subject0 -> Sito web (Proprietà e custodia),Subject0 -> Tipo (Proprietà e custodia),Subject0 -> Data inizio contratto (Proprietà e custodia),Subject0 -> Data fine contratto (Proprietà e custodia),Subject0 -> Durata contratto (Proprietà e custodia),Subject0 -> Canone annuale (Proprietà e custodia),Subject0 -> Tipo possesso (Proprietà e custodia),Subject1 -> Nome (Proprietà e custodia),Subject1 -> Cognome (Proprietà e custodia),Subject1 -> P. IVA (Proprietà e custodia),Subject1 -> Telefono (Proprietà e custodia),Subject1 -> Cellulare (Proprietà e custodia),Subject1 -> PEC (Proprietà e custodia),Subject1 -> Mail (Proprietà e custodia),Subject1 -> Sito web (Proprietà e custodia),Subject1 -> Tipo (Proprietà e custodia),Subject1 -> Data inizio contratto (Proprietà e custodia),Subject1 -> Data fine contratto (Proprietà e custodia),Subject1 -> Durata contratto (Proprietà e custodia),Subject1 -> Canone annuale (Proprietà e custodia),Subject1 -> Tipo possesso (Proprietà e custodia)\nADAME',,921606201,Capanna sociale,Cedegolo,Comune,,,,2017 - 09 - 22T21: 03: 30.663Z,2018 - 07 - 03T17: 37: 27.102Z,CAI Centrale,Lombardia,BS,SAVIORE DELL'ADAMELLO,CASINE DI MEZZO,Lombardia,LOM,,2107,46.236667,11.902778,alpi retiche,asdf,,,,,Custode,1235234523,23465264365,,,roba@roba.it,,riferimento,true,2342,2341,a12,a112,Parziale,,true,vva,vvb,Sì,true,C,24,,,,Gas,,,IMHOFF pozzo perdente,true,,,true,Acquedotto,,Primavera,,,,,,,,,,,,,,,,,,,,23,3,3,3,2018 - 02 - 01T23: 00: 00.000Z,2018 - 03 - 01T23: 00: 00.000Z,roba,gest, cognomeGest,,23452345235,134522345,,,,,,,,22323342,Affitto a gestore,enteProp,,149052345234451,234504325234,,prop@pec.it,mail@prop.it,www.sito.it,Proprietario,2002 - 02 - 01T23: 00: 00.000Z,2002 - 02 - 02T23: 00: 00.000Z,,4343,Affitto a gestore`
 
         createCSV( < any > [TEST_SHELTER])
             .then(csv => {
@@ -224,7 +225,7 @@ describe('Common tools', () => {
     });
 
     it('Should parse CSV multiple item', () => {
-        const csvStr = `Nome,Nome comune,IDCAI,Tipo,Sezione,Proprietà,Stato,Categoria per la Regione,Categoria,Inserito il,Aggiornato il,Aggiornato da,Regione,Provincia/Città metropolitana,Comune,Località,GR (Gruppo Regionale),Commissione regionale,Ente sovracomunale di competenza,Quota (m slm),Latitudine,Longitudine,Gruppo montuoso,Valle,Comprensiorio sciistico,Zona tutelata,Sito,Nome (Contatti),Ruolo (Contatti),Telefono (Contatti),Cellulare (Contatti),PEC (Contatti),Link prenotazione (Contatti),Mail (Contatti),Sito web (Contatti),Riferimento (Proprietà),Regolarità edilizia,Anno di costruzione,Anno di ristrutturazione,Classe catastale,Codice catastale,Coerenza tipologica,Coerenza materica,Regolarità urbanistica,Consistenza corpo principale,Consistenza corpo secondario,Regolarità antincendio,Certificazione ISO 14001,Classe energetica,Quantità (KW),Green,Generatore diesel,Fotovoltaico,Tipo di riscaldamento,Tipo fonte energetica,Nome fonte energetica,Tipo di scarico,Scarico a norma,Disoleatore,Captazione certificata,Riciclo,Acqua,Disponibilità acqua,Periodi di siccità,Anno (Richiesta contributo),Lavori a corpo (€),Lavori a misura (€),Oneri di sicurezza (€),TOTALE LAVORI (€),Spese per indagini, rilievi, ecc. (€),Spese per allacciamenti a reti di distribuzione (€),Spese tecniche (€),Spese di collaudo (€),Tasse e oneri (€),TOTALE SPESE (€),IVA compresa perché non recuperabile,COSTO TOTALE DEL PROGETTO (€),Finanziamento esterno (€),Autofinanziamento (€),SCOPERTO (€),RICHIESTO (€),Contributo accettato,Tipo di contributo richiesto,services.pernottamento.camerate_da_4_posti,services.pernottamento.camerate_da_6_posti,services.pernottamento.posti_letto,services.servizi_igenici.docce,openingTime0.startDate,openingTime0.endDate,openingTime0.type,management.subject0.name,management.subject0.surname,management.subject0.taxCode,management.subject0.fixedPhone,management.subject0.mobilePhone,management.subject0.pec,management.subject0.email,management.subject0.webSite,management.subject0.type,management.subject0.contract_start_date,management.subject0.contract_end_date,management.subject0.contract_duration,management.subject0.contract_fee,management.subject0.possession_type,management.subject1.name,management.subject1.surname,management.subject1.taxCode,management.subject1.fixedPhone,management.subject1.mobilePhone,management.subject1.pec,management.subject1.email,management.subject1.webSite,management.subject1.type,management.subject1.contract_start_date,management.subject1.contract_end_date,management.subject1.contract_duration,management.subject1.contract_fee,management.subject1.possession_type\nADAME',,921606201,Capanna sociale,Cedegolo,Comune,,,,2017 - 09 - 22T21: 03: 30.663Z,2018 - 07 - 03T17: 37: 27.102Z,CAI Centrale,Lombardia,BS,SAVIORE DELL'ADAMELLO,CASINE DI MEZZO,Lombardia,LOM,,2107,46.236667,11.902778,alpi retiche,asdf,,,,,Custode,1235234523,23465264365,,,roba@roba.it,,riferimento,true,2342,2341,a12,a112,Parziale,,true,vva,vvb,Sì,true,C,24,,,,Gas,,,IMHOFF pozzo perdente,true,,,true,Acquedotto,,Primavera,,,,,,,,,,,,,,,,,,,,23,3,3,3,2018 - 02 - 01T23: 00: 00.000Z,2018 - 03 - 01T23: 00: 00.000Z,roba,gest, cognomeGest,,23452345235,134522345,,,,,,,,22323342,Affitto a gestore,enteProp,,149052345234451,234504325234,,prop@pec.it,mail@prop.it,www.sito.it,Proprietario,2002 - 02 - 01T23: 00: 00.000Z,2002 - 02 - 02T23: 00: 00.000Z,,4343,Affitto a gestore\nADAME',,921606201,Capanna sociale,Cedegolo,Comune,,,,2017 - 09 - 22T21: 03: 30.663Z,2018 - 07 - 03T17: 37: 27.102Z,CAI Centrale,Lombardia,BS,SAVIORE DELL'ADAMELLO,CASINE DI MEZZO,Lombardia,LOM,,2107,46.236667,11.902778,alpi retiche,asdf,,,,,Custode,1235234523,23465264365,,,roba@roba.it,,riferimento,true,2342,2341,a12,a112,Parziale,,true,vva,vvb,Sì,true,C,24,,,,Gas,,,IMHOFF pozzo perdente,true,,,true,Acquedotto,,Primavera,,,,,,,,,,,,,,,,,,,,23,3,3,3,2018 - 02 - 01T23: 00: 00.000Z,2018 - 03 - 01T23: 00: 00.000Z,roba,gest, cognomeGest,,23452345235,134522345,,,,,,,,22323342,Affitto a gestore,enteProp,,149052345234451,234504325234,,prop@pec.it,mail@prop.it,www.sito.it,Proprietario,2002 - 02 - 01T23: 00: 00.000Z,2002 - 02 - 02T23: 00: 00.000Z,,4343,Affitto a gestore`
+        const csvStr = `Nome,Nome comune,IDCAI,Tipo,Sezione,Proprietà,Stato,Categoria per la Regione,Categoria,Inserito il,Aggiornato il,Aggiornato da,Regione,Provincia/Città metropolitana,Comune,Località,GR (Gruppo Regionale),Commissione regionale,Ente sovracomunale di competenza,Quota (m slm),Latitudine,Longitudine,Gruppo montuoso,Valle,Comprensiorio sciistico,Zona tutelata,Sito,Nome (Contatti),Ruolo (Contatti),Telefono (Contatti),Cellulare (Contatti),PEC (Contatti),Link prenotazione (Contatti),Mail (Contatti),Sito web (Contatti),Riferimento (Proprietà),Regolarità edilizia,Anno di costruzione,Anno di ristrutturazione,Classe catastale,Codice catastale,Coerenza tipologica,Coerenza materica,Regolarità urbanistica,Consistenza corpo principale,Consistenza corpo secondario,Regolarità antincendio,Certificazione ISO 14001,Classe energetica,Quantità (KW),Green,Generatore diesel,Fotovoltaico,Tipo di riscaldamento,Tipo fonte energetica,Nome fonte energetica,Tipo di scarico,Scarico a norma,Disoleatore,Captazione certificata,Riciclo,Acqua,Disponibilità acqua,Periodi di siccità,Anno (Richiesta contributo),Lavori a corpo (€),Lavori a misura (€),Oneri di sicurezza (€),TOTALE LAVORI (€),Spese per indagini, rilievi, ecc. (€),Spese per allacciamenti a reti di distribuzione (€),Spese tecniche (€),Spese di collaudo (€),Tasse e oneri (€),TOTALE SPESE (€),IVA compresa perché non recuperabile,COSTO TOTALE DEL PROGETTO (€),Finanziamento esterno (€),Autofinanziamento (€),SCOPERTO (€),RICHIESTO (€),Contributo accettato,Tipo di contributo richiesto,Camere da 4 posti,Camere da 6 posti,Posti letto,Docce,Apertura0 -> Apertura (inizio),Apertura0 -> Apertura (fine),Apertura0 -> Tipo apertura,Subject0 -> Nome (Proprietà e custodia),Subject0 -> Cognome (Proprietà e custodia),Subject0 -> P. IVA (Proprietà e custodia),Subject0 -> Telefono (Proprietà e custodia),Subject0 -> Cellulare (Proprietà e custodia),Subject0 -> PEC (Proprietà e custodia),Subject0 -> Mail (Proprietà e custodia),Subject0 -> Sito web (Proprietà e custodia),Subject0 -> Tipo (Proprietà e custodia),Subject0 -> Data inizio contratto (Proprietà e custodia),Subject0 -> Data fine contratto (Proprietà e custodia),Subject0 -> Durata contratto (Proprietà e custodia),Subject0 -> Canone annuale (Proprietà e custodia),Subject0 -> Tipo possesso (Proprietà e custodia),Subject1 -> Nome (Proprietà e custodia),Subject1 -> Cognome (Proprietà e custodia),Subject1 -> P. IVA (Proprietà e custodia),Subject1 -> Telefono (Proprietà e custodia),Subject1 -> Cellulare (Proprietà e custodia),Subject1 -> PEC (Proprietà e custodia),Subject1 -> Mail (Proprietà e custodia),Subject1 -> Sito web (Proprietà e custodia),Subject1 -> Tipo (Proprietà e custodia),Subject1 -> Data inizio contratto (Proprietà e custodia),Subject1 -> Data fine contratto (Proprietà e custodia),Subject1 -> Durata contratto (Proprietà e custodia),Subject1 -> Canone annuale (Proprietà e custodia),Subject1 -> Tipo possesso (Proprietà e custodia)\nADAME',,921606201,Capanna sociale,Cedegolo,Comune,,,,2017 - 09 - 22T21: 03: 30.663Z,2018 - 07 - 03T17: 37: 27.102Z,CAI Centrale,Lombardia,BS,SAVIORE DELL'ADAMELLO,CASINE DI MEZZO,Lombardia,LOM,,2107,46.236667,11.902778,alpi retiche,asdf,,,,,Custode,1235234523,23465264365,,,roba@roba.it,,riferimento,true,2342,2341,a12,a112,Parziale,,true,vva,vvb,Sì,true,C,24,,,,Gas,,,IMHOFF pozzo perdente,true,,,true,Acquedotto,,Primavera,,,,,,,,,,,,,,,,,,,,23,3,3,3,2018 - 02 - 01T23: 00: 00.000Z,2018 - 03 - 01T23: 00: 00.000Z,roba,gest, cognomeGest,,23452345235,134522345,,,,,,,,22323342,Affitto a gestore,enteProp,,149052345234451,234504325234,,prop@pec.it,mail@prop.it,www.sito.it,Proprietario,2002 - 02 - 01T23: 00: 00.000Z,2002 - 02 - 02T23: 00: 00.000Z,,4343,Affitto a gestore\nADAME',,921606201,Capanna sociale,Cedegolo,Comune,,,,2017 - 09 - 22T21: 03: 30.663Z,2018 - 07 - 03T17: 37: 27.102Z,CAI Centrale,Lombardia,BS,SAVIORE DELL'ADAMELLO,CASINE DI MEZZO,Lombardia,LOM,,2107,46.236667,11.902778,alpi retiche,asdf,,,,,Custode,1235234523,23465264365,,,roba@roba.it,,riferimento,true,2342,2341,a12,a112,Parziale,,true,vva,vvb,Sì,true,C,24,,,,Gas,,,IMHOFF pozzo perdente,true,,,true,Acquedotto,,Primavera,,,,,,,,,,,,,,,,,,,,23,3,3,3,2018 - 02 - 01T23: 00: 00.000Z,2018 - 03 - 01T23: 00: 00.000Z,roba,gest, cognomeGest,,23452345235,134522345,,,,,,,,22323342,Affitto a gestore,enteProp,,149052345234451,234504325234,,prop@pec.it,mail@prop.it,www.sito.it,Proprietario,2002 - 02 - 01T23: 00: 00.000Z,2002 - 02 - 02T23: 00: 00.000Z,,4343,Affitto a gestore`
 
         createCSV( < any > [TEST_SHELTER, TEST_SHELTER])
             .then(csv => {
@@ -320,41 +321,41 @@ describe('Common tools', () => {
             "RICHIESTO (€)": [null, null],
             "Contributo accettato": [null, null],
             "Tipo di contributo richiesto": [null, null],
-            "services.pernottamento.camerate_da_4_posti": ["23", "23"],
-            "services.pernottamento.camerate_da_6_posti": ["3", "3"],
-            "services.pernottamento.posti_letto": ["3", "3"],
-            "services.servizi_igenici.docce": ["3", "3"],
-            "openingTime0.startDate": ["2018 - 02 - 01T23: 00: 00.000Z", "2018 - 02 - 01T23: 00: 00.000Z"],
-            "openingTime0.endDate": ["2018 - 03 - 01T23: 00: 00.000Z", "2018 - 03 - 01T23: 00: 00.000Z"],
-            "openingTime0.type": ["roba", "roba"],
-            "management.subject0.name": ["gest", "gest"],
-            "management.subject0.surname": [" cognomeGest", " cognomeGest"],
-            "management.subject0.taxCode": [null, null],
-            "management.subject0.fixedPhone": ["23452345235", "23452345235"],
-            "management.subject0.mobilePhone": ["134522345", "134522345"],
-            "management.subject0.pec": [null, null],
-            "management.subject0.email": [null, null],
-            "management.subject0.webSite": [null, null],
-            "management.subject0.type": [null, null],
-            "management.subject0.contract_start_date": [null, null],
-            "management.subject0.contract_end_date": [null, null],
-            "management.subject0.contract_duration": [null, null],
-            "management.subject0.contract_fee": [22323342, 22323342],
-            "management.subject0.possession_type": ["Affitto a gestore", "Affitto a gestore"],
-            "management.subject1.name": ["enteProp", "enteProp"],
-            "management.subject1.surname": [null, null],
-            "management.subject1.taxCode": ["149052345234451", "149052345234451"],
-            "management.subject1.fixedPhone": ["234504325234", "234504325234"],
-            "management.subject1.mobilePhone": [null, null],
-            "management.subject1.pec": ["prop@pec.it", "prop@pec.it"],
-            "management.subject1.email": ["mail@prop.it", "mail@prop.it"],
-            "management.subject1.webSite": ["www.sito.it", "www.sito.it"],
-            "management.subject1.type": ["Proprietario", "Proprietario"],
-            "management.subject1.contract_start_date": ["2002 - 02 - 01T23: 00: 00.000Z", "2002 - 02 - 01T23: 00: 00.000Z"],
-            "management.subject1.contract_end_date": ["2002 - 02 - 02T23: 00: 00.000Z", "2002 - 02 - 02T23: 00: 00.000Z"],
-            "management.subject1.contract_duration": [null, null],
-            "management.subject1.contract_fee": [4343, 4343],
-            "management.subject1.possession_type": ["Affitto a gestore", "Affitto a gestore"]
+            "Camere da 4 posti": ["23", "23"],
+            "Camere da 6 posti": ["3", "3"],
+            "Posti letto": ["3", "3"],
+            "Docce": ["3", "3"],
+            "Apertura0 -> Apertura (inizio)": ["2018 - 02 - 01T23: 00: 00.000Z", "2018 - 02 - 01T23: 00: 00.000Z"],
+            "Apertura0 -> Apertura (fine)": ["2018 - 03 - 01T23: 00: 00.000Z", "2018 - 03 - 01T23: 00: 00.000Z"],
+            "Apertura0 -> Tipo apertura": ["roba", "roba"],
+            "Subject0 -> Nome (Proprietà e custodia)": ["gest", "gest"],
+            "Subject0 -> Cognome (Proprietà e custodia)": [" cognomeGest", " cognomeGest"],
+            "Subject0 -> P. IVA (Proprietà e custodia)": [null, null],
+            "Subject0 -> Telefono (Proprietà e custodia)": ["23452345235", "23452345235"],
+            "Subject0 -> Cellulare (Proprietà e custodia)": ["134522345", "134522345"],
+            "Subject0 -> PEC (Proprietà e custodia)": [null, null],
+            "Subject0 -> Mail (Proprietà e custodia)": [null, null],
+            "Subject0 -> Sito web (Proprietà e custodia)": [null, null],
+            "Subject0 -> Tipo (Proprietà e custodia)": [null, null],
+            "Subject0 -> Data inizio contratto (Proprietà e custodia)": [null, null],
+            "Subject0 -> Data fine contratto (Proprietà e custodia)": [null, null],
+            "Subject0 -> Durata contratto (Proprietà e custodia)": [null, null],
+            "Subject0 -> Canone annuale (Proprietà e custodia)": [22323342, 22323342],
+            "Subject0 -> Tipo possesso (Proprietà e custodia)": ["Affitto a gestore", "Affitto a gestore"],
+            "Subject1 -> Nome (Proprietà e custodia)": ["enteProp", "enteProp"],
+            "Subject1 -> Cognome (Proprietà e custodia)": [null, null],
+            "Subject1 -> P. IVA (Proprietà e custodia)": ["149052345234451", "149052345234451"],
+            "Subject1 -> Telefono (Proprietà e custodia)": ["234504325234", "234504325234"],
+            "Subject1 -> Cellulare (Proprietà e custodia)": [null, null],
+            "Subject1 -> PEC (Proprietà e custodia)": ["prop@pec.it", "prop@pec.it"],
+            "Subject1 -> Mail (Proprietà e custodia)": ["mail@prop.it", "mail@prop.it"],
+            "Subject1 -> Sito web (Proprietà e custodia)": ["www.sito.it", "www.sito.it"],
+            "Subject1 -> Tipo (Proprietà e custodia)": ["Proprietario", "Proprietario"],
+            "Subject1 -> Data inizio contratto (Proprietà e custodia)": ["2002 - 02 - 01T23: 00: 00.000Z", "2002 - 02 - 01T23: 00: 00.000Z"],
+            "Subject1 -> Data fine contratto (Proprietà e custodia)": ["2002 - 02 - 02T23: 00: 00.000Z", "2002 - 02 - 02T23: 00: 00.000Z"],
+            "Subject1 -> Durata contratto (Proprietà e custodia)": [null, null],
+            "Subject1 -> Canone annuale (Proprietà e custodia)": [4343, 4343],
+            "Subject1 -> Tipo possesso (Proprietà e custodia)": ["Affitto a gestore", "Affitto a gestore"]
         }
 
         expect(JSON.stringify(getCSVDict( < any > [TEST_SHELTER, TEST_SHELTER]))).toBe(JSON.stringify(obj))
@@ -445,43 +446,42 @@ describe('Common tools', () => {
             "RICHIESTO (€)": null,
             "Contributo accettato": null,
             "Tipo di contributo richiesto": null,
-            "services.pernottamento.camerate_da_4_posti": "23",
-            "services.pernottamento.camerate_da_6_posti": "3",
-            "services.pernottamento.posti_letto": "3",
-            "services.servizi_igenici.docce": "3",
-            "openingTime0.startDate": "2018 - 02 - 01T23: 00: 00.000Z",
-            "openingTime0.endDate": "2018 - 03 - 01T23: 00: 00.000Z",
-            "openingTime0.type": "roba",
-            "management.subject0.name": "gest",
-            "management.subject0.surname": " cognomeGest",
-            "management.subject0.taxCode": null,
-            "management.subject0.fixedPhone": "23452345235",
-            "management.subject0.mobilePhone": "134522345",
-            "management.subject0.pec": null,
-            "management.subject0.email": null,
-            "management.subject0.webSite": null,
-            "management.subject0.type": null,
-            "management.subject0.contract_start_date": null,
-            "management.subject0.contract_end_date": null,
-            "management.subject0.contract_duration": null,
-            "management.subject0.contract_fee": 22323342,
-            "management.subject0.possession_type": "Affitto a gestore",
-            "management.subject1.name": "enteProp",
-            "management.subject1.surname": null,
-            "management.subject1.taxCode": "149052345234451",
-            "management.subject1.fixedPhone": "234504325234",
-            "management.subject1.mobilePhone": null,
-            "management.subject1.pec": "prop@pec.it",
-            "management.subject1.email": "mail@prop.it",
-            "management.subject1.webSite": "www.sito.it",
-            "management.subject1.type": "Proprietario",
-            "management.subject1.contract_start_date": "2002 - 02 - 01T23: 00: 00.000Z",
-            "management.subject1.contract_end_date": "2002 - 02 - 02T23: 00: 00.000Z",
-            "management.subject1.contract_duration": null,
-            "management.subject1.contract_fee": 4343,
-            "management.subject1.possession_type": "Affitto a gestore"
+            "Camere da 4 posti": "23",
+            "Camere da 6 posti": "3",
+            "Posti letto": "3",
+            "Docce": "3",
+            "Apertura0 -> Apertura (inizio)": "2018 - 02 - 01T23: 00: 00.000Z",
+            "Apertura0 -> Apertura (fine)": "2018 - 03 - 01T23: 00: 00.000Z",
+            "Apertura0 -> Tipo apertura": "roba",
+            "Subject0 -> Nome (Proprietà e custodia)": "gest",
+            "Subject0 -> Cognome (Proprietà e custodia)": " cognomeGest",
+            "Subject0 -> P. IVA (Proprietà e custodia)": null,
+            "Subject0 -> Telefono (Proprietà e custodia)": "23452345235",
+            "Subject0 -> Cellulare (Proprietà e custodia)": "134522345",
+            "Subject0 -> PEC (Proprietà e custodia)": null,
+            "Subject0 -> Mail (Proprietà e custodia)": null,
+            "Subject0 -> Sito web (Proprietà e custodia)": null,
+            "Subject0 -> Tipo (Proprietà e custodia)": null,
+            "Subject0 -> Data inizio contratto (Proprietà e custodia)": null,
+            "Subject0 -> Data fine contratto (Proprietà e custodia)": null,
+            "Subject0 -> Durata contratto (Proprietà e custodia)": null,
+            "Subject0 -> Canone annuale (Proprietà e custodia)": 22323342,
+            "Subject0 -> Tipo possesso (Proprietà e custodia)": "Affitto a gestore",
+            "Subject1 -> Nome (Proprietà e custodia)": "enteProp",
+            "Subject1 -> Cognome (Proprietà e custodia)": null,
+            "Subject1 -> P. IVA (Proprietà e custodia)": "149052345234451",
+            "Subject1 -> Telefono (Proprietà e custodia)": "234504325234",
+            "Subject1 -> Cellulare (Proprietà e custodia)": null,
+            "Subject1 -> PEC (Proprietà e custodia)": "prop@pec.it",
+            "Subject1 -> Mail (Proprietà e custodia)": "mail@prop.it",
+            "Subject1 -> Sito web (Proprietà e custodia)": "www.sito.it",
+            "Subject1 -> Tipo (Proprietà e custodia)": "Proprietario",
+            "Subject1 -> Data inizio contratto (Proprietà e custodia)": "2002 - 02 - 01T23: 00: 00.000Z",
+            "Subject1 -> Data fine contratto (Proprietà e custodia)": "2002 - 02 - 02T23: 00: 00.000Z",
+            "Subject1 -> Durata contratto (Proprietà e custodia)": null,
+            "Subject1 -> Canone annuale (Proprietà e custodia)": 4343,
+            "Subject1 -> Tipo possesso (Proprietà e custodia)": "Affitto a gestore"
         }
-
         expect(JSON.stringify(transform( < any > TEST_SHELTER))).toBe(JSON.stringify(obj))
     });
 
@@ -585,6 +585,22 @@ describe('Common tools', () => {
         expect(JSON.stringify(processFlatArrayNames(test, "management.subject"))).toBe(JSON.stringify(ret));
     });
 
+    it("Should transform doc fields to human readable -> services", () => {
+        const ret = {
+            "Camere da 4 posti": "23",
+            "Camere da 6 posti": "3",
+            "Posti letto": "3",
+            "Docce": "3"
+        }
+        const test = {
+            "services.pernottamento.camerate_da_4_posti": "23",
+            "services.pernottamento.camerate_da_6_posti": "3",
+            "services.pernottamento.posti_letto": "3",
+            "services.servizi_igenici.docce": "3"
+        }
+        expect(JSON.stringify(processFlatArrayNames(test, "services"))).toBe(JSON.stringify(ret));
+    });
+
     it("Should transform doc fields to human readable -> openingTime", () => {
         const ret = {
             "Apertura0 -> Apertura (inizio)": "2018 - 02 - 01T23: 00: 00.000Z",
@@ -597,5 +613,61 @@ describe('Common tools', () => {
             "openingTime1.type": "roba"
         }
         expect(JSON.stringify(processFlatArrayNames(test, "openingTime"))).toBe(JSON.stringify(ret));
+    });
+
+    it("Should get and transform array field -> management.subject", () => {
+        const obj = {
+            "Subject0 -> Nome (Proprietà e custodia)": "gest",
+            "Subject0 -> Cognome (Proprietà e custodia)": " cognomeGest",
+            "Subject0 -> P. IVA (Proprietà e custodia)": null,
+            "Subject0 -> Telefono (Proprietà e custodia)": "23452345235",
+            "Subject0 -> Cellulare (Proprietà e custodia)": "134522345",
+            "Subject0 -> PEC (Proprietà e custodia)": null,
+            "Subject0 -> Mail (Proprietà e custodia)": null,
+            "Subject0 -> Sito web (Proprietà e custodia)": null,
+            "Subject0 -> Tipo (Proprietà e custodia)": null,
+            "Subject0 -> Data inizio contratto (Proprietà e custodia)": null,
+            "Subject0 -> Data fine contratto (Proprietà e custodia)": null,
+            "Subject0 -> Durata contratto (Proprietà e custodia)": null,
+            "Subject0 -> Canone annuale (Proprietà e custodia)": 22323342,
+            "Subject0 -> Tipo possesso (Proprietà e custodia)": "Affitto a gestore",
+            "Subject1 -> Nome (Proprietà e custodia)": "enteProp",
+            "Subject1 -> Cognome (Proprietà e custodia)": null,
+            "Subject1 -> P. IVA (Proprietà e custodia)": "149052345234451",
+            "Subject1 -> Telefono (Proprietà e custodia)": "234504325234",
+            "Subject1 -> Cellulare (Proprietà e custodia)": null,
+            "Subject1 -> PEC (Proprietà e custodia)": "prop@pec.it",
+            "Subject1 -> Mail (Proprietà e custodia)": "mail@prop.it",
+            "Subject1 -> Sito web (Proprietà e custodia)": "www.sito.it",
+            "Subject1 -> Tipo (Proprietà e custodia)": "Proprietario",
+            "Subject1 -> Data inizio contratto (Proprietà e custodia)": "2002 - 02 - 01T23: 00: 00.000Z",
+            "Subject1 -> Data fine contratto (Proprietà e custodia)": "2002 - 02 - 02T23: 00: 00.000Z",
+            "Subject1 -> Durata contratto (Proprietà e custodia)": null,
+            "Subject1 -> Canone annuale (Proprietà e custodia)": 4343,
+            "Subject1 -> Tipo possesso (Proprietà e custodia)": "Affitto a gestore"
+        }
+
+        expect(JSON.stringify(transformArrayFields(TEST_SHELTER, "management.subject"))).toBe(JSON.stringify(obj));
+    });
+
+    it("Should get and transform array field -> openingTime", () => {
+        const obj = {
+            "Apertura0 -> Apertura (inizio)": "2018 - 02 - 01T23: 00: 00.000Z",
+            "Apertura0 -> Apertura (fine)": "2018 - 03 - 01T23: 00: 00.000Z",
+            "Apertura0 -> Tipo apertura": "roba"
+        }
+
+        expect(JSON.stringify(transformArrayFields(TEST_SHELTER, "openingTime"))).toBe(JSON.stringify(obj));
+    });
+
+    it("Should get and transform array field -> services", () => {
+        const test = {
+            "Camere da 4 posti": "23",
+            "Camere da 6 posti": "3",
+            "Posti letto": "3",
+            "Docce": "3"
+        }
+
+        expect(JSON.stringify(transformArrayFields(TEST_SHELTER, "services"))).toBe(JSON.stringify(test));
     });
 });

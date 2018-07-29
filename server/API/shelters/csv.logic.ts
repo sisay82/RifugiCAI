@@ -1,5 +1,5 @@
 import { CSV_FIELDS, CSV_UNWINDS, CSV_ALIASES, CSV_UNWINDS_ALIASES } from '../../tools/constants';
-import { IShelterExtended, toTitleCase } from '../../tools/common';
+import { IShelterExtended, toTitleCase, getPropertySafe } from '../../tools/common';
 
 function concatPropNames(father: String, props: String[]): String[] {
     return props.map(prop => father + '.' + prop);
@@ -168,6 +168,20 @@ export function getValueForFieldDoc(doc, field) {
     return ret;
 }
 
+export function transformArrayFields(doc, baseField) {
+    let fields = null;
+    if (baseField === "services") {
+        fields = processServicesFields(doc.services);
+    } else {
+        const prop = getPropertySafe(doc, baseField);
+        if (!prop) {
+            return null;
+        }
+        fields = processArrayField(baseField, prop);
+    }
+    return processFlatArrayNames(fields, baseField);
+}
+
 export function transform(doc: IShelterExtended) {
     const ret = {};
 
@@ -181,13 +195,15 @@ export function transform(doc: IShelterExtended) {
             }
         }
     }
-
+    return Object.keys(CSV_UNWINDS).reduce((acc, val) => {
+        return Object.assign({}, acc, transformArrayFields(doc, val))
+    }, ret);
     /*const fieldsUnwinded = CSV_UNWINDS.reduce((acc, val) => {
         const prop = getPropertySafe(doc, val);
         return prop != null ? Object.assign({}, acc, processArrayField(val, prop)) : acc;
     }, {})*/
 
-    const managFields = doc.management ? processArrayField(
+    /*const managFields = doc.management ? processArrayField(
         "management.subject",
         doc.management.subject
     ) : {};
@@ -205,7 +221,7 @@ export function transform(doc: IShelterExtended) {
         servicesFields,
         openingFields,
         managFields
-    );
+    );*/
 }
 
 export function getCSVDict(shelters: IShelterExtended[]): { [key: string]: [any] } {
