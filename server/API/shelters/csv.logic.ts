@@ -198,30 +198,6 @@ export function transform(doc: IShelterExtended) {
     return Object.keys(CSV_UNWINDS).reduce((acc, val) => {
         return Object.assign({}, acc, transformArrayFields(doc, val))
     }, ret);
-    /*const fieldsUnwinded = CSV_UNWINDS.reduce((acc, val) => {
-        const prop = getPropertySafe(doc, val);
-        return prop != null ? Object.assign({}, acc, processArrayField(val, prop)) : acc;
-    }, {})*/
-
-    /*const managFields = doc.management ? processArrayField(
-        "management.subject",
-        doc.management.subject
-    ) : {};
-
-    const openingFields = doc.openingTime ? processArrayField(
-        "openingTime",
-        doc.openingTime
-    ) : {};
-
-    const servicesFields = doc.services ? processServicesFields(doc.services) : {}
-
-    return Object.assign(
-        {},
-        ret,
-        servicesFields,
-        openingFields,
-        managFields
-    );*/
 }
 
 export function getCSVDict(shelters: IShelterExtended[]): { [key: string]: [any] } {

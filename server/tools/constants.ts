@@ -134,11 +134,6 @@ export const CSV_ALIASES = {
         "emailAddress": "Mail (Contatti)",
         "webAddress": "Sito web (Contatti)",
     },
-    /*"openingTime": {
-        "startDate": "Apertura (inizio)",
-        "endDate": "Apertura (fine)",
-        "type": "Tipo apertura",
-    },*/
     "management": {
         "reference": "Riferimento (Proprietà)",
         "self_management": "Autogestione",
