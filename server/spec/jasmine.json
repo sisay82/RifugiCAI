@@ -1,0 +1,8 @@
+{
+    "spec_dir": "out-tsc/spec",
+    "spec_files": [
+        "**/*[sS]pec.js"
+    ],
+    "stopSpecOnExpectationFailure": true,
+    "random": false
+}

@@ -1,11 +1,10 @@
-import { IShelterExtended } from '../tools/common';
-import { OUT_DIR, MONTHS } from '../tools/constants';
+import { IShelterExtended } from '../../tools/common';
+import { OUT_DIR, MONTHS } from '../../tools/constants';
 import * as path from 'path';
-// import * as pdf from 'html-pdf';
-import { countContributionFilesByShelter, insertNewFile } from './files.api';
-import { Enums } from '../../src/app/shared/types/enums';
+import { countContributionFilesByShelter, insertNewFile } from './files.logic';
+import { Enums } from '../../../src/app/shared/types/enums';
 import Files_Enum = Enums.Files;
-import { IFile } from '../../src/app/shared/types/interfaces';
+import { IFile } from '../../../src/app/shared/types/interfaces';
 import * as printer from 'pdfmake/src/printer';
 import { TDocumentDefinitions } from 'pdfmake/build/pdfmake';
 import { Buffer } from 'buffer';
@@ -15,7 +14,6 @@ const subtitleSize = 10;
 const bodySize = 13;
 const contentSize = 11;
 
-const imageFilePath = path.join('file://' + OUT_DIR + '/assets/images/');
 const assetsPath = path.join(OUT_DIR + '/assets/');
 const fontDescriptors = {
     Roboto: {
@@ -174,33 +172,33 @@ export function createContributionPDF(shelter: IShelterExtended): Promise<{ name
             }
         }
 
-    const f: IFile = {
-        shelterId: shelter._id,
-        uploadDate: new Date(),
-        contribution_type: contribution.type,
-        contentType: 'application/pdf',
-        type: Files_Enum.File_Type.contribution,
-        invoice_year: contribution.year,
-    }
+        const f: IFile = {
+            shelterId: shelter._id,
+            uploadDate: new Date(),
+            contribution_type: contribution.type,
+            contentType: 'application/pdf',
+            type: Files_Enum.File_Type.contribution,
+            invoice_year: contribution.year,
+        }
 
-    return Promise.all([
-        createPdf(docDescriptor),
-        countContributionFilesByShelter(shelter._id)
-    ])
-        .then(values => {
-            const num = values["1"];
-            const buff = values["0"];
-            f.name = getPDFContributionName(contribution.year, contribution.type, num);
-            f.value = num;
-            f.size = buff.length;
-            f.data = buff
-            return insertNewFile(<any>f);
-        })
-        .then(file => {
-            return Promise.resolve({ name: file.name, id: file.id });
-        })
-        .catch(err => Promise.reject(err))
-} else {
-    return Promise.reject(new Error('Error contribution data'));
-}
+        return Promise.all([
+            createPdf(docDescriptor),
+            countContributionFilesByShelter(shelter._id)
+        ])
+            .then(values => {
+                const num = values["1"];
+                const buff = values["0"];
+                f.name = getPDFContributionName(contribution.year, contribution.type, num);
+                f.value = num;
+                f.size = buff.length;
+                f.data = buff
+                return insertNewFile(<any>f);
+            })
+            .then(file => {
+                return Promise.resolve({ name: file.name, id: file.id });
+            })
+            .catch(err => Promise.reject(err))
+    } else {
+        return Promise.reject(new Error('Error contribution data'));
+    }
 }

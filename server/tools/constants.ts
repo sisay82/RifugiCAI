@@ -17,16 +17,73 @@ export const MONTHS = [
     'dicembre'
 ];
 
-export const CSV_UNWINDS = [
-    'services',
-    'services.tags',
-    'openingTime',
-    'management.subject',
+export const CLEAR_CACHE_INTERVAL = 1.5 * 1000;
+
+export const CSV_UNWINDS = {
+    'services': [],
+    'openingTime': ["Apertura"],
+    'management.subject': [null, "Subject"],
     // 'economy',
     // 'use',
     // 'contributions.attachments'
+}
 
-]
+export const CSV_UNWINDS_ALIASES = {
+    "services": {
+        "camerate_da_4_posti": "Camere da 4 posti",
+        "camerate_da_6_posti": "Camere da 6 posti",
+        "posti_letto": "Posti letto",
+        "posti_letto_invernali": "Posti letto invernale",
+        "tavolati": "Tavolati",
+        "posti_totali": "Posti totali",
+        "vendita_sacco_lenzuolo": "Vendita sacco lenzuolo",
+        "ristorante": "Ristorante",
+        "accesso_alla_cucina": "Accesso alla cucina",
+        "acqua_in_rifugio": "Acqua in rifugio",
+        "acqua_calda": "Acqua calda",
+        "docce": "Docce",
+        "WC_in_camera": "WC in camera",
+        "WC_uso_comune": "WC uso comune",
+        "elettricità": "Elettricità",
+        "punti_ricarica_camere": "Punti ricarica camere",
+        "punti_ricarica_spazi_comuni": "Punti ricarica spazi comuni",
+        "WIFI": "WIFI",
+        "segnale_GSM": "Segnale GSM",
+        "gestore_telefonia_mobile": "Gestore telefonia mobile",
+        "accessibilità_ai_disabili": "Accessibilità ai disabili",
+        "servizi_igienici_per_disabili": "Servizi igienici per disabili",
+        "accessibilità_famiglie_con_bambini": "Accessibilità famiglie con bambini",
+        "accessibilità_macchina": "Accessibilità macchina",
+        "ammissibilità_animali_domestici": "Ammissibilità animali domestici",
+        "stanze_dedicate": "Stanze dedicate",
+        "pagamento_POS": "Pagamento POS",
+        "convenzioni": "convenzioni",
+        "richiesta_di_rifornire_il_rifugio": "Richiesta di rifornire il rifugio",
+        "presidio_culturale": "Presidio culturale",
+        "attività_culturali/corsi_specifici": "Attività culturali/corsi specifici"
+    },
+    "management.subject": {
+        "name": "Nome (Proprietà e custodia)",
+        "surname": "Cognome (Proprietà e custodia)",
+        "taxCode": "P. IVA (Proprietà e custodia)",
+        "fixedPhone": "Telefono (Proprietà e custodia)",
+        "mobilePhone": "Cellulare (Proprietà e custodia)",
+        "pec": "PEC (Proprietà e custodia)",
+        "email": "Mail (Proprietà e custodia)",
+        "webSite": "Sito web (Proprietà e custodia)",
+        "type": "Tipo (Proprietà e custodia)",
+        "contract_start_date": "Data inizio contratto (Proprietà e custodia)",
+        "contract_end_date": "Data fine contratto (Proprietà e custodia)",
+        "contract_duration": "Durata contratto (Proprietà e custodia)",
+        "contract_fee": "Canone annuale (Proprietà e custodia)",
+        "possession_type": "Tipo possesso (Proprietà e custodia)",
+    },
+    "openingTime": {
+        "startDate": "Apertura (inizio)",
+        "endDate": "Apertura (fine)",
+        "type": "Tipo apertura"
+    }
+}
 
 export const CSV_ALIASES = {
     "name": "Nome",
@@ -46,38 +103,6 @@ export const CSV_ALIASES = {
         "tags": {
             "key": "Nome Servizio",
             "value": "Valore Servizio"
-
-            /*"camerate_da_4_posti": "Camere da 4 posti",
-            "camerate_da_6_posti": "Camere da 6 posti",
-            "posti_letto": "Posti letto",
-            "posti_letto_invernali": "Posti letto invernale",
-            "tavolati": "Tavolati",
-            "posti_totali": "Posti totali",
-            "vendita_sacco_lenzuolo": "Vendita sacco lenzuolo",
-            "ristorante": "Ristorante",
-            "accesso_alla_cucina": "Accesso alla cucina",
-            "acqua_in_rifugio": "Acqua in rifugio",
-            "acqua_calda": "Acqua calda",
-            "docce": "Docce",
-            "WC_in_camera": "WC in camera",
-            "WC_uso_comune": "WC uso comune",
-            "elettricità": "Elettricità",
-            "punti_ricarica_camere": "Punti ricarica camere",
-            "punti_ricarica_spazi_comuni": "Punti ricarica spazi comuni",
-            "WIFI": "WIFI",
-            "segnale_GSM": "Segnale GSM",
-            "gestore_telefonia_mobile": "Gestore telefonia mobile",
-            "accessibilità_ai_disabili": "Accessibilità ai disabili",
-            "servizi_igienici_per_disabili": "Servizi igienici per disabili",
-            "accessibilità_famiglie_con_bambini": "Accessibilità famiglie con bambini",
-            "accessibilità_macchina": "Accessibilità macchina",
-            "ammissibilità_animali_domestici": "Ammissibilità animali domestici",
-            "stanze_dedicate": "Stanze dedicate",
-            "pagamento_POS": "Pagamento POS",
-            "convenzioni": "convenzioni",
-            "richiesta_di_rifornire_il_rifugio": "Richiesta di rifornire il rifugio",
-            "presidio_culturale": "Presidio culturale",
-            "attività_culturali/corsi_specifici": "Attività culturali/corsi specifici"*/
         }
     },
     "geoData": {
@@ -109,28 +134,7 @@ export const CSV_ALIASES = {
         "emailAddress": "Mail (Contatti)",
         "webAddress": "Sito web (Contatti)",
     },
-    "openingTime": {
-        "startDate": "Apertura (inizio)",
-        "endDate": "Apertura (fine)",
-        "type": "Tipo apertura",
-    },
     "management": {
-        "subject": {
-            "name": "Nome (Proprietà e custodia)",
-            "surname": "Cognome (Proprietà e custodia)",
-            "taxCode": "P. IVA (Proprietà e custodia)",
-            "fixedPhone": "Telefono (Proprietà e custodia)",
-            "mobilePhone": "Cellulare (Proprietà e custodia)",
-            "pec": "PEC (Proprietà e custodia)",
-            "email": "Mail (Proprietà e custodia)",
-            "webSite": "Sito web (Proprietà e custodia)",
-            "type": "Tipo (Proprietà e custodia)",
-            "contract_start_date": "Data inizio contratto (Proprietà e custodia)",
-            "contract_end_date": "Data fine contratto (Proprietà e custodia)",
-            "contract_duration": "Durata contratto (Proprietà e custodia)",
-            "contract_fee": "Canone annuale (Proprietà e custodia)",
-            "possession_type": "Tipo possesso (Proprietà e custodia)",
-        },
         "reference": "Riferimento (Proprietà)",
         "self_management": "Autogestione",
         "pickupKey": "Ritiro chiavi",
