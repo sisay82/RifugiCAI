@@ -1,5 +1,5 @@
-import { CSV_FIELDS, CSV_UNWINDS, CSV_ALIASES } from '../../tools/constants';
-import { IShelterExtended, getPropertySafe } from '../../tools/common';
+import { CSV_FIELDS, CSV_UNWINDS, CSV_ALIASES, CSV_UNWINDS_ALIASES } from '../../tools/constants';
+import { IShelterExtended, toTitleCase } from '../../tools/common';
 
 function concatPropNames(father: String, props: String[]): String[] {
     return props.map(prop => father + '.' + prop);
@@ -86,7 +86,7 @@ function flattenArray(arr) {
     }, {})
 }
 
-export function getFieldNameFragment(fieldName: string): string[][] {
+export function getFieldNameLastFragment(fieldName: string): string[][] {
     const fields = CSV_FIELDS
         .filter(f => f.indexOf(fieldName) > -1)
         .map(f => {
@@ -112,7 +112,7 @@ export function processServicesFields(services) {
 }
 
 export function processArrayField(baseField, objs, useFields?) {
-    const fields = useFields == null ? getFieldNameFragment(baseField) : useFields;
+    const fields = useFields == null ? getFieldNameLastFragment(baseField) : useFields;
 
     return objs ? objs.reduce((acc, val, index) => {
         const uniqueKeyObj = fields.reduce((o, k) => {
@@ -120,7 +120,7 @@ export function processArrayField(baseField, objs, useFields?) {
                 o = k.reduce((a, subK) => {
                     const subfields = processArrayField(
                         baseField + index + '.' + subK, val[subK],
-                        getFieldNameFragment(baseField + '.' + subK)
+                        getFieldNameLastFragment(baseField + '.' + subK)
                     );
                     return Object.assign({}, a, subfields);
                 }, o)
@@ -134,6 +134,25 @@ export function processArrayField(baseField, objs, useFields?) {
         return Object.assign({}, acc, uniqueKeyObj);
     }, {}) : {}
 
+}
+
+export function processFlatArrayNames(obj: { [key: string]: any }, nameBase: string) {
+    const names: string[] = CSV_UNWINDS[nameBase]
+    const regMatch = /[0-9]+/g
+    return Object.keys(obj).reduce((acc, val) => {
+        const fragments = val.split('\.');
+        const base = fragments.reduce((a, v, index) => {
+            let ret = "";
+            if (names[index]) {
+                ret += names[index] + v.match(regMatch).join('') + ' -> ';
+            }
+            return a + ret
+        }, "");
+        const fieldNames = CSV_UNWINDS_ALIASES[nameBase];
+        const n = fieldNames[fragments[fragments.length - 1]] ? base + fieldNames[fragments[fragments.length - 1]] : "";
+        acc[n] = obj[val];
+        return acc;
+    }, {});
 }
 
 export function getValueForFieldDoc(doc, field) {
@@ -154,10 +173,12 @@ export function transform(doc: IShelterExtended) {
 
     for (const field of CSV_FIELDS) {
         const part = field.split('\.')[0];
-        if (!CSV_UNWINDS.includes(part)) {
+        if (!CSV_UNWINDS[part]) {
             const name = getAliasForField(field, CSV_ALIASES);
             const value = getValueForFieldDoc(doc, field);
-            ret[name] = value;
+            if (name) {
+                ret[name] = value;
+            }
         }
     }
 

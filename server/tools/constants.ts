@@ -19,15 +19,38 @@ export const MONTHS = [
 
 export const CLEAR_CACHE_INTERVAL = 1.5 * 1000;
 
-export const CSV_UNWINDS = [
-    'services',
-    'openingTime',
-    'management.subject',
+export const CSV_UNWINDS = {
+    'services': [],
+    'openingTime': ["Apertura"],
+    'management.subject': [null, "Subject"],
     // 'economy',
     // 'use',
     // 'contributions.attachments'
+}
 
-]
+export const CSV_UNWINDS_ALIASES = {
+    "management.subject": {
+        "name": "Nome (Proprietà e custodia)",
+        "surname": "Cognome (Proprietà e custodia)",
+        "taxCode": "P. IVA (Proprietà e custodia)",
+        "fixedPhone": "Telefono (Proprietà e custodia)",
+        "mobilePhone": "Cellulare (Proprietà e custodia)",
+        "pec": "PEC (Proprietà e custodia)",
+        "email": "Mail (Proprietà e custodia)",
+        "webSite": "Sito web (Proprietà e custodia)",
+        "type": "Tipo (Proprietà e custodia)",
+        "contract_start_date": "Data inizio contratto (Proprietà e custodia)",
+        "contract_end_date": "Data fine contratto (Proprietà e custodia)",
+        "contract_duration": "Durata contratto (Proprietà e custodia)",
+        "contract_fee": "Canone annuale (Proprietà e custodia)",
+        "possession_type": "Tipo possesso (Proprietà e custodia)",
+    },
+    "openingTime": {
+        "startDate": "Apertura (inizio)",
+        "endDate": "Apertura (fine)",
+        "type": "Tipo apertura"
+    }
+}
 
 export const CSV_ALIASES = {
     "name": "Nome",
@@ -110,28 +133,12 @@ export const CSV_ALIASES = {
         "emailAddress": "Mail (Contatti)",
         "webAddress": "Sito web (Contatti)",
     },
-    "openingTime": {
+    /*"openingTime": {
         "startDate": "Apertura (inizio)",
         "endDate": "Apertura (fine)",
         "type": "Tipo apertura",
-    },
+    },*/
     "management": {
-        /*"subject": {
-            "name": "Nome (Proprietà e custodia)",
-            "surname": "Cognome (Proprietà e custodia)",
-            "taxCode": "P. IVA (Proprietà e custodia)",
-            "fixedPhone": "Telefono (Proprietà e custodia)",
-            "mobilePhone": "Cellulare (Proprietà e custodia)",
-            "pec": "PEC (Proprietà e custodia)",
-            "email": "Mail (Proprietà e custodia)",
-            "webSite": "Sito web (Proprietà e custodia)",
-            "type": "Tipo (Proprietà e custodia)",
-            "contract_start_date": "Data inizio contratto (Proprietà e custodia)",
-            "contract_end_date": "Data fine contratto (Proprietà e custodia)",
-            "contract_duration": "Durata contratto (Proprietà e custodia)",
-            "contract_fee": "Canone annuale (Proprietà e custodia)",
-            "possession_type": "Tipo possesso (Proprietà e custodia)",
-        },*/
         "reference": "Riferimento (Proprietà)",
         "self_management": "Autogestione",
         "pickupKey": "Ritiro chiavi",
