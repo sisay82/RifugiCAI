@@ -184,7 +184,7 @@ export function transformArrayFields(doc, baseField) {
     return processFlatArrayNames(fields, baseField);
 }
 
-export function transform(doc: IShelterExtended) {
+export function transform(doc: IShelterExtended): { [key: string]: any } {
     const ret = {};
 
     for (const field of CSV_FIELDS) {
@@ -203,42 +203,56 @@ export function transform(doc: IShelterExtended) {
 }
 
 export function getCSVDict(shelters: IShelterExtended[]): { [key: string]: [any] } {
-    return shelters.reduce((acc, val) => {
+    return shelters.reduce((acc, val, index) => {
         const shel = transform(val);
         Object.keys(shel).forEach((v) => {
             if (!acc[v]) {
-                acc[v] = [shel[v]]
-            } else {
-                acc[v].push(shel[v])
+                acc[v] = <any>[]
             }
+            acc[v][index] = shel[v]
         });
+        Object.keys(acc)
+            .filter(k => !Object.keys(shel).includes(k))
+            .map(v => {
+                if (acc[v]) {
+                    acc[v].push(null);
+                }
+            });
         return acc;
-    }, {});
+    }, <{ [key: string]: [any] }>{});
+}
+
+export function getCSVLines(dict: { [key: string]: [any] }) {
+    return Object.keys(dict).reduce((acc, val) => dict[val].length > acc ? dict[val].length : acc, 0)
+}
+
+export function parseCSVLines(dict) {
+    const lines = getCSVLines(dict)
+    return Object.keys(dict).reduce((acc, val) => {
+        acc.header += val;
+        for (let index = 0; index < lines; index++) {
+            let v = dict[val][index];
+            if (!acc.lines[index]) {
+                acc.lines[index] = ""
+            }
+            if (v) {
+                if (typeof v === 'object' && !isNaN(new Date(v).getTime())) {
+                    v = new Date(v).toISOString()
+                }
+                acc.lines[index] += String(v);
+            }
+            acc.lines[index] += ","
+        }
+        acc.header += ","
+        return acc;
+    }, { header: "", lines: <string[]>[] });
 }
 
 export function createCSV(shelters: IShelterExtended[]): Promise<any> {
     return new Promise<any>((resolve, reject) => {
         try {
             const dict = getCSVDict(shelters);
-            const lines = Object.keys(dict).reduce((acc, val) => dict[val].length > acc ? dict[val].length : acc, 0)
-            const partialCSV = Object.keys(dict).reduce((acc, val) => {
-                acc.header += val;
-                for (let index = 0; index < lines; index++) {
-                    let v = dict[val][index];
-                    if (!acc.lines[index]) {
-                        acc.lines[index] = ""
-                    }
-                    if (v) {
-                        if (typeof v === 'object' && !isNaN(new Date(v).getTime())) {
-                            v = new Date(v).toISOString()
-                        }
-                        acc.lines[index] += String(v);
-                    }
-                    acc.lines[index] += ","
-                }
-                acc.header += ","
-                return acc;
-            }, { header: "", lines: [] });
+            const partialCSV = parseCSVLines(dict);
 
             partialCSV.header = partialCSV.header.slice(0, partialCSV.header.length - 1)
             partialCSV.lines = partialCSV.lines.map(v => v.slice(0, v.length - 1));

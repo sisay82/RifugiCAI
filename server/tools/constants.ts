@@ -180,7 +180,7 @@ export const CSV_ALIASES = {
             "customizedWorks": "Lavori a misura (€)",
             "safetyCharges": "Oneri di sicurezza (€)",
             "totWorks": "TOTALE LAVORI (€)",
-            "surveyorsCharges": "Spese per indagini, rilievi, ecc. (€)",
+            "surveyorsCharges": "Spese per indagini - rilievi - ecc. (€)",
             "connectionsCharges": "Spese per allacciamenti a reti di distribuzione (€)",
             "technicalCharges": "Spese tecniche (€)",
             "testCharges": "Spese di collaudo (€)",
