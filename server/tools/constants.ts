@@ -98,13 +98,6 @@ export const CSV_ALIASES = {
     "insertDate": "Inserito il",
     "updateDate": "Aggiornato il",
     "updateSubject": "Aggiornato da",
-    "services": {
-        "name": "Nome Categoria",
-        "tags": {
-            "key": "Nome Servizio",
-            "value": "Valore Servizio"
-        }
-    },
     "geoData": {
         "location": {
             "region": "Regione",

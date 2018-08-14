@@ -9,7 +9,10 @@ import {
     processFlatArrayNames,
     transformArrayFields,
     getCSVLines,
-    parseCSVLines
+    parseCSVLines,
+    getCSVAliasesOrdered,
+    getAliasForField,
+    getAliasForPartialField
 } from './csv.logic'
 import {
     CSV_UNWINDS
@@ -376,6 +379,43 @@ const TEST_SHELTER_B = {
 }
 
 describe('Common tools', () => {
+    it('Should get alias for a specific field', () => {
+        expect(getAliasForField('geoData.location.region')).toBe('Regione');
+        expect(getAliasForField('regional_type')).toBe('Categoria per la Regione');
+    });
+
+    it('Should get aliases for a partial field', () => {
+        expect(getAliasForPartialField('geoData.location.region')).toBe('Regione');
+        expect(getAliasForPartialField('regional_type')).toBe('Categoria per la Regione');
+        expect(JSON.stringify(getAliasForPartialField('geoData.location'))).toBe(JSON.stringify({
+            "region": "Regione",
+            "province": "Provincia/Città metropolitana",
+            "municipality": "Comune",
+            "locality": "Località",
+            "ownerRegion": "GR (Gruppo Regionale)",
+            "regional_commission": "Commissione regionale",
+            "authorityJurisdiction": "Ente sovracomunale di competenza",
+            "altitude": "Quota (m slm)",
+            "latitude": "Latitudine",
+            "longitude": "Longitudine",
+            "massif": "Gruppo montuoso",
+            "valley": "Valle",
+            "ski_area": "Comprensiorio sciistico",
+            "protected_area": "Zona tutelata",
+            "site": "Sito"
+        }));
+    });
+
+    it('Should get value from normal field', () => {
+        expect(getValueForFieldDoc(TEST_SHELTER_A, 'name')).toBe('ADAME\'');
+        expect(getValueForFieldDoc(TEST_SHELTER_A, 'geoData.location.region')).toBe('Lombardia');
+        expect(getValueForFieldDoc(TEST_SHELTER_A, 'contacts.role')).toBe('Custode');
+        expect(getValueForFieldDoc(TEST_SHELTER_A, 'energy.class')).toBe('C');
+        expect(getValueForFieldDoc(TEST_SHELTER_A, 'updateDate')).toBe('2018 - 07 - 03T17: 37: 27.102Z');
+    });
+});
+
+describe('CSV Tools', () => {
     it('Should parse CSV single item', () => {
         const csvStr = `Nome,Nome comune,IDCAI,Tipo,Sezione,Proprietà,Stato,Categoria per la Regione,Categoria,Inserito il,Aggiornato il,Aggiornato da,Regione,Provincia/Città metropolitana,Comune,Località,GR (Gruppo Regionale),Commissione regionale,Ente sovracomunale di competenza,Quota (m slm),Latitudine,Longitudine,Gruppo montuoso,Valle,Comprensiorio sciistico,Zona tutelata,Sito,Nome (Contatti),Ruolo (Contatti),Telefono (Contatti),Cellulare (Contatti),PEC (Contatti),Link prenotazione (Contatti),Mail (Contatti),Sito web (Contatti),Riferimento (Proprietà),Regolarità edilizia,Anno di costruzione,Anno di ristrutturazione,Classe catastale,Codice catastale,Coerenza tipologica,Coerenza materica,Regolarità urbanistica,Consistenza corpo principale,Consistenza corpo secondario,Regolarità antincendio,Certificazione ISO 14001,Classe energetica,Quantità (KW),Green,Generatore diesel,Fotovoltaico,Tipo di riscaldamento,Tipo fonte energetica,Nome fonte energetica,Tipo di scarico,Scarico a norma,Disoleatore,Captazione certificata,Riciclo,Acqua,Disponibilità acqua,Periodi di siccità,Anno (Richiesta contributo),Lavori a corpo (€),Lavori a misura (€),Oneri di sicurezza (€),TOTALE LAVORI (€),Spese per indagini - rilievi - ecc. (€),Spese per allacciamenti a reti di distribuzione (€),Spese tecniche (€),Spese di collaudo (€),Tasse e oneri (€),TOTALE SPESE (€),IVA compresa perché non recuperabile,COSTO TOTALE DEL PROGETTO (€),Finanziamento esterno (€),Autofinanziamento (€),SCOPERTO (€),RICHIESTO (€),Contributo accettato,Tipo di contributo richiesto,Camere da 4 posti,Camere da 6 posti,Posti letto,Docce,Apertura0 -> Apertura (inizio),Apertura0 -> Apertura (fine),Apertura0 -> Tipo apertura,Subject0 -> Nome (Proprietà e custodia),Subject0 -> Cognome (Proprietà e custodia),Subject0 -> P. IVA (Proprietà e custodia),Subject0 -> Telefono (Proprietà e custodia),Subject0 -> Cellulare (Proprietà e custodia),Subject0 -> PEC (Proprietà e custodia),Subject0 -> Mail (Proprietà e custodia),Subject0 -> Sito web (Proprietà e custodia),Subject0 -> Tipo (Proprietà e custodia),Subject0 -> Data inizio contratto (Proprietà e custodia),Subject0 -> Data fine contratto (Proprietà e custodia),Subject0 -> Durata contratto (Proprietà e custodia),Subject0 -> Canone annuale (Proprietà e custodia),Subject0 -> Tipo possesso (Proprietà e custodia),Subject1 -> Nome (Proprietà e custodia),Subject1 -> Cognome (Proprietà e custodia),Subject1 -> P. IVA (Proprietà e custodia),Subject1 -> Telefono (Proprietà e custodia),Subject1 -> Cellulare (Proprietà e custodia),Subject1 -> PEC (Proprietà e custodia),Subject1 -> Mail (Proprietà e custodia),Subject1 -> Sito web (Proprietà e custodia),Subject1 -> Tipo (Proprietà e custodia),Subject1 -> Data inizio contratto (Proprietà e custodia),Subject1 -> Data fine contratto (Proprietà e custodia),Subject1 -> Durata contratto (Proprietà e custodia),Subject1 -> Canone annuale (Proprietà e custodia),Subject1 -> Tipo possesso (Proprietà e custodia)\nADAME',,921606201,Capanna sociale,Cedegolo,Comune,,,,2017 - 09 - 22T21: 03: 30.663Z,2018 - 07 - 03T17: 37: 27.102Z,CAI Centrale,Lombardia,BS,SAVIORE DELL'ADAMELLO,CASINE DI MEZZO,Lombardia,LOM,,2107,46.236667,11.902778,alpi retiche,asdf,,,,,Custode,1235234523,23465264365,,,roba@roba.it,,riferimento,true,2342,2341,a12,a112,Parziale,,true,vva,vvb,Sì,true,C,24,,,,Gas,,,IMHOFF pozzo perdente,true,,,true,Acquedotto,,Primavera,,,,,,,,,,,,,,,,,,,,23,3,3,3,2018 - 02 - 01T23: 00: 00.000Z,2018 - 03 - 01T23: 00: 00.000Z,roba,gest, cognomeGest,,23452345235,134522345,,,,,,,,22323342,Affitto a gestore,enteProp,,149052345234451,234504325234,,prop@pec.it,mail@prop.it,www.sito.it,Proprietario,2002 - 02 - 01T23: 00: 00.000Z,2002 - 02 - 02T23: 00: 00.000Z,,4343,Affitto a gestore`
 
@@ -551,6 +591,140 @@ describe('Common tools', () => {
         expect(JSON.stringify(getCSVDict(<any>[TEST_SHELTER_A, TEST_SHELTER_B]))).toBe(JSON.stringify(test))
     });
 
+    it('Should get ordered CSV values', () => {
+        const test = [
+            "Nome",
+            "Nome comune",
+            "IDCAI",
+            "Tipo",
+            "Sezione",
+            "Proprietà",
+            "Stato",
+            "Categoria per la Regione",
+            "Categoria",
+            "Inserito il",
+            "Aggiornato il",
+            "Aggiornato da",
+            "Regione",
+            "Provincia/Città metropolitana",
+            "Comune",
+            "Località", "GR (Gruppo Regionale)",
+            "Commissione regionale",
+            "Ente sovracomunale di competenza",
+            "Quota (m slm)", "Latitudine",
+            "Longitudine",
+            "Gruppo montuoso",
+            "Valle",
+            "Comprensiorio sciistico",
+            "Zona tutelata",
+            "Sito",
+            "Camere da 4 posti",
+            "Camere da 6 posti",
+            "Posti letto",
+            "Posti letto invernale",
+            "Tavolati", "Posti totali", "Vendita sacco lenzuolo",
+            "Ristorante",
+            "Accesso alla cucina",
+            "Acqua in rifugio",
+            "Acqua calda",
+            "Docce",
+            "WC in camera",
+            "WC uso comune",
+            "Elettricità",
+            "Punti ricarica camere",
+            "Punti ricarica spazi comuni",
+            "WIFI",
+            "Segnale GSM",
+            "Gestore telefonia mobile",
+            "Accessibilità ai disabili",
+            "Servizi igienici per disabili",
+            "Accessibilità famiglie con bambini",
+            "Accessibilità macchina",
+            "Ammissibilità animali domestici",
+            "Stanze dedicate",
+            "Pagamento POS",
+            "convenzioni",
+            "Richiesta di rifornire il rifugio",
+            "Presidio culturale",
+            "Attività culturali/corsi specifici",
+            "Nome (Contatti)",
+            "Ruolo (Contatti)",
+            "Telefono (Contatti)",
+            "Cellulare (Contatti)",
+            "PEC (Contatti)",
+            "Link prenotazione (Contatti)",
+            "Mail (Contatti)",
+            "Sito web (Contatti)",
+            "Apertura (inizio)",
+            "Apertura (fine)",
+            "Tipo apertura",
+            "Nome (Proprietà e custodia)",
+            "Cognome (Proprietà e custodia)",
+            "P. IVA (Proprietà e custodia)",
+            "Telefono (Proprietà e custodia)",
+            "Cellulare (Proprietà e custodia)",
+            "PEC (Proprietà e custodia)",
+            "Mail (Proprietà e custodia)",
+            "Sito web (Proprietà e custodia)",
+            "Tipo (Proprietà e custodia)",
+            "Data inizio contratto (Proprietà e custodia)",
+            "Data fine contratto (Proprietà e custodia)",
+            "Durata contratto (Proprietà e custodia)",
+            "Canone annuale (Proprietà e custodia)",
+            "Tipo possesso (Proprietà e custodia)",
+            "Riferimento (Proprietà)",
+            "Regolarità edilizia",
+            "Anno di costruzione",
+            "Anno di ristrutturazione",
+            "Classe catastale",
+            "Codice catastale",
+            "Coerenza tipologica",
+            "Coerenza materica",
+            "Regolarità urbanistica",
+            "Consistenza corpo principale",
+            "Consistenza corpo secondario",
+            "Regolarità antincendio",
+            "Certificazione ISO 14001",
+            "Classe energetica",
+            "Quantità (KW)",
+            "Green",
+            "Generatore diesel",
+            "Fotovoltaico",
+            "Tipo di riscaldamento",
+            "Tipo fonte energetica",
+            "Nome fonte energetica",
+            "Tipo di scarico",
+            "Scarico a norma",
+            "Disoleatore",
+            "Captazione certificata",
+            "Riciclo",
+            "Acqua",
+            "Disponibilità acqua",
+            "Periodi di siccità",
+            "Anno (Richiesta contributo)",
+            "Lavori a corpo (€)",
+            "Lavori a misura (€)",
+            "Oneri di sicurezza (€)",
+            "TOTALE LAVORI (€)",
+            "Spese per indagini - rilievi - ecc. (€)",
+            "Spese per allacciamenti a reti di distribuzione (€)",
+            "Spese tecniche (€)",
+            "Spese di collaudo (€)",
+            "Tasse e oneri (€)",
+            "TOTALE SPESE (€)",
+            "IVA compresa perché non recuperabile",
+            "COSTO TOTALE DEL PROGETTO (€)",
+            "Finanziamento esterno (€)",
+            "Autofinanziamento (€)",
+            "SCOPERTO (€)", "RICHIESTO (€)",
+            "Contributo accettato",
+            "Tipo di contributo richiesto"
+        ];
+
+        expect(JSON.stringify(getCSVAliasesOrdered())).toBe(<any>JSON.stringify(test))
+
+    });
+
     it('Should CSV Dictionary have the right length for each key', () => {
         const dict = getCSVDict(<any>[TEST_SHELTER_A, TEST_SHELTER_B]);
         expect(dict).toBeTruthy();
@@ -681,14 +855,6 @@ describe('Common tools', () => {
             "Subject1 -> Tipo possesso (Proprietà e custodia)": "Affitto a gestore"
         }
         expect(JSON.stringify(transform(<any>TEST_SHELTER_A))).toBe(JSON.stringify(obj))
-    });
-
-    it('Should get value from normal field', () => {
-        expect(getValueForFieldDoc(TEST_SHELTER_A, 'name')).toBe('ADAME\'');
-        expect(getValueForFieldDoc(TEST_SHELTER_A, 'geoData.location.region')).toBe('Lombardia');
-        expect(getValueForFieldDoc(TEST_SHELTER_A, 'contacts.role')).toBe('Custode');
-        expect(getValueForFieldDoc(TEST_SHELTER_A, 'energy.class')).toBe('C');
-        expect(getValueForFieldDoc(TEST_SHELTER_A, 'updateDate')).toBe('2018 - 07 - 03T17: 37: 27.102Z');
     });
 
     it('Should get value from array -> management', () => {
