@@ -1,6 +1,8 @@
 import { CSV_FIELDS, CSV_UNWINDS, CSV_ALIASES, CSV_UNWINDS_ALIASES } from '../../tools/constants';
 import { IShelterExtended, toTitleCase, getPropertySafe } from '../../tools/common';
 
+const FIELD_SEPARATOR = '->';
+
 function concatPropNames(father: String, props: String[]): String[] {
     return props.map(prop => father + '.' + prop);
 }
@@ -50,18 +52,22 @@ export function trimStr(str: String, c): string {
     return str.slice(start, end);
 }
 
-function getAliasForField(field: String, aliases) {
+export function getAliasForPartialField(field: String, aliases = CSV_ALIASES) {
     const parts = field.split('\.');
-    let current = aliases;
-    for (const part of parts) {
-        current = current[part];
-        if (current) {
-            if (typeof current === "string") {
-                return current;
-            }
-        } else { return null; }
+    return parts.reduce((acc, val) => {
+        return acc && acc[val] ? acc[val] : null;
+    }, aliases);
+
+}
+
+export function getAliasForField(field: String, aliases = CSV_ALIASES) {
+    const parts = field.split('\.');
+    const partial = getAliasForPartialField(field, aliases);
+    if (typeof partial === 'string') {
+        return partial;
+    } else {
+        return partial ? partial[parts[parts.length - 1]] : null;
     }
-    return null;
 }
 
 export function replaceCSVHeader(csvFile, fields) {
@@ -144,7 +150,7 @@ export function processFlatArrayNames(obj: { [key: string]: any }, nameBase: str
         const base = fragments.reduce((a, v, index) => {
             let ret = "";
             if (names[index]) {
-                ret += names[index] + v.match(regMatch).join('') + ' -> ';
+                ret += names[index] + v.match(regMatch).join('') + ' ' + FIELD_SEPARATOR + ' ';
             }
             return a + ret
         }, "");
@@ -190,7 +196,7 @@ export function transform(doc: IShelterExtended): { [key: string]: any } {
     for (const field of CSV_FIELDS) {
         const part = field.split('\.')[0];
         if (!CSV_UNWINDS[part]) {
-            const name = getAliasForField(field, CSV_ALIASES);
+            const name = getAliasForField(field);
             const value = getValueForFieldDoc(doc, field);
             if (name) {
                 ret[name] = value;
@@ -226,24 +232,66 @@ export function getCSVLines(dict: { [key: string]: [any] }) {
     return Object.keys(dict).reduce((acc, val) => dict[val].length > acc ? dict[val].length : acc, 0)
 }
 
+
+export function getCSVAliasesOrdered() {
+    const unwinds = Object.keys(CSV_UNWINDS);
+    return CSV_FIELDS.reduce((acc, val) => {
+        const arrField = unwinds.find(v => val.indexOf(v) >= 0);
+        if (arrField) {
+            const vals: any[] = Object.values(CSV_UNWINDS_ALIASES[arrField]);
+            if (acc.findIndex(v => {
+                const fieldName = CSV_UNWINDS[arrField].length > 0 ? v.slice(FIELD_SEPARATOR.length + 1) : v;
+                return vals.indexOf(fieldName) >= 0;
+            }) < 0) {
+                acc = acc.concat(vals.map(v => {
+                    return CSV_UNWINDS[arrField].length > 0 ? FIELD_SEPARATOR + ' ' + v : v;
+                }));
+            }
+        }
+        const objField = getAliasForPartialField(val);
+        if (objField) {
+            if (typeof objField === "string" && !acc.includes(objField)) {
+                acc.push(objField);
+            } else {
+                const vals: any[] = Object.values(objField)
+                if (acc.findIndex(v => vals.includes(v)) < 0) {
+                    acc = acc.concat(vals);
+                }
+            }
+        }
+        return acc;
+    }, <string[]>[])
+}
+
 export function parseCSVLines(dict) {
     const lines = getCSVLines(dict)
-    return Object.keys(dict).reduce((acc, val) => {
-        acc.header += val;
-        for (let index = 0; index < lines; index++) {
-            let v = dict[val][index];
-            if (!acc.lines[index]) {
-                acc.lines[index] = ""
-            }
-            if (v) {
-                if (typeof v === 'object' && !isNaN(new Date(v).getTime())) {
-                    v = new Date(v).toISOString()
-                }
-                acc.lines[index] += String(v);
-            }
-            acc.lines[index] += ","
+    return getCSVAliasesOrdered().reduce((acc, current) => {
+        let val = [current];
+        if (current.startsWith(FIELD_SEPARATOR)) {
+            val = Object.keys(dict).filter(k => k.includes(current));
         }
-        acc.header += ","
+        if (val) {
+            val.map(dictVal => {
+                if (dict[dictVal]) {
+                    acc.header += dictVal;
+                    for (let index = 0; index < lines; index++) {
+
+                        let v = dict[dictVal][index];
+                        if (!acc.lines[index]) {
+                            acc.lines[index] = ""
+                        }
+                        if (v) {
+                            if (typeof v === 'object' && !isNaN(new Date(v).getTime())) {
+                                v = new Date(v).toISOString()
+                            }
+                            acc.lines[index] += String(v);
+                        }
+                        acc.lines[index] += ","
+                    }
+                    acc.header += ","
+                }
+            })
+        }
         return acc;
     }, { header: "", lines: <string[]>[] });
 }

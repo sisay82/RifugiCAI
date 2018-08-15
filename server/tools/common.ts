@@ -62,6 +62,26 @@ function cleanSheltersToUpdate() {
     });
 }
 
+export function removeDuplicate(a: any[], b: any[]): any[] {
+    let t;
+    if (b.length > a.length) {
+        t = b, b = a, a = t;
+    }
+    return a.filter(function (e) {
+        return b.indexOf(e) === -1;
+    });
+}
+
+export function intersectArray(a: any[], b: any[]): any[] {
+    let t;
+    if (b.length > a.length) {
+        t = b, b = a, a = t;
+    }
+    return a.filter(function (e) {
+        return b.indexOf(e) > -1;
+    });
+}
+
 export function addShelterToUpdate(updatingShelter: UpdatingShelter, user: UserData): boolean {
     if (!user || !user.role) {
         return false;
