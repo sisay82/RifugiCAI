@@ -1,6 +1,8 @@
 import { CSV_FIELDS, CSV_UNWINDS, CSV_ALIASES, CSV_UNWINDS_ALIASES } from '../../tools/constants';
 import { IShelterExtended, toTitleCase, getPropertySafe } from '../../tools/common';
 
+const FIELD_SEPARATOR = '->';
+
 function concatPropNames(father: String, props: String[]): String[] {
     return props.map(prop => father + '.' + prop);
 }
@@ -148,7 +150,7 @@ export function processFlatArrayNames(obj: { [key: string]: any }, nameBase: str
         const base = fragments.reduce((a, v, index) => {
             let ret = "";
             if (names[index]) {
-                ret += names[index] + v.match(regMatch).join('') + ' -> ';
+                ret += names[index] + v.match(regMatch).join('') + ' ' + FIELD_SEPARATOR + ' ';
             }
             return a + ret
         }, "");
@@ -237,8 +239,13 @@ export function getCSVAliasesOrdered() {
         const arrField = unwinds.find(v => val.indexOf(v) >= 0);
         if (arrField) {
             const vals: any[] = Object.values(CSV_UNWINDS_ALIASES[arrField]);
-            if (acc.findIndex(v => vals.includes(v)) < 0) {
-                acc = acc.concat(vals);
+            if (acc.findIndex(v => {
+                const fieldName = CSV_UNWINDS[arrField].length > 0 ? v.slice(FIELD_SEPARATOR.length + 1) : v;
+                return vals.indexOf(fieldName) >= 0;
+            }) < 0) {
+                acc = acc.concat(vals.map(v => {
+                    return CSV_UNWINDS[arrField].length > 0 ? FIELD_SEPARATOR + ' ' + v : v;
+                }));
             }
         }
         const objField = getAliasForPartialField(val);
@@ -258,22 +265,33 @@ export function getCSVAliasesOrdered() {
 
 export function parseCSVLines(dict) {
     const lines = getCSVLines(dict)
-    return Object.keys(dict).reduce((acc, val) => {
-        acc.header += val;
-        for (let index = 0; index < lines; index++) {
-            let v = dict[val][index];
-            if (!acc.lines[index]) {
-                acc.lines[index] = ""
-            }
-            if (v) {
-                if (typeof v === 'object' && !isNaN(new Date(v).getTime())) {
-                    v = new Date(v).toISOString()
-                }
-                acc.lines[index] += String(v);
-            }
-            acc.lines[index] += ","
+    return getCSVAliasesOrdered().reduce((acc, current) => {
+        let val = [current];
+        if (current.startsWith(FIELD_SEPARATOR)) {
+            val = Object.keys(dict).filter(k => k.includes(current));
         }
-        acc.header += ","
+        if (val) {
+            val.map(dictVal => {
+                if (dict[dictVal]) {
+                    acc.header += dictVal;
+                    for (let index = 0; index < lines; index++) {
+
+                        let v = dict[dictVal][index];
+                        if (!acc.lines[index]) {
+                            acc.lines[index] = ""
+                        }
+                        if (v) {
+                            if (typeof v === 'object' && !isNaN(new Date(v).getTime())) {
+                                v = new Date(v).toISOString()
+                            }
+                            acc.lines[index] += String(v);
+                        }
+                        acc.lines[index] += ","
+                    }
+                    acc.header += ","
+                }
+            })
+        }
         return acc;
     }, { header: "", lines: <string[]>[] });
 }
