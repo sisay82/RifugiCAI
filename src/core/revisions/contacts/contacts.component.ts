@@ -21,7 +21,9 @@ import {
     FormBuilder,
     FormControl,
     FormArray,
-    Validators
+    Validators,
+    ValidationErrors,
+    AbstractControl
 } from '@angular/forms';
 import {
     ShelterService
@@ -58,8 +60,6 @@ import {
 export class BcContactsRevision extends RevisionBase implements OnDestroy {
     contactForm: FormGroup;
     private newOpeningForm: FormGroup;
-    /*private contacts: IContacts;
-    private openings: IOpening[];*/
     private openingChange = false;
     private hiddenOpening = true;
     constructor(shared: BcSharedService,
@@ -83,7 +83,9 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         this.newOpeningForm = fb.group({
             newOpeningStartDate: ["", customDateValidator],
             newOpeningEndDate: ["", customDateValidator],
-            newOpeningType: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
+            newOpeningType: ["", Validators.compose(
+                [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator), this.uniqueTypeValidator.bind(this)]
+            )]
         });
 
         this.formValidSub = this.contactForm.statusChanges.subscribe((value) => {
@@ -163,11 +165,20 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         }
     }
 
+    uniqueTypeValidator(val: AbstractControl): ValidationErrors {
+        return (<FormArray>this.contactForm.controls.openingTime)
+            .controls
+            .findIndex(v => v.value.type === val.value) >= 0
+            ? { unique: false } : null;
+    }
+
     resetOpeningForm() {
         this.newOpeningForm = this.fb.group({
             newOpeningStartDate: ["", customDateValidator],
             newOpeningEndDate: ["", customDateValidator],
-            newOpeningType: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]
+            newOpeningType: ["", Validators.compose(
+                [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator), this.uniqueTypeValidator.bind(this)]
+            )]
         });
         this.toggleOpenings();
     }
@@ -176,7 +187,9 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         return this.fb.group({
             startDate: [trimYear(opening.startDate)],
             endDate: [trimYear(opening.endDate)],
-            type: [opening.type]
+            type: [opening.type, Validators.compose(
+                [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator), this.uniqueTypeValidator.bind(this)]
+            )]
         });
     }
 

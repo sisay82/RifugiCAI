@@ -9,7 +9,7 @@ import {
     By
 } from '@angular/platform-browser';
 
-describe('BcSelectInput', () => {
+describe('BcCheckInput', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [BcCheckboxInput]
@@ -46,7 +46,7 @@ describe('BcSelectInput', () => {
                 checked: false
             }
         });
-        expect(app.value).toBe(false);
+        expect(app.value).toBeFalsy();
         expect(app.isChecked()).toBe(false);
         app.onChange({
             target: {
@@ -60,7 +60,7 @@ describe('BcSelectInput', () => {
                 checked: "false"
             }
         });
-        expect(app.value).toBe(false);
+        expect(app.value).toBeFalsy();
         expect(app.isChecked()).toBe(false);
     });
 });

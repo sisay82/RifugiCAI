@@ -17,6 +17,10 @@ export class FakeAuthService {
     checkUserPermission(): Observable<Enums.Auth_Permissions.User_Type> {
         return obsOf(Enums.Auth_Permissions.User_Type.sectional);
     }
+
+    isCentralUser(...param) {
+        return obsOf(true);
+    }
 }
 
 export class FakeSharedService {
