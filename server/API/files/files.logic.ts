@@ -28,8 +28,8 @@ export function countContributionFilesByShelter(shelid): Promise<Number> {
     });
 }
 
-export function insertNewFile(file: IFileExtended): Promise<{id: any, name: String, size: Number, type: any, contentType: String}> {
-    return new Promise<{id: any, name: String, size: Number, type: any, contentType: String}>((resolve, reject) => {
+export function insertNewFile(file: IFileExtended): Promise<{ id: any, name: String, size: Number, type: any, contentType: String }> {
+    return new Promise<{ id: any, name: String, size: Number, type: any, contentType: String }>((resolve, reject) => {
         Files.create(file, (err, ris) => {
             if (err) {
                 reject(err);
@@ -120,8 +120,29 @@ export function queryAllFiles(): Promise<IFileExtended[]> {
     });
 }
 
-export function queryFileByid(id): QueryCursor<IFileExtended> {
-    return Files.findById(id).cursor();
+export function queryFileMetaByid(id): Promise<IFileExtended> {
+    return new Promise<IFileExtended>((resolve, reject) => {
+        Files.findById(id, 'name size contentType')
+            .exec((err, ris) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(ris);
+                }
+            });
+    });
+}
+
+export function queryFileByid(id): Promise<IFileExtended> {
+    return new Promise<IFileExtended>((resolve, reject) => {
+        Files.findById(id).exec((err, ris) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(ris);
+            }
+        });
+    });
 }
 
 export function queryFilesByshelterId(id, types?: Enums.Files.File_Type[]): Promise<IFileExtended[]> {

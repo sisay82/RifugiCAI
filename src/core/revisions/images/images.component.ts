@@ -242,20 +242,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
   }
 
   downloadFile(id) {
-    const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
-      const e = document.createEvent('MouseEvents');
-      const data = Buffer.from(file.data);
-      const blob = new Blob([data], { type: <string>file.contentType });
-      const a = document.createElement('a');
-      a.download = <string>file.name;
-      a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
-      e.initEvent('click', true, false);
-      a.dispatchEvent(e);
-      if (queryFileSub) {
-        queryFileSub.unsubscribe();
-      }
-    });
+    this.shelterService.downloadFile(id);
   }
 
   ngOnDestroy() {

@@ -6,7 +6,7 @@ import { Map, LatLng } from 'leaflet';
 import { IPagedResults, IShelter, IMarker, IFile } from '../shared/types/interfaces';
 import { Enums } from '../shared/types/enums';
 import { catchError, map } from 'rxjs/operators';
-
+import { Buffer } from 'buffer';
 @Injectable()
 export class ShelterService {
 
@@ -15,6 +15,23 @@ export class ShelterService {
     // private sheltersBaseUrl: string = 'https://test-mongo-cai.herokuapp.com/api/shelters';
 
     constructor(private http: HttpClient) { }
+
+    downloadFile(id) {
+        const queryFileSub = this.getFile(id).subscribe(file => {
+            const e = document.createEvent('MouseEvents');
+            const data = Buffer.from(file.data);
+            const blob = new Blob([data], { type: <string>file.contentType });
+            const a = document.createElement('a');
+            a.download = <string>file.name;
+            a.href = window.URL.createObjectURL(blob);
+            a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
+            e.initEvent('click', true, false);
+            a.dispatchEvent(e);
+            if (queryFileSub) {
+                queryFileSub.unsubscribe();
+            }
+        });
+    }
 
     getShelters(): Observable<IShelter[]> {
         return this.http.get(this.sheltersBaseUrl).pipe(

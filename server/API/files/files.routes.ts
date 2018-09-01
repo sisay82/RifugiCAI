@@ -9,11 +9,11 @@ import {
     logger,
     LOG_TYPE,
     getShelterToUpdateById,
-    addShelterToUpdate,
-    sendFile
+    addShelterToUpdate
 } from '../../tools/common';
 import { IFile } from '../../../src/app/shared/types/interfaces';
-import { checkPermissionAPI,
+import {
+    checkPermissionAPI,
     insertNewFile,
     MAX_IMAGES,
     queryAllFilesByType,
@@ -212,9 +212,9 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
 fileRoute.route('/shelters/file/:id')
     .get(function (req, res) {
         try {
-            const queryCursor = queryFileByid(req.params.id);
-            sendFile(res, queryCursor)
-                .then(() => {
+            queryFileByid(req.params.id)
+                .then(data => {
+                    res.send(data);
                     res.end();
                 })
                 .catch(err => {

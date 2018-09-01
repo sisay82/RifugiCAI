@@ -1,13 +1,11 @@
 import {
-    Component, Input, OnInit, Directive, ViewEncapsulation
+    Component, Input, Directive, ViewEncapsulation
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IShelter, IFile } from '../../../app/shared/types/interfaces';
-import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { IFile } from '../../../app/shared/types/interfaces';
 import { ShelterService } from '../../../app/shelter/shelter.service';
 import { Enums } from '../../../app/shared/types/enums';
 import { BcSharedService } from '../../../app/shared/shared.service';
-import { Subscription } from 'rxjs';
 import { BcDetailsService } from '../details.service';
 import { DetailBase } from '../shared/detail_base';
 import { Buffer } from 'buffer';
@@ -46,20 +44,7 @@ export class BcImg extends DetailBase {
     }
 
     downloadFile(id) {
-        const queryFileSub = this.shelterService.getFile(id).subscribe(file => {
-            const e = document.createEvent('MouseEvents');
-            const data = Buffer.from(file.data);
-            const blob = new Blob([data], { type: <string>file.contentType });
-            const a = document.createElement('a');
-            a.download = <string>file.name;
-            a.href = window.URL.createObjectURL(blob);
-            a.dataset.downloadurl = [file.contentType, a.download, a.href].join(':');
-            e.initEvent('click', true, false);
-            a.dispatchEvent(e);
-            if (queryFileSub) {
-                queryFileSub.unsubscribe();
-            }
-        });
+        this.shelterService.downloadFile(id);
     }
 
     isFullScreen(id) {

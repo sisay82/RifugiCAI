@@ -6,6 +6,7 @@ import Auth_Permissions = Enums.Auth_Permissions;
 import request = require('request');
 import { CLEAR_CACHE_INTERVAL } from './constants';
 import { Response } from 'express';
+import { queryFileByid } from '../API/files/files.logic';
 
 export interface IServiceExtended extends IService, Document {
     _id: String;
@@ -172,7 +173,7 @@ export function getPropertiesNumber(obj): number {
     return c;
 }
 
-export function sendFile(res: Response, stream): Promise<any> {
+export function sendFileStream(res: Response, stream): Promise<any> {
     return new Promise<any>((resolve, reject) => {
         stream.on('error', (err) => {
             reject();
