@@ -6,7 +6,7 @@ import Auth_Permissions = Enums.Auth_Permissions;
 import request = require('request');
 import { CLEAR_CACHE_INTERVAL } from './constants';
 import { Response } from 'express';
-import { UserData } from './userData';
+import { UserData } from '../API/auth/userData';
 
 export interface IServiceExtended extends IService, Document {
     _id: String;

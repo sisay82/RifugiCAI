@@ -6,7 +6,7 @@ import { Tools } from '../../../src/app/shared/tools/common.tools';
 import { Enums } from '../../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import { config } from '../../config/env';
-import { UserData, UserDataTools } from '../../tools/userData';
+import { UserData, UserDataTools } from './userData';
 
 export const CAS_BASE_URL = 'https://accesso.cai.it';
 export const AUTH_URL = 'https://services.cai.it/cai-integration-ws/secured/users/';

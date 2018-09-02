@@ -1,8 +1,8 @@
 
-import { Enums } from '../../src/app/shared/types/enums';
+import { Enums } from '../../../src/app/shared/types/enums';
 import { Schema, model, Document } from 'mongoose';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { logger, LOG_TYPE } from './common';
+import { logger, LOG_TYPE } from '../../tools/common';
 
 
 export interface UserData {

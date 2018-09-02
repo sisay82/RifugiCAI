@@ -6,7 +6,7 @@ import { OUT_DIR } from '../../tools/constants';
 import { config } from '../../config/env';
 import * as path from 'path';
 import { DISABLE_AUTH, CAS_BASE_URL, checkUserPromise, validationPromise } from './auth.logic';
-import { UserDataTools, UserData } from '../../tools/userData';
+import { UserDataTools, UserData } from './userData';
 
 export const authRoute = express.Router();
 

@@ -11,7 +11,7 @@ import { appRoute } from '../API/shelters/shelters.routes';
 import { authRoute } from '../API/auth/auth.routes';
 import { getUserData } from '../API/auth/auth.logic'
 import { MongoStore as ms} from 'connect-mongo';
-import { UserDataTools } from '../tools/userData';
+import { UserDataTools } from '../API/auth/userData';
 
 const app = express();
 const MongoStore = require('connect-mongo')(session);

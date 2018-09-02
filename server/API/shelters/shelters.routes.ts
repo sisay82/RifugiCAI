@@ -33,7 +33,7 @@ import {
     queryShelSectionById,
     deleteService
 } from './shelters.logic';
-import { UserData } from '../../tools/userData';
+import { UserData } from '../auth/userData';
 
 
 export const appRoute = express.Router();
