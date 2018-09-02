@@ -9,7 +9,6 @@ import {
 } from '../../tools/common';
 import { createCSV } from './csv.logic';
 import {
-    UserData,
     getUserDataFilters,
     logger,
     LOG_TYPE,
@@ -34,6 +33,7 @@ import {
     queryShelSectionById,
     deleteService
 } from './shelters.logic';
+import { UserData } from '../../tools/userData';
 
 
 export const appRoute = express.Router();

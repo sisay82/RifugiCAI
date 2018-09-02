@@ -10,15 +10,22 @@ import { fileRoute } from '../API/files/files.routes';
 import { appRoute } from '../API/shelters/shelters.routes';
 import { authRoute } from '../API/auth/auth.routes';
 import { getUserData } from '../API/auth/auth.logic'
+import { MongoStore as ms} from 'connect-mongo';
+import { UserDataTools } from '../tools/userData';
 
 const app = express();
 const MongoStore = require('connect-mongo')(session);
+const store: ms = new MongoStore({ mongooseConnection: mongoose.connection });
+store.on('destroy', (sid) => {
+    logger(LOG_TYPE.INFO, 'DELETE USER SESSION SID: ' + sid);
+    UserDataTools.deleteDataSession(sid);
+});
 
 app.use(bodyParser.urlencoded({
     extended: true
 }), session({
     secret: 'ytdv6w4a2wzesdc7564uybi6n0m9pmku4esx',
-    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+    store: store,
     cookie: { maxAge: 1000 * 60 * 40 },
     resave: false,
     saveUninitialized: true

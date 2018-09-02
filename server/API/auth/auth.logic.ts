@@ -1,22 +1,22 @@
 
-import { logger, UserData, performRequestGET, LOG_TYPE } from '../../tools/common';
+import { logger, performRequestGET, LOG_TYPE } from '../../tools/common';
 import xmldom = require('xmldom');
 const DOMParser = xmldom.DOMParser;
 import { Tools } from '../../../src/app/shared/tools/common.tools';
 import { Enums } from '../../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import { config } from '../../config/env';
+import { UserData, UserDataTools } from '../../tools/userData';
 
 export const CAS_BASE_URL = 'https://accesso.cai.it';
 export const AUTH_URL = 'https://services.cai.it/cai-integration-ws/secured/users/';
-export const userList: UserData[] = [];
 export const DISABLE_AUTH = false;
 
 export function getUserData(sessionID: string): Promise<UserData> {
     return new Promise<UserData>((resolve, reject) => {
         if (DISABLE_AUTH) {
             const user: UserData = {
-                id: sessionID,
+                sid: sessionID,
                 redirections: 0,
                 checked: true,
                 code: '9999999',
@@ -24,12 +24,18 @@ export function getUserData(sessionID: string): Promise<UserData> {
             };
             resolve(user);
         } else {
-            const user = userList.find(obj => String(obj.id) === sessionID);
-            if (user && user.checked && user.role && user.code) {
-                resolve(user);
-            } else {
-                reject({ error: 'Unauthorized User' });
-            }
+            UserDataTools.getUserData(sessionID)
+                .then(user => {
+                    if (user && user.checked && user.role && user.code) {
+                        resolve(user);
+                    } else {
+                        reject({ error: 'Unauthorized User' });
+                    }
+                })
+                .catch(err => {
+                    reject(err);
+                });
+
         }
     });
 }

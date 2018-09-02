@@ -6,6 +6,7 @@ import Auth_Permissions = Enums.Auth_Permissions;
 import request = require('request');
 import { CLEAR_CACHE_INTERVAL } from './constants';
 import { Response } from 'express';
+import { UserData } from './userData';
 
 export interface IServiceExtended extends IService, Document {
     _id: String;
@@ -24,17 +25,6 @@ export interface UpdatingShelter {
     shelter: IShelterExtended;
     files: any[];
     isNew?: Boolean;
-}
-
-export interface UserData {
-    id: String;
-    resource?: String;
-    ticket?: String;
-    uuid?: String;
-    code?: String;
-    role?: Auth_Permissions.User_Type;
-    redirections: number;
-    checked: boolean;
 }
 
 const ShelUpdate: UpdatingShelter[] = [];
@@ -96,7 +86,6 @@ export function addShelterToUpdate(updatingShelter: UpdatingShelter, user: UserD
 
 export function getUserDataFilters(user: UserData): Tools.ICodeInfo {
     if (user && user.code && user.role) {
-        const sections: {} = {};
         if (Auth_Permissions.User_Type[user.role]) {
             return Tools.getCodeSections(user.role, user.code);
         } else {
