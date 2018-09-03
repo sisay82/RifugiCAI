@@ -4,7 +4,6 @@ import { Enums } from '../../src/app/shared/types/enums';
 import { Tools } from '../../src/app/shared/tools/common.tools';
 import Auth_Permissions = Enums.Auth_Permissions;
 import request = require('request');
-import { CLEAR_CACHE_INTERVAL } from './constants';
 import { Response } from 'express';
 import { UserData } from '../API/auth/userData';
 
@@ -20,37 +19,10 @@ export interface IFileExtended extends IFile, Document {
     _id: String;
 }
 
-export interface UpdatingShelter {
-    watchDog: Date;
-    shelter: IShelterExtended;
-    files: any[];
-    isNew?: Boolean;
-}
-
-const ShelUpdate: UpdatingShelter[] = [];
-
-export function removeShelterToUpdate(shelUpdate: UpdatingShelter) {
-    ShelUpdate.splice(ShelUpdate.indexOf(shelUpdate), 1);
-}
-
-export function getShelterToUpdateById(id: String) {
-    return ShelUpdate.find(shelter => String(shelter.shelter._id) === id);
-}
-
 export const ObjectId = Types.ObjectId;
 
 const DISABLE_LOG = false;
-const MAX_TIME = 1000 * 60 * 10;
 const TIMEOUT_REQUEST = 1000 * 2;
-
-function cleanSheltersToUpdate() {
-    ShelUpdate.forEach(obj => {
-        const diff = Date.now() - obj.watchDog.valueOf();
-        if (diff > MAX_TIME) {
-            ShelUpdate.splice(ShelUpdate.indexOf(obj), 1);
-        }
-    });
-}
 
 export function removeDuplicate(a: any[], b: any[]): any[] {
     let t;
@@ -70,18 +42,6 @@ export function intersectArray(a: any[], b: any[]): any[] {
     return a.filter(function (e) {
         return b.indexOf(e) > -1;
     });
-}
-
-export function addShelterToUpdate(updatingShelter: UpdatingShelter, user: UserData): boolean {
-    if (!user || !user.role) {
-        return false;
-    }
-
-    updatingShelter.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
-    updatingShelter.watchDog = new Date(Date.now());
-
-    ShelUpdate.push(updatingShelter);
-    return true;
 }
 
 export function getUserDataFilters(user: UserData): Tools.ICodeInfo {
@@ -127,7 +87,8 @@ export function performRequestGET(url: String, authorization?: String, timeout: 
 export enum LOG_TYPE {
     INFO,
     WARNING,
-    ERROR
+    ERROR,
+    FATAL
 }
 
 export function logger(logWeight: LOG_TYPE, log?: any, ...other) {
@@ -141,6 +102,11 @@ export function logger(logWeight: LOG_TYPE, log?: any, ...other) {
             console.log(log, ...other);
         }
     }
+}
+
+export function sendFatalError(res, e?) {
+    if (e) { logger(LOG_TYPE.ERROR, e) };
+    res.status(500).send({ error: 'Invalid user or request' });
 }
 
 export function toTitleCase(input: string): string {
@@ -182,6 +148,3 @@ export function getPropertySafe(obj, prop) {
             return acc != null ? acc[val] || null : acc;
         }, obj);
 }
-
-
-setInterval(cleanSheltersToUpdate, CLEAR_CACHE_INTERVAL);

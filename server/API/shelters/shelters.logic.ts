@@ -3,9 +3,7 @@ import { Enums } from '../../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import {
     IShelterExtended,
-    IServiceExtended,
-    removeShelterToUpdate,
-    getShelterToUpdateById
+    IServiceExtended
 } from '../../tools/common';
 import { model, QueryCursor } from 'mongoose';
 import { IOpening } from '../../../src/app/shared/types/interfaces';
@@ -19,6 +17,7 @@ import {
 import { DISABLE_AUTH } from '../auth/auth.logic';
 import { createContributionPDF } from '../files/pdf.logic';
 import { Tools } from '../../../src/app/shared/tools/common.tools';
+import { StagingAreaTools } from '../../tools/stagingArea';
 
 const Services = model<IServiceExtended>('Services', BCSchema.serviceSchema);
 const Shelters = model<IShelterExtended>('Shelters', BCSchema.shelterSchema);
@@ -481,19 +480,23 @@ export function updateShelter(id: any, params: any, isNew?: Boolean): Promise<bo
     });
 }
 
-export function confirmShelter(id: any): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-        const shelToUpdate = getShelterToUpdateById(id);
-        updateShelter(id, shelToUpdate.shelter, shelToUpdate.isNew)
-            .then(() => {
-                removeShelterToUpdate(shelToUpdate);
-                resolve(true);
+export function confirmShelter(id: any): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        StagingAreaTools.getStaginItemByShelId(id)
+            .then(shelToUpdate => {
+                updateShelter(id, shelToUpdate.shelter, shelToUpdate.isNew)
+                    .then(() => StagingAreaTools.removeShelterToUpdate(shelToUpdate))
+                    .then(() => resolve())
+                    .catch((err) => {
+                        logger(LOG_TYPE.WARNING, err);
+                        reject(err);
+                    });
             })
-            .catch((err) => {
-                removeShelterToUpdate(shelToUpdate);
+            .catch(err => {
                 logger(LOG_TYPE.WARNING, err);
                 reject(err);
             });
+
     });
 }
 

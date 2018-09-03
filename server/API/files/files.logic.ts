@@ -5,14 +5,17 @@ import {
     IFileExtended,
     logger,
     LOG_TYPE,
-    removeShelterToUpdate
+    ObjectId
 } from '../../tools/common';
 import { model, QueryCursor } from 'mongoose';
 import { BCSchema } from '../../../src/app/shared/types/schema';
 import { DISABLE_AUTH } from '../auth/auth.logic';
 import { Buffer } from 'buffer';
+import { StagingAreaTools, StagingInterfaces } from '../../tools/stagingArea';
+import { ObjectID } from 'bson';
+import { UserData } from '../auth/userData';
 
-const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
+export const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
 
 export const MAX_IMAGES = 10;
 
@@ -28,8 +31,8 @@ export function countContributionFilesByShelter(shelid): Promise<Number> {
     });
 }
 
-export function insertNewFile(file: IFileExtended): Promise<{id: any, name: String, size: Number, type: any, contentType: String}> {
-    return new Promise<{id: any, name: String, size: Number, type: any, contentType: String}>((resolve, reject) => {
+export function insertNewFile(file: IFileExtended): Promise<{ id: any, name: String, size: Number, type: any, contentType: String }> {
+    return new Promise<{ id: any, name: String, size: Number, type: any, contentType: String }>((resolve, reject) => {
         Files.create(file, (err, ris) => {
             if (err) {
                 reject(err);
@@ -66,12 +69,12 @@ function isValidFile(file): boolean {
     }
 }
 
-function resolveFile(file): Promise<any> {
+function resolveFile(file: StagingInterfaces.StagingFileExtended): Promise<any> {
     if (isValidFile(file)) {
-        if (file.remove) {
+        if (file.toRemove) {
             return deleteFile(file._id);
         } else {
-            if (!file.new && file.update) {
+            if (!file.new && file.toUpdate) {
                 return updateFile(file._id, file);
             } else {
                 return insertNewFile(file);
@@ -82,7 +85,7 @@ function resolveFile(file): Promise<any> {
     }
 }
 
-export function resolveFilesForShelter(shelter): Promise<any> {
+export function resolveFilesForShelter(shelter: StagingInterfaces.StagingItemExtended): Promise<any> {
     return new Promise<any>((resolve, reject) => {
         if (shelter.files != null) {
             const promises = [];
@@ -92,7 +95,7 @@ export function resolveFilesForShelter(shelter): Promise<any> {
 
             Promise.all(promises)
                 .then(() => {
-                    removeShelterToUpdate(shelter);
+                    StagingAreaTools.removeShelterToUpdate(shelter);
                     resolve();
                 })
                 .catch(err => {
@@ -100,7 +103,7 @@ export function resolveFilesForShelter(shelter): Promise<any> {
                     reject(err);
                 });
         } else {
-            removeShelterToUpdate(shelter);
+            StagingAreaTools.removeShelterToUpdate(shelter);
             resolve();
         }
     })
@@ -216,4 +219,91 @@ export function checkPermissionAPI(req, res, next) {
             res.status(500).send({ error: 'Invalid user or request' });
         }
     }
+}
+
+export function intersectFilesArray(stagingArray: StagingInterfaces.StagingFileExtended[], files: IFileExtended[]) {
+    const updFiles = stagingArray.filter(obj => obj.toUpdate);
+    const retFiles = files.filter(obj => {
+        const fstaging = stagingArray.find(o => String(o._id) === String(obj._id));
+        return !fstaging || !fstaging.toRemove;
+    })
+    .concat(
+        stagingArray.filter(obj => obj.new)
+    );
+    updFiles.forEach(updfile => {
+        retFiles.splice(retFiles.findIndex(o => String(o._id) === String(updfile._id)), 1, updfile);
+    });
+
+    return retFiles;
+}
+
+export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFile, user: UserData): Promise<ObjectID> {
+    const shelId = file.shelterId;
+    const fileid = new ObjectId();
+    file._id = fileid.toHexString();
+    file.new = true;
+    return new Promise<ObjectID>((resolve, reject) => {
+        StagingAreaTools.getStaginItemByShelId(shelId)
+            .then(stagingItem => {
+                if (file.type === Files_Enum.File_Type.image) {
+                    queryFilesByshelterId(shelId)
+                        .then(files => Promise.resolve(files.filter(obj => obj.type === Files_Enum.File_Type.image)))
+                        .catch(e => Promise.resolve(stagingItem.files))
+                        .then(images => {
+                            if (images.length < MAX_IMAGES &&
+                                (!stagingItem.files || images.length + stagingItem.files.length < MAX_IMAGES)
+                            ) {
+                                return StagingAreaTools.addFileAndSave(file, stagingItem);
+                            } else {
+                                reject('Max ' + MAX_IMAGES + ' images');
+                            }
+                        })
+                        .then(fid => resolve(fid))
+                        .catch(err => reject(err));
+                } else {
+                    StagingAreaTools.addFileAndSave(file, stagingItem)
+                        .then(fid => resolve(fid))
+                        .catch(err => reject(err));
+                }
+            })
+            .catch(e => {
+                if (!e) {
+                    if (file.type === Files_Enum.File_Type.image) {
+                        queryFilesByshelterId(shelId)
+                            .then(files => {
+                                const images = files.filter(obj => obj.type === Files_Enum.File_Type.image);
+                                if (images.length < MAX_IMAGES) {
+                                    const newShelter: StagingInterfaces.StagingItem = {
+                                        shelter: { _id: shelId },
+                                        watchDog: new Date(Date.now()),
+                                        files: [file]
+                                    };
+                                    return StagingAreaTools.addStagingItem(newShelter, user);
+                                } else {
+                                    reject('Max ' + MAX_IMAGES + ' images')
+                                }
+                            })
+                            .catch(error => {
+                                return StagingAreaTools.addStagingItem({
+                                    watchDog: new Date(Date.now()),
+                                    shelter: { _id: shelId },
+                                    files: [file]
+                                }, user);
+                            })
+                            .then(item => resolve(item.files[0].id))
+                            .catch(err => reject(err));
+                    } else {
+                        StagingAreaTools.addStagingItem({
+                            watchDog: new Date(Date.now()),
+                            shelter: { _id: shelId },
+                            files: [file]
+                        }, user)
+                            .then(item => resolve(item.files[0].id))
+                            .catch(err => reject(err));
+                    }
+                } else {
+                    reject(e);
+                }
+            });
+    });
 }
