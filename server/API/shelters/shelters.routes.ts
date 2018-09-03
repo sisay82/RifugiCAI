@@ -2,7 +2,7 @@ import * as express from 'express';
 import { Enums } from '../../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import {
-    IShelterExtended
+    IShelterExtended, sendFatalError
 } from '../../tools/common';
 import { createCSV } from './csv.logic';
 import {
@@ -176,9 +176,14 @@ appRoute.route('/shelters/:id')
                     const newShelter: IShelterExtended = req.body;
                     newShelter._id = req.params.id;
                     const stagingItem = { watchDog: new Date(Date.now()), shelter: newShelter, files: null }
-                    StagingAreaTools.addStagingItem(stagingItem, req.body.user);
+                    StagingAreaTools.addItemAndSend(
+                        stagingItem,
+                        req.body.user,
+                        (item) => res.status(200).send(true),
+                        e => sendFatalError(res, e)
+                    );
                 } else {
-                    logger(LOG_TYPE.ERROR, err);
+                    sendFatalError(res, err);
                 }
             })
 
@@ -209,8 +214,9 @@ appRoute.route('/shelters/confirm/:id')
                                     res.status(500).send({ error: 'Invalid user or request' });
                                 });
                         } else {
-                            StagingAreaTools.removeShelterToUpdate(stagingItem);
-                            res.status(200).send(true);
+                            StagingAreaTools.removeShelterToUpdate(stagingItem)
+                            .then(() => res.status(200).send(true))
+                            .catch(err => sendFatalError(res, err));
                         }
                     })
                     .catch(err => {
@@ -224,10 +230,12 @@ appRoute.route('/shelters/confirm/:id')
             } else if (req.body.new) {
                 const id = new ObjectId();
                 const newShelter: any = { _id: id };
-                StagingAreaTools.addStagingItem(
-                    { watchDog: new Date(Date.now()), shelter: newShelter, files: null, newItem: true }, req.body.user
+                StagingAreaTools.addItemAndSend(
+                    { watchDog: new Date(Date.now()), shelter: newShelter, files: null, newItem: true },
+                    req.body.user,
+                    (item) => res.status(200).send({ id: id }),
+                    err => sendFatalError(res, err)
                 );
-                res.status(200).send({ id: id });
             } else {
                 res.status(500).send({ error: 'Invalid user or request' });
             }
@@ -252,10 +260,12 @@ appRoute.route('/shelters/confirm/:section/:id')
                         const newShelter: IShelterExtended = req.body;
                         newShelter._id = req.params.id;
 
-                        StagingAreaTools.addStagingItem(
-                            { watchDog: new Date(Date.now()), shelter: newShelter, files: null }, req.body.user
+                        StagingAreaTools.addItemAndSend(
+                            { watchDog: new Date(Date.now()), shelter: newShelter, files: null },
+                            req.body.user,
+                            (item) => res.status(200).send(true),
+                            e => sendFatalError(res, e)
                         );
-                        res.status(200).send(true);
                     } else {
                         logger(LOG_TYPE.ERROR, err);
                     }

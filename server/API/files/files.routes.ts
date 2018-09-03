@@ -246,7 +246,7 @@ fileRoute.route('/shelters/file/byshel/:id')
                             res.status(500).send({ error: 'Invalid user or request' });
                         });
                 } else {
-                    return Promise.reject();
+                    return Promise.reject(null);
                 }
             })
             .catch(err => {
@@ -281,7 +281,7 @@ fileRoute.route('/shelters/file/byshel/:id/bytype')
                             res.status(500).send({ error: 'Invalid user or request' });
                         });
                 } else {
-                    return Promise.reject();
+                    return Promise.reject(null);
                 }
             })
             .catch(err => {

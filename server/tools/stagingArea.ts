@@ -1,4 +1,4 @@
-import { IShelterExtended, IFileExtended } from "./common";
+import { IShelterExtended, IFileExtended, sendFatalError, logger, LOG_TYPE } from "./common";
 import { Enums } from "../../src/app/shared/types/enums";
 import { UserData } from "../API/auth/userData";
 import { CLEAR_CACHE_INTERVAL, MAX_TIME } from './constants';
@@ -43,12 +43,13 @@ const stagingItemSchema = new Schema({
     watchDog: { type: Date, default: Date.now },
     shelter: Object.assign(
         {},
-        BCSchema.shelterSchema.obj
+        BCSchema.shelterSchema.obj,
+        { _id: String, services: [BCSchema.serviceSchema.obj] }
     ),
     files: [Object.assign(
         {},
         BCSchema.fileSchema.obj,
-        { new: Boolean, roRemove: Boolean, toUpdate: Boolean }
+        { _id: String, new: Boolean, roRemove: Boolean, toUpdate: Boolean }
     )],
     newItem: Boolean
 });
@@ -63,7 +64,7 @@ export namespace StagingAreaTools {
                     .then(() => resolve())
                     .catch(err => reject(err));
             }
-            StagingAreaModel.findOneAndRemove({ 'shelter.shelter._id': shelUpdate.shelter.id }).exec((err, ris) => {
+            StagingAreaModel.findOneAndRemove({ 'shelter._id': shelUpdate.shelter.id }).exec((err, ris) => {
                 err ? reject(err) : resolve();
             })
         });
@@ -71,7 +72,7 @@ export namespace StagingAreaTools {
 
     export function getStaginItemByShelId(id: String): Promise<StagingInterfaces.StagingItemExtended> {
         return new Promise<StagingInterfaces.StagingItemExtended>((resolve, reject) => {
-            StagingAreaModel.findOne({ 'shelter.shelter._id': id }).exec((err, res) => {
+            StagingAreaModel.findOne({ 'shelter._id': id }).exec((err, res) => {
                 err || !res ? reject(err) : resolve(res);
             });
         })
@@ -88,6 +89,21 @@ export namespace StagingAreaTools {
             updatingShelter.watchDog = new Date(Date.now());
             return StagingAreaModel.create(updatingShelter);
         })
+    }
+
+    export function addItemAndSend(updatingShelter: StagingInterfaces.StagingItem,
+        user: UserData,
+        callback: (item: StagingInterfaces.StagingItemExtended) => void,
+        errCallback?: (err: String) => void) {
+        addStagingItem(updatingShelter, user)
+            .then(item => callback(item))
+            .catch(err => {
+                if (errCallback) {
+                    errCallback(err);
+                } else {
+                    logger(LOG_TYPE.ERROR, err);
+                }
+            })
     }
 
     export function addFileAndSave(file: StagingInterfaces.StagingFile, stagingItem: StagingInterfaces.StagingItemExtended) {
