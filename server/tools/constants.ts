@@ -18,6 +18,7 @@ export const MONTHS = [
 ];
 
 export const CLEAR_CACHE_INTERVAL = 1.5 * 1000;
+export const MAX_TIME = 1000 * 60 * 10;
 
 export const CSV_UNWINDS = {
     'services': [],

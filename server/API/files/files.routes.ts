@@ -5,11 +5,9 @@ import multer = require('multer');
 import {
     IFileExtended,
     ObjectId,
-    UpdatingShelter,
     logger,
     LOG_TYPE,
-    getShelterToUpdateById,
-    addShelterToUpdate
+    sendFatalError
 } from '../../tools/common';
 import { IFile } from '../../../src/app/shared/types/interfaces';
 import {
@@ -20,8 +18,11 @@ import {
     queryAllFiles,
     queryFilesByshelterId,
     queryFileByid,
-    deleteFile
+    deleteFile,
+    resolveStagingAreaFiles,
+    intersectFilesArray
 } from './files.logic';
+import { StagingAreaTools, StagingInterfaces } from '../../tools/stagingArea';
 
 export const fileRoute = express.Router();
 
@@ -83,90 +84,16 @@ fileRoute.route('/shelters/file/confirm')
                 if (err) {
                     res.status(500).send({ error: 'Invalid user or request' })
                 } else {
-                    const file = <IFileExtended>JSON.parse(req.body.metadata);
+                    const file = <StagingInterfaces.StagingFileExtended>JSON.parse(req.body.metadata);
                     file.data = req.file.buffer;
                     if (file.size < 1024 * 1024 * 16) {
-                        const id = file.shelterId;
-                        const fileid = new ObjectId();
-                        const shelUpdate = getShelterToUpdateById(id);
-                        (<any>file)._id = fileid;
-                        (<any>file).new = true;
-                        if (file.type === Files_Enum.File_Type.image) {
-                            const shelFiles = queryFilesByshelterId(id)
-                                .then(files => {
-                                    const images = files.filter(obj => obj.type === Files_Enum.File_Type.image);
-                                    if (shelUpdate) {
-                                        if (images.length < MAX_IMAGES &&
-                                            (!shelUpdate.files || images.length + shelUpdate.files.length < MAX_IMAGES)
-                                        ) {
-                                            if (shelUpdate.files) {
-                                                shelUpdate.files.push(file);
-                                            } else {
-                                                shelUpdate.files = [file];
-                                            }
-                                            shelUpdate.watchDog = new Date(Date.now());
-                                            res.status(200).send(fileid);
-                                        } else {
-                                            logger(LOG_TYPE.ERROR, 'Max ' + MAX_IMAGES + ' images');
-                                            res.status(500).send({ error: 'Invalid user or request' });
-                                        }
-                                    } else {
-                                        if (images.length < MAX_IMAGES) {
-                                            const newShelter: UpdatingShelter = {
-                                                shelter: <any>{ _id: id },
-                                                watchDog: new Date(Date.now()),
-                                                files: [file]
-                                            };
-                                            addShelterToUpdate(newShelter, user);
-                                            res.status(200).send(fileid);
-                                        } else {
-                                            logger(LOG_TYPE.ERROR, 'Max ' + MAX_IMAGES + ' images');
-                                            res.status(500).send({ error: 'Invalid user or request' });
-                                        }
-                                    }
-                                })
-                                .catch(e => {
-                                    if (shelUpdate) {
-                                        if (!shelUpdate.files || shelUpdate.files.length < MAX_IMAGES) {
-                                            if (shelUpdate.files) {
-                                                shelUpdate.files.push(file);
-                                            } else {
-                                                shelUpdate.files = [file];
-                                            }
-                                            shelUpdate.watchDog = new Date(Date.now());
-                                            res.status(200).send(fileid);
-                                        } else {
-                                            logger(LOG_TYPE.ERROR, 'Max ' + MAX_IMAGES + ' images');
-                                            res.status(500).send({ error: 'Invalid user or request' });
-                                        }
-                                    } else {
-                                        const newShelter: any = { _id: id };
-                                        addShelterToUpdate({
-                                            watchDog: new Date(Date.now()),
-                                            shelter: newShelter,
-                                            files: [file]
-                                        }, user);
-                                        res.status(200).send(fileid);
-                                    }
-                                });
-                        } else {
-                            if (shelUpdate) {
-                                if (shelUpdate.files) {
-                                    shelUpdate.files.push(file);
-                                } else {
-                                    shelUpdate.files = [file];
-                                }
-                                shelUpdate.watchDog = new Date(Date.now());
-                            } else {
-                                const newShelter: any = { _id: id };
-                                addShelterToUpdate({
-                                    watchDog: new Date(Date.now()),
-                                    shelter: newShelter,
-                                    files: [file]
-                                }, user);
-                            }
-                            res.status(200).send(fileid);
-                        }
+                        resolveStagingAreaFiles(file, user)
+                            .then(fileid => {
+                                res.status(200).send({ fileId: fileid });
+                            })
+                            .catch(e => {
+                                sendFatalError(res, e);
+                            });
                     } else {
                         logger(LOG_TYPE.ERROR, 'File size over limit');
                         res.status(500).send({ error: 'Invalid user or request' });
@@ -174,40 +101,54 @@ fileRoute.route('/shelters/file/confirm')
                 }
             });
         } catch (e) {
-            logger(LOG_TYPE.ERROR, e);
-            res.status(500).send({ error: 'Invalid user or request' });
+            sendFatalError(res, e);
         }
     });
 
 fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
     .delete(function (req, res) {
-        const shelUpdate = getShelterToUpdateById(req.params.shelid);
         const user = req.body.user;
-        if (shelUpdate) {
-            let fileToDelete;
-            if (shelUpdate.files) {
-                fileToDelete = shelUpdate.files.filter(f => String(f._id) === req.params.fileid);
-            } else {
-                shelUpdate.files = [];
-            }
-            if (fileToDelete && fileToDelete.length > 0) {
-                shelUpdate.files.splice(shelUpdate.files.indexOf(fileToDelete[0]), 1);
-                delete (fileToDelete[0].data);
-                fileToDelete[0].remove = true;
-            } else {
-                shelUpdate.files.push({ _id: req.params.fileid, remove: true });
-            }
-            res.status(200).send(true);
-        } else {
-            const newShelter: any = {};
-            newShelter._id = req.params.shelid;
-            addShelterToUpdate({
-                watchDog: new Date(Date.now()),
-                shelter: newShelter, files: [{ _id: req.params.fileid, remove: true }]
-            }, user);
-            res.status(200).send(true);
-        }
-    })
+        StagingAreaTools.getStaginItemByShelId(req.params.shelid)
+            .then(stagingItem => {
+                let fileToDelete;
+                if (stagingItem.files) {
+                    fileToDelete = stagingItem.files.find(f => String(f._id) === req.params.fileid);
+                } else {
+                    stagingItem.files = [];
+                }
+                if (fileToDelete) {
+                    // stagingItem.files.splice(stagingItem.files.indexOf(fileToDelete[0]), 1);
+                    delete (fileToDelete.data);
+                    fileToDelete.toRemove = true;
+                } else {
+                    stagingItem.files = stagingItem.files.concat(<any>{ _id: req.params.fileid, toRemove: true });
+                }
+                stagingItem.save((err, ris) => {
+                    if (!err) {
+                        res.status(200).send(true);
+                    } else {
+                        sendFatalError(res, err);
+                    }
+                })
+            })
+            .catch(err => {
+                if (!err) {
+                    const newShelter: any = {};
+                    newShelter._id = req.params.shelid;
+                    StagingAreaTools.addStagingItem({
+                        watchDog: new Date(Date.now()),
+                        shelter: newShelter,
+                        files: [{ _id: req.params.fileid, toRemove: true }]
+                    }, user)
+                        .then(item => {
+                            res.status(200).send(true);
+                        })
+                        .catch(e => { sendFatalError(res, e) });
+                } else {
+                    sendFatalError(res, err);
+                }
+            });
+    });
 
 fileRoute.route('/shelters/file/:id')
     .get(function (req, res) {
@@ -221,9 +162,8 @@ fileRoute.route('/shelters/file/:id')
                     logger(LOG_TYPE.ERROR, err);
                     res.status(500).send({ error: 'Invalid user or request' });
                 });
-        } catch (e) {
-            logger(LOG_TYPE.ERROR, e);
-            res.status(500).send({ error: 'Invalid user or request' });
+        } catch (err) {
+            sendFatalError(res, err);
         }
     })
     .put(function (req, res) {
@@ -231,53 +171,66 @@ fileRoute.route('/shelters/file/:id')
             const updFile: IFile = req.body.file;
             const user = req.body.user;
             if (updFile) {
-                const shel = getShelterToUpdateById(updFile.shelterId);
-                if (shel) {
-                    let file;
-                    if (shel.files) {
-                        file = shel.files.filter(f => String(f._id) === req.params.id)[0];
-                    } else {
-                        shel.files = [];
-                    }
-                    if (file) {
-                        for (const prop in updFile) {
-                            if (updFile.hasOwnProperty(prop)) {
-                                file[prop] = updFile[prop];
+                StagingAreaTools.getStaginItemByShelId(updFile.shelterId)
+                    .then(stagingItem => {
+                        let file;
+                        if (stagingItem.files) {
+                            file = stagingItem.files.filter(f => String(f._id) === req.params.id)[0];
+                        } else {
+                            stagingItem.files = [];
+                        }
+                        if (file) {
+                            for (const prop in updFile) {
+                                if (updFile.hasOwnProperty(prop)) {
+                                    file[prop] = updFile[prop];
+                                }
                             }
-                        }
-                        file.update = true;
-                    } else {
-                        const newF: any = {};
-                        for (const prop in updFile) {
-                            if (updFile.hasOwnProperty(prop)) {
-                                newF[prop] = updFile[prop];
+                            file.toUpdate = true;
+                        } else {
+                            const newF: any = {};
+                            for (const prop in updFile) {
+                                if (updFile.hasOwnProperty(prop)) {
+                                    newF[prop] = updFile[prop];
+                                }
                             }
+                            newF.toUpdate = true;
+                            stagingItem.files = stagingItem.files.concat(newF);
                         }
-                        newF.update = true;
-                        shel.files.push(newF);
-                    }
-                } else {
-                    const shelter: any = { _id: updFile.shelterId };
-                    const newF: any = {};
-                    for (const prop in updFile) {
-                        if (updFile.hasOwnProperty(prop)) {
-                            newF[prop] = updFile[prop];
+                        stagingItem.save((err, ris) => {
+                            if (!err) {
+                                return Promise.resolve();
+                            } else {
+                                return Promise.reject(err);
+                            }
+                        });
+
+                    })
+                    .catch(err => {
+                        if (!err) {
+                            const shelter = { _id: updFile.shelterId };
+                            const newF: any = {};
+                            for (const prop in updFile) {
+                                if (updFile.hasOwnProperty(prop)) {
+                                    newF[prop] = updFile[prop];
+                                }
+                            }
+                            newF.toUpdate = true;
+                            return StagingAreaTools.addStagingItem({
+                                watchDog: new Date(Date.now()),
+                                shelter: shelter,
+                                files: [newF]
+                            }, user);
+                        } else {
+                            sendFatalError(res, err);
                         }
-                    }
-                    newF.update = true;
-                    addShelterToUpdate({
-                        watchDog: new Date(Date.now()),
-                        shelter: shelter,
-                        files: [newF]
-                    }, user);
-                }
-                res.status(200).send(true);
+                    })
+                    .then(val => { res.status(200).send(true) })
+                    .catch(e => { sendFatalError(res, e) });
             } else {
                 res.status(500).send({ error: 'Invalid user or request' });
             }
         } catch (e) {
-            logger(LOG_TYPE.ERROR, e);
-            res.status(500).send({ error: 'Invalid user or request' });
+            sendFatalError(res, e);
         }
     })
     .delete(function (req, res) {
@@ -293,69 +246,68 @@ fileRoute.route('/shelters/file/:id')
 
 fileRoute.route('/shelters/file/byshel/:id')
     .get(function (req, res) {
-        const shel = getShelterToUpdateById(req.params.id);
-        if (shel && shel.files != null) {
-            queryFilesByshelterId(req.params.id)
-                .then((files) => {
-                    for (const f of shel.files.filter(obj => obj.type !== Files_Enum.File_Type.image)) {
-                        if (f.remove) {
-                            const fi = files.filter(obj => String(obj._id) === f._id)[0];
-                            files.splice(files.indexOf(fi), 1);
-                        } else if (f.new) {
-                            files.push(f);
-                        } else {
-                            const fi = files.filter(obj => String(obj._id) === f._id)[0];
-                            files[files.indexOf(fi)] = f;
-                        }
-                    }
-                    res.status(200).send(files);
-                })
-                .catch((err) => {
-                    res.status(500).send({ error: 'Invalid user or request' });
-                });
-        } else {
-            queryFilesByshelterId(req.params.id)
-                .then((file) => {
-                    res.status(200).send(file);
-                })
-                .catch((err) => {
-                    res.status(500).send({ error: 'Invalid user or request' });
-                });
-        }
+        StagingAreaTools.getStaginItemByShelId(req.params.id)
+            .then(stagingItem => {
+                if (stagingItem.files != null) {
+                    queryFilesByshelterId(req.params.id)
+                        .then((files) => {
+                            const stagingFiles = stagingItem.files.filter(obj => obj.type !== Files_Enum.File_Type.image)
+                            const retFiles = intersectFilesArray(stagingFiles, files);
+                            res.status(200).send(retFiles);
+                        })
+                        .catch((err) => {
+                            res.status(500).send({ error: 'Invalid user or request' });
+                        });
+                } else {
+                    return Promise.reject(null);
+                }
+            })
+            .catch(err => {
+                if (!err) {
+                    queryFilesByshelterId(req.params.id)
+                        .then((file) => {
+                            res.status(200).send(file);
+                        })
+                        .catch((e) => {
+                            res.status(500).send({ error: 'Invalid user or request' });
+                        });
+                } else {
+                    sendFatalError(res, err);
+                }
+            });
+
     });
 
 fileRoute.route('/shelters/file/byshel/:id/bytype')
     .get(function (req, res) {
-        const shel = getShelterToUpdateById(req.params.id);
         const types = req.query.types.map(t => Enums.Files.File_Type[t] || Number(t) || null);
-        if (shel && shel.files != null) {
-            queryFilesByshelterId(req.params.id, types)
-                .then((files) => {
-                    const shelFiles = shel.files.filter(file => types.indexOf(file.type));
-                    for (const f of shelFiles) {
-                        if (f.remove) {
-                            const fi = files.filter(obj => String(obj._id) === f._id)[0];
-                            files.splice(files.indexOf(fi), 1);
-                        } else if (f.new) {
-                            files.push(f);
-                        } else {
-                            const fi = files.filter(obj => String(obj._id) === f._id)[0];
-                            files[files.indexOf(fi)] = f;
-                        }
-                    }
-
-                    res.status(200).send(files);
-                })
-                .catch((err) => {
-                    res.status(500).send({ error: 'Invalid user or request' });
-                });
-        } else {
-            queryFilesByshelterId(req.params.id, types)
-                .then((file) => {
-                    res.status(200).send(file);
-                })
-                .catch((err) => {
-                    res.status(500).send({ error: 'Invalid user or request' });
-                });
-        }
+        StagingAreaTools.getStaginItemByShelId(req.params.id)
+            .then(stagingItem => {
+                if (stagingItem.files != null) {
+                    queryFilesByshelterId(req.params.id, types)
+                        .then((files) => {
+                            const stagingFiles = stagingItem.files.filter(file => types.indexOf(file.type) >= 0);
+                            const retFiles = intersectFilesArray(stagingFiles, files);
+                            res.status(200).send(retFiles);
+                        })
+                        .catch((err) => {
+                            res.status(500).send({ error: 'Invalid user or request' });
+                        });
+                } else {
+                    return Promise.reject(null);
+                }
+            })
+            .catch(err => {
+                if (!err) {
+                    queryFilesByshelterId(req.params.id, types)
+                        .then((file) => {
+                            res.status(200).send(file);
+                        })
+                        .catch((e) => {
+                            sendFatalError(res, e);
+                        });
+                } else {
+                    sendFatalError(res, err);
+                }
+            });
     });
