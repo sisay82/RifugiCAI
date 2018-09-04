@@ -191,7 +191,7 @@ export function createContributionPDF(shelter: IShelterExtended): Promise<{ name
                 f.name = getPDFContributionName(contribution.year, contribution.type, num);
                 f.value = num;
                 f.size = buff.length;
-                f.data = buff
+                f.data = buff;
                 return insertNewFile(<any>f);
             })
             .then(file => {

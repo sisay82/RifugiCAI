@@ -14,6 +14,7 @@ import { Buffer } from 'buffer';
 import { StagingAreaTools, StagingInterfaces } from '../../tools/stagingArea';
 import { ObjectID } from 'bson';
 import { UserData } from '../auth/userData';
+import { IFile } from '../../../src/app/shared/types/interfaces';
 
 export const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
 
@@ -31,11 +32,18 @@ export function countContributionFilesByShelter(shelid): Promise<Number> {
     });
 }
 
-export function insertNewFile(file: StagingInterfaces.StagingFileExtended)
+export function insertFileFromStagingArea(file: StagingInterfaces.StagingFileExtended) {
+    if ((<any>file)._doc) {
+        return insertNewFile((<any>file)._doc);
+    } else {
+        return Promise.reject('ERR OBJECT NOT FROM MONGO');
+    }
+}
+
+export function insertNewFile(file: IFile)
     : Promise<{ id: any, name: String, size: Number, type: any, contentType: String }> {
     return new Promise<any>((resolve, reject) => {
-        const f = new Files((<any>file)._doc);
-        file.remove();
+        const f = new Files(file);
         f.save((err, ris) => {
             if (err) {
                 reject(err);
@@ -82,7 +90,7 @@ function resolveFile(file: StagingInterfaces.StagingFileExtended): Promise<any> 
             if (!file.new && file.toUpdate) {
                 return updateFile(file._id, file);
             } else if (file.new) {
-                return insertNewFile(file);
+                return insertFileFromStagingArea(file);
             } else {
                 return Promise.reject('ERR NO ACTION ON FILE')
             }
