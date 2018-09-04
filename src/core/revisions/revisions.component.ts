@@ -6,89 +6,23 @@ import { BcSharedService } from '../../app/shared/shared.service';
 import { Subscription } from 'rxjs';
 import { Router, RoutesRecognized } from '@angular/router';
 import { BcAuthService } from '../../app/shared/auth.service';
+import { BcDataBaseService } from '../services/data.base.service';
 
 @Component({
     moduleId: module.id,
     selector: 'bc-revisions',
     templateUrl: 'revisions.component.html',
     styleUrls: ['revisions.component.scss'],
-    providers: [BcRevisionsService]
+    providers: [BcRevisionsService, BcDataBaseService]
 })
 export class BcRevisions implements OnDestroy {
-    shelterToUpdate: IShelter;
-    docs: IFile[];
-    images: IFile[];
     subscriptions: Subscription[] = [];
     localPermissions: any[];
-    updateFile(file: IFile, remove?: Boolean) {
-        if (file.type === Enums.Files.File_Type.image) {
-            this.images = this.updateFileLocal(this.images, file, remove);
-        } else {
-            this.docs = this.updateFileLocal(this.docs, file, remove);
-        }
-    }
-
-    saveFiles(files: IFile[]) {
-        for (const file of files) {
-            if (file.type === Enums.Files.File_Type.image) {
-                this.images = this.updateFileLocal(this.images, file);
-            } else {
-                this.docs = this.updateFileLocal(this.docs, file);
-            }
-        }
-    }
-
-    updateFileLocal(storage: IFile[], file: IFile, remove?: Boolean): IFile[] {
-        if (storage) {
-            if (remove) {
-                const f = storage.find(f => f._id == file._id);
-                if (f) {
-                    storage.splice(storage.indexOf(f), 1);
-                }
-            } else {
-                const fIndex = storage.findIndex(f => f._id == file._id);
-                if (fIndex > -1) {
-                    storage[fIndex] = file;
-                } else {
-                    storage.push(file);
-                }
-            }
-        } else {
-            if (!remove) {
-                storage = [file];
-            }
-        }
-        return storage
-    }
-
-    deleteSection(section: string) {
-        if (this.shelterToUpdate && this.shelterToUpdate.hasOwnProperty(section)) {
-            this.shelterToUpdate[section] = null;
-        }
-    }
-
-    initStorage() {
-        this.docs = null;
-        this.images = null;
-        this.shelterToUpdate = null;
-    }
-
-    checkDocTypes(types: Enums.Files.File_Type[]): boolean {
-        return (
-            types.includes(Enums.Files.File_Type.doc) ||
-            types.includes(Enums.Files.File_Type.map) ||
-            types.includes(Enums.Files.File_Type.invoice)
-        );
-    }
-
-    checkImageTypes(types: Enums.Files.File_Type[]): boolean {
-        return types.includes(Enums.Files.File_Type.image);
-    }
 
     constructor(private revisionService: BcRevisionsService,
-        private router: Router,
         private shared: BcSharedService,
-        private authService: BcAuthService) {
+        private authService: BcAuthService,
+        private dataService: BcDataBaseService) {
         this.subscriptions.push(
             authService.getPermissions().subscribe(permissions => {
                 this.localPermissions = permissions;
@@ -99,54 +33,31 @@ export class BcRevisions implements OnDestroy {
             }),
             shared.activeOutletChange$.subscribe((outlet) => {
                 if (outlet === Enums.Routes.Routed_Outlet.content) {
-                    this.initStorage();
+                    dataService.initStorage();
                 }
             }),
             revisionService.save$.subscribe(obj => {
-                if (this.shelterToUpdate) {
-                    this.shelterToUpdate[obj.section] = obj.shelter[obj.section];
-                } else {
-                    this.shelterToUpdate = obj.shelter;
-                }
+                dataService.saveShelter(obj);
             }),
             revisionService.loadRequest$.subscribe(section => {
-                if (this.shelterToUpdate && this.shelterToUpdate[section]) {
-                    this.revisionService.onChildLoad(this.shelterToUpdate);
-                } else {
-                    this.revisionService.onChildLoad(null);
-                }
+                this.revisionService.onChildLoad(dataService.loadShelter(section));
             }),
             revisionService.saveFile$.subscribe(obj => {
-                this.updateFile(obj.file, obj.remove);
+                dataService.updateFile(obj.file, obj.remove);
             }),
             revisionService.saveFiles$.subscribe(files => {
-                this.saveFiles(files);
+                dataService.saveLoadedFiles(files);
             }),
             revisionService.loadFilesRequest$.subscribe(types => {
-                let files: IFile[] = [];
-                let retNull = false;
-                if (this.docs && this.checkDocTypes(types)) {
-                    files = files.concat(this.docs.filter(f => types.includes(f.type)));
-                } else {
-                    if (this.images && this.checkImageTypes(types)) {
-                        retNull = false;
-                        files = files.concat(this.images.filter(f => types.includes(f.type)));
-                    } else {
-                        retNull = true;
-                    }
-                }
+                const files = dataService.loadFiles(types);
+                this.revisionService.onChildLoadFiles(files);
 
-                if (retNull) {
-                    this.revisionService.onChildLoadFiles(null);
-                } else {
-                    this.revisionService.onChildLoadFiles(files);
-                }
             }),
             shared.maskSave$.subscribe(() => {
-                this.initStorage();
+                dataService.initStorage();
             }),
             shared.maskCancel$.subscribe(() => {
-                this.initStorage();
+                dataService.initStorage();
                 const disableSaveSub = this.revisionService.childDisableSaveAnswer$.subscribe(() => {
                     shared.onMaskConfirmCancel();
                     if (disableSaveSub) {
@@ -156,7 +67,7 @@ export class BcRevisions implements OnDestroy {
                 this.revisionService.onChildDisableSaveRequest();
             }),
             revisionService.childDelete$.subscribe(section => {
-                this.deleteSection(section);
+                dataService.deleteSection(section);
             })
         );
     }

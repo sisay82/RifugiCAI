@@ -21,6 +21,10 @@ export class FakeAuthService {
     isCentralUser(...param) {
         return obsOf(true);
     }
+
+    getPermissions() {
+        return obsOf([Enums.Auth_Permissions.User_Type.sectional])
+    }
 }
 
 export class FakeSharedService {
@@ -32,6 +36,12 @@ export class FakeSharedService {
 
     maskSaveSubject = new Subject();
     maskSave$ = this.maskSaveSubject.asObservable();
+
+    maskCancelSubject = new Subject();
+    maskCancel$ = this.maskCancelSubject.asObservable();
+
+    activeOutletChange = new Subject();
+    activeOutletChange$ = this.activeOutletChange.asObservable();
 
     onActiveOutletChange(outlet: Enums.Routes.Routed_Outlet) { }
     onMaskConfirmSave(component: Enums.Routes.Routed_Component) { }
