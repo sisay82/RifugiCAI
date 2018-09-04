@@ -85,12 +85,12 @@ fileRoute.route('/shelters/file/confirm')
                 if (err) {
                     res.status(500).send({ error: 'Invalid user or request' })
                 } else {
-                    const file = <StagingInterfaces.StagingFile>JSON.parse(req.body.metadata);
+                    const file = <StagingInterfaces.StagingFileExtended>JSON.parse(req.body.metadata);
                     file.data = req.file.buffer;
                     if (file.size < 1024 * 1024 * 16) {
                         resolveStagingAreaFiles(file, user)
                             .then(fileid => {
-                                res.status(200).send(fileid);
+                                res.status(200).send({ fileId: fileid });
                             })
                             .catch(e => {
                                 sendFatalError(res, e);
@@ -113,18 +113,24 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
             .then(stagingItem => {
                 let fileToDelete;
                 if (stagingItem.files) {
-                    fileToDelete = stagingItem.files.filter(f => String(f._id) === req.params.fileid);
+                    fileToDelete = stagingItem.files.find(f => String(f._id) === req.params.fileid);
                 } else {
                     stagingItem.files = [];
                 }
-                if (fileToDelete && fileToDelete.length > 0) {
-                    stagingItem.files.splice(stagingItem.files.indexOf(fileToDelete[0]), 1);
-                    delete (fileToDelete[0].data);
-                    fileToDelete[0].toRemove = true;
+                if (fileToDelete) {
+                    // stagingItem.files.splice(stagingItem.files.indexOf(fileToDelete[0]), 1);
+                    delete (fileToDelete.data);
+                    fileToDelete.toRemove = true;
                 } else {
-                    stagingItem.files.push(<any>{ _id: req.params.fileid, toRemove: true });
+                    stagingItem.files = stagingItem.files.concat(<any>{ _id: req.params.fileid, toRemove: true });
                 }
-                res.status(200).send(true);
+                stagingItem.save((err, ris) => {
+                    if (!err) {
+                        res.status(200).send(true);
+                    } else {
+                        sendFatalError(res, err);
+                    }
+                })
             })
             .catch(err => {
                 if (!err) {
@@ -135,8 +141,10 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
                         shelter: newShelter,
                         files: [{ _id: req.params.fileid, toRemove: true }]
                     }, user)
-                        .then(item => res.status(200).send(true))
-                        .catch(e => sendFatalError(res, e));
+                        .then(item => {
+                            res.status(200).send(true);
+                        })
+                        .catch(e => { sendFatalError(res, e) });
                 } else {
                     sendFatalError(res, err);
                 }
@@ -187,10 +195,16 @@ fileRoute.route('/shelters/file/:id')
                                 }
                             }
                             newF.toUpdate = true;
-                            stagingItem.files.push(newF);
+                            stagingItem.files = stagingItem.files.concat(newF);
                         }
-                        stagingItem.save();
-                        return Promise.resolve();
+                        stagingItem.save((err, ris) => {
+                            if (!err) {
+                                return Promise.resolve();
+                            } else {
+                                return Promise.reject(err);
+                            }
+                        });
+
                     })
                     .catch(err => {
                         if (!err) {
@@ -211,8 +225,8 @@ fileRoute.route('/shelters/file/:id')
                             sendFatalError(res, err);
                         }
                     })
-                    .then(val => res.status(200).send(true))
-                    .catch(e => sendFatalError(res, e));
+                    .then(val => { res.status(200).send(true) })
+                    .catch(e => { sendFatalError(res, e) });
             } else {
                 res.status(500).send({ error: 'Invalid user or request' });
             }
@@ -273,7 +287,7 @@ fileRoute.route('/shelters/file/byshel/:id/bytype')
                 if (stagingItem.files != null) {
                     queryFilesByshelterId(req.params.id, types)
                         .then((files) => {
-                            const stagingFiles = stagingItem.files.filter(file => types.indexOf(file.type));
+                            const stagingFiles = stagingItem.files.filter(file => types.indexOf(file.type) >= 0);
                             const retFiles = intersectFilesArray(stagingFiles, files);
                             res.status(200).send(retFiles);
                         })

@@ -49,7 +49,7 @@ const stagingItemSchema = new Schema({
     files: [Object.assign(
         {},
         BCSchema.fileSchema.obj,
-        { _id: String, new: Boolean, roRemove: Boolean, toUpdate: Boolean }
+        { _id: String, new: Boolean, toRemove: Boolean, toUpdate: Boolean }
     )],
     newItem: Boolean
 });
@@ -57,7 +57,7 @@ const stagingItemSchema = new Schema({
 export const StagingAreaModel = model<StagingInterfaces.StagingItemExtended>('StagingArea', stagingItemSchema);
 
 export namespace StagingAreaTools {
-    export function removeShelterToUpdate(shelUpdate: StagingInterfaces.StagingItemExtended): Promise<void> {
+    export function removeStagingItem(shelUpdate: StagingInterfaces.StagingItemExtended): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (shelUpdate._id && shelUpdate.remove) {
                 shelUpdate.remove()
@@ -80,15 +80,22 @@ export namespace StagingAreaTools {
 
     export function addStagingItem(updatingShelter: StagingInterfaces.StagingItem, user: UserData)
         : Promise<StagingInterfaces.StagingItemExtended> {
-        return new Promise<StagingInterfaces.StagingItemExtended>((resolve, reject) => {
-            if (!user || !user.role) {
-                return reject();
-            }
+        if (!user || !user.role) {
+            return Promise.reject('USER AUTH ERROR');
+        }
 
-            updatingShelter.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
-            updatingShelter.watchDog = new Date(Date.now());
-            return StagingAreaModel.create(updatingShelter);
-        })
+        updatingShelter.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
+        updatingShelter.watchDog = new Date(Date.now());
+        return new Promise<StagingInterfaces.StagingItemExtended>((resolve, reject) => {
+            const item = new StagingAreaModel(updatingShelter);
+            item.save((err, el) => {
+                if (!err) {
+                    resolve(el);
+                } else {
+                    reject(err);
+                }
+            });
+        });
     }
 
     export function addItemAndSend(updatingShelter: StagingInterfaces.StagingItem,
@@ -106,18 +113,24 @@ export namespace StagingAreaTools {
             })
     }
 
-    export function addFileAndSave(file: StagingInterfaces.StagingFile, stagingItem: StagingInterfaces.StagingItemExtended) {
-        return new Promise<ObjectID>((resolve, reject) => {
+    export function addFileAndSave(file: StagingInterfaces.StagingFileExtended, stagingItem: StagingInterfaces.StagingItemExtended) {
+        return new Promise<String>((resolve, reject) => {
             try {
-                const fileExt = new Files(file)
+                file.new = true;
                 if (stagingItem.files) {
-                    stagingItem.files.push(fileExt);
+                    stagingItem.files = stagingItem.files.concat(file);
                 } else {
-                    stagingItem.files = [fileExt];
+                    stagingItem.files = [file];
                 }
                 stagingItem.watchDog = new Date(Date.now());
-                stagingItem.save();
-                resolve(fileExt.id);
+                stagingItem.save((err, ris) => {
+                    if (!err) {
+                        resolve(file._id);
+                    } else {
+                        reject(err);
+                    }
+                });
+
             } catch (err) {
                 reject(err);
             }

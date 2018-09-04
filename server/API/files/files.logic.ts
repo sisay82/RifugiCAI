@@ -31,22 +31,27 @@ export function countContributionFilesByShelter(shelid): Promise<Number> {
     });
 }
 
-export function insertNewFile(file: IFileExtended): Promise<{ id: any, name: String, size: Number, type: any, contentType: String }> {
-    return new Promise<{ id: any, name: String, size: Number, type: any, contentType: String }>((resolve, reject) => {
-        Files.create(file, (err, ris) => {
+export function insertNewFile(file: StagingInterfaces.StagingFileExtended)
+    : Promise<{ id: any, name: String, size: Number, type: any, contentType: String }> {
+    return new Promise<any>((resolve, reject) => {
+        const f = new Files((<any>file)._doc);
+        file.remove();
+        f.save((err, ris) => {
             if (err) {
                 reject(err);
             } else {
-                resolve({
+                const retFile = {
                     id: ris._id,
                     name: ris.name,
                     size: ris.size,
                     type: ris.type,
                     contentType: ris.contentType
-                });
+                };
+                resolve(retFile);
             }
-        })
-    });
+        });
+    })
+
 }
 
 function isValidFile(file): boolean {
@@ -76,8 +81,10 @@ function resolveFile(file: StagingInterfaces.StagingFileExtended): Promise<any> 
         } else {
             if (!file.new && file.toUpdate) {
                 return updateFile(file._id, file);
-            } else {
+            } else if (file.new) {
                 return insertNewFile(file);
+            } else {
+                return Promise.reject('ERR NO ACTION ON FILE')
             }
         }
     } else {
@@ -86,27 +93,16 @@ function resolveFile(file: StagingInterfaces.StagingFileExtended): Promise<any> 
 }
 
 export function resolveFilesForShelter(shelter: StagingInterfaces.StagingItemExtended): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-        if (shelter.files != null) {
-            const promises = [];
-            shelter.files.forEach(file => {
-                promises.push(resolveFile(file));
-            });
+    if (shelter.files != null) {
+        const promises = [];
+        shelter.files.forEach(file => {
+            promises.push(resolveFile(file));
+        });
 
-            Promise.all(promises)
-                .then(() => {
-                    StagingAreaTools.removeShelterToUpdate(shelter);
-                    resolve();
-                })
-                .catch(err => {
-                    logger(LOG_TYPE.WARNING, err);
-                    reject(err);
-                });
-        } else {
-            StagingAreaTools.removeShelterToUpdate(shelter);
-            resolve();
-        }
-    })
+        return Promise.all(promises);
+    } else {
+        return Promise.resolve();
+    }
 }
 
 export function queryAllFiles(): Promise<IFileExtended[]> {
@@ -227,9 +223,9 @@ export function intersectFilesArray(stagingArray: StagingInterfaces.StagingFileE
         const fstaging = stagingArray.find(o => String(o._id) === String(obj._id));
         return !fstaging || !fstaging.toRemove;
     })
-    .concat(
-        stagingArray.filter(obj => obj.new)
-    );
+        .concat(
+            stagingArray.filter(obj => obj.new)
+        );
     updFiles.forEach(updfile => {
         retFiles.splice(retFiles.findIndex(o => String(o._id) === String(updfile._id)), 1, updfile);
     });
@@ -237,12 +233,12 @@ export function intersectFilesArray(stagingArray: StagingInterfaces.StagingFileE
     return retFiles;
 }
 
-export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFile, user: UserData): Promise<ObjectID> {
+export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExtended, user: UserData): Promise<String> {
     const shelId = file.shelterId;
     const fileid = new ObjectId();
-    file._id = fileid.toHexString();
+    file._id = <any>fileid;
     file.new = true;
-    return new Promise<ObjectID>((resolve, reject) => {
+    return new Promise<String>((resolve, reject) => {
         StagingAreaTools.getStaginItemByShelId(shelId)
             .then(stagingItem => {
                 if (file.type === Files_Enum.File_Type.image) {
@@ -258,12 +254,12 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFile, use
                                 reject('Max ' + MAX_IMAGES + ' images');
                             }
                         })
-                        .then(fid => resolve(fid))
-                        .catch(err => reject(err));
+                        .then(fid => { resolve(fid) })
+                        .catch(err => { reject(err) });
                 } else {
                     StagingAreaTools.addFileAndSave(file, stagingItem)
-                        .then(fid => resolve(fid))
-                        .catch(err => reject(err));
+                        .then(fid => { resolve(fid) })
+                        .catch(err => { reject(err) });
                 }
             })
             .catch(e => {
@@ -290,16 +286,20 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFile, use
                                     files: [file]
                                 }, user);
                             })
-                            .then(item => resolve(item.files[0].id))
-                            .catch(err => reject(err));
+                            .then(item => { resolve(item.files[0].id) })
+                            .catch(err => { reject(err) });
                     } else {
                         StagingAreaTools.addStagingItem({
                             watchDog: new Date(Date.now()),
                             shelter: { _id: shelId },
                             files: [file]
                         }, user)
-                            .then(item => resolve(item.files[0].id))
-                            .catch(err => reject(err));
+                            .then(item => {
+                                resolve(item.files[0].id)
+                            })
+                            .catch(err => {
+                                reject(err)
+                            });
                     }
                 } else {
                     reject(e);

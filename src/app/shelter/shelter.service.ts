@@ -118,7 +118,7 @@ export class ShelterService {
         delete (file.data);
         formData.append('metadata', JSON.stringify(file));
         return this.http.post(this.sheltersBaseUrl + "/file/confirm", formData).pipe(
-            map(res => res instanceof Object ? null : <any>res),
+            map(res => res && (<any>res).fileId ? (<any>res).fileId : null),
             catchError(this.handleError.bind(this)));
     }
 

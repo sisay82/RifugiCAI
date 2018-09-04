@@ -158,8 +158,13 @@ appRoute.route('/shelters/:id')
                         }
                     }
                     stagingItem.watchDog = new Date(Date.now());
-                    stagingItem.save();
-                    res.status(200).send(true);
+                    stagingItem.save((err) => {
+                        if (!err) {
+                            res.status(200).send(true);
+                        } else {
+                            sendFatalError(res, err);
+                        }
+                    });
                 } else {
                     updateShelter(req.params.id, req.body, stagingItem && stagingItem.newItem)
                         .then(() => {
@@ -206,17 +211,25 @@ appRoute.route('/shelters/confirm/:id')
                     .then(stagingItem => {
                         if (req.body.confirm) {
                             confirmShelter(req.params.id)
-                                .then((ris) => resolveFilesForShelter(stagingItem))
-                                .then((ris) => {
+                                .then(() => resolveFilesForShelter(stagingItem))
+                                .then((val) => StagingAreaTools.removeStagingItem(stagingItem))
+                                .then(() => {
                                     res.status(200).send(true);
                                 })
                                 .catch((err) => {
-                                    res.status(500).send({ error: 'Invalid user or request' });
-                                });
+                                    StagingAreaTools.removeStagingItem(stagingItem)
+                                    .then(() => {
+                                        sendFatalError(res, err);
+                                    })
+                                    .catch((e) => {
+                                        logger(LOG_TYPE.ERROR, err);
+                                        sendFatalError(res, e);
+                                    })
+                                })
                         } else {
-                            StagingAreaTools.removeShelterToUpdate(stagingItem)
-                            .then(() => res.status(200).send(true))
-                            .catch(err => sendFatalError(res, err));
+                            StagingAreaTools.removeStagingItem(stagingItem)
+                                .then(() => { res.status(200).send(true) })
+                                .catch(err => { sendFatalError(res, err) });
                         }
                     })
                     .catch(err => {
@@ -252,8 +265,13 @@ appRoute.route('/shelters/confirm/:section/:id')
                 .then(stagingItem => {
                     stagingItem.shelter[req.params.section] = req.body[req.params.section];
                     stagingItem.watchDog = new Date(Date.now());
-                    stagingItem.save();
-                    res.status(200).send(true);
+                    stagingItem.save((err) => {
+                        if (!err) {
+                            res.status(200).send(true);
+                        } else {
+                            sendFatalError(res, err);
+                        }
+                    });
                 })
                 .catch(err => {
                     if (!err) {
@@ -349,8 +367,13 @@ appRoute.route('/shelters/:id/:name')
             StagingAreaTools.getStaginItemByShelId(req.params.id)
                 .then(stagingItem => {
                     stagingItem.watchDog = new Date(Date.now());
-                    stagingItem.save();
-                    res.status(200).send(stagingItem.shelter);
+                    stagingItem.save((err) => {
+                        if (!err) {
+                            res.status(200).send(stagingItem.shelter);
+                        } else {
+                            sendFatalError(res, err);
+                        }
+                    });
                 })
                 .catch(err => {
                     if (!err) {
