@@ -10,6 +10,7 @@ import { BcSharedService } from '../../../app/shared/shared.service';
 import { Subscription } from 'rxjs';
 import { BcAuthService } from '../../../app/shared/auth.service';
 import { CUSTOM_PATTERN_VALIDATORS, createLengthValidator } from '../../inputs/input_base';
+import { BcModalService } from '../../modal/modal.service';
 
 @Directive({
   selector: "[disabled]",
@@ -26,7 +27,7 @@ export class BcDisableStyler {
   selector: 'bc-mask-revision',
   templateUrl: 'mask-revision.component.html',
   styleUrls: ['mask-revision.component.scss'],
-  providers: [ShelterService],
+  providers: [ShelterService, BcModalService],
   host: {
     '[class.bc-mask]': 'true'
   },
@@ -51,7 +52,8 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
     private shelterService: ShelterService,
     private shared: BcSharedService,
     private fb: FormBuilder,
-    private authService: BcAuthService) {
+    private authService: BcAuthService,
+    private modalService: BcModalService) {
 
     this.maskForm = fb.group({
       name: ["", [Validators.required, Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)]],
@@ -100,19 +102,25 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
   }
 
   remove() {
-    if (this.isCentral) {
-      const removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val) => {
-        if (val) {
-          this.return();
-        } else {
+    const modalSub = this.modalService.openDialog$.subscribe(confirm => {
+      if (confirm && this.isCentral) {
+        const removeShelSub = this.shelterService.deleteShelter(this.shelter._id).subscribe((val) => {
+          if (val) {
+            this.return();
+          } else {
 
-          this.shared.onMaskInvalid();
-        }
-        if (removeShelSub) {
-          removeShelSub.unsubscribe();
-        }
-      });
-    }
+            this.shared.onMaskInvalid();
+          }
+          if (removeShelSub) {
+            removeShelSub.unsubscribe();
+          }
+        });
+      }
+      if (modalSub) {
+        modalSub.unsubscribe();
+      }
+    });
+    this.modalService.onOpenDialog('ATTENZIONE! CONFERMI DI VOLER ELIMINARE TUTTI I DATI DEL RIFUGIO?')
   }
 
   private isCentralUser() {
@@ -187,30 +195,37 @@ export class BcMaskRevision implements OnInit, OnDestroy, OnChanges {
   }
 
   return() {
-    const cancelSub = this.shared.maskCancelConfirm$.subscribe(() => {
-      const shelSub = this.shelterService.confirmShelter(this.shelter._id, false).subscribe(value => {
-        if (!value) {
-          console.log("Error in Cancel");
-          if (shelSub) {
-            shelSub.unsubscribe();
-          }
-          if (cancelSub) {
-            cancelSub.unsubscribe();
-          }
-        } else {
-          this.router.navigateByUrl("list");
-          if (shelSub) {
-            shelSub.unsubscribe();
-          }
-          if (cancelSub) {
-            cancelSub.unsubscribe();
-          }
-        }
+    const modalSub = this.modalService.openDialog$.subscribe(confirm => {
+      if (confirm) {
+        const cancelSub = this.shared.maskCancelConfirm$.subscribe(() => {
+          const shelSub = this.shelterService.confirmShelter(this.shelter._id, false).subscribe(value => {
+            if (!value) {
+              console.log("Error in Cancel");
+              if (shelSub) {
+                shelSub.unsubscribe();
+              }
+              if (cancelSub) {
+                cancelSub.unsubscribe();
+              }
+            } else {
+              this.router.navigateByUrl("list");
+              if (shelSub) {
+                shelSub.unsubscribe();
+              }
+              if (cancelSub) {
+                cancelSub.unsubscribe();
+              }
+            }
 
-      });
+          });
+        });
+        this.shared.onMaskCancel();
+      }
+      if (modalSub) {
+        modalSub.unsubscribe();
+      }
     });
-    this.shared.onMaskCancel();
-
+    this.modalService.onOpenDialog('PROSEGUENDO VERRANNO PERSI TUTTI I DATI, CONFERMARE?')
   }
 
   initForm(permission) {
