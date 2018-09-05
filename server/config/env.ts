@@ -16,6 +16,11 @@ const conf = {
         SERVER_URL: "localhost:",
         APP_PORT: process.env.PORT || 8000,
         MONGO_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/CaiDB'
+    },
+    heroku: {
+        SERVER_URL: "app-cai.herokuapp.com",
+        APP_PORT: process.env.PORT,
+        MONGO_URI: process.env.MONGODB_URI
     }
 }
 

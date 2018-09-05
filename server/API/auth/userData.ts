@@ -3,6 +3,8 @@ import { Enums } from '../../../src/app/shared/types/enums';
 import { Schema, model, Document } from 'mongoose';
 import Auth_Permissions = Enums.Auth_Permissions;
 import { logger, LOG_TYPE } from '../../tools/common';
+import { store } from '../../config/app';
+import { MAX_SESSION_TIME } from '../../tools/constants';
 
 
 export interface UserData {
@@ -77,4 +79,23 @@ export namespace UserDataTools {
                 }
             })
     }
+}
+
+export function swipeUserData() {
+    UserDataModel.find().cursor().eachAsync(doc => {
+        store.get(doc.sid.toString(), (err, session) => {
+            if (!err) {
+                if (!session) {
+                    logger(LOG_TYPE.INFO, "Removing session data", doc.sid);
+                    doc.remove((e) => {
+                        if (e) {
+                            logger(LOG_TYPE.ERROR, e);
+                        }
+                    });
+                }
+            } else {
+                logger(LOG_TYPE.ERROR, "Error getting sessions information", err);
+            }
+        });
+    });
 }

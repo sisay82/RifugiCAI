@@ -12,10 +12,13 @@ import { authRoute } from '../API/auth/auth.routes';
 import { getUserData } from '../API/auth/auth.logic'
 import { MongoStore as ms} from 'connect-mongo';
 import { UserDataTools } from '../API/auth/userData';
+import { MAX_SESSION_TIME } from '../tools/constants';
+import './init';
 
 const app = express();
 const MongoStore = require('connect-mongo')(session);
-const store: ms = new MongoStore({ mongooseConnection: mongoose.connection });
+export const store: ms = new MongoStore({ mongooseConnection: mongoose.connection });
+
 store.on('destroy', (sid) => {
     logger(LOG_TYPE.INFO, 'DELETE USER SESSION SID: ' + sid);
     UserDataTools.deleteDataSession(sid);
@@ -26,7 +29,7 @@ app.use(bodyParser.urlencoded({
 }), session({
     secret: 'ytdv6w4a2wzesdc7564uybi6n0m9pmku4esx',
     store: store,
-    cookie: { maxAge: 1000 * 60 * 40 },
+    cookie: { maxAge: MAX_SESSION_TIME },
     resave: false,
     saveUninitialized: true
 }), bodyParser.json());

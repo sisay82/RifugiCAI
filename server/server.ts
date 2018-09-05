@@ -5,7 +5,6 @@ import {
 } from './tools/common';
 import { app } from './config/app';
 import { config } from './config/env';
-(<any>mongoose.Promise) = global.Promise;
 
 const createServer = (i: number) => {
     mongoose.connect(config.MONGO_URI, {

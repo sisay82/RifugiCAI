@@ -138,12 +138,14 @@ export namespace StagingAreaTools {
     }
 }
 
-function cleanSheltersToUpdate() {
+export function cleanSheltersToUpdate() {
     StagingAreaModel.remove({
         watchDog: {
             $gte: Date.now() - MAX_TIME
         }
+    }).exec(err => {
+        if (err) {
+            logger(LOG_TYPE.ERROR, err);
+        }
     });
 }
-
-setInterval(cleanSheltersToUpdate, CLEAR_CACHE_INTERVAL);
