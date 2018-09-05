@@ -181,7 +181,7 @@ export function validationPromise(ticket): Promise<String> {
         if (DISABLE_AUTH) {
             resolve(null)
         } else {
-            const url = CAS_BASE_URL + '/cai-cas/serviceValidate?service=' + config.PARSED_URL + '&ticket=' + ticket
+            const url = CAS_BASE_URL + '/cai-cas/serviceValidate?service=' + config.getParsedURL() + '&ticket=' + ticket
             performRequestGET(url)
                 .then(value => {
                     const parser = new DOMParser({

@@ -46,8 +46,8 @@ authRoute.get('/j_spring_cas_security_check', function (req, res) {
             .catch(err => {
                 logger(LOG_TYPE.WARNING, 'Invalid user request');
                 UserDataTools.updateUserAndSend(
-                    { sid: req.session.id, resource: config.APP_BASE_URL, redirections: 0, checked: false },
-                    () => res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.PARSED_URL),
+                    { sid: req.session.id, resource: config.getAppBaseURL(), redirections: 0, checked: false },
+                    () => res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.getParsedURL()),
                     () => sendDefaultError(res)
                 );
             })
@@ -88,10 +88,10 @@ authRoute.get('/user', function (req, res) {
                 } else {
                     logger(LOG_TYPE.INFO, 'User not logged');
                     UserDataTools.updateUserData(
-                        { sid: req.session.id, resource: config.APP_BASE_URL + '/list', redirections: 0, checked: false }
+                        { sid: req.session.id, resource: config.getAppBaseURL() + '/list', redirections: 0, checked: false }
                     )
                         .then(() => {
-                            res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.PARSED_URL);
+                            res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.getParsedURL());
                         })
                         .catch(e => {
                             logger(LOG_TYPE.ERROR, 'Error deleting user data', e);
@@ -131,7 +131,7 @@ function handleRedirects(user: UserData, res: express.Response, req: express.Req
                 );
             })
     } else {
-        res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.PARSED_URL);
+        res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.getParsedURL());
     }
 }
 
@@ -208,7 +208,7 @@ authRoute.get('/*', function (req, res) {
                                 user.resource = req.path;
                                 UserDataTools.updateUserAndSend(
                                     user,
-                                    () => res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.PARSED_URL),
+                                    () => res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.getParsedURL()),
                                     () => sendDefaultError(res)
                                 );
                             }
@@ -234,7 +234,7 @@ authRoute.get('/*', function (req, res) {
                         user.redirections++;
                         UserDataTools.updateUserAndSend(
                             user,
-                            () => res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.PARSED_URL),
+                            () => res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.getParsedURL()),
                             () => sendDefaultError(res)
                         );
                     }
@@ -244,7 +244,7 @@ authRoute.get('/*', function (req, res) {
                 logger(LOG_TYPE.INFO, 'User not logged', err);
                 UserDataTools.updateUserData({ sid: req.session.id, resource: req.path, redirections: 0, checked: false })
                     .then(userData => {
-                        res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.PARSED_URL);
+                        res.redirect(CAS_BASE_URL + '/cai-cas/login?service=' + config.getParsedURL());
                     })
                     .catch(e => {
                         logger(LOG_TYPE.ERROR, 'Error deleting user data', e);
