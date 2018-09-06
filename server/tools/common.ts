@@ -71,9 +71,7 @@ export function performRequestGET(url: String, authorization?: String, timeout: 
             if (err) {
                 if (String(err.code) === 'ESOCKETTIMEDOUT' && count < 3) {
                     logger(LOG_TYPE.WARNING, 'RETRY REQUEST ' + count, Date.now() - time);
-                    return performRequestGET(url, authorization, timeout, ++count)
-                        .then(value => resolve(value))
-                        .catch(e => reject(e));
+                    return performRequestGET(url, authorization, timeout, ++count);
                 } else {
                     reject(err);
                 }
@@ -87,8 +85,7 @@ export function performRequestGET(url: String, authorization?: String, timeout: 
 export enum LOG_TYPE {
     INFO,
     WARNING,
-    ERROR,
-    FATAL
+    ERROR
 }
 
 export function logger(logWeight: LOG_TYPE, log?: any, ...other) {

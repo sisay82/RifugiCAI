@@ -74,3 +74,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Enviroment variables used from dotenv
+.env

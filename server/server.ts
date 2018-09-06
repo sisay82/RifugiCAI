@@ -30,8 +30,11 @@ const createServer = (i: number = 0) => {
         }
     });
 }
-initServer();
-createServer()
+if (initServer()) {
+    createServer();
+} else {
+    logger(LOG_TYPE.ERROR, "INITIALIZATION FAILED");
+}
 
 
 

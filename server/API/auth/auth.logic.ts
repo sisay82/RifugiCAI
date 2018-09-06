@@ -150,7 +150,7 @@ export function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Ty
         if (DISABLE_AUTH) {
             resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });
         } else {
-            performRequestGET(AUTH_URL + uuid + '/full', 'Basic YXBwcmlmdWdpQGNhaS5pdDpiZXN1Z1U3UjJHdWc=', 1000 * 10)
+            performRequestGET(AUTH_URL + uuid + '/full', process.env.USER_DATA_AUTH, 1000 * 10)
                 .then(value => {
                     try {
                         const data = JSON.parse(value.body);
@@ -165,6 +165,7 @@ export function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Ty
                             reject('User not authorized');
                         }
                     } catch (e) {
+                        logger(LOG_TYPE.ERROR, e);
                         reject(e);
                     }
                 })

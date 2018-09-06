@@ -30,6 +30,11 @@ export const CSV_UNWINDS = {
     // 'contributions.attachments'
 }
 
+export const ENV_LIST = [
+    'SESSION_SECRET',
+    'USER_DATA_AUTH'
+]
+
 export const CSV_UNWINDS_ALIASES = {
     "services": {
         "camerate_da_4_posti": "Camere da 4 posti",

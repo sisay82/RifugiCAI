@@ -26,7 +26,7 @@ store.on('destroy', (sid) => {
 app.use(bodyParser.urlencoded({
     extended: true
 }), session({
-    secret: 'ytdv6w4a2wzesdc7564uybi6n0m9pmku4esx',
+    secret: process.env.SESSION_SECRET,
     store: store,
     cookie: { maxAge: MAX_SESSION_TIME },
     resave: false,
