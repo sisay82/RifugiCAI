@@ -1,11 +1,11 @@
+import { config } from './config/env';
+import { initServer } from './config/init';
 import * as mongoose from 'mongoose';
 import {
     logger,
     LOG_TYPE
 } from './tools/common';
 import { app } from './config/app';
-import { config } from './config/env';
-import { initServer } from './config/init';
 
 const createServer = (i: number = 0) => {
     mongoose.connect(config.MONGO_URI, {

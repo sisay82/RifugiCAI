@@ -1,4 +1,6 @@
 import { logger, LOG_TYPE } from "../tools/common";
+import * as dotenv from 'dotenv';
+import { ENV_LIST } from "../tools/constants";
 
 interface IConfig {
     SERVER_URL: string,
@@ -44,6 +46,12 @@ const conf: { [type: string]: IConfig } = {
     }
 }
 
+export function checkEnvList(): boolean {
+    return ENV_LIST.reduce((acc, val) => {
+        return acc && process.env[val] != null;
+    }, true);
+}
+
 export function getConfig(env): IConfig {
     const confType = env || "default";
     const c = conf[confType];
@@ -54,4 +62,5 @@ export function getConfig(env): IConfig {
         throw new Error("CONFIGURATION ERROR ON CONFIGURATION: " + confType);
     }
 }
+export const ENV = dotenv.config();
 export const config = getConfig(process.env.NODE_ENV);
