@@ -1,5 +1,4 @@
 import { logger, LOG_TYPE } from "../tools/common";
-import * as dotenv from 'dotenv';
 import { ENV_LIST } from "../tools/constants";
 
 interface IConfig {
@@ -43,6 +42,17 @@ const conf: { [type: string]: IConfig } = {
         getParsedURL: function () {
             return encodeURIComponent(this.getAppBaseURL() + '/j_spring_cas_security_check')
         }
+    },
+    test: {
+        SERVER_URL: "localhost:",
+        APP_PORT: 8000,
+        MONGO_URI: 'mongodb://localhost:27017/CAITestDB',
+        getAppBaseURL: function () {
+            return 'http://' + this.SERVER_URL + this.APP_PORT
+        },
+        getParsedURL: function () {
+            return encodeURIComponent(this.getAppBaseURL() + '/j_spring_cas_security_check')
+        }
     }
 }
 
@@ -52,8 +62,8 @@ export function checkEnvList(): boolean {
     }, true);
 }
 
-export function getConfig(env): IConfig {
-    const confType = env || "default";
+export function getConfig(env: string): IConfig {
+    const confType = env ? env.toLowerCase() : "default";
     const c = conf[confType];
     if (c) {
         logger(LOG_TYPE.INFO, "USING CONFIGURATION: " + confType);
@@ -62,5 +72,4 @@ export function getConfig(env): IConfig {
         throw new Error("CONFIGURATION ERROR ON CONFIGURATION: " + confType);
     }
 }
-export const ENV = dotenv.config();
 export const config = getConfig(process.env.NODE_ENV);

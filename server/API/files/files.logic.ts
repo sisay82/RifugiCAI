@@ -7,14 +7,13 @@ import {
     LOG_TYPE,
     ObjectId
 } from '../../tools/common';
-import { model, QueryCursor } from 'mongoose';
+import { model } from 'mongoose';
 import { BCSchema } from '../../../src/app/shared/types/schema';
-import { DISABLE_AUTH } from '../auth/auth.logic';
 import { Buffer } from 'buffer';
 import { StagingAreaTools, StagingInterfaces } from '../../tools/stagingArea';
-import { ObjectID } from 'bson';
 import { UserData } from '../auth/userData';
 import { IFile } from '../../../src/app/shared/types/interfaces';
+import { DISABLE_AUTH } from '../../tools/constants';
 
 export const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
 

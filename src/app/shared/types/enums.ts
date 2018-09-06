@@ -251,7 +251,7 @@ export module Enums {
             [User_Type.test]: "TEST"
         }
 
-        export const getUserRolesByType = {
+        export const USER_TYPE_TO_ROLE = {
             [User_Type.central]: ['ROLE_RIFUGI_ADMIN'],
             [User_Type.sectional]: ['ROLE_MEMBERS_VIEW', 'ROLE_MEMBERSHIP'],
             [User_Type.area]: ['ROLE_RIFUGI_AREA'],

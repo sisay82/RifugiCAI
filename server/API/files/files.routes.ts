@@ -4,7 +4,6 @@ import Files_Enum = Enums.Files;
 import multer = require('multer');
 import {
     IFileExtended,
-    ObjectId,
     logger,
     LOG_TYPE,
     sendFatalError
@@ -13,7 +12,6 @@ import { IFile } from '../../../src/app/shared/types/interfaces';
 import {
     checkPermissionAPI,
     insertNewFile,
-    MAX_IMAGES,
     queryAllFilesByType,
     queryAllFiles,
     queryFilesByshelterId,

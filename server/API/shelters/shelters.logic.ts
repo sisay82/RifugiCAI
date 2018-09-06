@@ -14,10 +14,10 @@ import {
     toTitleCase,
     getPropertiesNumber
 } from '../../tools/common';
-import { DISABLE_AUTH } from '../auth/auth.logic';
 import { createContributionPDF } from '../files/pdf.logic';
 import { Tools } from '../../../src/app/shared/tools/common.tools';
 import { StagingAreaTools } from '../../tools/stagingArea';
+import { DISABLE_AUTH } from '../../tools/constants';
 
 const Services = model<IServiceExtended>('Services', BCSchema.serviceSchema);
 const Shelters = model<IShelterExtended>('Shelters', BCSchema.shelterSchema);

@@ -12,7 +12,8 @@
                 "--config=${workspaceRoot}\\server\\spec\\jasmine.json"
             ],
             "env": {
-                "NODE_PATH": "."
+                "NODE_PATH": ".",
+                "NODE_ENV": "test"
             }
         },
         {

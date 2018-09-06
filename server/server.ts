@@ -1,3 +1,5 @@
+
+require('dotenv').config();
 import { config } from './config/env';
 import { initServer } from './config/init';
 import * as mongoose from 'mongoose';
@@ -30,6 +32,7 @@ const createServer = (i: number = 0) => {
         }
     });
 }
+
 if (initServer()) {
     createServer();
 } else {

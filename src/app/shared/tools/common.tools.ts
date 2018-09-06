@@ -76,7 +76,7 @@ export namespace Tools {
     export function getRegions(userInfo: ICodeInfo) {
         return getRegionsFromAreaCode(userInfo.AREA)
             || (userInfo.GR ? [userInfo.GR] : null)
-                || (userInfo.REGION ? [userInfo.REGION] : null);
+            || (userInfo.REGION ? [userInfo.REGION] : null);
     }
 
     export function getSections(userInfo: ICodeInfo) {
@@ -84,8 +84,11 @@ export namespace Tools {
     }
 
     export function getCodeSection(code: String, codeName: Codes.CodeNames): String {
-        const codeSection = Codes.CodeSection[codeName];
-        return code.substr(codeSection[0], codeSection[1]);
+        if (code && codeName) {
+            const codeSection = Codes.CodeSection[codeName];
+            return code.substr(codeSection[0], codeSection[1]);
+        }
+        return null;
     }
 
     export function getCodeSections(userType: User_Type, code: String): ICodeInfo {

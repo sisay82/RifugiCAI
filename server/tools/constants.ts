@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { config } from '../config/env';
 
 export const OUT_DIR = path.join(__dirname, '../../../dist');
 
@@ -20,6 +21,18 @@ export const MONTHS = [
 export const CLEAR_CACHE_INTERVAL = 1.5 * 1000;
 export const MAX_TIME = 1000 * 60 * 10;
 export const MAX_SESSION_TIME = 1000 * 60 * 40;
+
+const CAS_BASE_URL = 'https://accesso.cai.it';
+export const AUTH_URL = 'https://services.cai.it/cai-integration-ws/secured/users/';
+export const DISABLE_AUTH = false;
+
+export const CAS_LOGOUT_URL = CAS_BASE_URL + '/cai-cas/logout'
+export function getLoginURL() {
+    return CAS_BASE_URL + '/cai-cas/login?service=' + config.getParsedURL();
+}
+export function getValidationURL(ticket: string) {
+    return CAS_BASE_URL + '/cai-cas/serviceValidate?service=' + config.getParsedURL() + '&ticket=' + ticket
+}
 
 export const CSV_UNWINDS = {
     'services': [],

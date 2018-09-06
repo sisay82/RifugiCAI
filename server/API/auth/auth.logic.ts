@@ -5,12 +5,15 @@ const DOMParser = xmldom.DOMParser;
 import { Tools } from '../../../src/app/shared/tools/common.tools';
 import { Enums } from '../../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { config } from '../../config/env';
 import { UserData, UserDataTools } from './userData';
+import { DISABLE_AUTH, AUTH_URL, getValidationURL, CAS_LOGOUT_URL } from '../../tools/constants';
+import { Response } from 'express';
 
-export const CAS_BASE_URL = 'https://accesso.cai.it';
-export const AUTH_URL = 'https://services.cai.it/cai-integration-ws/secured/users/';
-export const DISABLE_AUTH = false;
+export function sendDefaultError(res: Response, err?) {
+    res.status(500).send(`Error, try logout <a href='` +
+        CAS_LOGOUT_URL + `'>here</a> before try again.
+            <br>Error info:<br><br>` + err);
+}
 
 export function getUserData(sessionID: string): Promise<UserData> {
     return new Promise<UserData>((resolve, reject) => {
@@ -40,50 +43,26 @@ export function getUserData(sessionID: string): Promise<UserData> {
     });
 }
 
-function getChildByName(node: Node, name: String): Node {
-    for (let i = 0; i < node.childNodes.length; i++) {
-        if (node.childNodes.item(i).localName === name) {
-            return node.childNodes.item(i);
-        }
-        if (node.childNodes.item(i).hasChildNodes()) {
-            const n = getChildByName(node.childNodes.item(i), name);
-            if (n) {
-                return n;
+export function getChildByName(node: Node, name: String): Node {
+    if (node && name && node.hasChildNodes()) {
+        for (let i = 0; i < node.childNodes.length; i++) {
+            const childNode = node.childNodes.item(i);
+            if (childNode.localName === name) {
+                return childNode;
+            }
+            if (childNode.hasChildNodes()) {
+                const n = getChildByName(childNode, name);
+                if (n) {
+                    return n;
+                }
             }
         }
     }
     return null;
 }
 
-function getChildsByName(node: Node, name: String): Node[] {
-    let nodes: Node[] = [];
-    for (let i = 0; i < node.childNodes.length; i++) {
-        if (node.childNodes.item(i).localName === name) {
-            nodes.push(node.childNodes.item(i));
-        }
-        if (node.childNodes.item(i).hasChildNodes()) {
-            const n = getChildsByName(node.childNodes.item(i), name);
-            if (n) {
-                nodes = nodes.concat(n);
-            }
-        }
-    }
-    return nodes;
-}
-
-function getTargetNodesByName(node: Node, name: String, target: String): Node[] {
-    const nodes: Node[] = [];
-    for (const n of getChildsByName(node, name)) {
-        const child = getChildByName(n, target);
-        if (child) {
-            nodes.push(child);
-        }
-    }
-    return nodes;
-}
-
-function checkInclude(source: any[], target: any[], attribute): boolean {
-    if (source) {
+export function checkInclude(source: any[], target: any[], attribute): boolean {
+    if (source && target) {
         return source.reduce((ret, item) => {
             if (target.find(obj => obj.indexOf(item[attribute]) > -1)) {
                 return true;
@@ -96,20 +75,20 @@ function checkInclude(source: any[], target: any[], attribute): boolean {
     }
 }
 
-function getRole(data): Auth_Permissions.User_Type {
+export function getRole(data): Auth_Permissions.User_Type {
     if (data) {
-        if (checkInclude(data.aggregatedAuthorities, Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.central], 'role')) {
+        if (checkInclude(data.aggregatedAuthorities, Auth_Permissions.USER_TYPE_TO_ROLE[Auth_Permissions.User_Type.central], 'role')) {
             return Auth_Permissions.User_Type.central;
-        } else if (checkInclude(data.userGroups, Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.regional], 'name')) {
+        } else if (checkInclude(data.userGroups, Auth_Permissions.USER_TYPE_TO_ROLE[Auth_Permissions.User_Type.regional], 'name')) {
             return Auth_Permissions.User_Type.regional;
         } else if (checkInclude(data.aggregatedAuthorities,
-            Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.sectional], 'role')) {
+            Auth_Permissions.USER_TYPE_TO_ROLE[Auth_Permissions.User_Type.sectional], 'role')) {
             return Auth_Permissions.User_Type.sectional;
         } else if (checkInclude(data.aggregatedAuthorities,
-            Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.visualization], 'role')) {
+            Auth_Permissions.USER_TYPE_TO_ROLE[Auth_Permissions.User_Type.visualization], 'role')) {
             return Auth_Permissions.User_Type.visualization;
         } else if (checkInclude(data.aggregatedAuthorities,
-            Auth_Permissions.getUserRolesByType[Auth_Permissions.User_Type.area], 'role')) {
+            Auth_Permissions.USER_TYPE_TO_ROLE[Auth_Permissions.User_Type.area], 'role')) {
             return Auth_Permissions.User_Type.area;
         } else {
             return null;
@@ -119,9 +98,9 @@ function getRole(data): Auth_Permissions.User_Type {
     }
 }
 
-function getCode(type: Auth_Permissions.User_Type, data): String {
+export function getCode(type: Auth_Permissions.User_Type, data): String {
     let code = null;
-    if (type) {
+    if (type && data) {
         if (type === Auth_Permissions.User_Type.sectional) {
             if (data.sectionCode) {
                 code = data.sectionCode;
@@ -135,13 +114,19 @@ function getCode(type: Auth_Permissions.User_Type, data): String {
     return code;
 }
 
-function getUserPermissions(data): Tools.IUserProfile {
+export function getUserPermissions(data): Tools.IUserProfile {
     let role = getRole(data);
     const code = getCode(role, data);
-    if (role === Auth_Permissions.User_Type.regional && Tools.getCodeSection(code, Auth_Permissions.Codes.CodeNames.CODETYPE) === '93') {
-        role = Auth_Permissions.User_Type.area;
+    if (role && code) {
+        if (
+            role === Auth_Permissions.User_Type.regional &&
+            Tools.getCodeSection(code, Auth_Permissions.Codes.CodeNames.CODETYPE) === '93'
+        ) {
+            role = Auth_Permissions.User_Type.area;
+        }
+        return { role: role, code: code };
     }
-    return { role: role, code: code };
+    return { role: null, code: null };
 }
 
 export function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Type, code: String }> {
@@ -182,7 +167,7 @@ export function validationPromise(ticket): Promise<String> {
         if (DISABLE_AUTH) {
             resolve(null)
         } else {
-            const url = CAS_BASE_URL + '/cai-cas/serviceValidate?service=' + config.getParsedURL() + '&ticket=' + ticket
+            const url = getValidationURL(ticket);
             performRequestGET(url)
                 .then(value => {
                     const parser = new DOMParser({
@@ -195,7 +180,6 @@ export function validationPromise(ticket): Promise<String> {
                     });
                     const el: Document = parser.parseFromString(value.body, 'text/xml');
                     if (el) {
-                        const doc = el.firstChild;
                         let res = false;
                         let user: String;
                         if (getChildByName(el, 'authenticationSuccess')) {

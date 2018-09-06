@@ -4,8 +4,6 @@ import { Schema, model, Document } from 'mongoose';
 import Auth_Permissions = Enums.Auth_Permissions;
 import { logger, LOG_TYPE } from '../../tools/common';
 import { store } from '../../config/app';
-import { MAX_SESSION_TIME } from '../../tools/constants';
-
 
 export interface UserData {
     sid: String;
