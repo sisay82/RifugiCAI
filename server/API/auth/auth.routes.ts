@@ -135,6 +135,12 @@ function handleRedirects(user: UserData, res: express.Response, req: express.Req
     }
 }
 
+/*
+authRoute.get('/*', function (req, res, next) {
+
+});
+*/
+
 authRoute.get('/*', function (req, res) {
     logger(LOG_TYPE.INFO, req.method + ' REQUEST: ' + JSON.stringify(req.query));
     logger(LOG_TYPE.INFO, req.path);

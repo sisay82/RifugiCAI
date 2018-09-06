@@ -20,7 +20,8 @@ import {
     queryFileByid,
     deleteFile,
     resolveStagingAreaFiles,
-    intersectFilesArray
+    intersectFilesArray,
+    filterStagingFile
 } from './files.logic';
 import { StagingAreaTools, StagingInterfaces } from '../../tools/stagingArea';
 
@@ -286,12 +287,12 @@ fileRoute.route('/shelters/file/byshel/:id/bytype')
                 if (stagingItem.files != null) {
                     queryFilesByshelterId(req.params.id, types)
                         .then((files) => {
-                            const stagingFiles = stagingItem.files.filter(file => types.indexOf(file.type) >= 0);
+                            const stagingFiles = stagingItem.files.filter(file => filterStagingFile(file, types));
                             const retFiles = intersectFilesArray(stagingFiles, files);
                             res.status(200).send(retFiles);
                         })
                         .catch((err) => {
-                            res.status(500).send({ error: 'Invalid user or request' });
+                            sendFatalError(res, err);
                         });
                 } else {
                     return Promise.reject(null);

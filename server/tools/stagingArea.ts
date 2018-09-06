@@ -141,7 +141,7 @@ export namespace StagingAreaTools {
 export function cleanSheltersToUpdate() {
     StagingAreaModel.remove({
         watchDog: {
-            $gte: Date.now() - MAX_TIME
+            $lte: new Date(Date.now() - MAX_TIME)
         }
     }).exec(err => {
         if (err) {

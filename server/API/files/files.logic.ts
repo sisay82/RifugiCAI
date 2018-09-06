@@ -246,6 +246,21 @@ export function checkPermissionAPI(req, res, next) {
     }
 }
 
+
+export function mergeFiles(objA: IFileExtended, objB: IFile) {
+    if (objA && objB && (<any>objA)._doc && (<any>objB)._doc) {
+        for (const prop in (<any>objA)._doc) {
+            if (!prop.startsWith('_') &&
+                (<any>objB)._doc[prop] &&
+                objB[prop]) {
+                objA[prop] = objB[prop];
+            }
+        }
+    }
+    return objA;
+}
+
+
 export function intersectFilesArray(stagingArray: StagingInterfaces.StagingFileExtended[], files: IFileExtended[]) {
     const updFiles = stagingArray.filter(obj => obj.toUpdate);
     const retFiles = files.filter(obj => {
@@ -255,11 +270,13 @@ export function intersectFilesArray(stagingArray: StagingInterfaces.StagingFileE
         .concat(
             stagingArray.filter(obj => obj.new)
         );
-    updFiles.forEach(updfile => {
-        retFiles.splice(retFiles.findIndex(o => String(o._id) === String(updfile._id)), 1, updfile);
-    });
 
-    return retFiles;
+    return retFiles.map(file => {
+        const updFile = updFiles.find(upd =>
+            String(upd._id) === String(file._id)
+        );
+        return mergeFiles(file, updFile);
+    });
 }
 
 export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExtended, user: UserData): Promise<String> {
@@ -335,4 +352,8 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExten
                 }
             });
     });
+}
+
+export function filterStagingFile(file: StagingInterfaces.StagingFileExtended, types: Enums.Files.File_Type[]) {
+    return (types.indexOf(file.type) >= 0) || file.toRemove || file.toUpdate;
 }
