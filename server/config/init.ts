@@ -5,10 +5,13 @@ import { logger, LOG_TYPE } from '../tools/common';
 import * as mongoose from 'mongoose';
 (<any>mongoose.Promise) = global.Promise;
 
-swipeUserData();
-cleanSheltersToUpdate();
+export function initServer() {
+    swipeUserData();
+    cleanSheltersToUpdate();
 
-setInterval(cleanSheltersToUpdate, CLEAR_CACHE_INTERVAL);
-setInterval(swipeUserData, MAX_SESSION_TIME);
+    setInterval(cleanSheltersToUpdate, CLEAR_CACHE_INTERVAL);
+    setInterval(swipeUserData, MAX_SESSION_TIME);
 
-logger(LOG_TYPE.INFO, "SERVER INITIALIZED");
+    logger(LOG_TYPE.INFO, "SERVER INITIALIZED");
+}
+

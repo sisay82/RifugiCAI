@@ -19,6 +19,9 @@
       "node"
     ]
   },
+  "exclude": [
+    "node_modules"
+  ],
   "include": [
     "**/*.spec.ts",
     "**/*.d.ts"

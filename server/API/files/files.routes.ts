@@ -27,7 +27,7 @@ import { StagingAreaTools, StagingInterfaces } from '../../tools/stagingArea';
 
 export const fileRoute = express.Router();
 
-fileRoute.all('*', checkPermissionAPI);
+fileRoute.all('*', checkPermissionAPI || <any>(() => { }));
 
 fileRoute.route('/shelters/file')
     .post(function (req, res) {

@@ -10,10 +10,9 @@ import { fileRoute } from '../API/files/files.routes';
 import { appRoute } from '../API/shelters/shelters.routes';
 import { authRoute } from '../API/auth/auth.routes';
 import { getUserData } from '../API/auth/auth.logic'
-import { MongoStore as ms} from 'connect-mongo';
+import { MongoStore as ms } from 'connect-mongo';
 import { UserDataTools } from '../API/auth/userData';
 import { MAX_SESSION_TIME } from '../tools/constants';
-import './init';
 
 const app = express();
 const MongoStore = require('connect-mongo')(session);

@@ -247,7 +247,7 @@ export function checkPermissionAPI(req, res, next) {
 }
 
 
-export function mergeFiles(objA: IFileExtended, objB: IFile) {
+export function mergeFiles(objA: IFileExtended, objB: StagingInterfaces.StagingFile) {
     if (objA && objB && (<any>objA)._doc && (<any>objB)._doc) {
         for (const prop in (<any>objA)._doc) {
             if (!prop.startsWith('_') &&
@@ -255,6 +255,15 @@ export function mergeFiles(objA: IFileExtended, objB: IFile) {
                 objB[prop]) {
                 objA[prop] = objB[prop];
             }
+        }
+        if (objB.toUpdate != null) {
+            (<any>objA).toUpdate = objB.toUpdate;
+        }
+        if (objB.new != null) {
+            (<any>objA).new = objB.new;
+        }
+        if (objB.toRemove != null) {
+            (<any>objA).toRemove = objB.toRemove;
         }
     }
     return objA;

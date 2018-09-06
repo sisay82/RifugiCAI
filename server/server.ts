@@ -5,8 +5,9 @@ import {
 } from './tools/common';
 import { app } from './config/app';
 import { config } from './config/env';
+import { initServer } from './config/init';
 
-const createServer = (i: number) => {
+const createServer = (i: number = 0) => {
     mongoose.connect(config.MONGO_URI, {
         useMongoClient: true
     }, function (err) {
@@ -29,7 +30,8 @@ const createServer = (i: number) => {
         }
     });
 }
-createServer(0)
+initServer();
+createServer()
 
 
 
