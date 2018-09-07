@@ -13,9 +13,11 @@ import { getUserData } from '../API/auth/auth.logic'
 import { MongoStore as ms } from 'connect-mongo';
 import { UserDataTools } from '../API/auth/userData';
 import { MAX_SESSION_TIME } from '../tools/constants';
+import * as ConnectMongo from 'connect-mongo';
 
 const app = express();
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = ConnectMongo(session);
+
 export const store: ms = new MongoStore({ mongooseConnection: mongoose.connection });
 
 store.on('destroy', (sid) => {
@@ -23,6 +25,7 @@ store.on('destroy', (sid) => {
     UserDataTools.deleteDataSession(sid);
 });
 
+app.disable('x-powered-by');
 app.use(bodyParser.urlencoded({
     extended: true
 }), session({
@@ -30,7 +33,8 @@ app.use(bodyParser.urlencoded({
     store: store,
     cookie: { maxAge: MAX_SESSION_TIME },
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    name: 'sessionId'
 }), bodyParser.json());
 
 app.use('/api', function (req, res, next) {

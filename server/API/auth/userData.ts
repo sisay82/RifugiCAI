@@ -42,6 +42,14 @@ export namespace UserDataTools {
         });
     }
 
+    export function getUserDataByUUID(uuid): Promise<UserDataExtended> {
+        return new Promise<UserDataExtended>((resolve, reject) => {
+            UserDataModel.findOne({ uuid: uuid }).exec((err, res) => {
+                err || !res ? reject(err) : resolve(res);
+            });
+        });
+    }
+
     export function updateUserData(user: UserData): Promise<UserDataExtended> {
         return new Promise<UserDataExtended>((resolve, reject) => {
             const upsert = (<any>user).__v == null;

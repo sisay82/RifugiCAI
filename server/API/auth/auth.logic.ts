@@ -142,40 +142,45 @@ export function getUserPermissions(data): Tools.IUserProfile {
     return { role: null, code: null };
 }
 
+export function getAuthorizationsFromCAI(uuid) {
+    return new Promise<{ role: Auth_Permissions.User_Type, code: String }>((resolve, reject) => {
+        performRequestGET(AUTH_URL + uuid + '/full', process.env.USER_DATA_AUTH, MAX_DELAY_GET_REQUEST)
+            .then(value => {
+                try {
+                    const data = JSON.parse(value.body);
+                    const user: { role: Auth_Permissions.User_Type, code: String } = getUserPermissions(data);
+                    if (user.role) {
+                        if (user.code) {
+                            resolve(user);
+                        } else {
+                            reject('Error code');
+                        }
+                    } else {
+                        reject('User not authorized');
+                    }
+                } catch (e) {
+                    logger(LOG_TYPE.ERROR, e);
+                    reject(e);
+                }
+            })
+            .catch(err => {
+                logger(LOG_TYPE.WARNING, err);
+                reject(err);
+            });
+    });
+}
+
 export function checkUserAuthorizations(uuid): Promise<{ role: Auth_Permissions.User_Type, code: String }> {
     logger(LOG_TYPE.INFO, 'CHECKUSER');
     if (!uuid) {
         return Promise.reject('ERROR USER UUID');
     }
-    return new Promise<{ role: Auth_Permissions.User_Type, code: String }>((resolve, reject) => {
-        if (DISABLE_AUTH) {
-            resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });
-        } else {
-            performRequestGET(AUTH_URL + uuid + '/full', process.env.USER_DATA_AUTH, MAX_DELAY_GET_REQUEST)
-                .then(value => {
-                    try {
-                        const data = JSON.parse(value.body);
-                        const user: { role: Auth_Permissions.User_Type, code: String } = getUserPermissions(data);
-                        if (user.role) {
-                            if (user.code) {
-                                resolve(user);
-                            } else {
-                                reject('Error code');
-                            }
-                        } else {
-                            reject('User not authorized');
-                        }
-                    } catch (e) {
-                        logger(LOG_TYPE.ERROR, e);
-                        reject(e);
-                    }
-                })
-                .catch(err => {
-                    logger(LOG_TYPE.WARNING, err);
-                    reject(err);
-                });
-        }
-    });
+    if (DISABLE_AUTH) {
+        return Promise.resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });
+    } else {
+        return getAuthorizationsFromCAI(uuid);
+    }
+
 }
 
 export function validationPromise(ticket): Promise<String> {
