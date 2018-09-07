@@ -5,15 +5,11 @@ const DOMParser = xmldom.DOMParser;
 import { Tools } from '../../../src/app/shared/tools/common.tools';
 import { Enums } from '../../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { UserData, UserDataTools } from './userData';
-import { DISABLE_AUTH, AUTH_URL, getValidationURL, CAS_LOGOUT_URL } from '../../tools/constants';
-import { Response } from 'express';
-
-export function sendDefaultError(res: Response, err?) {
-    res.status(500).send(`Error, try logout <a href='` +
-        CAS_LOGOUT_URL + `'>here</a> before try again.
-            <br>Error info:<br><br>` + err);
-}
+import { UserData, UserDataTools, UserDataExtended } from './userData';
+import { DISABLE_AUTH, AUTH_URL, getValidationURL, CAS_LOGOUT_URL, MAX_DELAY_GET_REQUEST, getLoginURL } from '../../tools/constants';
+import { Response, Request } from 'express';
+import { ENV_CONFIG } from '../../config/env';
+import { store } from '../../config/app';
 
 export function getUserData(sessionID: string): Promise<UserData> {
     return new Promise<UserData>((resolve, reject) => {
@@ -41,6 +37,23 @@ export function getUserData(sessionID: string): Promise<UserData> {
 
         }
     });
+}
+
+export function sendDefaultError(res: Response, ...errors) {
+    logger(LOG_TYPE.WARNING, errors);
+    res.status(500).send(`Error, try logout <a href='` +
+        CAS_LOGOUT_URL + `'>here</a> before try again`);
+}
+
+export function sendTicketError(req: Request, res: Response, user: UserData, disableUserCheck?) {
+    logger(LOG_TYPE.INFO, 'Invalid ticket');
+    handleRedirects(user, req.path, disableUserCheck)
+        .then(() => {
+            res.redirect(getLoginURL())
+        })
+        .catch(e => {
+            sendDefaultError(res, e);
+        });
 }
 
 export function getChildByName(node: Node, name: String): Node {
@@ -129,13 +142,16 @@ export function getUserPermissions(data): Tools.IUserProfile {
     return { role: null, code: null };
 }
 
-export function checkUserPromise(uuid): Promise<{ role: Auth_Permissions.User_Type, code: String }> {
+export function checkUserAuthorizations(uuid): Promise<{ role: Auth_Permissions.User_Type, code: String }> {
     logger(LOG_TYPE.INFO, 'CHECKUSER');
+    if (!uuid) {
+        return Promise.reject('ERROR USER UUID');
+    }
     return new Promise<{ role: Auth_Permissions.User_Type, code: String }>((resolve, reject) => {
         if (DISABLE_AUTH) {
             resolve({ role: Auth_Permissions.User_Type.superUser, code: '9999999' });
         } else {
-            performRequestGET(AUTH_URL + uuid + '/full', process.env.USER_DATA_AUTH, 1000 * 10)
+            performRequestGET(AUTH_URL + uuid + '/full', process.env.USER_DATA_AUTH, MAX_DELAY_GET_REQUEST)
                 .then(value => {
                     try {
                         const data = JSON.parse(value.body);
@@ -179,26 +195,139 @@ export function validationPromise(ticket): Promise<String> {
                         }
                     });
                     const el: Document = parser.parseFromString(value.body, 'text/xml');
-                    if (el) {
-                        let res = false;
-                        let user: String;
-                        if (getChildByName(el, 'authenticationSuccess')) {
-                            res = true;
-                            user = getChildByName(el, 'uuid').textContent;
-                        }
-                        if (res) {
-                            resolve(user);
-                        } else {
-                            reject({ error: 'Authentication error' });
-                        }
+                    if (el && getChildByName(el, 'authenticationSuccess')) {
+                        const user = getChildByName(el, 'uuid').textContent;
+                        resolve(user);
                     } else {
-                        reject({ error: 'Document parsing error' });
+                        reject('Authentication FAILED');
                     }
                 })
                 .catch(err => {
                     logger(LOG_TYPE.WARNING, err);
                     reject(err);
                 });
+        }
+    });
+}
+
+export function checkUserCache(user: UserDataExtended, sessionID: string)
+    : Promise<{ code: String; role: Enums.Auth_Permissions.User_Type }> {
+    return new Promise<{ code: String; role: Enums.Auth_Permissions.User_Type }>((resolve, reject) => {
+        if (user && user.uuid) {
+            if (!user.code || !user.role) {
+                deleteSessionByID(sessionID)
+                    .then(() => {
+                        reject('Permissions in UserData cache error');
+                    })
+                    .catch(err => {
+                        logger(LOG_TYPE.ERROR, err);
+                        reject('Permissions in UserData cache error');
+                    });
+            } else {
+                resolve({ code: user.code, role: user.role })
+            }
+        } else {
+            logger(LOG_TYPE.INFO, 'User not logged');
+            UserDataTools.updateUserData(
+                { sid: sessionID, resource: ENV_CONFIG.getAppBaseURL() + '/list', redirections: 0, checked: false }
+            )
+                .then(() => {
+                    reject();
+                })
+                .catch(e => {
+                    logger(LOG_TYPE.ERROR, 'Error deleting user data', e);
+                    reject();
+                });
+        }
+    });
+}
+
+export function deleteSessionByID(sessionID) {
+    return new Promise<void>((resolve, reject) => {
+        store.get(sessionID, (err, session) => {
+            if (err) {
+                reject(err);
+            } else {
+                return deleteSession(session);
+            }
+        });
+    });
+}
+
+export function deleteSession(session) {
+    return new Promise<void>((resolve, reject) => {
+        session.destroy(e => {
+            if (e) {
+                reject(e);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+export function handleRedirects(user: UserData, path: string, disableUserCheck?): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        if (user.redirections >= 3) {
+            UserDataTools.deleteDataSession(user.sid)
+                .then(() => {
+                    reject("Redirection error: TOO MANY REDIRECTS")
+                })
+                .catch(err => {
+                    logger(LOG_TYPE.ERROR, 'Error deleting user data', err);
+                    reject("Redirection error: TOO MANY REDIRECTS")
+                });
+        } else {
+            if (disableUserCheck) {
+                user.checked = false;
+            }
+            user.resource = path;
+            user.redirections++;
+            UserDataTools.updateUserData(user)
+                .then(userData => {
+                    resolve();
+                })
+                .catch(err => {
+                    reject(err)
+                });
+        }
+    })
+
+}
+
+export function updateDefaultUserPrivileges(user: UserData): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        user.checked = true;
+        user.redirections = 0;
+        if (!user.code || !user.role) {
+            checkUserAuthorizations(user.uuid)
+                .then(us => {
+                    logger(LOG_TYPE.INFO,
+                        'Access granted with role and code: ', Auth_Permissions.User_Type[us.role], us.code);
+                    user.code = us.code;
+                    user.role = us.role;
+                    UserDataTools.updateUserAndSend(
+                        user,
+                        () => resolve(),
+                        (err) => reject(err)
+                    );
+
+                })
+                .catch((err) => {
+                    logger(LOG_TYPE.INFO, 'Access denied', err);
+                    UserDataTools.updateUserAndSend(
+                        user,
+                        () => resolve(),
+                        (e) => reject(e)
+                    );
+                });
+        } else {
+            logger(LOG_TYPE.INFO, 'Access granted with role and code: ', user.role, user.code);
+            UserDataTools.updateUserAndSend(
+                user,
+                () => resolve(),
+                (err) => reject(err)
+            );
         }
     });
 }

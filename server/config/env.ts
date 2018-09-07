@@ -72,4 +72,4 @@ export function getConfig(env: string): IConfig {
         throw new Error("CONFIGURATION ERROR ON CONFIGURATION: " + confType);
     }
 }
-export const config = getConfig(process.env.NODE_ENV);
+export const ENV_CONFIG = getConfig(process.env.NODE_ENV);

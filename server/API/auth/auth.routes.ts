@@ -1,11 +1,18 @@
 import { Enums } from '../../../src/app/shared/types/enums';
 import * as express from 'express';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { logger, LOG_TYPE } from '../../tools/common';
+import { logger, LOG_TYPE, sendFatalError } from '../../tools/common';
 import { OUT_DIR, DISABLE_AUTH, CAS_LOGOUT_URL, getLoginURL } from '../../tools/constants';
-import { config } from '../../config/env';
+import { ENV_CONFIG } from '../../config/env';
 import * as path from 'path';
-import { checkUserPromise, validationPromise, sendDefaultError } from './auth.logic';
+import {
+    validationPromise,
+    sendDefaultError,
+    checkUserCache,
+    deleteSession,
+    updateDefaultUserPrivileges,
+    sendTicketError
+} from './auth.logic';
 import { UserDataTools, UserData } from './userData';
 
 export const authRoute = express.Router();
@@ -14,13 +21,16 @@ authRoute.get('/logout', function (req, res) {
     if (DISABLE_AUTH) {
         res.redirect('/list');
     } else {
-        logger(LOG_TYPE.INFO, 'Logging out user ' + req.session.id);
-        req.session.destroy(err => {
-            if (err) {
-                logger(LOG_TYPE.WARNING, 'Error in destroying session', err);
-            }
-        });
-        res.redirect(CAS_LOGOUT_URL);
+        const sid = req.session.id;
+        deleteSession(req.session)
+            .then(() => {
+                logger(LOG_TYPE.INFO, 'Logging out user ' + sid);
+                res.redirect(CAS_LOGOUT_URL);
+            })
+            .catch(err => {
+                logger(LOG_TYPE.ERROR, 'Error in destroying session', err);
+                res.redirect(CAS_LOGOUT_URL);
+            });
     }
 });
 
@@ -34,15 +44,15 @@ authRoute.get('/j_spring_cas_security_check', function (req, res) {
                 UserDataTools.updateUserAndSend(
                     user,
                     (updUser) => res.redirect(updUser.resource.toString()),
-                    () => sendDefaultError(res)
+                    (err) => sendFatalError(res, err)
                 );
             })
             .catch(err => {
-                logger(LOG_TYPE.WARNING, 'Invalid user request');
+                logger(LOG_TYPE.WARNING, 'Invalid user request', err);
                 UserDataTools.updateUserAndSend(
-                    { sid: req.session.id, resource: config.getAppBaseURL(), redirections: 0, checked: false },
+                    { sid: req.session.id, resource: ENV_CONFIG.getAppBaseURL(), redirections: 0, checked: false },
                     () => res.redirect(getLoginURL()),
-                    () => sendDefaultError(res)
+                    (e) => sendFatalError(res, e)
                 );
             })
 
@@ -56,44 +66,17 @@ authRoute.get('/user', function (req, res) {
         UserDataTools.getUserData(req.session.id)
             .then(user => {
                 logger(LOG_TYPE.INFO, 'User permissions request (UUID): ', user.uuid);
-                if (user && user.uuid) {
-                    if (!user.code || !user.role) {
-                        if (user.checked) {
-                            user.checked = false;
-                            res.status(500).send({ error: 'Invalid user or request' });
-                        } else {
-                            checkUserPromise(user.uuid)
-                                .then(usr => {
-                                    user.code = usr.code;
-                                    user.role = usr.role;
-                                    UserDataTools.updateUserAndSend(
-                                        user,
-                                        () => res.status(200).send(usr),
-                                        () => sendDefaultError(res)
-                                    );
-                                })
-                                .catch(() => {
-                                    res.status(500).send({ error: 'Invalid user or request' });
-                                });
-                        }
-                    } else {
-                        res.status(200).send({ code: user.code, role: user.role });
-                    }
-                } else {
-                    logger(LOG_TYPE.INFO, 'User not logged');
-                    UserDataTools.updateUserData(
-                        { sid: req.session.id, resource: config.getAppBaseURL() + '/list', redirections: 0, checked: false }
-                    )
-                        .then(() => {
-                            res.redirect(getLoginURL());
-                        })
-                        .catch(e => {
-                            logger(LOG_TYPE.ERROR, 'Error deleting user data', e);
-                        });
-                }
+                return checkUserCache(user, req.session.id);
             })
-            .catch(() => {
-                res.status(500).send({ error: 'Invalid user or request' });
+            .then((user) => {
+                res.status(200).send({ code: user.code, role: user.role })
+            })
+            .catch((err) => {
+                if (err) {
+                    sendFatalError(err);
+                } else {
+                    res.redirect(getLoginURL());
+                }
             });
     }
 })
@@ -107,149 +90,53 @@ authRoute.get('/', function (req, res, next) {
 
 authRoute.use(express.static(OUT_DIR));
 
-function handleRedirects(user: UserData, res: express.Response, req: express.Request, error?) {
-    user.resource = req.path;
-    user.redirections++;
-    if (user.redirections >= 3) {
-        logger(LOG_TYPE.WARNING, 'Too many redirects');
-        UserDataTools.deleteDataSession(user.sid)
-            .then(() => {
-                res.status(500).send(`Error, try logout <a href='` +
-                    CAS_LOGOUT_URL + `'>here</a> before try again.
-                                        <br>Error info:<br><br>` + error);
-            })
-            .catch(err => {
-                logger(LOG_TYPE.ERROR, 'Error deleting user data', err);
-                res.status(500).send(
-                    'Error, try logout <a href="' + CAS_LOGOUT_URL + '">here</a> before try again'
-                );
-            })
-    } else {
-        res.redirect(getLoginURL());
-    }
-}
-
-/*
 authRoute.get('/*', function (req, res, next) {
-
-});
-*/
-
-authRoute.get('/*', function (req, res) {
-    logger(LOG_TYPE.INFO, req.method + ' REQUEST: ' + JSON.stringify(req.query));
-    logger(LOG_TYPE.INFO, req.path);
+    logger(LOG_TYPE.INFO, req.method + ' REQUEST: ' + JSON.stringify(req.query) + ' PATH: ' + req.path);
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('content-type', 'text/html; charset=utf-8');
-
     if (DISABLE_AUTH) {
         res.sendFile(path.join(OUT_DIR + '/index.html'));
     } else {
-        UserDataTools.getUserData(req.session.id)
-            .then(user => {
-                if (user.ticket) {
-                    logger(LOG_TYPE.INFO, 'Checking ticket: ', user.ticket);
-                    validationPromise(user.ticket)
-                        .then((usr) => {
-                            logger(LOG_TYPE.INFO, 'Valid ticket');
-                            user.checked = true;
-                            user.redirections = 0;
-                            if (!user.code || !user.role) {
-                                user.uuid = usr;
-                                checkUserPromise(usr)
-                                    .then(us => {
-                                        logger(LOG_TYPE.INFO,
-                                            'Access granted with role and code: ', Auth_Permissions.User_Type[us.role], us.code);
-                                        user.code = us.code;
-                                        user.role = us.role;
-                                        UserDataTools.updateUserAndSend(
-                                            user,
-                                            () => res.sendFile(path.join(OUT_DIR + '/index.html')),
-                                            () => sendDefaultError(res)
-                                        );
-                                    })
-                                    .catch(() => {
-                                        logger(LOG_TYPE.INFO, 'Access denied');
-                                        UserDataTools.updateUserAndSend(
-                                            user,
-                                            () => res.sendFile(path.join(OUT_DIR + '/index.html')),
-                                            () => sendDefaultError(res)
-                                        );
-                                    });
-                            } else {
-                                if (user.role) {
-                                    logger(LOG_TYPE.INFO, 'Access granted with role and code: ', user.role, user.code);
-                                }
-                                UserDataTools.updateUserAndSend(
-                                    user,
-                                    () => res.sendFile(path.join(OUT_DIR + '/index.html')),
-                                    () => sendDefaultError(res)
-                                );
-                            }
-                        })
-                        .catch((err) => {
-                            logger(LOG_TYPE.INFO, 'Invalid ticket', err);
-                            if (user.redirections >= 3) {
-                                UserDataTools.deleteDataSession(user.sid)
-                                    .then(() => {
-                                        logger(LOG_TYPE.WARNING, 'Too many redirects');
-                                        sendDefaultError(res, err);
-                                        res.status(500).send(`Error, try logout <a href='` +
-                                            CAS_LOGOUT_URL + `'>here</a> before try again.
-                                        <br>Error info:<br><br>` + err);
-                                    })
-                                    .catch(e => {
-                                        logger(LOG_TYPE.ERROR, 'Error deleting user data', e);
-                                        sendDefaultError(res);
-                                    })
-                            } else {
-                                user.redirections++;
-                                user.checked = false;
-                                user.resource = req.path;
-                                UserDataTools.updateUserAndSend(
-                                    user,
-                                    () => res.redirect(getLoginURL()),
-                                    () => sendDefaultError(res)
-                                );
-                            }
-                        });
-                } else {
-                    logger(LOG_TYPE.WARNING, 'Invalid user ticket');
-                    if (user.redirections >= 3) {
-                        logger(LOG_TYPE.WARNING, 'Too many redirects');
-                        UserDataTools.deleteDataSession(user.sid)
-                            .then(() => {
-                                res.status(500).send(
-                                    'Error, try logout <a href="' + CAS_LOGOUT_URL + '">here</a> before try again'
-                                );
-                            })
-                            .catch(err => {
-                                logger(LOG_TYPE.ERROR, 'Error deleting user data', err);
-                                res.status(500).send(
-                                    'Error, try logout <a href="' + CAS_LOGOUT_URL + '">here</a> before try again'
-                                );
-                            })
-                    } else {
-                        user.resource = req.path;
-                        user.redirections++;
-                        UserDataTools.updateUserAndSend(
-                            user,
-                            () => res.redirect(getLoginURL()),
-                            () => sendDefaultError(res)
-                        );
-                    }
-                }
-            })
-            .catch(err => {
-                logger(LOG_TYPE.INFO, 'User not logged', err);
-                UserDataTools.updateUserData({ sid: req.session.id, resource: req.path, redirections: 0, checked: false })
-                    .then(userData => {
-                        res.redirect(getLoginURL());
+        next();
+    }
+}, function (req, res, next) {
+    UserDataTools.getUserData(req.session.id)
+        .then(user => {
+            req.body.user = user;
+            next();
+        })
+        .catch(err => {
+            logger(LOG_TYPE.INFO, 'User not logged', err);
+            UserDataTools.updateUserAndSend(
+                { sid: req.session.id, resource: req.path, redirections: 0, checked: false },
+                () => res.redirect(getLoginURL()),
+                (e) => sendFatalError(res, e)
+            );
+        });
+}, function (req, res) {
+    const user = req.body.user;
+    if (user.ticket) {
+        logger(LOG_TYPE.INFO, 'Checking ticket: ', user.ticket);
+        validationPromise(user.ticket)
+            .then((uuid) => {
+                logger(LOG_TYPE.INFO, 'Valid ticket');
+                user.uuid = uuid;
+                updateDefaultUserPrivileges(user)
+                    .then(() => {
+                        res.sendFile(path.join(OUT_DIR + '/index.html'));
                     })
-                    .catch(e => {
-                        logger(LOG_TYPE.ERROR, 'Error deleting user data', e);
-                        sendDefaultError(res);
+                    .catch(err => {
+                        sendDefaultError(res, err);
                     });
+            })
+            .catch((err) => {
+                if (err) {
+                    logger(LOG_TYPE.WARNING, err);
+                }
+                sendTicketError(req, res, user, true);
             });
+    } else {
+        sendTicketError(req, res, user);
     }
 });

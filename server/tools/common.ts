@@ -101,8 +101,8 @@ export function logger(logWeight: LOG_TYPE, log?: any, ...other) {
     }
 }
 
-export function sendFatalError(res, e?) {
-    if (e) { logger(LOG_TYPE.ERROR, e) };
+export function sendFatalError(res, ...errors) {
+    if (errors) { logger(LOG_TYPE.ERROR, errors) };
     res.status(500).send({ error: 'Invalid user or request' });
 }
 

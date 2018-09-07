@@ -1,5 +1,5 @@
 import 'jasmine';
-import { getChildByName, checkInclude, getRole, getCode, getUserPermissions, checkUserPromise } from './auth.logic';
+import { getChildByName, checkInclude, getRole, getCode, getUserPermissions, checkUserAuthorizations } from './auth.logic';
 import { DOMParser } from 'xmldom';
 import { Enums } from '../../../src/app/shared/types/enums';
 
@@ -333,7 +333,7 @@ describe('AuthLogic', () => {
     it('Should get user data from uuid', (done) => {
         const testUUID = "96b5ae9d-f72f-4f0c-8fb4-a95473ce4ed5";
         require('dotenv').config();
-        checkUserPromise(testUUID)
+        checkUserAuthorizations(testUUID)
         .then(val => {
             expect(val.role).toBe(Enums.Auth_Permissions.User_Type.central);
             expect(val.code).toBe("9300100");
