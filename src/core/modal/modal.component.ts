@@ -4,9 +4,9 @@ import {
 } from '@angular/core';
 
 @Component({
-    selector: 'bc-dialog',
-    styleUrls: ['dialog.component.scss'],
-    templateUrl: 'dialog.component.html',
+    selector: 'bc-modal',
+    styleUrls: ['modal.component.scss'],
+    templateUrl: 'modal.component.html',
     encapsulation: ViewEncapsulation.None
 })
 export class BcModalComponent { }
