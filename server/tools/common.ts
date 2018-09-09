@@ -90,7 +90,7 @@ export enum LOG_TYPE {
 
 export function logger(logWeight: LOG_TYPE, log?: any, ...other) {
     if (logWeight === LOG_TYPE.ERROR) {
-        console.log('FATAL ERROR: ', log, ...other);
+        console.error('FATAL ERROR: ', log, ...other);
     }
     if (!DISABLE_LOG) {
         if (logWeight === LOG_TYPE.WARNING) {

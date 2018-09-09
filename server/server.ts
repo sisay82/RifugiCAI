@@ -9,6 +9,34 @@ import {
 } from './tools/common';
 import { app } from './config/app';
 
+const closeServer = server => {
+    server.close(function (err) {
+        if (err) {
+            logger(LOG_TYPE.ERROR, err);
+            process.exit(2)
+        }
+
+        mongoose.connection.close(function () {
+            logger(LOG_TYPE.INFO, "Closed mongoose connections and exiting...");
+            process.exit(0)
+        })
+    })
+}
+
+const setupStopINT = (server) => {
+    process.on('SIGINT', () => {
+        logger(LOG_TYPE.WARNING, 'SIGINT signal received');
+        closeServer(server);
+    });
+
+    process.on('message', (msg) => {
+        if (msg === 'shutdown') {
+            logger(LOG_TYPE.WARNING, 'SHUTDOWN message received');
+            closeServer(server);
+        }
+    })
+}
+
 const createServer = (i: number = 0) => {
     mongoose.connect(ENV_CONFIG.MONGO_URI, {
         useMongoClient: true
@@ -22,13 +50,14 @@ const createServer = (i: number = 0) => {
                 }, 5 * 1000)
             } else {
                 logger(LOG_TYPE.ERROR, "CANNOT ESTABLISH CONNECTION. CLOSE")
-                process.exit()
+                process.exit(1)
             }
         } else {
             const server = app.listen(ENV_CONFIG.APP_PORT, function () {
                 const port = server.address().port;
                 logger(LOG_TYPE.INFO, 'App now running on port', port);
             });
+            setupStopINT(server);
         }
     });
 }
