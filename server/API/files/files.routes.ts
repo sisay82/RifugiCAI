@@ -78,7 +78,6 @@ fileRoute.route('/shelters/file/confirm')
     .post(function (req, res) {
         try {
             const upload = multer().single('file');
-            const user = req.body.user;
             upload(req, res, function (err) {
                 if (err) {
                     res.status(500).send({ error: 'Invalid user or request' })
@@ -86,7 +85,7 @@ fileRoute.route('/shelters/file/confirm')
                     const file = <StagingInterfaces.StagingFileExtended>JSON.parse(req.body.metadata);
                     file.data = req.file.buffer;
                     if (file.size < 1024 * 1024 * 16) {
-                        resolveStagingAreaFiles(file, user)
+                        resolveStagingAreaFiles(file, req.session)
                             .then(fileid => {
                                 res.status(200).send({ fileId: fileid });
                             })
@@ -106,7 +105,6 @@ fileRoute.route('/shelters/file/confirm')
 
 fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
     .delete(function (req, res) {
-        const user = req.body.user;
         StagingAreaTools.getStaginItemByShelId(req.params.shelid)
             .then(stagingItem => {
                 let fileToDelete;
@@ -138,7 +136,7 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
                         watchDog: new Date(Date.now()),
                         shelter: newShelter,
                         files: [{ _id: req.params.fileid, toRemove: true }]
-                    }, user)
+                    }, req.session)
                         .then(item => {
                             res.status(200).send(true);
                         })
@@ -168,7 +166,6 @@ fileRoute.route('/shelters/file/:id')
     .put(function (req, res) {
         try {
             const updFile: IFile = req.body.file;
-            const user = req.body.user;
             if (updFile) {
                 StagingAreaTools.getStaginItemByShelId(updFile.shelterId)
                     .then(stagingItem => {
@@ -218,7 +215,7 @@ fileRoute.route('/shelters/file/:id')
                                 watchDog: new Date(Date.now()),
                                 shelter: shelter,
                                 files: [newF]
-                            }, user);
+                            }, req.session);
                         } else {
                             sendFatalError(res, err);
                         }

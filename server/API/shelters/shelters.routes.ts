@@ -15,7 +15,7 @@ import { resolveFilesForShelter } from '../files/files.logic';
 import { Tools } from '../../../src/app/shared/tools/common.tools';
 import { Buffer } from 'buffer';
 import {
-    checkPermissionAPI,
+    checkPermissionSheltersAPI,
     getAllIdsHead,
     insertNewShelter,
     queryShelByRegion,
@@ -29,17 +29,15 @@ import {
     queryShelSectionById,
     deleteService
 } from './shelters.logic';
-import { UserData } from '../auth/userData';
 import { StagingInterfaces, StagingAreaTools } from '../../tools/stagingArea';
 
 
 export const appRoute = express.Router();
-appRoute.all('*', checkPermissionAPI);
+appRoute.all('*', checkPermissionSheltersAPI);
 
 appRoute.route('/shelters')
     .get(function (req, res) {
-        const user: UserData = req.body.user;
-        const userData: Tools.ICodeInfo = getUserDataFilters(user);
+        const userData: Tools.ICodeInfo = getUserDataFilters(req.session);
         if (userData) {
             try {
                 getAllIdsHead(userData)
@@ -77,8 +75,7 @@ appRoute.route('/shelters')
 
 appRoute.route('/shelters/country/:name')
     .get(function (req, res) {
-        const user: UserData = req.body.user;
-        const userData = getUserDataFilters(user);
+        const userData = getUserDataFilters(req.session);
         if (userData) {
             try {
                 queryShelByRegion(req.params.name, userData)
@@ -100,8 +97,7 @@ appRoute.route('/shelters/country/:name')
 
 appRoute.route('/shelters/point')
     .get(function (req, res) {
-        const user: UserData = req.body.user;
-        const userData = getUserDataFilters(user);
+        const userData = getUserDataFilters(req.session);
         if (userData) {
             try {
                 if (req.query.lat && req.query.lng && req.query.range) {
@@ -183,7 +179,7 @@ appRoute.route('/shelters/:id')
                     const stagingItem = { watchDog: new Date(Date.now()), shelter: newShelter, files: null }
                     StagingAreaTools.addItemAndSend(
                         stagingItem,
-                        req.body.user,
+                        req.session,
                         (item) => res.status(200).send(true),
                         e => sendFatalError(res, e)
                     );
@@ -245,7 +241,7 @@ appRoute.route('/shelters/confirm/:id')
                 const newShelter: any = { _id: id };
                 StagingAreaTools.addItemAndSend(
                     { watchDog: new Date(Date.now()), shelter: newShelter, files: null, newItem: true },
-                    req.body.user,
+                    req.session,
                     (item) => res.status(200).send({ id: id }),
                     err => sendFatalError(res, err)
                 );
@@ -280,7 +276,7 @@ appRoute.route('/shelters/confirm/:section/:id')
 
                         StagingAreaTools.addItemAndSend(
                             { watchDog: new Date(Date.now()), shelter: newShelter, files: null },
-                            req.body.user,
+                            req.session,
                             (item) => res.status(200).send(true),
                             e => sendFatalError(res, e)
                         );
@@ -325,7 +321,7 @@ appRoute.route('/shelters/page/:pageNumber/:pageSize')
 
 appRoute.route('/shelters/csv/list')
     .get(function (req, res) {
-        if (req.body.user && req.body.user.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.body.user.role) > -1) {
+        if (req.session && req.session.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.session.role) > -1) {
             queryAllSheCSV()
                 .then(shelters => createCSV(shelters))
                 .then(csv => {
@@ -344,7 +340,7 @@ appRoute.route('/shelters/csv/list')
 
 appRoute.route('/shelters/csv/:id')
     .get(function (req, res) {
-        if (req.body.user && req.body.user.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.body.user.role) > -1) {
+        if (req.session && req.session.role && Auth_Permissions.Visualization.CSVPermission.indexOf(req.session.role) > -1) {
             queryShelById(req.params.id)
                 .then(shelters => createCSV([shelters]))
                 .then(csv => {

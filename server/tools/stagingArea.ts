@@ -1,6 +1,5 @@
 import { IShelterExtended, IFileExtended, sendFatalError, logger, LOG_TYPE } from "./common";
 import { Enums } from "../../src/app/shared/types/enums";
-import { UserData } from "../API/auth/userData";
 import { CLEAR_CACHE_INTERVAL, MAX_TIME } from './constants';
 import { Schema, model, Document } from "mongoose";
 import { IFile, IShelter } from "../../src/app/shared/types/interfaces";
@@ -78,7 +77,7 @@ export namespace StagingAreaTools {
         })
     }
 
-    export function addStagingItem(updatingShelter: StagingInterfaces.StagingItem, user: UserData)
+    export function addStagingItem(updatingShelter: StagingInterfaces.StagingItem, user)
         : Promise<StagingInterfaces.StagingItemExtended> {
         if (!user || !user.role) {
             return Promise.reject('USER AUTH ERROR');
@@ -99,7 +98,7 @@ export namespace StagingAreaTools {
     }
 
     export function addItemAndSend(updatingShelter: StagingInterfaces.StagingItem,
-        user: UserData,
+        user,
         callback: (item: StagingInterfaces.StagingItemExtended) => void,
         errCallback?: (err: String) => void) {
         addStagingItem(updatingShelter, user)

@@ -18,6 +18,7 @@ import { createContributionPDF } from '../files/pdf.logic';
 import { Tools } from '../../../src/app/shared/tools/common.tools';
 import { StagingAreaTools } from '../../tools/stagingArea';
 import { DISABLE_AUTH } from '../../tools/constants';
+import { Request, Response } from 'express';
 
 const Services = model<IServiceExtended>('Services', BCSchema.serviceSchema);
 const Shelters = model<IShelterExtended>('Shelters', BCSchema.shelterSchema);
@@ -272,33 +273,32 @@ function insertNewService(params): Promise<IServiceExtended> {
     });
 }
 
-export function checkPermissionAPI(req, res, next) {
+export function checkPermissionSheltersAPI(req: Request, res: Response, next) {
     if (DISABLE_AUTH) {
         next();
     } else {
-        const user = req.body.user;
-        if (user) {
+        if (req.session) {
             if (req.method === 'GET') {
                 next();
             } else {
                 if (req.method === 'DELETE' || req.method === 'POST') {
-                    if (user.role === Auth_Permissions.User_Type.central) {
+                    if (req.session.role === Auth_Permissions.User_Type.central) {
                         next();
                     } else {
-                        res.status(500).send({ error: 'Invalid user or request' });
+                        res.sendStatus(401);
                     }
                 } else if (req.method === 'PUT') {
-                    if (Auth_Permissions.Revision.DetailRevisionPermission.find(obj => obj === user.role)) {
+                    if (Auth_Permissions.Revision.DetailRevisionPermission.find(obj => obj === req.session.role)) {
                         next();
                     } else {
-                        res.status(500).send({ error: 'Invalid user or request' });
+                        res.sendStatus(401);
                     }
                 } else {
                     res.status(501).send({ error: 'Not Implemented method ' + req.method });
                 }
             }
         } else {
-            res.status(500).send({ error: 'Invalid user or request' });
+            res.sendStatus(401);
         }
     }
 }

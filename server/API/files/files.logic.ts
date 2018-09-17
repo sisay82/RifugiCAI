@@ -11,9 +11,9 @@ import { model } from 'mongoose';
 import { BCSchema } from '../../../src/app/shared/types/schema';
 import { Buffer } from 'buffer';
 import { StagingAreaTools, StagingInterfaces } from '../../tools/stagingArea';
-import { UserData } from '../auth/userData';
 import { IFile } from '../../../src/app/shared/types/interfaces';
 import { DISABLE_AUTH } from '../../tools/constants';
+import { Request, Response } from 'express';
 
 export const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
 
@@ -220,27 +220,26 @@ export function queryAllFilesByType(types): Promise<IFileExtended[]> {
     });
 }
 
-export function checkPermissionAPI(req, res, next) {
+export function checkPermissionAPI(req: Request, res: Response, next) {
     if (DISABLE_AUTH) {
         next();
     } else {
-        const user = req.body.user;
-        if (user) {
+        if (req.session) {
             if (req.method === 'GET') {
                 next();
             } else {
                 if (req.method === 'DELETE' || req.method === 'POST' || req.method === 'PUT') {
-                    if (Auth_Permissions.Revision.DocRevisionPermission.find(obj => obj === user.role)) {
+                    if (Auth_Permissions.Revision.DocRevisionPermission.find(obj => obj === req.session.role)) {
                         next();
                     } else {
-                        res.status(500).send({ error: 'Invalid user or request' });
+                        res.sendStatus(401);
                     }
                 } else {
                     res.status(501).send({ error: 'Not Implemented method ' + req.method });
                 }
             }
         } else {
-            res.status(500).send({ error: 'Invalid user or request' });
+            res.sendStatus(401);
         }
     }
 }
@@ -287,7 +286,7 @@ export function intersectFilesArray(stagingArray: StagingInterfaces.StagingFileE
     });
 }
 
-export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExtended, user: UserData): Promise<String> {
+export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExtended, user): Promise<String> {
     const shelId = file.shelterId;
     const fileid = new ObjectId();
     file._id = <any>fileid;

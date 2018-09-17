@@ -23,7 +23,7 @@ export const MAX_TIME = 1000 * 60 * 10;
 export const MAX_SESSION_TIME = 1000 * 60 * 40;
 export const MAX_DELAY_GET_REQUEST = 1000 * 10;
 
-const CAS_BASE_URL = 'https://accesso.cai.it';
+export const CAS_BASE_URL = 'https://accesso.cai.it';
 export const AUTH_URL = 'https://services.cai.it/cai-integration-ws/secured/users/';
 export const DISABLE_AUTH = false;
 

@@ -9,10 +9,8 @@ import {
 import { fileRoute } from '../API/files/files.routes';
 import { appRoute } from '../API/shelters/shelters.routes';
 import { authRoute } from '../API/auth/auth.routes';
-import { getUserData } from '../API/auth/auth.logic'
 import { MongoStore as ms } from 'connect-mongo';
-import { UserDataTools } from '../API/auth/userData';
-import { MAX_SESSION_TIME } from '../tools/constants';
+import { MAX_SESSION_TIME, DISABLE_AUTH } from '../tools/constants';
 import * as ConnectMongo from 'connect-mongo';
 
 const app = express();
@@ -22,7 +20,6 @@ export const store: ms = new MongoStore({ mongooseConnection: mongoose.connectio
 
 store.on('destroy', (sid) => {
     logger(LOG_TYPE.INFO, 'DELETE USER SESSION SID: ' + sid);
-    UserDataTools.deleteDataSession(sid);
 });
 
 app.disable('x-powered-by');
@@ -48,15 +45,7 @@ app.use('/api', function (req, res, next) {
         res.writeHead(200, headers);
         res.end();
     } else {
-        getUserData(req.session.id)
-            .then(userData => {
-                req.body.user = userData;
-                next();
-            })
-            .catch(err => {
-                logger(LOG_TYPE.ERROR, err);
-                res.status(500).send({ error: 'Invalid user or request' });
-            });
+        next();
     }
 }, fileRoute, appRoute);
 

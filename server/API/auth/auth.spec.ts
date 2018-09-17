@@ -2,12 +2,27 @@ import 'jasmine';
 import { getChildByName, checkInclude, getRole, getCode, getUserPermissions, checkUserAuthorizations } from './auth.logic';
 import { DOMParser } from 'xmldom';
 import { Enums } from '../../../src/app/shared/types/enums';
+import { CasAuth, ICasOption, AUTH_TYPE } from './auth.cas';
+import { CAS_BASE_URL } from '../../tools/constants';
 
-describe('AuthLogic', () => {
-    it('Should get user profile from cai response', () => {
+describe('AuthCAS', () => {
+    const CASOptions: ICasOption = {
+        url: CAS_BASE_URL,
+        serviceUrl: 'localhost:'
+    }
 
+    describe('Bounce_Redirect type', () => {
+        const AuthCAS = new CasAuth(CASOptions);
+
+        it('Should ', () => {
+
+        });
     });
 
+});
+
+
+describe('AuthLogic', () => {
     describe('XML Parse', () => {
         const xmldoc = `<parent><childA>robaroba</childA></parent>`;
 
@@ -334,15 +349,15 @@ describe('AuthLogic', () => {
         const testUUID = "96b5ae9d-f72f-4f0c-8fb4-a95473ce4ed5";
         require('dotenv').config();
         checkUserAuthorizations(testUUID)
-        .then(val => {
-            expect(val.role).toBe(Enums.Auth_Permissions.User_Type.central);
-            expect(val.code).toBe("9300100");
-            done();
-        })
-        .catch(err => {
-            expect(err).toBeUndefined();
-            done();
-        })
+            .then(val => {
+                expect(val.role).toBe(Enums.Auth_Permissions.User_Type.central);
+                expect(val.code).toBe("9300100");
+                done();
+            })
+            .catch(err => {
+                expect(err).toBeUndefined();
+                done();
+            })
     });
 
 });

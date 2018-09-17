@@ -3,9 +3,8 @@ import { Types, Document } from 'mongoose';
 import { Enums } from '../../src/app/shared/types/enums';
 import { Tools } from '../../src/app/shared/tools/common.tools';
 import Auth_Permissions = Enums.Auth_Permissions;
-import request = require('request');
+import * as request from 'request';
 import { Response } from 'express';
-import { UserData } from '../API/auth/userData';
 
 export interface IServiceExtended extends IService, Document {
     _id: String;
@@ -44,7 +43,7 @@ export function intersectArray(a: any[], b: any[]): any[] {
     });
 }
 
-export function getUserDataFilters(user: UserData): Tools.ICodeInfo {
+export function getUserDataFilters(user): Tools.ICodeInfo {
     if (user && user.code && user.role) {
         if (Auth_Permissions.User_Type[user.role]) {
             return Tools.getCodeSections(user.role, user.code);
@@ -58,11 +57,11 @@ export function getUserDataFilters(user: UserData): Tools.ICodeInfo {
 }
 
 export function performRequestGET(url: String, authorization?: String, timeout: number = TIMEOUT_REQUEST, count: number = 0)
-    : Promise<{ response: any, body: any }> {
-    return new Promise<{ response: any, body: any }>((resolve, reject) => {
+    : Promise<{ response: request.Response, body: any }> {
+    return new Promise<{ response: request.Response, body: any }>((resolve, reject) => {
         const headers = authorization ? { 'Authorization': authorization } : null;
         const time = Date.now();
-        request.get({
+        const req = request.get({
             url: <string>url,
             method: 'GET',
             headers: headers,
@@ -79,6 +78,10 @@ export function performRequestGET(url: String, authorization?: String, timeout: 
                 resolve({ response: response, body: body });
             }
         });
+        req.on('error', (err) => {
+            reject(err);
+        });
+        req.end();
     });
 }
 
