@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { logger, LOG_TYPE } from '../../tools/common';
 import * as xmldom from 'xmldom';
 import { getChildByName, validationPromise, updateDefaultUserPrivileges } from './auth.logic';
-import { getLoginURL, CAS_LOGOUT_URL } from '../../tools/constants';
+import { CAS_LOGOUT_URL } from '../../tools/constants';
 
 const DOMParser = xmldom.DOMParser;
 
@@ -35,7 +35,7 @@ const XMLParser = new DOMParser({
 });
 
 export class CasAuth {
-    private validateUri = '/cai-cas/serviceValidate';
+    private validateUri = '/serviceValidate';
     private url: string;
     private host: string;
     private port: number;
@@ -99,8 +99,8 @@ export class CasAuth {
                 this.login(req, res, next);
             }
         } else {
-            // Otherwise, redirect the user to the CAS login.
-            this.login(req, res, next);
+            // Otherwise, send not implemented error.
+            res.sendStatus(501);
         }
     };
 
@@ -125,7 +125,7 @@ export class CasAuth {
         req.session.checked = false;
 
         // Redirect to the CAS login.
-        res.redirect(getLoginURL());
+        res.redirect(this.serviceUrl);
 
     }
 
@@ -136,10 +136,10 @@ export class CasAuth {
                 if (err) {
                     logger(LOG_TYPE.ERROR, err);
                 }
-                res.redirect(this.url + '/cai-cas/logout');
+                res.redirect(this.url + '/logout');
             });
         } else {
-            res.redirect(this.url + '/cai-cas/logout');
+            res.redirect(this.url + '/logout');
         }
     }
 

@@ -2,17 +2,16 @@ import 'jasmine';
 import { getChildByName, checkInclude, getRole, getCode, getUserPermissions, checkUserAuthorizations } from './auth.logic';
 import { DOMParser } from 'xmldom';
 import { Enums } from '../../../src/app/shared/types/enums';
-import { CasAuth, ICasOption, AUTH_TYPE } from './auth.cas';
-import { CAS_BASE_URL } from '../../tools/constants';
+import { CasAuth, ICasOption } from './auth.cas';
+import { CAS_BASE_URL, getLoginURL } from '../../tools/constants';
 
 describe('AuthCAS', () => {
-    const CASOptions: ICasOption = {
-        url: CAS_BASE_URL,
-        serviceUrl: 'localhost:'
+    const CasOptions: ICasOption = {
+        url: CAS_BASE_URL + "/cai-cas",
+        serviceUrl: getLoginURL()
     }
-
     describe('Bounce_Redirect type', () => {
-        const AuthCAS = new CasAuth(CASOptions);
+        const AuthCAS = new CasAuth(CasOptions);
 
         it('Should ', () => {
 
