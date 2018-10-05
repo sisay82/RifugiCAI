@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
-    "baseUrl": "",
+    "baseUrl": "src",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -18,12 +18,5 @@
       "jasmine",
       "node"
     ]
-  },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "**/*.spec.ts",
-    "**/*.d.ts"
-  ]
+  }
 }

@@ -10,14 +10,69 @@ describe('AuthCAS', () => {
         url: CAS_BASE_URL + "/cai-cas",
         serviceUrl: getLoginURL()
     }
-    describe('Bounce_Redirect type', () => {
-        const AuthCAS = new CasAuth(CasOptions);
+    const AuthCAS = new CasAuth(CasOptions);
 
-        it('Should ', () => {
+    describe('BOUNCE', () => {
+        it('Should intercept ticket and redirect to resource', () => {
+            const req: any = {
+                query: {
+                    ticket: "ticket"
+                },
+                session: {
+                    resource: "target"
+                }
+            }
+            const res: any = {
+                redirect: (path) => {
+                    expect(path).toEqual(req.session.resource);
+                }
+            }
+            const next = () => {
+            }
+            AuthCAS.bounce(req, res, next);
+        });
 
+        it('Should redirect to login if no ticket is found in query', () => {
+            const req: any = {
+                session: {
+                    resource: "target"
+                },
+                path: "resource"
+            }
+            const res: any = {
+                redirect: (path) => {
+                    expect(path).toEqual(CasOptions.serviceUrl);
+                }
+            }
+            const next = () => {
+            }
+            AuthCAS.bounce(req, res, next);
+            expect(req.session.checked).toEqual(false);
+            expect(req.session.resource).toEqual("resource");
         });
     });
 
+    describe('BounceRedirect', () => {
+        it('Should redirect to login if no ticket is found in session', () => {
+            const req: any = {
+                session: {
+                    resource: "target"
+                },
+                path: "resource"
+            }
+            const res: any = {
+                redirect: (path) => {
+                    expect(path).toEqual(CasOptions.serviceUrl);
+                }
+            }
+            const next = () => {
+            }
+            AuthCAS.bounceRedirect(req, res, next);
+            expect(req.session.checked).toEqual(false);
+            expect(req.session.resource).toEqual("resource");
+        });
+
+    });
 });
 
 

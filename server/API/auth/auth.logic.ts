@@ -153,15 +153,14 @@ export function checkUserAuthorizations(uuid): Promise<{ role: Auth_Permissions.
 
 }
 
-export function validationPromise(ticket): Promise<String> {
-    if (!ticket) {
+export function validationPromise(url): Promise<String> {
+    if (!url) {
         return Promise.reject('TICKET PARAMETER NOT FOUND IN VALIDATION')
     }
     return new Promise((resolve, reject) => {
         if (DISABLE_AUTH) {
             resolve(null)
         } else {
-            const url = getValidationURL(ticket);
             performRequestGET(url)
                 .then(value => {
                     const parser = new DOMParser({

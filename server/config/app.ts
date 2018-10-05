@@ -9,14 +9,13 @@ import {
 import { fileRoute } from '../API/files/files.routes';
 import { appRoute } from '../API/shelters/shelters.routes';
 import { authRoute } from '../API/auth/auth.routes';
-import { MongoStore as ms } from 'connect-mongo';
 import { MAX_SESSION_TIME, DISABLE_AUTH } from '../tools/constants';
 import * as ConnectMongo from 'connect-mongo';
 
 const app = express();
 const MongoStore = ConnectMongo(session);
 
-export const store: ms = new MongoStore({ mongooseConnection: mongoose.connection });
+export const store = new MongoStore({ mongooseConnection: mongoose.connection });
 
 store.on('destroy', (sid) => {
     logger(LOG_TYPE.INFO, 'DELETE USER SESSION SID: ' + sid);
