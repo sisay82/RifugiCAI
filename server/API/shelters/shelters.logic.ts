@@ -447,7 +447,7 @@ function cleanShelterProps(shelter, params) {
     }
 }
 
-export function updateShelter(id: any, params: any, isNew?: Boolean): Promise<boolean> {
+export function updateShelter(id: any, params: any, newItem?: Boolean): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         try {
             const services: any[] = params.services;
@@ -457,7 +457,7 @@ export function updateShelter(id: any, params: any, isNew?: Boolean): Promise<bo
             delete (params.services);
             delete (params.use);
             delete (params.economy);
-            const options: any = { upsert: isNew || false, new: true };
+            const options: any = { upsert: newItem || false, new: true };
             if (!params.updateDate) {
                 params.updateDate = new Date(Date.now());
             }
@@ -497,7 +497,7 @@ export function updateShelter(id: any, params: any, isNew?: Boolean): Promise<bo
 
 export function confirmShelter(id: any): Promise<boolean> {
     return StagingAreaTools.getStaginItemByShelId(id)
-        .then(shelToUpdate => updateShelter(id, shelToUpdate.shelter, shelToUpdate.isNew));
+        .then(shelToUpdate => updateShelter(id, shelToUpdate.shelter, shelToUpdate.newItem));
 }
 
 function addOpening(id, opening: IOpening): Promise<boolean> {

@@ -23,10 +23,13 @@ import {
 import { Tools } from '../../shared/tools/common.tools';
 import { Buffer } from 'buffer';
 
-function getProperty(item, prop: String) {
+function getProperty(item: any, prop: String) {
     const props = prop.split('.');
     let retItem = item;
     for (const p of props) {
+        if (!retItem[p]) {
+            return null;
+        }
         retItem = retItem[p];
     }
     return retItem;
@@ -65,9 +68,9 @@ export class BcShelterList implements OnInit {
             e.initEvent('click', true, false);
             a.dispatchEvent(e);
             if (getCSVSub) {
-              getCSVSub.unsubscribe();
+                getCSVSub.unsubscribe();
             }
-          });
+        });
     }
 
     getAuth() {
