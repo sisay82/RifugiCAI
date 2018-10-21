@@ -2,6 +2,7 @@ import { logger, LOG_TYPE } from "../tools/common";
 import { ENV_LIST } from "../tools/constants";
 
 interface IConfig {
+    DEV: boolean,
     SERVER_URL: string,
     APP_PORT: string | number,
     MONGO_URI: string,
@@ -11,6 +12,7 @@ interface IConfig {
 
 const conf: { [type: string]: IConfig } = {
     production: {
+        DEV: false,
         SERVER_URL: "rifugi.cai.it",
         APP_PORT: process.env.PORT || 8000,
         MONGO_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/CaiDB',
@@ -22,6 +24,7 @@ const conf: { [type: string]: IConfig } = {
         }
     },
     default: {
+        DEV: true,
         SERVER_URL: "localhost:",
         APP_PORT: process.env.PORT || 8000,
         MONGO_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/CaiDB',
@@ -33,6 +36,7 @@ const conf: { [type: string]: IConfig } = {
         }
     },
     heroku: {
+        DEV: false,
         SERVER_URL: "app-cai.herokuapp.com",
         APP_PORT: process.env.PORT,
         MONGO_URI: process.env.MONGODB_URI,
@@ -44,6 +48,7 @@ const conf: { [type: string]: IConfig } = {
         }
     },
     test: {
+        DEV: true,
         SERVER_URL: "localhost:",
         APP_PORT: 8000,
         MONGO_URI: 'mongodb://localhost:27017/CAITestDB',

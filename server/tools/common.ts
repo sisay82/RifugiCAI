@@ -5,6 +5,7 @@ import { Tools } from '../../src/app/shared/tools/common.tools';
 import Auth_Permissions = Enums.Auth_Permissions;
 import * as request from 'request';
 import { Response } from 'express';
+import { ENV_CONFIG } from '../config/env';
 
 export interface IServiceExtended extends IService, Document {
     _id: String;
@@ -91,15 +92,26 @@ export enum LOG_TYPE {
     ERROR
 }
 
+function structuredLog(logWeight: LOG_TYPE, logs: any[], error: boolean = false) {
+    const log = {
+        logWeight: logWeight,
+        content: logs,
+        time: Date.now(),
+        _id: new ObjectId()
+    }
+    const logFunc = error ? console.error : console.log;
+    ENV_CONFIG.DEV ? logFunc(log) : logFunc(JSON.stringify(log));
+}
+
 export function logger(logWeight: LOG_TYPE, log?: any, ...other) {
     if (logWeight === LOG_TYPE.ERROR) {
-        console.error('FATAL ERROR: ', log, ...other);
+        structuredLog(logWeight, ['FATAL ERROR: ', log].concat(other), true);
     }
     if (!DISABLE_LOG) {
         if (logWeight === LOG_TYPE.WARNING) {
-            console.log('WARNING: ', log, ...other);
+            structuredLog(logWeight, ['WARNING: ', log].concat(other));
         } else {
-            console.log(log, ...other);
+            structuredLog(logWeight, [log].concat(other));
         }
     }
 }
