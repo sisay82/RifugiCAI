@@ -64,7 +64,6 @@ export class BcImg extends DetailBase {
     }
 
     initImages(files) {
-        let i = 0;
         const j = files.length;
         if (j > 0) {
             for (const file of files) {
@@ -75,11 +74,10 @@ export class BcImg extends DetailBase {
                     reader.onload = (e) => {
                         const src = reader.result;
                         this.data.push({ file: f, url: src });
-                        i++;
-                        if (i === j) {
-                            this.downloading = false;
-                        }
                     };
+                    reader.onloadend = (e) => {
+                        this.downloading = false;
+                    }
                     reader.readAsDataURL(blob);
                 });
             }
