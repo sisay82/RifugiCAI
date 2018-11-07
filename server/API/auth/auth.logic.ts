@@ -30,7 +30,7 @@ export function getChildByName(node: Node, name: String): Node {
     if (node && name && node.hasChildNodes()) {
         for (let i = 0; i < node.childNodes.length; i++) {
             const childNode = node.childNodes.item(i);
-            if (childNode.localName === name) {
+            if ((<any>childNode).localName === name) {
                 return childNode;
             }
             if (childNode.hasChildNodes()) {

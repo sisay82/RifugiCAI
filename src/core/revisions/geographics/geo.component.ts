@@ -261,7 +261,7 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
                         if (!shel.geoData) {
                             shel.geoData = {
                                 location: {},
-                                tags: [] as [ITag]
+                                tags: [] as any
                             };
                         }
                         this.revisionService.onChildSave(shel, "geoData");
@@ -289,7 +289,7 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
     getEmptyObjData(section): any {
         return {
             location: {},
-            tags: [] as [ITag]
+            tags: [] as any
         };
     }
 }

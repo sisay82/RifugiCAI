@@ -54,7 +54,7 @@ const createServer = (i: number = 0) => {
             }
         } else {
             const server = app.listen(ENV_CONFIG.APP_PORT, function () {
-                const port = server.address().port;
+                const port = (<any>server.address()).port;
                 logger(LOG_TYPE.INFO, 'App now running on port', port);
             });
             setupStopINT(server);

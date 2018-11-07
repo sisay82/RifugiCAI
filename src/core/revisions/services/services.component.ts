@@ -403,7 +403,7 @@ export class BcServRevisionComponent extends RevisionBase implements OnDestroy {
         for (const serviceBaseEntry of serviceBaseList) {
             const s: IService = {};
             s.name = s.category = serviceBaseEntry.serviceName;
-            s.tags = [] as [ITag];
+            s.tags = [] as any;
             const serv = shelter.services.find(obj => obj.category && obj.category === serviceBaseEntry.serviceName);
             for (const tagBaseEntry of serviceBaseEntry.tags) {
                 const tag = { key: tagBaseEntry.name, value: null, type: tagBaseEntry.type };

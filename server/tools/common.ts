@@ -100,7 +100,7 @@ function structuredLog(logWeight: LOG_TYPE, logs: any[], error: boolean = false)
         _id: new ObjectId()
     }
     const logFunc = error ? console.error : console.log;
-    ENV_CONFIG.DEV ? logFunc(log) : logFunc(JSON.stringify(log));
+    ENV_CONFIG && ENV_CONFIG.DEV ? logFunc(log) : logFunc(JSON.stringify(log));
 }
 
 export function logger(logWeight: LOG_TYPE, log?: any, ...other) {

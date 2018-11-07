@@ -72,7 +72,7 @@ export class BcManage extends DetailBase {
   }*/
 
   getEmptyObjData(section) {
-    return { subject: [] as [ISubject] };
+    return { subject: [] as any };
   }
 
   init(shelId) {

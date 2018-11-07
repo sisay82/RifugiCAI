@@ -49,7 +49,7 @@ export class BcGeo extends DetailBase {
   }
 
   getEmptyObjData(section) {
-    return { location: {}, tags: [] as [ITag] };
+    return { location: {}, tags: [] as any };
   }
 
   init(shelId) {

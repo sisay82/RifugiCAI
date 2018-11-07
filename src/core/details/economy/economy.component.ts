@@ -34,8 +34,8 @@ export class BcEconomy extends DetailBase {
   activeTab: IEconomy;
   balanceSheet = 0;
   files: IFile[] = [];
-  revenuesFiles: [IFile] = [] as [IFile];
-  outgosFiles: [IFile] = [] as [IFile];
+  revenuesFiles: [IFile] = [] as any;
+  outgosFiles: [IFile] = [] as any;
   revenues = 0;
   outgos = 0;
   constructor(shelterService: ShelterService,

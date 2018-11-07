@@ -46,8 +46,8 @@ export class BcEconomyRevision extends RevisionBase implements OnDestroy {
   name: String;
   activeTab: IEconomy;
   private balanceSheet = 0;
-  private revenuesFiles: [IFile] = [] as [IFile];
-  private outgosFiles: [IFile] = [] as [IFile];
+  private revenuesFiles: [IFile] = [] as any;
+  private outgosFiles: [IFile] = [] as any;
   private revenues = 0;
   private outgos = 0;
   private statusChange = false;

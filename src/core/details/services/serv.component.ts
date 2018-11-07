@@ -38,7 +38,7 @@ export class BcServ extends DetailBase {
         for (const serviceEntry of serviceBaseList) {
             const s: IService = {}
             s.category = serviceEntry.serviceName;
-            s.tags = [] as [ITag];
+            s.tags = [] as any;
             const serv = services.find(obj => obj.category && obj.category === s.category);
             for (const tagEntry of serviceEntry.tags) {
                 const tag = { key: tagEntry.name, value: null, type: tagEntry.type };

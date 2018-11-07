@@ -241,7 +241,7 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
     }
 
     getEmptyObjData(section) {
-        return { subject: [] as [ISubject] };
+        return { subject: [] as any };
     }
 
     init(shelId) {
