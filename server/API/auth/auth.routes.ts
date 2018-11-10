@@ -2,19 +2,14 @@ import { Enums } from '../../../src/app/shared/types/enums';
 import * as express from 'express';
 import Auth_Permissions = Enums.Auth_Permissions;
 import { logger, LOG_TYPE, sendFatalError } from '../../tools/common';
-import { OUT_DIR, DISABLE_AUTH, getLoginURL, CAS_BASE_URL } from '../../tools/constants';
+import { OUT_DIR, DISABLE_AUTH, getLoginURL } from '../../tools/constants';
 import * as path from 'path';
 import {
     checkUserCache
 } from './auth.logic';
-import { CasAuth, ICasOption } from './auth.cas';
+import { AuthService } from '../../config/init';
 
 export const authRoute = express.Router();
-const CasOptions: ICasOption = {
-    url: CAS_BASE_URL + "/cai-cas",
-    serviceUrl: getLoginURL()
-}
-const AuthService = new CasAuth(CasOptions);
 
 authRoute.get('/logout', AuthService.logout.bind(AuthService));
 

@@ -61,9 +61,9 @@ export class CasAuth {
         this.port = parsedUrl.protocol === 'http:' ? 80 : 443;
         this.path = parsedUrl.pathname;
         this.serviceUrl = options.serviceUrl
-        this.renew = options.renew !== undefined ? !!options.renew : false;
-        this.isDevMode = options.isDevMode !== undefined ? !!options.isDevMode : false;
-        this.destroySession = options.destroySession !== undefined ? !!options.destroySession : false;
+        this.renew = options.renew != null ? !!options.renew : false;
+        this.isDevMode = options.isDevMode != null ? !!options.isDevMode : false;
+        this.destroySession = options.destroySession != null ? !!options.destroySession : true;
     }
 
     private validate(body, callback: (err: any, uuid?: string, attributes?: any) => void) {
@@ -132,7 +132,7 @@ export class CasAuth {
     public logout(req: Request, res: Response, next) {
         // Destroy the entire session if the option is set.
         if (this.destroySession) {
-            req.session.destroy(function (err) {
+            req.session.destroy((err) => {
                 if (err) {
                     logger(LOG_TYPE.ERROR, err);
                 }
