@@ -3,7 +3,8 @@ import { Enums } from '../../../src/app/shared/types/enums';
 import Auth_Permissions = Enums.Auth_Permissions;
 import {
     IShelterExtended,
-    IServiceExtended
+    IServiceExtended,
+    getRegExpListResult
 } from '../../tools/common';
 import { model, QueryCursor } from 'mongoose';
 import { IOpening } from '../../../src/app/shared/types/interfaces';
@@ -19,6 +20,7 @@ import { Tools } from '../../../src/app/shared/tools/common.tools';
 import { StagingAreaTools } from '../../tools/stagingArea';
 import { DISABLE_AUTH } from '../../tools/constants';
 import { Request, Response } from 'express';
+import { CasAuth } from '../auth/auth.cas';
 
 const Services = model<IServiceExtended>('Services', BCSchema.serviceSchema);
 const Shelters = model<IShelterExtended>('Shelters', BCSchema.shelterSchema);
@@ -273,7 +275,19 @@ function insertNewService(params): Promise<IServiceExtended> {
     });
 }
 
-export function checkPermissionSheltersAPI(req: Request, res: Response, next) {
+export function createPermissionAppAPICheck(authService: CasAuth, openGetRoutes: RegExp[]) {
+    return (req: Request, res: Response, next) => {
+        if (req.method === 'GET' && getRegExpListResult(openGetRoutes, req.path)) {
+            next();
+        } else {
+            authService.block(req, res, () => {
+                checkPermissionSheltersAPI(req, res, next);
+            });
+        }
+    }
+}
+
+function checkPermissionSheltersAPI(req: Request, res: Response, next) {
     if (DISABLE_AUTH) {
         next();
     } else {

@@ -66,7 +66,6 @@ app.use(
       next();
     }
   },
-  AuthService.block.bind(AuthService),
   fileRoute,
   appRoute
 );

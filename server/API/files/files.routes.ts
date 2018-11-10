@@ -10,7 +10,6 @@ import {
 } from '../../tools/common';
 import { IFile } from '../../../src/app/shared/types/interfaces';
 import {
-    checkPermissionAPI,
     insertNewFile,
     queryAllFilesByType,
     queryAllFiles,
@@ -19,13 +18,20 @@ import {
     deleteFile,
     resolveStagingAreaFiles,
     intersectFilesArray,
-    filterStagingFile
+    filterStagingFile,
+    createPermissionFileAPICheck
 } from './files.logic';
 import { StagingAreaTools, StagingInterfaces } from '../../tools/stagingArea';
+import { AuthService } from '../../config/init';
 
 export const fileRoute = express.Router();
 
-fileRoute.all('*', checkPermissionAPI || <any>(() => { }));
+const OPEN_ROUTES: RegExp[] = [
+    /^(\/shelters\/file\/[^\/]+)$/,
+    /^(\/shelters\/file\/byshel\/[^\/]+\/bytype)$/
+];
+
+fileRoute.use(createPermissionFileAPICheck(AuthService, OPEN_ROUTES));
 
 fileRoute.route('/shelters/file')
     .post(function (req, res) {

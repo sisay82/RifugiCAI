@@ -24,6 +24,15 @@ export const ObjectId = Types.ObjectId;
 const DISABLE_LOG = false;
 const TIMEOUT_REQUEST = 1000 * 2;
 
+export function getRegExpListResult(arr: RegExp[], value) {
+    let ret = false;
+    arr.forEach(val => {
+        ret = ret || val.test(value);
+    });
+    return ret;
+    //return arr.some(val => val.test(value))
+}
+
 export function removeDuplicate(a: any[], b: any[]): any[] {
     let t;
     if (b.length > a.length) {

@@ -5,7 +5,8 @@ import {
     IFileExtended,
     logger,
     LOG_TYPE,
-    ObjectId
+    ObjectId,
+    getRegExpListResult
 } from '../../tools/common';
 import { model } from 'mongoose';
 import { BCSchema } from '../../../src/app/shared/types/schema';
@@ -14,6 +15,7 @@ import { StagingAreaTools, StagingInterfaces } from '../../tools/stagingArea';
 import { IFile } from '../../../src/app/shared/types/interfaces';
 import { DISABLE_AUTH } from '../../tools/constants';
 import { Request, Response } from 'express';
+import { CasAuth } from '../auth/auth.cas';
 
 export const Files = model<IFileExtended>('Files', BCSchema.fileSchema);
 
@@ -220,7 +222,19 @@ export function queryAllFilesByType(types): Promise<IFileExtended[]> {
     });
 }
 
-export function checkPermissionAPI(req: Request, res: Response, next) {
+export function createPermissionFileAPICheck(authService: CasAuth, openGetRoutes: RegExp[]) {
+    return (req: Request, res: Response, next) => {
+        if (req.method === 'GET' && getRegExpListResult(openGetRoutes, req.path)) {
+            next();
+        } else {
+            authService.block(req, res, () => {
+                checkPermissionAPI(req, res, next);
+            });
+        }
+    }
+}
+
+function checkPermissionAPI(req: Request, res: Response, next) {
     if (DISABLE_AUTH) {
         next();
     } else {
