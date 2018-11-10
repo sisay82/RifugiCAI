@@ -36,7 +36,7 @@ const OPEN_ROUTES: RegExp[] = [
   /^(\/shelters\/[^\/]+\/[^\/]+)$/
 ];
 
-appRoute.use(createPermissionAppAPICheck(AuthService, OPEN_ROUTES));
+appRoute.all('/shelters*', createPermissionAppAPICheck(AuthService, OPEN_ROUTES));
 
 appRoute
   .route("/shelters")

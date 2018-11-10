@@ -31,7 +31,7 @@ const OPEN_ROUTES: RegExp[] = [
     /^(\/shelters\/file\/byshel\/[^\/]+\/bytype)$/
 ];
 
-fileRoute.use(createPermissionFileAPICheck(AuthService, OPEN_ROUTES));
+fileRoute.all('/shelters/file*', createPermissionFileAPICheck(AuthService, OPEN_ROUTES));
 
 fileRoute.route('/shelters/file')
     .post(function (req, res) {
