@@ -1,7 +1,7 @@
 import * as express from "express";
 import { Enums } from "../../../src/app/shared/types/enums";
 import Auth_Permissions = Enums.Auth_Permissions;
-import { IShelterExtended, sendFatalError } from "../../tools/common";
+import { IShelterExtended } from "../../tools/common";
 import { createCSV } from "./csv.logic";
 import {
     getUserDataFilters,
@@ -164,7 +164,8 @@ appRoute
                         if (!err) {
                             res.status(200).send(true);
                         } else {
-                            sendFatalError(res, err);
+                            logger(LOG_TYPE.ERROR, err);
+                            res.status(500).send({ error: 'Invalid user or request' });
                         }
                     });
                 } else {
@@ -195,10 +196,14 @@ appRoute
                         stagingItem,
                         req.session,
                         item => res.status(200).send(true),
-                        e => sendFatalError(res, e)
+                        e => {
+                            logger(LOG_TYPE.ERROR, e);
+                            res.status(500).send({ error: 'Invalid user or request' });
+                        }
                     );
                 } else {
-                    sendFatalError(res, err);
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(500).send({ error: 'Invalid user or request' });
                 }
             });
     })
@@ -227,11 +232,12 @@ appRoute.route("/shelters/confirm/:id").put(function (req, res) {
                             .catch(err => {
                                 StagingAreaTools.removeStagingItem(stagingItem)
                                     .then(() => {
-                                        sendFatalError(res, err);
+                                        logger(LOG_TYPE.ERROR, err);
+                                        res.status(500).send({ error: 'Invalid user or request' });
                                     })
                                     .catch(e => {
                                         logger(LOG_TYPE.ERROR, err);
-                                        sendFatalError(res, e);
+                                        res.status(500).send({ error: 'Invalid user or request' });
                                     });
                             });
                     } else {
@@ -240,7 +246,8 @@ appRoute.route("/shelters/confirm/:id").put(function (req, res) {
                                 res.status(200).send(true);
                             })
                             .catch(err => {
-                                sendFatalError(res, err);
+                                logger(LOG_TYPE.ERROR, err);
+                                res.status(500).send({ error: 'Invalid user or request' });
                             });
                     }
                 })
@@ -263,7 +270,10 @@ appRoute.route("/shelters/confirm/:id").put(function (req, res) {
                 },
                 req.session,
                 item => res.status(200).send({ id: id }),
-                err => sendFatalError(res, err)
+                err => {
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(500).send({ error: 'Invalid user or request' });
+                }
             );
         } else {
             res.status(500).send({ error: "Invalid user or request" });
@@ -283,7 +293,8 @@ appRoute.route("/shelters/confirm/:section/:id").put(async function (req, res) {
                 if (!err) {
                     res.status(200).send(true);
                 } else {
-                    sendFatalError(res, err);
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(500).send({ error: 'Invalid user or request' });
                 }
             });
         } catch (err) {
@@ -299,7 +310,10 @@ appRoute.route("/shelters/confirm/:section/:id").put(async function (req, res) {
                     },
                     req.session,
                     item => res.status(200).send(true),
-                    e => sendFatalError(res, e)
+                    e => {
+                        logger(LOG_TYPE.ERROR, e);
+                        res.status(500).send({ error: 'Invalid user or request' });
+                    }
                 );
             } else {
                 logger(LOG_TYPE.ERROR, err);
@@ -397,7 +411,8 @@ appRoute
                         if (!err) {
                             res.status(200).send(stagingItem.shelter);
                         } else {
-                            sendFatalError(res, err);
+                            logger(LOG_TYPE.ERROR, err);
+                            res.status(500).send({ error: 'Invalid user or request' });
                         }
                     });
                 } else {

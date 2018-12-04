@@ -1,7 +1,7 @@
 import { Enums } from '../../../src/app/shared/types/enums';
 import * as express from 'express';
 import Auth_Permissions = Enums.Auth_Permissions;
-import { logger, LOG_TYPE, sendFatalError } from '../../tools/common';
+import { logger, LOG_TYPE } from '../../tools/common';
 import { OUT_DIR, DISABLE_AUTH, getLoginURL } from '../../tools/constants';
 import * as path from 'path';
 import {
@@ -31,7 +31,8 @@ authRoute.get('/user', function (req, res) {
             })
             .catch((err) => {
                 if (err) {
-                    sendFatalError(err);
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(401).send({ error: 'Invalid user or request' });
                 } else {
                     res.redirect(getLoginURL());
                 }

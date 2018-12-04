@@ -6,7 +6,8 @@ import {
     Observable,
     Subscription,
     of as obsOf,
-    forkJoin as obsForkJoin
+    forkJoin as obsForkJoin,
+    throwError
 } from 'rxjs';
 import {
     HttpClient,
@@ -248,8 +249,9 @@ export class BcAuthService {
         }
         this.routeError = true;
         this.errorRouteSource.next(true);
-        return Observable.throw({
+        return throwError({
             error: "Access denied"
-        })
+        });
+
     }
 }

@@ -1,4 +1,4 @@
-import { IShelterExtended, IFileExtended, sendFatalError, logger, LOG_TYPE } from "./common";
+import { IShelterExtended, IFileExtended, logger, LOG_TYPE } from "./common";
 import { Enums } from "../../src/app/shared/types/enums";
 import { CLEAR_CACHE_INTERVAL, MAX_TIME } from './constants';
 import { Schema, model, Document } from "mongoose";

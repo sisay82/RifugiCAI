@@ -5,8 +5,7 @@ import multer = require('multer');
 import {
     IFileExtended,
     logger,
-    LOG_TYPE,
-    sendFatalError
+    LOG_TYPE
 } from '../../tools/common';
 import { IFile } from '../../../src/app/shared/types/interfaces';
 import {
@@ -96,7 +95,8 @@ fileRoute.route('/shelters/file/confirm')
                                 res.status(200).send({ fileId: fileid });
                             })
                             .catch(e => {
-                                sendFatalError(res, e);
+                                logger(LOG_TYPE.ERROR, e);
+                                res.status(500).send({ error: 'Invalid user or request' });
                             });
                     } else {
                         logger(LOG_TYPE.ERROR, 'File size over limit');
@@ -105,7 +105,8 @@ fileRoute.route('/shelters/file/confirm')
                 }
             });
         } catch (e) {
-            sendFatalError(res, e);
+            logger(LOG_TYPE.ERROR, e);
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     });
 
@@ -130,7 +131,8 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
                     if (!err) {
                         res.status(200).send(true);
                     } else {
-                        sendFatalError(res, err);
+                        logger(LOG_TYPE.ERROR, err);
+                        res.status(500).send({ error: 'Invalid user or request' });
                     }
                 })
             })
@@ -146,9 +148,13 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
                         .then(item => {
                             res.status(200).send(true);
                         })
-                        .catch(e => { sendFatalError(res, e) });
+                        .catch(e => {
+                            logger(LOG_TYPE.ERROR, e);
+                            res.status(500).send({ error: 'Invalid user or request' });
+                        });
                 } else {
-                    sendFatalError(res, err);
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(500).send({ error: 'Invalid user or request' });
                 }
             });
     });
@@ -166,7 +172,8 @@ fileRoute.route('/shelters/file/:id')
                     res.status(500).send({ error: 'Invalid user or request' });
                 });
         } catch (err) {
-            sendFatalError(res, err);
+            logger(LOG_TYPE.ERROR, err);
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     })
     .put(function (req, res) {
@@ -223,16 +230,21 @@ fileRoute.route('/shelters/file/:id')
                                 files: [newF]
                             }, req.session);
                         } else {
-                            sendFatalError(res, err);
+                            logger(LOG_TYPE.ERROR, err);
+                            res.status(500).send({ error: 'Invalid user or request' });
                         }
                     })
                     .then(val => { res.status(200).send(true) })
-                    .catch(e => { sendFatalError(res, e) });
+                    .catch(e => {
+                        logger(LOG_TYPE.ERROR, e);
+                        res.status(500).send({ error: 'Invalid user or request' });
+                    });
             } else {
                 res.status(500).send({ error: 'Invalid user or request' });
             }
         } catch (e) {
-            sendFatalError(res, e);
+            logger(LOG_TYPE.ERROR, e);
+            res.status(500).send({ error: 'Invalid user or request' });
         }
     })
     .delete(function (req, res) {
@@ -274,7 +286,8 @@ fileRoute.route('/shelters/file/byshel/:id')
                             res.status(500).send({ error: 'Invalid user or request' });
                         });
                 } else {
-                    sendFatalError(res, err);
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(500).send({ error: 'Invalid user or request' });
                 }
             });
 
@@ -293,7 +306,8 @@ fileRoute.route('/shelters/file/byshel/:id/bytype')
                             res.status(200).send(retFiles);
                         })
                         .catch((err) => {
-                            sendFatalError(res, err);
+                            logger(LOG_TYPE.ERROR, err);
+                            res.status(500).send({ error: 'Invalid user or request' });
                         });
                 } else {
                     return Promise.reject(null);
@@ -306,10 +320,12 @@ fileRoute.route('/shelters/file/byshel/:id/bytype')
                             res.status(200).send(file);
                         })
                         .catch((e) => {
-                            sendFatalError(res, e);
+                            logger(LOG_TYPE.ERROR, e);
+                            res.status(500).send({ error: 'Invalid user or request' });
                         });
                 } else {
-                    sendFatalError(res, err);
+                    logger(LOG_TYPE.ERROR, err);
+                    res.status(500).send({ error: 'Invalid user or request' });
                 }
             });
     });

@@ -126,6 +126,7 @@ export function getAuthorizationsFromCAI(uuid) {
                             reject('Error code');
                         }
                     } else {
+                        logger(LOG_TYPE.INFO, data)
                         reject('User not authorized');
                     }
                 } catch (e) {

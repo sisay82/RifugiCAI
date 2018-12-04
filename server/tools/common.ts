@@ -30,7 +30,6 @@ export function getRegExpListResult(arr: RegExp[], value) {
         ret = ret || val.test(value);
     });
     return ret;
-    //return arr.some(val => val.test(value))
 }
 
 export function removeDuplicate(a: any[], b: any[]): any[] {
@@ -123,11 +122,6 @@ export function logger(logWeight: LOG_TYPE, log?: any, ...other) {
             structuredLog(logWeight, [log].concat(other));
         }
     }
-}
-
-export function sendFatalError(res, ...errors) {
-    if (errors) { logger(LOG_TYPE.ERROR, errors) };
-    res.status(500).send({ error: 'Invalid user or request' });
 }
 
 export function toTitleCase(input: string): string {
