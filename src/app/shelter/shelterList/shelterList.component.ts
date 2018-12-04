@@ -9,7 +9,7 @@ import {
     IShelter
 } from '../../shared/types/interfaces';
 import {
-    Enums, A
+    Enums
 } from '../../shared/types/enums';
 import {
     BcSharedService

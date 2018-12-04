@@ -39,7 +39,7 @@ export class BcDisableDivStyler {
   providers: [ShelterService]
 })
 export class BcEconomyRevision extends RevisionBase implements OnDestroy {
-  economy: [IEconomy] = <any>[];
+  economy: IEconomy[] = [];
   private files: IFile[] = [];
   private activeYear: Number;
   maskSaveSub: Subscription;

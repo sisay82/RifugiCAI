@@ -104,7 +104,7 @@ export enum LOG_TYPE {
 function structuredLog(logWeight: LOG_TYPE, logs: any[], error: boolean = false) {
     const log = {
         logWeight: logWeight,
-        content: logs,
+        content: JSON.stringify(logs),
         time: Date.now(),
         _id: new ObjectId()
     }

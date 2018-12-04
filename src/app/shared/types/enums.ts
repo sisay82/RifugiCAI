@@ -1,25 +1,3 @@
-
-export namespace A {
-    export enum Routed_Component {
-        geographic = "geographic",
-        services = "services",
-        contacts = "contacts",
-        management = "management",
-        catastal = "catastal",
-        documents = "documents",
-        images = "images",
-        economy = "economy",
-        contribution = "contribution",
-        use = "use",
-        working = "working"
-    }
-
-    export enum Routed_Outlet {
-        "content",
-        "revision"
-    }
-}
-
 export module Enums {
     export module Routes {
         export enum Routed_Component {
@@ -193,11 +171,11 @@ export module Enums {
 
     export module Files {
         export enum File_Type {
-            doc = "doc",
-            map = "map",
-            invoice = "invoice",
-            image = "image",
-            contribution = "contribution"
+            "doc",
+            "map",
+            "invoice",
+            "image",
+            "contribution"
         }
 
         export enum Docs_Type {

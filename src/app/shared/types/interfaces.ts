@@ -57,7 +57,7 @@ export interface ITag {
 
 export interface IGeographic {
     location?: ILocation;
-    tags?: [ITag];
+    tags?: ITag[];
 }
 
 export interface IService {
@@ -65,7 +65,7 @@ export interface IService {
     name?: String;
     category?: String;
     description?: String;
-    tags?: [ITag];
+    tags?: ITag[];
 }
 
 export interface IOpening {
@@ -109,7 +109,7 @@ export interface IManagement {
     self_management?: Boolean;
     valuta?: String;
     pickupKey?: Boolean;
-    subject?: [ISubject];
+    subject?: ISubject[];
 }
 
 export interface ICatastal {
@@ -191,7 +191,7 @@ export interface IContributionData {
 export interface IContribution {
     year: Number;
     data?: IContributionData;
-    attachments?: [IFileRef];
+    attachments?: IFileRef[];
     value?: Number;
     accepted?: Boolean;
     type?: Enums.Contribution_Type;
@@ -213,15 +213,15 @@ export interface IShelter {
     updateSubject?: Enums.Auth_Permissions.User_Type;
 
     geoData?: IGeographic;
-    services?: [IService];
+    services?: IService[];
     contacts?: IContacts;
-    openingTime?: [IOpening];
+    openingTime?: IOpening[];
     management?: IManagement;
     catastal?: ICatastal;
     energy?: IEnergy;
     drain?: IDrain;
-    economy?: [IEconomy];
-    use?: [IUse];
+    economy?: IEconomy[];
+    use?: IUse[];
     contributions?: IContribution;
 }
 

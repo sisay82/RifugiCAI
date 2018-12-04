@@ -28,7 +28,7 @@ export class BcActiveTabStyler {
   providers: [ShelterService]
 })
 export class BcFruition extends DetailBase {
-  data: [IUse] = <any>[];
+  data: IUse[] = [];
   activeYear;
   activeTab: IUse;
   constructor(shelterService: ShelterService,

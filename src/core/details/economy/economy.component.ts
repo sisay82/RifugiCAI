@@ -29,13 +29,13 @@ export class BcActiveTabStyler {
   providers: [ShelterService]
 })
 export class BcEconomy extends DetailBase {
-  economy: [IEconomy] = <any>[];
+  economy: IEconomy[] = [];
   activeYear: Number;
   activeTab: IEconomy;
   balanceSheet = 0;
   files: IFile[] = [];
-  revenuesFiles: [IFile] = [] as any;
-  outgosFiles: [IFile] = [] as any;
+  revenuesFiles: IFile[] = [];
+  outgosFiles: IFile[] = [];
   revenues = 0;
   outgos = 0;
   constructor(shelterService: ShelterService,

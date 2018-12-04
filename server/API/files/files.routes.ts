@@ -282,7 +282,7 @@ fileRoute.route('/shelters/file/byshel/:id')
 
 fileRoute.route('/shelters/file/byshel/:id/bytype')
     .get(function (req, res) {
-        const types = req.query.types.map(t => Enums.Files.File_Type[t] || Number(t) || null);
+        const types = req.query.types.map(t => Number(t) !== NaN ? Number(t) : Enums.Files.File_Type[t] || null);
         StagingAreaTools.getStaginItemByShelId(req.params.id)
             .then(stagingItem => {
                 if (stagingItem.files != null) {

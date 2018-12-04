@@ -72,7 +72,11 @@ export namespace StagingAreaTools {
     export function getStaginItemByShelId(id: String): Promise<StagingInterfaces.StagingItemExtended> {
         return new Promise<StagingInterfaces.StagingItemExtended>((resolve, reject) => {
             StagingAreaModel.findOne({ 'shelter._id': id }).exec((err, res) => {
-                err || !res ? reject(err) : resolve(res);
+                if (err || !res) {
+                    reject(err)
+                } else {
+                    resolve(res);
+                }
             });
         })
     }

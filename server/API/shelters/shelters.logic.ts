@@ -7,7 +7,7 @@ import {
     getRegExpListResult
 } from '../../tools/common';
 import { model, QueryCursor } from 'mongoose';
-import { IOpening } from '../../../src/app/shared/types/interfaces';
+import { IOpening, IShelter } from '../../../src/app/shared/types/interfaces';
 import { BCSchema } from '../../../src/app/shared/types/schema';
 import {
     logger,
@@ -333,7 +333,7 @@ export function deleteShelter(id): Promise<boolean> {
     });
 }
 
-function resolveSingleServiceInShelter(shelter, service): Promise<any> {
+function resolveSingleServiceInShelter(shelter: IShelterExtended, service: IServiceExtended): Promise<any> {
     const c = getPropertiesNumber(service);
 
     if (service.hasOwnProperty('_id') && c === 1) {
@@ -341,10 +341,15 @@ function resolveSingleServiceInShelter(shelter, service): Promise<any> {
     } else {
         if (service._id) {
             return updateService(service._id, service)
+                .then(val => {
+                    if (shelter.services.findIndex(s => s._id === service._id) === -1) {
+                        shelter.services = shelter.services.concat(<any>service._id)
+                    }
+                })
         } else {
             return insertNewService(service)
                 .then((serv) => {
-                    shelter.services.push(serv._id);
+                    shelter.services = shelter.services.concat(<any>serv._id);
                 });
         }
     }
@@ -450,57 +455,69 @@ function resolveEconomyInShelter(shelter: IShelterExtended, uses: any[], contrib
     });
 }
 
-function cleanShelterProps(shelter, params) {
-    for (const prop in shelter) {
-        if (Object.getPrototypeOf(shelter).hasOwnProperty(prop) &&
-            Object.getPrototypeOf(params).hasOwnProperty(prop)) {
-            shelter[prop] = undefined;
-        } else if (shelter[prop] == null) {
-            shelter[prop] = undefined;
+function getShelterDocPropsBase(params) {
+    return Object.keys(params).reduce((acc, val) => {
+        if (!val.startsWith('_') && !Array.isArray(params[val]) && params[val] && params[val]._doc) {
+            acc[val] = params[val]._doc;
         }
-    }
+        return acc;
+    }, {});
 }
 
-export function updateShelter(id: any, params: any, newItem?: Boolean): Promise<boolean> {
+export function updateShelter(id: any, updateObj: any, newItem?: Boolean): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         try {
-            const services: any[] = params.services;
-            const use: any[] = params.use;
-            const contributions = params.contributions;
-            const economy: any[] = params.economy;
-            delete (params.services);
-            delete (params.use);
-            delete (params.economy);
+            const services: any[] = updateObj.services;
+            const use: any[] = updateObj.use;
+            const contributions = updateObj.contributions;
+            const economy: any[] = updateObj.economy;
+
+            const params = getShelterDocPropsBase(updateObj)
+
             const options: any = { upsert: newItem || false, new: true };
-            if (!params.updateDate) {
-                params.updateDate = new Date(Date.now());
+            if (!updateObj.updateDate) {
+                updateObj.updateDate = new Date(Date.now());
             }
-            Shelters.findByIdAndUpdate(id, { $set: params }, options, function (err, shel) {
+            Shelters.findByIdAndUpdate(id, params, options, async (err, shel) => {
                 if (err) {
                     logger(LOG_TYPE.WARNING, err);
                     reject(err);
                 } else {
-                    cleanShelterProps(shel, params);
-
-                    resolveServicesInShelter(shel, services)
-                        .then((shelter) => {
-                            resolveEconomyInShelter(shelter, use, contributions, economy)
-                                .then((s) => {
-                                    s.save((e) => {
-                                        if (!err) {
-                                            resolve(true);
-                                        } else {
-                                            reject(e);
-                                        }
+                    try {
+                        /*updateShelterProps(shel, params);
+                        const shelter = await resolveServicesInShelter(shel, services)
+                        const s = await resolveEconomyInShelter(shelter, use, contributions, economy)
+                        s.save((e) => {
+                            if (!err) {
+                                resolve(true);
+                            } else {
+                                reject(e);
+                            }
+                        });*/
+                        resolveServicesInShelter(shel, services)
+                            .then((shelter) => {
+                                resolveEconomyInShelter(shelter, use, contributions, economy)
+                                    .then((s) => {
+                                        s.save((e) => {
+                                            if (!err) {
+                                                resolve(true);
+                                            } else {
+                                                reject(e);
+                                            }
+                                        });
+                                    })
+                                    .catch((e) => {
+                                        reject(e);
                                     });
-                                })
-                                .catch((e) => {
-                                    reject(e);
-                                });
-                        })
-                        .catch((e) => {
-                            reject(e);
-                        });
+                            })
+                            .catch((e) => {
+                                reject(e);
+                            });
+
+                    } catch (e) {
+                        reject(e);
+                    }
+
                 }
             })
         } catch (e) {
@@ -509,9 +526,9 @@ export function updateShelter(id: any, params: any, newItem?: Boolean): Promise<
     });
 }
 
-export function confirmShelter(id: any): Promise<boolean> {
-    return StagingAreaTools.getStaginItemByShelId(id)
-        .then(shelToUpdate => updateShelter(id, shelToUpdate.shelter, shelToUpdate.newItem));
+export async function confirmShelter(id: any): Promise<boolean> {
+    const shelToUpdate = await StagingAreaTools.getStaginItemByShelId(id);
+    return updateShelter(id, shelToUpdate.shelter, shelToUpdate.newItem)
 }
 
 function addOpening(id, opening: IOpening): Promise<boolean> {
