@@ -554,7 +554,9 @@ function getShelterDocPropsBase(params, arrayFields?: string[]) {
         ) {
             if (params[val]._doc) {
                 acc[val] = params[val]._doc;
-            } else if(Array.isArray(params[val])) {
+            } else if (Array.isArray(params[val])) {
+                acc[val] = params[val];
+            } else if (typeof params[val] === "string" || typeof params[val] === "number" ) {
                 acc[val] = params[val];
             }
         }
