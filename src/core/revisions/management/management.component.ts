@@ -217,11 +217,15 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
                 for (const subj of shelter.management.subject) {
                     if (subj.type && subj.type.toLowerCase().indexOf("proprietario") > -1) {
                         this.property = subj;
-                        // this.ownerSubjectForm.setValue(this.initSubject(subj));
-
-                        for (const contr in subj) {
+                        const propSubject = this.initSubject(subj);
+                        for (const contr in propSubject.controls) {
                             if (this.ownerSubjectForm.contains(contr)) {
-                                this.ownerSubjectForm.get(contr).setValue(subj[contr]);
+                                if (contr.indexOf("date") === -1) {
+                                    this.ownerSubjectForm.get(contr).setValue(subj[contr]);
+                                } else {
+                                    this.ownerSubjectForm.get(contr).setValue(subj[contr] ?
+                                        (new Date(subj[contr]).toLocaleDateString() || null) : null);
+                                }
                             }
                         }
                     } else {
