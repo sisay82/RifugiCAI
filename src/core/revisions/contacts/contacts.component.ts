@@ -168,7 +168,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
     uniqueTypeValidator(val: AbstractControl): ValidationErrors {
         return (<FormArray>this.contactForm.controls.openingTime)
             .controls
-            .findIndex(v => v.value.type === val.value) >= 0
+            .findIndex(v => (<any>v).controls.type !== val && v.value.type === val.value) >= 0
             ? { unique: false } : null;
     }
 
@@ -216,6 +216,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
 
             shelter.openingTime = openings;
             shelter.contacts = contacts;
+            console.log(openings)
             this.processSavePromise(shelter, "openingTime")
                 .then(() => this.processSavePromise(shelter, "contacts"))
                 .then(() => {

@@ -168,7 +168,17 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
             const subjects: ISubject[] = this.getFormArrayValues(control);
             subjects.push(prop);
             shelter.management = management
-            shelter.management.subject = subjects as [ISubject];
+            shelter.management.subject = subjects.map(subj => {
+                if (subj) {
+                    if (subj.contract_end_date) {
+                        subj.contract_end_date = this.processSimpleDate(subj.contract_end_date);
+                    }
+                    if (subj.contract_start_date) {
+                        subj.contract_start_date = this.processSimpleDate(subj.contract_start_date);
+                    }
+                }
+                return subj;
+            });
             this.processSavePromise(shelter, "management")
                 .then(() => {
                     this.displayError = false;
