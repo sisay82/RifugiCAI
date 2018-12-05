@@ -239,7 +239,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         this.data["openingTime"] = shelter.openingTime;
         if (this.data.contacts) {
             for (const prop in this.data.contacts) {
-                if (this.data.contacts.hasOwnProperty(prop)) {
+                if (this.data.contacts.hasOwnProperty(prop) && this.data.contacts[prop]) {
                     if (this.contactForm.contains(prop)) {
                         this.contactForm.get(prop).setValue(this.data.contacts[prop]);
                     }
