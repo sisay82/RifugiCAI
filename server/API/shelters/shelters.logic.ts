@@ -83,6 +83,22 @@ function getQueryFilters(regions, sections) {
     return query;
 }
 
+export function getShelterHeadById(id: string) {
+    return new Promise<IShelterExtended>((resolve, reject) => {
+        Shelters.findById(
+            id,
+            "name idCai type branch owner category insertDate updateDate"
+        ).exec((err, ris) => {
+            if (err) {
+                logger(LOG_TYPE.WARNING, err);
+                reject(err);
+            } else {
+                resolve(ris);
+            }
+        });
+    });
+}
+
 export function getAllIdsHead(
     userData: Tools.ICodeInfo
 ): Promise<IShelterExtended[]> {

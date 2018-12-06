@@ -25,7 +25,8 @@ import {
     queryShelPage,
     queryAllSheCSV,
     queryShelSectionById,
-    deleteService
+    deleteService,
+    getShelterHeadById
 } from "./shelters.logic";
 import { StagingAreaTools } from "../../tools/stagingArea";
 import { AuthService } from "../../config/init";
@@ -141,7 +142,18 @@ appRoute
     .get(function(req, res) {
         try {
             if (ObjectId.isValid(req.params.id)) {
-                queryShelById(req.params.id)
+                if (req.query.header) {
+                    getShelterHeadById(req.params.id)
+                        .then(rif => {
+                            res.status(200).send(rif);
+                        })
+                        .catch(err => {
+                            res.status(500).send({
+                                error: "Invalid user or request"
+                            });
+                        });
+                } else {
+                    queryShelById(req.params.id)
                     .then(rif => {
                         if (rif != null) {
                             res.status(200).send(rif);
@@ -154,6 +166,7 @@ appRoute
                             error: "Invalid user or request"
                         });
                     });
+                }
             } else {
                 res.status(500).send({ error: "Invalid user or request" });
             }
