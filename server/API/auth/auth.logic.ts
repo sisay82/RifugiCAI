@@ -88,9 +88,11 @@ export function getCode(type: Auth_Permissions.User_Type, data): String {
             if (data.sectionCode) {
                 code = data.sectionCode;
             }
+        } else if (type === Auth_Permissions.User_Type.central) {
+            code = '9300000'
         } else {
             if (data.regionaleGroupCode) {
-                return data.regionaleGroupCode;
+                code = data.regionaleGroupCode;
             }
         }
     }
