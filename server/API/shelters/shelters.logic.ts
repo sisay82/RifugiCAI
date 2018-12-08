@@ -83,6 +83,25 @@ function getQueryFilters(regions, sections) {
     return query;
 }
 
+export function getShelterHeaderByProperty(prop: string, value: string) {
+    return new Promise<IShelterExtended>((resolve, reject) => {
+        if (prop.includes(".")) {
+            reject("Only base property allowed: " + prop);
+        }
+        const query = { [prop]: value };
+        Shelters.findOne(
+            query,
+            "_id name idCai type branch owner category insertDate updateDate"
+        ).exec((err, ris) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(ris);
+            }
+        });
+    });
+}
+
 export function getShelterHeadById(id: string) {
     return new Promise<IShelterExtended>((resolve, reject) => {
         Shelters.findById(
@@ -572,7 +591,10 @@ function getShelterDocPropsBase(params, arrayFields?: string[]) {
                 acc[val] = params[val]._doc;
             } else if (Array.isArray(params[val])) {
                 acc[val] = params[val];
-            } else if (typeof params[val] === "string" || typeof params[val] === "number" ) {
+            } else if (
+                typeof params[val] === "string" ||
+                typeof params[val] === "number"
+            ) {
                 acc[val] = params[val];
             }
         }

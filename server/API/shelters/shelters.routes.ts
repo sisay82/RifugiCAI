@@ -26,7 +26,8 @@ import {
     queryAllSheCSV,
     queryShelSectionById,
     deleteService,
-    getShelterHeadById
+    getShelterHeadById,
+    getShelterHeaderByProperty
 } from "./shelters.logic";
 import { StagingAreaTools } from "../../tools/stagingArea";
 import { AuthService } from "../../config/init";
@@ -137,6 +138,21 @@ appRoute.route("/shelters/point").get(function(req, res) {
     }
 });
 
+appRoute.route("/shelters/byProp/:prop/:value").get(async function(req, res) {
+    try {
+        const shel = await getShelterHeaderByProperty(
+            req.params.prop,
+            req.params.value
+        );
+        res.status(200).send(shel);
+    } catch (err) {
+        logger(LOG_TYPE.ERROR, err);
+        res.status(500).send({
+            error: "Invalid user or request"
+        });
+    }
+});
+
 appRoute
     .route("/shelters/:id")
     .get(function(req, res) {
@@ -154,18 +170,18 @@ appRoute
                         });
                 } else {
                     queryShelById(req.params.id)
-                    .then(rif => {
-                        if (rif != null) {
-                            res.status(200).send(rif);
-                        } else {
-                            res.status(200).send({ _id: req.params.id });
-                        }
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            error: "Invalid user or request"
+                        .then(rif => {
+                            if (rif != null) {
+                                res.status(200).send(rif);
+                            } else {
+                                res.status(200).send({ _id: req.params.id });
+                            }
+                        })
+                        .catch(err => {
+                            res.status(500).send({
+                                error: "Invalid user or request"
+                            });
                         });
-                    });
                 }
             } else {
                 res.status(500).send({ error: "Invalid user or request" });
