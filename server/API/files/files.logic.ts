@@ -225,7 +225,9 @@ export function queryAllFilesByType(types): Promise<IFileExtended[]> {
 export function createPermissionFileAPICheck(authService: CasAuth, openGetRoutes: RegExp[]) {
     return (req: Request, res: Response, next) => {
         if (req.method === 'GET' && getRegExpListResult(openGetRoutes, req.path)) {
-            next();
+            authService.soft_block(req, res, () => {
+                next();
+            });
         } else {
             authService.block(req, res, () => {
                 checkPermissionAPI(req, res, next);
