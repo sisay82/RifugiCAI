@@ -35,7 +35,8 @@ import { AuthService } from "../../config/init";
 export const appRoute = express.Router();
 const OPEN_ROUTES: RegExp[] = [
     /^(\/shelters\/[^\/]+)$/,
-    /^(\/shelters\/[^\/]+\/[^\/]+)$/
+    /^(\/shelters\/[^\/]+\/[^\/]+)$/,
+    /^(\/shelters\/byProp\/[^\/]+\/[^\/]+)$/
 ];
 
 appRoute.all(
