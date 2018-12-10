@@ -367,7 +367,9 @@ export function createPermissionAppAPICheck(
             req.method === "GET" &&
             getRegExpListResult(openGetRoutes, req.path)
         ) {
-            next();
+            authService.soft_block(req, res, () => {
+                next();
+            });
         } else {
             authService.block(req, res, () => {
                 checkPermissionSheltersAPI(req, res, next);

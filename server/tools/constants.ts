@@ -46,7 +46,9 @@ export const CSV_UNWINDS = {
 
 export const ENV_LIST = [
     'SESSION_SECRET',
-    'USER_DATA_AUTH'
+    'USER_DATA_AUTH',
+    'INFOMONT_USER',
+    'INFOMONT_PASS',
 ]
 
 export const CSV_UNWINDS_ALIASES = {
