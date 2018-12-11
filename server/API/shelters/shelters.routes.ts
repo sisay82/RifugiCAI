@@ -185,9 +185,10 @@ appRoute
                         });
                 }
             } else {
-                res.status(500).send({ error: "Invalid user or request" });
+                res.status(500).send({ error: "Invalid shelter ID" });
             }
         } catch (e) {
+            logger(LOG_TYPE.ERROR, e);
             res.status(500).send({ error: "Invalid user or request" });
         }
     })

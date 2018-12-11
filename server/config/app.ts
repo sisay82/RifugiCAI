@@ -58,7 +58,7 @@ app.use(
         );
         const origin = <string>req.headers.origin;
 
-        if (ENV_CONFIG.DEV || ALLOWED_ORIGINS.indexOf(origin) > -1) {
+        if (origin && (ENV_CONFIG.DEV || ALLOWED_ORIGINS.indexOf(origin) > -1)) {
             res.setHeader("Access-Control-Allow-Origin", origin);
         }
 

@@ -443,10 +443,8 @@ function resolveSingleServiceInShelter(
     } else {
         if (service._id) {
             return updateService(service._id, service).then(val => {
-                if (
-                    shelter.services.findIndex(s => s._id === service._id) ===
-                    -1
-                ) {
+                const shelterService = shelter.services.findIndex(servId => servId == service._id.toString());
+                if (shelterService === -1) {
                     shelter.services = shelter.services.concat(<any>(
                         service._id
                     ));
