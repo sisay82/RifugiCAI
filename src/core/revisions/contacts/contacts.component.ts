@@ -200,7 +200,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                 name: this.name
             };
 
-            const contacts: IContacts = this.getFormValues(this.contactForm);
+            const contacts: IContacts = this.getFormNotArrayValues(this.contactForm);
             const op = this.getFormArrayValues(<FormArray>this.contactForm.get('openingTime'));
             const openings = op.map(val => {
                 if (val) {
@@ -241,7 +241,12 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             for (const prop in this.data.contacts) {
                 if (this.data.contacts.hasOwnProperty(prop) && this.data.contacts[prop]) {
                     if (this.contactForm.contains(prop)) {
-                        this.contactForm.get(prop).setValue(this.data.contacts[prop]);
+                        try {
+                            this.contactForm.get(prop).setValue(this.data.contacts[prop]);
+                        } catch (e) {
+                            console.log(prop);
+                            console.error(e);
+                        }
                     }
                 }
             }

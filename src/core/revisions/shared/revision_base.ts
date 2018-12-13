@@ -182,6 +182,16 @@ export abstract class RevisionBase implements OnInit {
         return parseDate(value);
     }
 
+    protected getFormNotArrayValues(form: FormGroup): any {
+        const obj: any = {};
+        for (const control in form.controls) {
+            if (form.controls.hasOwnProperty(control) && !Array.isArray((<any>form.controls[control]).controls)) {
+                obj[control] = this.getControlValue(<FormGroup>form.controls[control]);
+            }
+        }
+        return obj;
+    }
+
     protected getFormValues(form: FormGroup): any {
         const obj: any = {};
         for (const control in form.controls) {
