@@ -59,40 +59,10 @@ export class BcServ extends DetailBase {
         return [];
     }
 
-    /*getService(id): Promise<IShelter> {
-        return new Promise<IShelter>((resolve, reject) => {
-            let detSub = this.detailsService.load$.subscribe(shelter => {
-                if (shelter != null && shelter.services != undefined) {
-                    if (detSub != undefined) {
-                        detSub.unsubscribe();
-                    }
-                    resolve(shelter);
-                } else {
-                    let shelSub = this.shelterService.getShelterSection(id, "services").subscribe(shelter => {
-                        if (shelter.services == undefined) shelter.services = [] as [IService];
-                        this.detailsService.onChildSave(shelter, "services");
-                        if (shelSub != undefined) {
-                            shelSub.unsubscribe();
-                        }
-                        if (detSub != undefined) {
-                            detSub.unsubscribe();
-                        }
-                        resolve(shelter);
-                    });
-                }
-            });
-            this.detailsService.onChildLoadRequest("services");
-        });
-    }*/
-
     init(shelId) {
         this.getData(shelId, "services")
             .then(shelter => {
                 this.initServices(shelter.services);
             });
-        /*this.getService(shelId)
-            .then(shelter => {
-                this.initServices(shelter.services);
-            });*/
     }
 }

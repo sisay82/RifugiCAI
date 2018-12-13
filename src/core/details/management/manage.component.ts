@@ -45,32 +45,6 @@ export class BcManage extends DetailBase {
 
   }
 
-  /*getManagement(id): Promise<IShelter> {
-    return new Promise<IShelter>((resolve, reject) => {
-      let detSub = this.detailsService.load$.subscribe(shelter => {
-        if (shelter != null && shelter.management != undefined) {
-          if (detSub != undefined) {
-            detSub.unsubscribe();
-          }
-          resolve(shelter);
-        } else {
-          let managSub = this.shelterService.getShelterSection(id, "management").subscribe(shelter => {
-            if (shelter.management == undefined) shelter.management = { subject: [] as [ISubject] };
-            this.detailsService.onChildSave(shelter, "management");
-            if (managSub != undefined) {
-              managSub.unsubscribe();
-            }
-            if (detSub != undefined) {
-              detSub.unsubscribe();
-            }
-            resolve(shelter);
-          });
-        }
-      });
-      this.detailsService.onChildLoadRequest("management");
-    });
-  }*/
-
   getEmptyObjData(section) {
     return { subject: [] as any };
   }
@@ -79,11 +53,7 @@ export class BcManage extends DetailBase {
     this.getData(shelId, "management")
       .then(shelter => {
         this.initManagement(shelter.management);
-      })
-    /*this.getManagement(shelId)
-      .then(shelter => {
-        this.initManagement(shelter.management);
-      });*/
+      });
   }
 
   getDifferenceDates(date1: Date, date2: Date) {

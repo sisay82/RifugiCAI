@@ -248,37 +248,6 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
 
     }
 
-    getGeoData(id): Promise<IShelter> {
-        return new Promise<IShelter>((resolve, reject) => {
-            const revSub = this.revisionService.load$.subscribe(shelter => {
-                if (shelter && shelter.geoData) {
-                    if (revSub) {
-                        revSub.unsubscribe();
-                    }
-                    resolve(shelter);
-                } else {
-                    const shelSub = this.shelterService.getShelterSection(id, "geoData").subscribe(shel => {
-                        if (!shel.geoData) {
-                            shel.geoData = {
-                                location: {},
-                                tags: [] as any
-                            };
-                        }
-                        this.revisionService.onChildSave(shel, "geoData");
-                        if (shelSub) {
-                            shelSub.unsubscribe();
-                        }
-                        if (revSub) {
-                            revSub.unsubscribe();
-                        }
-                        resolve(shel);
-                    });
-                }
-            });
-            this.revisionService.onChildLoadRequest("geoData");
-        });
-    }
-
     init(shelId) {
         this.getData(shelId, "geoData")
             .then((shelter) => {

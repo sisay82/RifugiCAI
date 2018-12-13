@@ -53,31 +53,6 @@ export class BcFruition extends DetailBase {
     }
   }
 
-  /* getUse(id): Promise<IShelter> {
-     return new Promise<IShelter>((resolve, reject) => {
-       let revSub = this.detailsService.load$.subscribe(shelter => {
-         if (shelter != null && shelter.use != undefined) {
-           if (revSub != undefined) {
-             revSub.unsubscribe();
-           }
-           resolve(shelter);
-         } else {
-           let shelSub = this.shelterService.getShelterSection(id, "use").subscribe(shelter => {
-             this.detailsService.onChildSave(shelter, "use");
-             if (shelSub != undefined) {
-               shelSub.unsubscribe();
-             }
-             if (revSub != undefined) {
-               revSub.unsubscribe();
-             }
-             resolve(shelter);
-           });
-         }
-       });
-       this.detailsService.onChildLoadRequest("use");
-     });
-   }*/
-
   init(shelId) {
     this.getData(shelId, "use")
       .then(shelter => {
@@ -89,18 +64,6 @@ export class BcFruition extends DetailBase {
           this.data.push(use);
           this.activeTab = use;
         }
-      })
-
-    /*this.getUse(shelId)
-      .then((shelter) => {
-        this.data = shelter.use.sort((a, b) => { return a.year < b.year ? -1 : a.year > b.year ? +1 : 0; });
-        this.activeTab = shelter.use.find(obj => obj.year == (new Date().getFullYear()));
-        this.activeYear = (new Date()).getFullYear();
-        if (!this.activeTab) {
-          let use: IUse = { year: (new Date()).getFullYear() }
-          this.data.push(use);
-          this.activeTab = use;
-        }
-      });*/
+      });
   }
 }
