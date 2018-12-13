@@ -162,7 +162,7 @@ export const CUSTOM_PATTERN_VALIDATORS = {
     urlValidator: <RegExp>(
         /(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
     ),
-    dateWithoutYearValidator: <RegExp>/^[0-9]{1,2}(-|\/)?[0-9]{1,2}$/,
+    dateWithoutYearValidator: <RegExp>/^[0-9]{1,2}(-|\/)[0-9]{1,2}$/,
     objectID: <RegExp>/^[0-9a-fA-F]{24}$/
 };
 

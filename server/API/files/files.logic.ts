@@ -155,10 +155,11 @@ export function queryFileByid(id): Promise<IFileExtended> {
 
 export function queryFilesByshelterId(id, types?: Enums.Files.File_Type[]): Promise<IFileExtended[]> {
     return new Promise<IFileExtended[]>((resolve, reject) => {
-        Files.find({
-            'shelterId': id,
-            type: { $in: types }
-        },
+        const query = types && Array.isArray(types)
+            ? { 'shelterId': id, type: { $in: types } }
+            : { 'shelterId': id };
+
+        Files.find(query,
             'name size contentType type description value invoice_tax invoice_year invoice_confirmed contribution_type invoice_type')
             .exec((err, ris) => {
                 if (err) {

@@ -114,10 +114,10 @@ export class BcList extends BcStyler implements OnDestroy, AfterContentInit {
           // added item
           changeRecord.item.listItemUniqueName = this.getListItemUniqueName(changeRecord.item);
         });
-        changeDiff.forEachRemovedItem((item: CollectionChangeRecord<BcListItem>) => {
+        /*changeDiff.forEachRemovedItem((item: CollectionChangeRecord<BcListItem>) => {
           // removed item
-          console.log('Removed BcListItem!!!');
-        });
+          // console.log('Removed BcListItem');
+        });*/
       }
     });
   }

@@ -104,7 +104,14 @@ export class CasAuth {
 
     private _handleBasicAuth(req: Request): boolean {
         const user = auth(req);
-        if (!user || user.name !== process.env.INFOMONT_USER || user.pass !== process.env.INFOMONT_PASS) {
+        if (ENV_CONFIG.DEV) {
+            logger(LOG_TYPE.INFO, "Soft block user authentication", user);
+        }
+        if (
+            !user ||
+            user.name !== process.env.INFOMONT_USER ||
+            user.pass !== process.env.INFOMONT_PASS
+        ) {
             return false;
         }
         return true;

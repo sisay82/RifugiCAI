@@ -123,9 +123,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
   removeFile(id) {
     this.commitToFather({ _id: id, type: Enums.Files.File_Type.image }, true);
     const removeFileSub = this.shelterService.removeFile(id, this._id).subscribe(value => {
-      if (!value) {
-        console.log(value);
-      } else {
+      if (value) {
         (<FormArray>this.docsForm.get('files')).controls
           .splice((<FormArray>this.docsForm.get('files')).controls
             .findIndex(f => f.value.id == id), 1);

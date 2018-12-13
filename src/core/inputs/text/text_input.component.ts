@@ -145,7 +145,7 @@ export class BcTextInput extends BcBaseInput {
 
     validatorFn(c?: FormControl) {
         const value = c ? (c.value || this.value) : this.value;
-        if (!this.removeYear || CUSTOM_PATTERN_VALIDATORS.dateWithoutYearValidator.test(value)) {
+        if (!this.removeYear || (!this.value || CUSTOM_PATTERN_VALIDATORS.dateWithoutYearValidator.test(value))) {
             if (c && c.value !== null) {
                 this.setValue(c.value);
             }

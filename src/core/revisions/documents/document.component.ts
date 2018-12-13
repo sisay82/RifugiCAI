@@ -259,9 +259,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
         const removeFileSub = this.shelterService
             .removeFile(id, this._id)
             .subscribe(value => {
-                if (!value) {
-                    console.log(value);
-                } else {
+                if (value) {
                     this.docs.splice(
                         this.docs.findIndex(file => file._id == id),
                         1
@@ -282,9 +280,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
         const removeFileSub = this.shelterService
             .removeFile(id, this._id)
             .subscribe(value => {
-                if (!value) {
-                    console.log(value);
-                } else {
+                if (value) {
                     this.maps.splice(
                         this.maps.findIndex(file => file._id == id),
                         1
@@ -305,9 +301,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
             const removeFileSub = this.shelterService
                 .removeFile(id, this._id)
                 .subscribe(value => {
-                    if (!value) {
-                        console.log(value);
-                    } else {
+                    if (value) {
                         (<FormArray>this.invoicesForm.get("files")).removeAt(
                             index
                         );
