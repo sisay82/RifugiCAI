@@ -181,7 +181,7 @@ export namespace BCSchema {
         status: String,
         regional_type: { type: Enums.Regional_Type },
         category: { type: Enums.Shelter_Category },
-        insertDate: { type: Date, default: Date.now },
+        insertDate: { type: Date, default: new Date(Date.now()) },
         updateDate: { type: Date, default: new Date(Date.now()) },
         updateSubject: { type: Enums.Auth_Permissions.User_Type },
 
