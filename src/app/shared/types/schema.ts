@@ -198,7 +198,7 @@ export namespace BCSchema {
         drain: { type: drainSchema },
         economy: [economySchema],
         use: [useSchema],
-        contributions: { type: contributionSchema }
+        contributions: [contributionSchema]
     });
 
     export const fileSchema = new Schema({

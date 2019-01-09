@@ -284,7 +284,7 @@ export function queryShelAroundPoint(
 
 function queryServById(id): Promise<IServiceExtended> {
     return new Promise<IServiceExtended>((resolve, reject) => {
-        Services.findById(id, function(err, serv) {
+        Services.findById(id, function (err, serv) {
             if (err) {
                 reject(err);
             } else {
@@ -298,7 +298,7 @@ function queryServWithParams(params): Promise<Array<IServiceExtended>> {
     return new Promise<Array<IServiceExtended>>((resolve, reject) => {
         Services.find(params)
             .populate("services")
-            .exec(function(err, ris) {
+            .exec(function (err, ris) {
                 if (err) {
                     reject(err);
                 } else {
@@ -313,7 +313,7 @@ export function insertNewShelter(params): Promise<IShelterExtended> {
         const services: IServiceExtended[] = params.services;
         params.services = [];
         const shelter = new Shelters(params);
-        shelter.save(function(err, shel) {
+        shelter.save(function (err, shel) {
             if (err) {
                 reject(err);
             } else {
@@ -348,7 +348,7 @@ export function insertNewShelter(params): Promise<IShelterExtended> {
 function insertNewService(params): Promise<IServiceExtended> {
     return new Promise<IServiceExtended>((resolve, reject) => {
         const shelter = new Services(params);
-        shelter.save(function(err, serv: IServiceExtended) {
+        shelter.save(function (err, serv: IServiceExtended) {
             if (err) {
                 reject(err);
             } else {
@@ -419,7 +419,7 @@ function checkPermissionSheltersAPI(req: Request, res: Response, next) {
 export function deleteShelter(id): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         if (id) {
-            Shelters.remove({ _id: id }, function(err) {
+            Shelters.remove({ _id: id }, function (err) {
                 if (err) {
                     reject(err);
                 } else {
@@ -614,32 +614,22 @@ export function updateShelter(
             const contributions = updateObj.contributions;
             const economy: any[] = updateObj.economy;
 
-            const params = getShelterDocPropsBase(updateObj, ["openingTime"]);
+            const params: any = getShelterDocPropsBase(updateObj, ["openingTime"]);
 
-            const options: any = { upsert: newItem || false, new: true };
-            if (!updateObj.updateDate) {
-                updateObj.updateDate = new Date(Date.now());
+            if (!params.updateDate) {
+                params.updateDate = new Date(Date.now());
             }
+
+            const options: any = { upsert: newItem || false, new: true, setDefaultsOnInsert: true };
             Shelters.findByIdAndUpdate(
                 id,
                 params,
-                options,
-                async (err, shel) => {
+                options).exec((err, shel) => {
                     if (err) {
                         logger(LOG_TYPE.WARNING, err);
                         reject(err);
                     } else {
                         try {
-                            /*updateShelterProps(shel, params);
-                        const shelter = await resolveServicesInShelter(shel, services)
-                        const s = await resolveEconomyInShelter(shelter, use, contributions, economy)
-                        s.save((e) => {
-                            if (!err) {
-                                resolve(true);
-                            } else {
-                                reject(e);
-                            }
-                        });*/
                             resolveServicesInShelter(shel, services)
                                 .then(shelter => {
                                     resolveEconomyInShelter(
@@ -669,7 +659,7 @@ export function updateShelter(
                         }
                     }
                 }
-            );
+                );
         } catch (e) {
             reject(e);
         }
@@ -683,12 +673,12 @@ export async function confirmShelter(id: any): Promise<boolean> {
 
 function addOpening(id, opening: IOpening): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-        Shelters.findById(id, "openingTime", function(err, shelter) {
+        Shelters.findById(id, "openingTime", function (err, shelter) {
             if (err) {
                 reject(err);
             } else {
                 shelter.openingTime.push(opening);
-                shelter.save(function(e) {
+                shelter.save(function (e) {
                     if (e) {
                         reject(e);
                     } else {
@@ -702,7 +692,7 @@ function addOpening(id, opening: IOpening): Promise<boolean> {
 
 function updateService(id, params: IServiceExtended): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-        Services.update({ _id: id }, params, { upsert: true }, function(err) {
+        Services.update({ _id: id }, params, { upsert: true }, function (err) {
             if (err) {
                 reject(err);
             } else {
@@ -735,7 +725,7 @@ function deleteShelterService(shelterId, serviceId): Promise<boolean> {
 export function deleteService(id): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
         if (id) {
-            Services.remove({ _id: id }, function(err) {
+            Services.remove({ _id: id }, function (err) {
                 if (err) {
                     reject(err);
                 } else {

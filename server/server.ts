@@ -38,9 +38,7 @@ const setupStopINT = (server) => {
 }
 
 const createServer = (i: number = 0) => {
-    mongoose.connect(ENV_CONFIG.MONGO_URI, {
-        useMongoClient: true
-    }, function (err) {
+    mongoose.connect(ENV_CONFIG.MONGO_URI, function (err) {
         if (err) {
             if (i < 3) {
                 logger(LOG_TYPE.ERROR, "CANNOT ESTABLISH CONNECTION. RETRY: ", i + 1)
