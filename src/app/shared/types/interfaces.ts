@@ -195,6 +195,8 @@ export interface IContribution {
     value?: Number;
     accepted?: Boolean;
     type?: Enums.Contribution_Type;
+    relatedFileId?: String;
+    fileCreated?: Boolean;
 }
 
 export interface IShelter {
@@ -222,7 +224,7 @@ export interface IShelter {
     drain?: IDrain;
     economy?: IEconomy[];
     use?: IUse[];
-    contributions?: IContribution;
+    contributions?: [IContribution];
 }
 
 export interface IFile {

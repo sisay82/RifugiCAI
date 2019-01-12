@@ -203,20 +203,30 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
     }
 
     initForm(shelter: IShelter) {
-        const contributions = shelter.contributions;
-        this.data["contributions"] = contributions;
-        const attachments = contributions.attachments;
-        delete (contributions["attachments"]);
+        const contribution = shelter.contributions ?
+            shelter.contributions.reduce((acc, val) => {
+                if (val.year > acc.year) {
+                    acc = val;
+                }
+                return acc;
+            }, shelter.contributions[0])
+            : null;
+        if (contribution.accepted) {
+            return;
+        }
+        this.data["contributions"] = shelter.contributions;
+        const attachments = contribution.attachments;
+        delete (contribution["attachments"]);
         if (this.checkRole()) {
-            if (this.checkPermission && contributions && !contributions.accepted) {
-                for (const control in contributions.data) {
+            if (this.checkPermission && contribution && !contribution.accepted) {
+                for (const control in contribution.data) {
                     if (this.contrForm.contains(control)) {
-                        this.contrForm.get(control).setValue(contributions.data[control] || null);
+                        this.contrForm.get(control).setValue(contribution.data[control] || null);
                     }
                 }
-                for (const control in contributions) {
+                for (const control in contribution) {
                     if (this.contrForm.contains(control)) {
-                        this.contrForm.get(control).setValue(contributions[control] || null);
+                        this.contrForm.get(control).setValue(contribution[control] || null);
                     }
                 }
                 this.contrForm.get('totWorks').setValue(this.getTotalWorks());
@@ -258,7 +268,17 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
             contr.data.red = this.getRedValue();
             contr.value = this.roundValue(this.getRedValue());
 
-            shelter.contributions = contr;
+            if (!shelter.contributions) {
+                shelter.contributions = [contr];
+
+            } else {
+                const contribIndex = shelter.contributions ? shelter.contributions.findIndex(c => c.year === contr.year) : null;
+                if (contribIndex && contribIndex >= 0) {
+                    shelter.contributions.splice(contribIndex, 1);
+                    shelter.contributions.push(contr);
+                }
+            }
+
             this.processSavePromise(shelter, "contributions")
                 .then(() => {
                     this.displayError = false;

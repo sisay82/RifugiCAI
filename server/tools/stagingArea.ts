@@ -6,6 +6,7 @@ import { IFile, IShelter } from "../../src/app/shared/types/interfaces";
 import { BCSchema } from "../../src/app/shared/types/schema";
 import { Files } from "../API/files/files.logic";
 import { ObjectID } from "bson";
+import { getShelterById } from "../API/shelters/shelters.logic";
 
 export namespace StagingInterfaces {
     export interface StagingShelter extends IShelter { }
@@ -53,20 +54,65 @@ const stagingItemSchema = new Schema({
     newItem: Boolean
 });
 
-export const StagingAreaModel = model<StagingInterfaces.StagingItemExtended>('StagingArea', stagingItemSchema);
+const StagingAreaModel = model<StagingInterfaces.StagingItemExtended>('StagingArea', stagingItemSchema);
 
 export namespace StagingAreaTools {
-    export function removeStagingItem(shelUpdate: StagingInterfaces.StagingItemExtended): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            if (shelUpdate._id && shelUpdate.remove) {
-                shelUpdate.remove()
-                    .then(() => resolve())
-                    .catch(err => reject(err));
+
+    function updateBaseObject(base, updates) {
+        for (const prop in updates) {
+            if (updates[prop] && !(prop.startsWith('_') || prop.startsWith('$'))) {
+                base[prop] = updates[prop];
             }
-            StagingAreaModel.findOneAndRemove({ 'shelter._id': shelUpdate.shelter.id }).exec((err, ris) => {
-                err ? reject(err) : resolve();
-            })
-        });
+        }
+        return base;
+    }
+
+    async function updateStagingItem(shelID: string, updatingShelter: IShelter): Promise<StagingInterfaces.StagingItem> {
+        try {
+            const baseItem = await getStaginItemByShelId(shelID);
+
+            baseItem.shelter = baseItem.shelter
+                ? updateBaseObject(baseItem.shelter, updatingShelter)
+                : baseItem['shelter'] = <any>updatingShelter;
+
+            return Promise.resolve(baseItem);
+
+        } catch (e) {
+            try {
+                let baseShelter = await getShelterById(shelID);
+
+                const updatedShelter = baseShelter
+                    ? updateBaseObject(baseShelter, updatingShelter)
+                    : baseShelter = <any>updatingShelter;
+
+                return Promise.resolve({
+                    shelter: updatedShelter,
+                    files: null,
+                    watchDog: new Date(Date.now())
+                });
+            } catch (err) {
+                logger(LOG_TYPE.ERROR, err);
+                return null;
+            }
+        }
+    }
+
+    export async function removeStagingItem(shelUpdate: StagingInterfaces.StagingItemExtended): Promise<void> {
+        try {
+            if (shelUpdate._id && shelUpdate.remove) {
+                await shelUpdate.remove();
+            }
+            const shelID = String(shelUpdate.shelter._id) || shelUpdate.shelter.id;
+
+            if (!shelID) {
+                throw "Staging shelter to remove has no id";
+            }
+
+            await StagingAreaModel.remove({ 'shelter._id': shelID }).exec();
+            return;
+        } catch (err) {
+            return Promise.reject(err);
+        }
     }
 
     export function getStaginItemByShelId(id: String): Promise<StagingInterfaces.StagingItemExtended> {
@@ -81,16 +127,18 @@ export namespace StagingAreaTools {
         })
     }
 
-    export function addStagingItem(updatingShelter: StagingInterfaces.StagingItem, user)
+    export async function addStagingItem(updatingShelter: StagingInterfaces.StagingItem, user)
         : Promise<StagingInterfaces.StagingItemExtended> {
         if (!user || !user.role) {
             return Promise.reject('USER AUTH ERROR');
         }
 
-        updatingShelter.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
-        updatingShelter.watchDog = new Date(Date.now());
+        const updatedStagingItem = await updateStagingItem(<string>updatingShelter.shelter._id, updatingShelter.shelter);
+
+        updatedStagingItem.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
+        updatedStagingItem.watchDog = new Date(Date.now());
         return new Promise<StagingInterfaces.StagingItemExtended>((resolve, reject) => {
-            const item = new StagingAreaModel(updatingShelter);
+            const item = new StagingAreaModel(updatedStagingItem);
             item.save((err, el) => {
                 if (!err) {
                     resolve(el);
@@ -99,21 +147,6 @@ export namespace StagingAreaTools {
                 }
             });
         });
-    }
-
-    export function addItemAndSend(updatingShelter: StagingInterfaces.StagingItem,
-        user,
-        callback: (item: StagingInterfaces.StagingItemExtended) => void,
-        errCallback?: (err: String) => void) {
-        addStagingItem(updatingShelter, user)
-            .then(item => callback(item))
-            .catch(err => {
-                if (errCallback) {
-                    errCallback(err);
-                } else {
-                    logger(LOG_TYPE.ERROR, err);
-                }
-            })
     }
 
     export function addFileAndSave(file: StagingInterfaces.StagingFileExtended, stagingItem: StagingInterfaces.StagingItemExtended) {
