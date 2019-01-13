@@ -233,11 +233,11 @@ appRoute
             if (!err) {
                 const newShelter: IShelterExtended = req.body;
                 newShelter._id = req.params.id;
-                const stagingItem = StagingAreaTools.createStagingItem({
+                const stagingItem = {
                     watchDog: new Date(Date.now()),
                     shelter: newShelter,
                     files: null
-                });
+                };
 
                 try {
                     const item = await StagingAreaTools.addStagingItem(stagingItem, req.session);
@@ -315,12 +315,12 @@ appRoute.route("/shelters/confirm/:id").put(async function (req, res) {
             const id = new ObjectId();
             const newShelter: any = { _id: id };
 
-            const stagingItem = StagingAreaTools.createStagingItem({
+            const stagingItem = {
                 watchDog: new Date(Date.now()),
                 shelter: newShelter,
                 files: null,
                 newItem: true
-            });
+            };
 
             try {
                 const item = await StagingAreaTools.addStagingItem(stagingItem, req.session);
@@ -354,11 +354,11 @@ appRoute.route("/shelters/confirm/:section/:id").put(async function (req, res) {
                 const newShelter: IShelterExtended = req.body;
                 newShelter._id = req.params.id;
 
-                const stagingItem = StagingAreaTools.createStagingItem({
+                const stagingItem = {
                     watchDog: new Date(Date.now()),
                     shelter: newShelter,
                     files: null
-                });
+                };
 
                 try {
                     const item = await StagingAreaTools.addStagingItem(stagingItem, req.session);

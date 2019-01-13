@@ -67,13 +67,25 @@ export namespace StagingAreaTools {
         return base;
     }
 
-    async function updateStagingItem(shelID: string, updatingShelter: IShelter): Promise<StagingInterfaces.StagingItemExtended> {
+    function removeEmptyArrays(base, item) {
+        for (const prop in item) {
+            if (!item[prop]) {
+                delete(base[prop]);
+            }
+        }
+        return base;
+    }
+
+    async function updateStagingItem(shelID: string, updatingItem: StagingInterfaces.StagingItem): Promise<StagingInterfaces.StagingItemExtended> {
+        const updatingShelter = updatingItem.shelter;
         try {
             const baseItem = await getStaginItemByShelId(shelID);
 
             baseItem.shelter = baseItem.shelter
                 ? updateBaseObject(baseItem.shelter, updatingShelter)
                 : baseItem['shelter'] = <any>updatingShelter;
+
+            baseItem.files = <any>updatingItem.files;
 
             return Promise.resolve(baseItem);
 
@@ -87,9 +99,9 @@ export namespace StagingAreaTools {
 
                 const item = createStagingItem({
                     shelter: updatedShelter,
-                    files: null,
+                    files: updatingItem.files,
                     watchDog: new Date(Date.now())
-                })
+                });
 
                 return Promise.resolve(item);
             } catch (err) {
@@ -99,9 +111,10 @@ export namespace StagingAreaTools {
         }
     }
 
-    export function createStagingItem(item: StagingInterfaces.StagingItem) {
+    function createStagingItem(item: StagingInterfaces.StagingItem) {
         if (!(<any>item)._id) {
-            return new StagingAreaModel(item);
+            const stagingItem = new StagingAreaModel(item);
+            return stagingItem
         }
         return null;
     }
@@ -148,15 +161,14 @@ export namespace StagingAreaTools {
         return StagingAreaModel.updateOne({ 'shelter._id': shelID }, { $set: { ['shelter.' + sectionName]: section } }).exec();
     }
 
-    export async function addStagingItem(updatingItem: StagingInterfaces.StagingItemExtended, user)
+    export async function addStagingItem(updatingItem: StagingInterfaces.StagingItem, user)
         : Promise<StagingInterfaces.StagingItemExtended> {
         if (!user || !user.role) {
             return Promise.reject('USER AUTH ERROR');
         }
 
         try {
-            const updatedStagingItem = await updateStagingItem(<string>updatingItem.shelter._id, updatingItem.shelter);
-            updatedStagingItem.files = updatingItem.files;
+            const updatedStagingItem = await updateStagingItem(<string>updatingItem.shelter._id, updatingItem);
             updatedStagingItem.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
             updatedStagingItem.watchDog = new Date(Date.now());
 

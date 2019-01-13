@@ -141,11 +141,11 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
                 const newShelter: any = {};
                 newShelter._id = req.params.shelid;
 
-                const stagingItem = StagingAreaTools.createStagingItem({
+                const stagingItem = {
                     watchDog: new Date(Date.now()),
                     shelter: newShelter,
                     files: [{ _id: req.params.fileid, toRemove: true }]
-                });
+                };
 
                 StagingAreaTools.addStagingItem(stagingItem, req.session)
                     .then(item => {
@@ -229,11 +229,11 @@ fileRoute.route('/shelters/file/:id')
                         }
                         newF.toUpdate = true;
 
-                        const stagingItem = StagingAreaTools.createStagingItem({
+                        const stagingItem = {
                             watchDog: new Date(Date.now()),
                             shelter: shelter,
                             files: [newF]
-                        });
+                        };
 
                         StagingAreaTools.addStagingItem(stagingItem, req.session)
                             .then(item => {
