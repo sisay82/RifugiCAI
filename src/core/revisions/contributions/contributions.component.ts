@@ -204,12 +204,12 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
 
     initForm(shelter: IShelter) {
         let contribution = shelter.contributions ?
-            shelter.contributions.reduce((acc, val) => {
+            shelter.contributions.filter(c => !c.accepted).reduce((acc, val) => {
                 if (val.year > acc.year) {
                     acc = val;
                 }
                 return acc;
-            }, shelter.contributions[0])
+            }, { year: 0 })
             : null;
 
         this.data["contributions"] = shelter.contributions;
@@ -218,9 +218,10 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
         if (contribution) {
             if (contribution.accepted) {
                 contribution = null;
+            } else {
+                attachments = contribution.attachments;
+                delete (contribution["attachments"]);
             }
-            attachments = contribution.attachments;
-            delete (contribution["attachments"]);
         }
 
         if (this.checkRole()) {
@@ -255,7 +256,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
 
     save(confirm) {
         if (!confirm || this.contrForm.valid) {
-            const shelter: IShelter = { _id: this._id };
+            const shelter: IShelter = { _id: this._id, contributions: this.data.contributions };
             const contr: IContribution = {
                 year: (new Date()).getFullYear(),
                 value: this.roundValue(this.getRedValue()),
@@ -276,14 +277,16 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
 
             if (!shelter.contributions) {
                 shelter.contributions = [contr];
-
             } else {
-                const contribIndex = shelter.contributions ? shelter.contributions.findIndex(c => c.year === contr.year) : null;
-                if (contribIndex && contribIndex >= 0) {
+                const contribIndex = shelter.contributions ? shelter.contributions.findIndex(c => !c.accepted && c.year === contr.year) : -1;
+                console.log(contribIndex);
+                if (contribIndex >= 0) {
                     shelter.contributions.splice(contribIndex, 1);
-                    shelter.contributions.push(contr);
                 }
+                shelter.contributions.push(contr);
             }
+
+            console.log(shelter.contributions)
 
             this.processSavePromise(shelter, "contributions")
                 .then(() => {
