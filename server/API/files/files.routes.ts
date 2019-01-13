@@ -111,55 +111,55 @@ fileRoute.route('/shelters/file/confirm')
     });
 
 fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
-    .delete(function (req, res) {
-        StagingAreaTools.getStaginItemByShelId(req.params.shelid)
-            .then(stagingItem => {
-                let fileToDelete;
-                if (stagingItem.files) {
-                    fileToDelete = stagingItem.files.find(f => String(f._id) === req.params.fileid);
-                } else {
-                    stagingItem.files = [];
-                }
-                if (fileToDelete) {
-                    // stagingItem.files.splice(stagingItem.files.indexOf(fileToDelete[0]), 1);
-                    delete (fileToDelete.data);
-                    fileToDelete.toRemove = true;
-                } else {
-                    stagingItem.files = stagingItem.files.concat(<any>{ _id: req.params.fileid, toRemove: true });
-                }
-                stagingItem.save((err, ris) => {
-                    if (!err) {
-                        res.status(200).send(true);
-                    } else {
-                        logger(LOG_TYPE.ERROR, err);
-                        res.status(500).send({ error: 'Invalid user or request' });
-                    }
-                })
-            })
-            .catch(err => {
-                if (!err) {
-                    const newShelter: any = {};
-                    newShelter._id = req.params.shelid;
-                    
-                    const stagingItem = StagingAreaTools.createStagingItem({
-                        watchDog: new Date(Date.now()),
-                        shelter: newShelter,
-                        files: [{ _id: req.params.fileid, toRemove: true }]
-                    });
+    .delete(async function (req, res) {
+        try {
+            const stagingItem = await StagingAreaTools.getStaginItemByShelId(req.params.shelid);
 
-                    StagingAreaTools.addStagingItem(stagingItem, req.session)
-                        .then(item => {
-                            res.status(200).send(true);
-                        })
-                        .catch(e => {
-                            logger(LOG_TYPE.ERROR, e);
-                            res.status(500).send({ error: 'Invalid user or request' });
-                        });
-                } else {
+            let fileToDelete;
+            if (stagingItem.files) {
+                fileToDelete = stagingItem.files.find(f => String(f._id) === req.params.fileid);
+            } else {
+                stagingItem.files = [];
+            }
+            if (fileToDelete) {
+                delete (fileToDelete.data);
+                fileToDelete.toRemove = true;
+            } else {
+                stagingItem.files = stagingItem.files.concat(<any>{ _id: req.params.fileid, toRemove: true });
+            }
+
+            StagingAreaTools.addStagingItem(stagingItem, req.session)
+                .then(() => {
+                    res.status(200).send(true);
+                })
+                .catch(err => {
                     logger(LOG_TYPE.ERROR, err);
                     res.status(500).send({ error: 'Invalid user or request' });
-                }
-            });
+                });
+        } catch (err) {
+            if (!err) {
+                const newShelter: any = {};
+                newShelter._id = req.params.shelid;
+
+                const stagingItem = StagingAreaTools.createStagingItem({
+                    watchDog: new Date(Date.now()),
+                    shelter: newShelter,
+                    files: [{ _id: req.params.fileid, toRemove: true }]
+                });
+
+                StagingAreaTools.addStagingItem(stagingItem, req.session)
+                    .then(item => {
+                        res.status(200).send(true);
+                    })
+                    .catch(e => {
+                        logger(LOG_TYPE.ERROR, e);
+                        res.status(500).send({ error: 'Invalid user or request' });
+                    });
+            } else {
+                logger(LOG_TYPE.ERROR, err);
+                res.status(500).send({ error: 'Invalid user or request' });
+            }
+        }
     });
 
 fileRoute.route('/shelters/file/:id')
@@ -179,73 +179,78 @@ fileRoute.route('/shelters/file/:id')
             res.status(500).send({ error: 'Invalid user or request' });
         }
     })
-    .put(function (req, res) {
+    .put(async function (req, res) {
         try {
             const updFile: IFile = req.body.file;
             if (updFile) {
-                StagingAreaTools.getStaginItemByShelId(updFile.shelterId)
-                    .then(stagingItem => {
-                        let file;
-                        if (stagingItem.files) {
-                            file = stagingItem.files.filter(f => String(f._id) === req.params.id)[0];
-                        } else {
-                            stagingItem.files = [];
+                try {
+                    const stagingItem = await StagingAreaTools.getStaginItemByShelId(updFile.shelterId);
+                    let file;
+                    if (stagingItem.files) {
+                        file = stagingItem.files.filter(f => String(f._id) === req.params.id)[0];
+                    } else {
+                        stagingItem.files = [];
+                    }
+                    if (file) {
+                        for (const prop in updFile) {
+                            if (updFile.hasOwnProperty(prop)) {
+                                file[prop] = updFile[prop];
+                            }
                         }
-                        if (file) {
-                            for (const prop in updFile) {
-                                if (updFile.hasOwnProperty(prop)) {
-                                    file[prop] = updFile[prop];
-                                }
+                        file.toUpdate = true;
+                    } else {
+                        const newF: any = {};
+                        for (const prop in updFile) {
+                            if (updFile.hasOwnProperty(prop)) {
+                                newF[prop] = updFile[prop];
                             }
-                            file.toUpdate = true;
-                        } else {
-                            const newF: any = {};
-                            for (const prop in updFile) {
-                                if (updFile.hasOwnProperty(prop)) {
-                                    newF[prop] = updFile[prop];
-                                }
-                            }
-                            newF.toUpdate = true;
-                            stagingItem.files = stagingItem.files.concat(newF);
                         }
-                        stagingItem.save((err, ris) => {
-                            if (!err) {
-                                return Promise.resolve();
-                            } else {
-                                return Promise.reject(err);
-                            }
+                        newF.toUpdate = true;
+                        stagingItem.files = stagingItem.files.concat(newF);
+                    }
+
+                    StagingAreaTools.addStagingItem(stagingItem, req.session)
+                        .then(item => {
+                            res.status(200).send(true);
+                        })
+                        .catch(e => {
+                            logger(LOG_TYPE.ERROR, e);
+                            res.status(500).send({ error: 'Invalid user or request' });
                         });
 
-                    })
-                    .catch(err => {
-                        if (!err) {
-                            const shelter = { _id: updFile.shelterId };
-                            const newF: any = {};
-                            for (const prop in updFile) {
-                                if (updFile.hasOwnProperty(prop)) {
-                                    newF[prop] = updFile[prop];
-                                }
+                } catch (err) {
+                    if (!err) {
+                        const shelter = { _id: updFile.shelterId };
+                        const newF: any = {};
+                        for (const prop in updFile) {
+                            if (updFile.hasOwnProperty(prop)) {
+                                newF[prop] = updFile[prop];
                             }
-                            newF.toUpdate = true;
-
-                            const stagingItem = StagingAreaTools.createStagingItem({
-                                watchDog: new Date(Date.now()),
-                                shelter: shelter,
-                                files: [newF]
-                            });
-
-                            return StagingAreaTools.addStagingItem(stagingItem, req.session);
-                        } else {
-                            logger(LOG_TYPE.ERROR, err);
-                            res.status(500).send({ error: 'Invalid user or request' });
                         }
-                    })
-                    .then(val => { res.status(200).send(true) })
-                    .catch(e => {
-                        logger(LOG_TYPE.ERROR, e);
+                        newF.toUpdate = true;
+
+                        const stagingItem = StagingAreaTools.createStagingItem({
+                            watchDog: new Date(Date.now()),
+                            shelter: shelter,
+                            files: [newF]
+                        });
+
+                        StagingAreaTools.addStagingItem(stagingItem, req.session)
+                            .then(item => {
+                                res.status(200).send(true);
+                            })
+                            .catch(e => {
+                                logger(LOG_TYPE.ERROR, e);
+                                res.status(500).send({ error: 'Invalid user or request' });
+                            });
+                    } else {
+                        logger(LOG_TYPE.ERROR, err);
                         res.status(500).send({ error: 'Invalid user or request' });
-                    });
+                    }
+                }
+
             } else {
+                logger(LOG_TYPE.WARNING, "No file to update provided");
                 res.status(500).send({ error: 'Invalid user or request' });
             }
         } catch (e) {

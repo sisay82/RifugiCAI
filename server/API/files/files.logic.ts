@@ -319,7 +319,7 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExten
                             if (images.length < MAX_IMAGES &&
                                 (!stagingItem.files || images.length + stagingItem.files.length < MAX_IMAGES)
                             ) {
-                                return StagingAreaTools.addFileAndSave(file, stagingItem);
+                                return StagingAreaTools.addFileAndSave(file, stagingItem, user);
                             } else {
                                 reject('Max ' + MAX_IMAGES + ' images');
                             }
@@ -327,7 +327,7 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExten
                         .then(fid => { resolve(fid) })
                         .catch(err => { reject(err) });
                 } else {
-                    StagingAreaTools.addFileAndSave(file, stagingItem)
+                    StagingAreaTools.addFileAndSave(file, stagingItem, user)
                         .then(fid => { resolve(fid) })
                         .catch(err => { reject(err) });
                 }

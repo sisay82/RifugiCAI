@@ -41,6 +41,7 @@
     "build:prod": "npm run clean && ng build --prod && npm run build-server",
     "clean": "npm run clean-server && rimraf ./dist",
     "clean-server": "rimraf ./out-tsc",
+    "build-angular": "ng build",
     "build-angular:watch": "ng build --watch",
     "build-server": "npm run clean-server && npm run compile-server",
     "build-server:watch": "npm run clean-server && tsc --p ./server/tsconfig.json --watch",

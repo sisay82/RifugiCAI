@@ -203,7 +203,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
     }
 
     initForm(shelter: IShelter) {
-        const contribution = shelter.contributions ?
+        let contribution = shelter.contributions ?
             shelter.contributions.reduce((acc, val) => {
                 if (val.year > acc.year) {
                     acc = val;
@@ -211,12 +211,18 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
                 return acc;
             }, shelter.contributions[0])
             : null;
-        if (contribution.accepted) {
-            return;
-        }
+
         this.data["contributions"] = shelter.contributions;
-        const attachments = contribution.attachments;
-        delete (contribution["attachments"]);
+        let attachments: IFileRef[];
+
+        if (contribution) {
+            if (contribution.accepted) {
+                contribution = null;
+            }
+            attachments = contribution.attachments;
+            delete (contribution["attachments"]);
+        }
+
         if (this.checkRole()) {
             if (this.checkPermission && contribution && !contribution.accepted) {
                 for (const control in contribution.data) {

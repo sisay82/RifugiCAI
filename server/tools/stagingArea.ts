@@ -145,17 +145,18 @@ export namespace StagingAreaTools {
     }
 
     export async function updateStagingAreaShelterSection(shelID: string, section: object, sectionName: string) {
-        return StagingAreaModel.updateOne({ 'shelter._id': shelID }, { $set: { ['shelter.'+sectionName]: section } }).exec();
+        return StagingAreaModel.updateOne({ 'shelter._id': shelID }, { $set: { ['shelter.' + sectionName]: section } }).exec();
     }
 
-    export async function addStagingItem(updatingShelter: StagingInterfaces.StagingItemExtended, user)
+    export async function addStagingItem(updatingItem: StagingInterfaces.StagingItemExtended, user)
         : Promise<StagingInterfaces.StagingItemExtended> {
         if (!user || !user.role) {
             return Promise.reject('USER AUTH ERROR');
         }
 
         try {
-            const updatedStagingItem = await updateStagingItem(<string>updatingShelter.shelter._id, updatingShelter.shelter);
+            const updatedStagingItem = await updateStagingItem(<string>updatingItem.shelter._id, updatingItem.shelter);
+            updatedStagingItem.files = updatingItem.files;
             updatedStagingItem.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
             updatedStagingItem.watchDog = new Date(Date.now());
 
@@ -166,28 +167,20 @@ export namespace StagingAreaTools {
         }
     }
 
-    export function addFileAndSave(file: StagingInterfaces.StagingFileExtended, stagingItem: StagingInterfaces.StagingItemExtended) {
-        return new Promise<String>((resolve, reject) => {
-            try {
-                file.new = true;
-                if (stagingItem.files) {
-                    stagingItem.files = stagingItem.files.concat(file);
-                } else {
-                    stagingItem.files = [file];
-                }
-                stagingItem.watchDog = new Date(Date.now());
-                stagingItem.save((err, ris) => {
-                    if (!err) {
-                        resolve(file._id);
-                    } else {
-                        reject(err);
-                    }
-                });
-
-            } catch (err) {
-                reject(err);
+    export async function addFileAndSave(file: StagingInterfaces.StagingFileExtended, stagingItem: StagingInterfaces.StagingItemExtended, user) {
+        try {
+            file.new = true;
+            if (stagingItem.files) {
+                stagingItem.files = stagingItem.files.concat(file);
+            } else {
+                stagingItem.files = [file];
             }
-        });
+            return addStagingItem(stagingItem, user)
+                .then(() => file._id);
+
+        } catch (err) {
+            return Promise.reject(err);
+        }
     }
 }
 
