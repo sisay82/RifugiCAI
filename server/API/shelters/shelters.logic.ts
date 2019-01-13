@@ -24,6 +24,24 @@ import { CasAuth } from "../auth/auth.cas";
 const Services = model<IServiceExtended>("Services", BCSchema.serviceSchema);
 const Shelters = model<IShelterExtended>("Shelters", BCSchema.shelterSchema);
 
+class ShelterProjections {
+    BASE: string;
+    LOCATION: string;
+    LOCATION_EXT: string;
+
+    constructor(base, location, locationExt) {
+        this.BASE = base;
+        this.LOCATION = base + " " + location;
+        this.LOCATION_EXT = base + " " + locationExt;
+    }
+}
+
+const PROJECTIONS = new ShelterProjections(
+    "name status idCai type branch owner category insertDate updateDate",
+    `geoData.location.region geoData.location.locality`,
+    `geoData.location.longitude geoData.location.latitude geoData.location.municipality geoData.location.region geoData.location.province`
+)
+
 function getRegionFilter(region: String) {
     if (region && String(region).length === 2) {
         const regionQuery = {
@@ -91,7 +109,7 @@ export function getShelterHeaderByProperty(prop: string, value: string) {
         const query = { [prop]: value };
         Shelters.findOne(
             query,
-            "_id name idCai type branch owner category insertDate updateDate"
+            "_id " + PROJECTIONS.BASE
         ).exec((err, ris) => {
             if (err) {
                 reject(err);
@@ -106,7 +124,7 @@ export function getShelterHeadById(id: string) {
     return new Promise<IShelterExtended>((resolve, reject) => {
         Shelters.findById(
             id,
-            "name idCai type branch owner category insertDate updateDate"
+            PROJECTIONS.BASE
         ).exec((err, ris) => {
             if (err) {
                 logger(LOG_TYPE.WARNING, err);
@@ -128,7 +146,7 @@ export function getAllIdsHead(
     return new Promise<IShelterExtended[]>((resolve, reject) => {
         Shelters.find(
             query,
-            "name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality"
+            PROJECTIONS.LOCATION
         ).exec((err, ris) => {
             if (err) {
                 logger(LOG_TYPE.WARNING, err);
@@ -147,7 +165,7 @@ export function getShelPage(
     return new Promise<IShelterExtended[]>((resolve, reject) => {
         Shelters.find(
             {},
-            "name idCai type branch owner category insertDate updateDate geoData.location.region geoData.location.locality"
+            PROJECTIONS.LOCATION
         )
             .skip(Number(pageNumber * pageSize))
             .limit(Number(pageSize))
@@ -270,8 +288,7 @@ export function getShelAroundPoint(
 
         Shelters.find(
             query,
-            `name idCai type branch owner category insertDate updateDate geoData.location.longitude geoData.location.latitude
-             geoData.location.municipality geoData.location.region geoData.location.province`
+            PROJECTIONS.LOCATION_EXT
         ).exec((err, ris) => {
             if (err) {
                 reject(err);
