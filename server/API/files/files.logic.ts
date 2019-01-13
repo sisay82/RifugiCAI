@@ -339,31 +339,34 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExten
                             .then(files => {
                                 const images = files.filter(obj => obj.type === Files_Enum.File_Type.image);
                                 if (images.length < MAX_IMAGES) {
-                                    const newShelter: StagingInterfaces.StagingItem = {
+                                    const newShelter = StagingAreaTools.createStagingItem({
                                         shelter: { _id: shelId },
                                         watchDog: new Date(Date.now()),
                                         files: [file]
-                                    };
+                                    });
                                     return StagingAreaTools.addStagingItem(newShelter, user);
                                 } else {
                                     reject('Max ' + MAX_IMAGES + ' images')
                                 }
                             })
                             .catch(error => {
-                                return StagingAreaTools.addStagingItem({
+                                const stagingItem = StagingAreaTools.createStagingItem({
                                     watchDog: new Date(Date.now()),
                                     shelter: { _id: shelId },
                                     files: [file]
-                                }, user);
+                                });
+                                return StagingAreaTools.addStagingItem(stagingItem, user);
                             })
                             .then(item => { resolve(item.files[0].id) })
                             .catch(err => { reject(err) });
                     } else {
-                        StagingAreaTools.addStagingItem({
+                        const stagingItem = StagingAreaTools.createStagingItem({
                             watchDog: new Date(Date.now()),
                             shelter: { _id: shelId },
                             files: [file]
-                        }, user)
+                        });
+
+                        StagingAreaTools.addStagingItem(stagingItem, user)
                             .then(item => {
                                 resolve(item.files[0].id)
                             })

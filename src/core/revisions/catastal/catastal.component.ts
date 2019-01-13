@@ -154,11 +154,9 @@ export class BcCatastalRevisionComponent extends RevisionBase implements OnDestr
         } else {
             if (!confirm || (this.catastalForm.valid && this.drainForm.valid && this.energyForm.valid)) {
 
-                Promise.all([
-                    this.processSaveForm(this.catastalForm, "catastal"),
-                    this.processSaveForm(this.drainForm, "drain"),
-                    this.processSaveForm(this.energyForm, "energy")
-                ])
+                this.processSaveForm(this.catastalForm, "catastal")
+                    .then(() => this.processSaveForm(this.drainForm, "drain"))
+                    .then(() => this.processSaveForm(this.energyForm, "energy"))
                     .then(() => {
                         if (confirm) {
                             this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.catastal);

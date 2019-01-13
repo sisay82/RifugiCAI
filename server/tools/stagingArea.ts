@@ -67,7 +67,7 @@ export namespace StagingAreaTools {
         return base;
     }
 
-    async function updateStagingItem(shelID: string, updatingShelter: IShelter): Promise<StagingInterfaces.StagingItem> {
+    async function updateStagingItem(shelID: string, updatingShelter: IShelter): Promise<StagingInterfaces.StagingItemExtended> {
         try {
             const baseItem = await getStaginItemByShelId(shelID);
 
@@ -85,16 +85,29 @@ export namespace StagingAreaTools {
                     ? updateBaseObject(baseShelter, updatingShelter)
                     : baseShelter = <any>updatingShelter;
 
-                return Promise.resolve({
+                const item = createStagingItem({
                     shelter: updatedShelter,
                     files: null,
                     watchDog: new Date(Date.now())
-                });
+                })
+
+                return Promise.resolve(item);
             } catch (err) {
                 logger(LOG_TYPE.ERROR, err);
                 return null;
             }
         }
+    }
+
+    export function createStagingItem(item: StagingInterfaces.StagingItem) {
+        if (!(<any>item)._id) {
+            return new StagingAreaModel(item);
+        }
+        return null;
+    }
+
+    export async function removeStagingItemByShelID(shelID): Promise<void> {
+        return StagingAreaModel.remove({ 'shelter._id': shelID }).exec();
     }
 
     export async function removeStagingItem(shelUpdate: StagingInterfaces.StagingItemExtended): Promise<void> {
@@ -127,26 +140,30 @@ export namespace StagingAreaTools {
         })
     }
 
-    export async function addStagingItem(updatingShelter: StagingInterfaces.StagingItem, user)
+    export async function updateWatchDog(shelID) {
+        return StagingAreaModel.updateOne({ "shelter._id": shelID }, { $set: { watchDog: new Date(Date.now()) } }).exec();
+    }
+
+    export async function updateStagingAreaShelterSection(shelID: string, section: object, sectionName: string) {
+        return StagingAreaModel.updateOne({ 'shelter._id': shelID }, { $set: { ['shelter.'+sectionName]: section } }).exec();
+    }
+
+    export async function addStagingItem(updatingShelter: StagingInterfaces.StagingItemExtended, user)
         : Promise<StagingInterfaces.StagingItemExtended> {
         if (!user || !user.role) {
             return Promise.reject('USER AUTH ERROR');
         }
 
-        const updatedStagingItem = await updateStagingItem(<string>updatingShelter.shelter._id, updatingShelter.shelter);
+        try {
+            const updatedStagingItem = await updateStagingItem(<string>updatingShelter.shelter._id, updatingShelter.shelter);
+            updatedStagingItem.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
+            updatedStagingItem.watchDog = new Date(Date.now());
 
-        updatedStagingItem.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
-        updatedStagingItem.watchDog = new Date(Date.now());
-        return new Promise<StagingInterfaces.StagingItemExtended>((resolve, reject) => {
-            const item = new StagingAreaModel(updatedStagingItem);
-            item.save((err, el) => {
-                if (!err) {
-                    resolve(el);
-                } else {
-                    reject(err);
-                }
-            });
-        });
+            return updatedStagingItem.save();
+        } catch (err) {
+            logger(LOG_TYPE.ERROR, err);
+            return Promise.reject(err);
+        }
     }
 
     export function addFileAndSave(file: StagingInterfaces.StagingFileExtended, stagingItem: StagingInterfaces.StagingItemExtended) {

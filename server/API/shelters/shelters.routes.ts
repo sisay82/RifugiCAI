@@ -233,11 +233,11 @@ appRoute
             if (!err) {
                 const newShelter: IShelterExtended = req.body;
                 newShelter._id = req.params.id;
-                const stagingItem = {
+                const stagingItem = StagingAreaTools.createStagingItem({
                     watchDog: new Date(Date.now()),
                     shelter: newShelter,
                     files: null
-                };
+                });
 
                 try {
                     const item = await StagingAreaTools.addStagingItem(stagingItem, req.session);
@@ -279,20 +279,19 @@ appRoute.route("/shelters/confirm/:id").put(async function (req, res) {
                         .then(() => {
                             res.status(200).send(true);
                         })
-                        .catch(err => {
+                        .catch(async err => {
                             logger(LOG_TYPE.ERROR, err);
-                            return StagingAreaTools.removeStagingItem(stagingItem)
-                        })
-                        .then(() => {
-                            res.status(500).send({
-                                error: "Invalid user or request"
-                            });
-                        })
-                        .catch(err => {
-                            res.status(500).send({
-                                error: "Invalid user or request"
-                            });
+                            try {
+                                await StagingAreaTools.removeStagingItem(stagingItem);
+                            } catch (e) {
+                                logger(LOG_TYPE.ERROR, e);
+                            } finally {
+                                res.status(500).send({
+                                    error: "Invalid user or request"
+                                });
+                            }
                         });
+
                 } else {
                     StagingAreaTools.removeStagingItem(stagingItem)
                         .then(() => {
@@ -316,12 +315,12 @@ appRoute.route("/shelters/confirm/:id").put(async function (req, res) {
             const id = new ObjectId();
             const newShelter: any = { _id: id };
 
-            const stagingItem = {
+            const stagingItem = StagingAreaTools.createStagingItem({
                 watchDog: new Date(Date.now()),
                 shelter: newShelter,
                 files: null,
                 newItem: true
-            }
+            });
 
             try {
                 const item = await StagingAreaTools.addStagingItem(stagingItem, req.session);
@@ -346,26 +345,20 @@ appRoute.route("/shelters/confirm/:section/:id").put(async function (req, res) {
             const stagingItem = await StagingAreaTools.getStaginItemByShelId(
                 req.params.id
             );
-            stagingItem.shelter[req.params.section] =
-                req.body[req.params.section];
 
-            StagingAreaTools.addStagingItem(stagingItem, req.session)
-                .then(() => {
-                    res.status(200).send(true);
-                })
-                .catch(err => {
-                    logger(LOG_TYPE.ERROR, err);
-                    res.status(500).send({ error: "Invalid user or request" });
-                });
+            await StagingAreaTools.updateStagingAreaShelterSection(req.params.id, req.body[req.params.section], req.params.section)
+            res.status(200).send(true);
+            
         } catch (err) {
             if (!err) {
                 const newShelter: IShelterExtended = req.body;
                 newShelter._id = req.params.id;
-                const stagingItem = {
+
+                const stagingItem = StagingAreaTools.createStagingItem({
                     watchDog: new Date(Date.now()),
                     shelter: newShelter,
                     files: null
-                }
+                });
 
                 try {
                     const item = await StagingAreaTools.addStagingItem(stagingItem, req.session);
@@ -474,9 +467,10 @@ appRoute
                     (!Array.isArray(stagingItem.shelter[req.params.name]) ||
                         stagingItem.shelter[req.params.name].lenght === 0)
                 ) {
-                    StagingAreaTools.addStagingItem(stagingItem, req.session)
+
+                    StagingAreaTools.updateWatchDog(req.params.id)
                         .then((updatedItem) => {
-                            res.status(200).send(updatedItem.shelter);
+                            res.status(200).send(stagingItem.shelter);
                         })
                         .catch(err => {
                             logger(LOG_TYPE.ERROR, err);
@@ -485,7 +479,15 @@ appRoute
                             });
                         });
                 } else {
-                    throw null;
+                    const shel = await getShelSectionById(
+                        req.params.id,
+                        req.params.name
+                    );
+                    if (shel != null) {
+                        res.status(200).send(shel);
+                    } else {
+                        res.status(200).send({ _id: req.params.id });
+                    }
                 }
             } catch (err) {
                 try {

@@ -18,9 +18,9 @@ export const MONTHS = [
     'dicembre'
 ];
 
-export const CLEAR_CACHE_INTERVAL = 1.5 * 1000;
-export const MAX_TIME = 1000 * 60 * 10;
-export const MAX_SESSION_TIME = 1000 * 60 * 40;
+export const CLEAR_CACHE_INTERVAL = 1000 * 60; // 1 minute
+export const MAX_TIME = 1000 * 60 * 60; // 1 hour
+export const MAX_SESSION_TIME = 1000 * 60 * 60; // 1 hour
 export const MAX_DELAY_GET_REQUEST = 1000 * 10;
 
 export const CAS_BASE_URL = 'https://accesso.cai.it';

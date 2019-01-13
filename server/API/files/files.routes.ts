@@ -140,11 +140,14 @@ fileRoute.route('/shelters/file/confirm/:fileid/:shelid')
                 if (!err) {
                     const newShelter: any = {};
                     newShelter._id = req.params.shelid;
-                    StagingAreaTools.addStagingItem({
+                    
+                    const stagingItem = StagingAreaTools.createStagingItem({
                         watchDog: new Date(Date.now()),
                         shelter: newShelter,
                         files: [{ _id: req.params.fileid, toRemove: true }]
-                    }, req.session)
+                    });
+
+                    StagingAreaTools.addStagingItem(stagingItem, req.session)
                         .then(item => {
                             res.status(200).send(true);
                         })
@@ -224,11 +227,14 @@ fileRoute.route('/shelters/file/:id')
                                 }
                             }
                             newF.toUpdate = true;
-                            return StagingAreaTools.addStagingItem({
+
+                            const stagingItem = StagingAreaTools.createStagingItem({
                                 watchDog: new Date(Date.now()),
                                 shelter: shelter,
                                 files: [newF]
-                            }, req.session);
+                            });
+
+                            return StagingAreaTools.addStagingItem(stagingItem, req.session);
                         } else {
                             logger(LOG_TYPE.ERROR, err);
                             res.status(500).send({ error: 'Invalid user or request' });
