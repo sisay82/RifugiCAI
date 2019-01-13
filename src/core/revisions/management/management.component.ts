@@ -202,7 +202,7 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
         if (shelter.management) {
             for (const prop in shelter.management) {
                 if (shelter.management.hasOwnProperty(prop)) {
-                    if (this.managForm.contains(prop)) {
+                    if (this.managForm.contains(prop) && !Array.isArray((<FormArray>this.managForm.get(prop)).controls)) {
                         if (prop.indexOf("date") === -1) {
                             this.managForm.get(prop).setValue(shelter.management[prop]);
                         } else {
