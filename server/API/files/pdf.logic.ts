@@ -4,7 +4,7 @@ import * as path from 'path';
 import { countContributionFilesByShelter, insertNewFile } from './files.logic';
 import { Enums } from '../../../src/app/shared/types/enums';
 import Files_Enum = Enums.Files;
-import { IFile } from '../../../src/app/shared/types/interfaces';
+import { IFile, IContribution } from '../../../src/app/shared/types/interfaces';
 import * as printer from 'pdfmake/src/printer';
 import { TDocumentDefinitions } from 'pdfmake/build/pdfmake';
 import { Buffer } from 'buffer';
@@ -81,9 +81,8 @@ function getLineBreak() {
     return { text: " " };
 }
 
-export function createContributionPDF(shelter: IShelterExtended): Promise<{ name: String, id: any }> {
-    if (shelter && shelter.branch && shelter.contributions && shelter.contributions.data) {
-        const contribution = shelter.contributions;
+export function createContributionPDF(shelter: IShelterExtended, contribution: IContribution): Promise<{ name: String, id: any }> {
+    if (shelter && shelter.branch && contribution && contribution.data) {
         const now = new Date(Date.now());
         const docDescriptor: TDocumentDefinitions = {
             content: [

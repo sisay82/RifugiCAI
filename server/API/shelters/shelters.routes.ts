@@ -16,15 +16,15 @@ import {
     createPermissionAppAPICheck,
     getAllIdsHead,
     insertNewShelter,
-    queryShelByRegion,
-    queryShelAroundPoint,
-    queryShelById,
+    getShelByRegion,
+    getShelAroundPoint,
+    getShelterById,
     updateShelter,
     confirmShelter,
     deleteShelter,
-    queryShelPage,
+    getShelPage,
     queryAllSheCSV,
-    queryShelSectionById,
+    getShelSectionById,
     deleteService,
     getShelterHeadById,
     getShelterHeaderByProperty
@@ -46,7 +46,7 @@ appRoute.all(
 
 appRoute
     .route("/shelters")
-    .get(function(req, res) {
+    .get(function (req, res) {
         const userData: Tools.ICodeInfo = getUserDataFilters(req.session);
         if (userData) {
             try {
@@ -74,7 +74,7 @@ appRoute
             res.status(500).send({ error: "Invalid user or request" });
         }
     })
-    .post(function(req, res) {
+    .post(function (req, res) {
         insertNewShelter(req.body)
             .then(shelter => {
                 const id = shelter._id;
@@ -87,11 +87,11 @@ appRoute
             });
     });
 
-appRoute.route("/shelters/country/:name").get(function(req, res) {
+appRoute.route("/shelters/country/:name").get(function (req, res) {
     const userData = getUserDataFilters(req.session);
     if (userData) {
         try {
-            queryShelByRegion(req.params.name, userData)
+            getShelByRegion(req.params.name, userData)
                 .then(ris => {
                     res.status(200).send({ num: ris });
                 })
@@ -108,12 +108,12 @@ appRoute.route("/shelters/country/:name").get(function(req, res) {
     }
 });
 
-appRoute.route("/shelters/point").get(function(req, res) {
+appRoute.route("/shelters/point").get(function (req, res) {
     const userData = getUserDataFilters(req.session);
     if (userData) {
         try {
             if (req.query.lat && req.query.lng && req.query.range) {
-                queryShelAroundPoint(
+                getShelAroundPoint(
                     { lat: Number(req.query.lat), lng: Number(req.query.lng) },
                     Number(req.query.range),
                     userData
@@ -139,7 +139,7 @@ appRoute.route("/shelters/point").get(function(req, res) {
     }
 });
 
-appRoute.route("/shelters/byProp/:prop/:value").get(async function(req, res) {
+appRoute.route("/shelters/byProp/:prop/:value").get(async function (req, res) {
     try {
         const shel = await getShelterHeaderByProperty(
             req.params.prop,
@@ -156,7 +156,7 @@ appRoute.route("/shelters/byProp/:prop/:value").get(async function(req, res) {
 
 appRoute
     .route("/shelters/:id")
-    .get(function(req, res) {
+    .get(function (req, res) {
         try {
             if (ObjectId.isValid(req.params.id)) {
                 if (req.query.header) {
@@ -170,7 +170,7 @@ appRoute
                             });
                         });
                 } else {
-                    queryShelById(req.params.id)
+                    getShelterById(req.params.id)
                         .then(rif => {
                             if (rif != null) {
                                 res.status(200).send(rif);
@@ -192,7 +192,7 @@ appRoute
             res.status(500).send({ error: "Invalid user or request" });
         }
     })
-    .put(async function(req, res) {
+    .put(async function (req, res) {
         try {
             const stagingItem = await StagingAreaTools.getStaginItemByShelId(
                 req.params.id
@@ -203,17 +203,16 @@ appRoute
                         stagingItem.shelter[prop] = req.body[prop];
                     }
                 }
-                stagingItem.watchDog = new Date(Date.now());
-                stagingItem.save(err => {
-                    if (!err) {
+                StagingAreaTools.addStagingItem(stagingItem, req.session)
+                    .then(() => {
                         res.status(200).send(true);
-                    } else {
+                    })
+                    .catch(err => {
                         logger(LOG_TYPE.ERROR, err);
                         res.status(500).send({
                             error: "Invalid user or request"
                         });
-                    }
-                });
+                    });
             } else {
                 updateShelter(
                     req.params.id,
@@ -239,24 +238,24 @@ appRoute
                     shelter: newShelter,
                     files: null
                 };
-                StagingAreaTools.addItemAndSend(
-                    stagingItem,
-                    req.session,
-                    item => res.status(200).send(true),
-                    e => {
-                        logger(LOG_TYPE.ERROR, e);
-                        res.status(500).send({
-                            error: "Invalid user or request"
-                        });
-                    }
-                );
+
+                try {
+                    const item = await StagingAreaTools.addStagingItem(stagingItem, req.session);
+                    res.status(200).send(true)
+                } catch (e) {
+                    logger(LOG_TYPE.ERROR, e);
+                    res.status(500).send({
+                        error: "Invalid user or request"
+                    });
+                }
+
             } else {
                 logger(LOG_TYPE.ERROR, err);
                 res.status(500).send({ error: "Invalid user or request" });
             }
         }
     })
-    .delete(function(req, res) {
+    .delete(function (req, res) {
         deleteShelter(req.params.id)
             .then(() => {
                 res.status(200).send(true);
@@ -266,7 +265,7 @@ appRoute
             });
     });
 
-appRoute.route("/shelters/confirm/:id").put(async function(req, res) {
+appRoute.route("/shelters/confirm/:id").put(async function (req, res) {
     try {
         if (req.body.confirm !== undefined) {
             try {
@@ -276,27 +275,23 @@ appRoute.route("/shelters/confirm/:id").put(async function(req, res) {
                 if (req.body.confirm) {
                     confirmShelter(req.params.id)
                         .then(() => resolveFilesForShelter(stagingItem))
-                        .then(val =>
-                            StagingAreaTools.removeStagingItem(stagingItem)
-                        )
+                        .then(val => StagingAreaTools.removeStagingItem(stagingItem))
                         .then(() => {
                             res.status(200).send(true);
                         })
-                        .catch(err => {
-                            StagingAreaTools.removeStagingItem(stagingItem)
-                                .then(() => {
-                                    logger(LOG_TYPE.ERROR, err);
-                                    res.status(500).send({
-                                        error: "Invalid user or request"
-                                    });
-                                })
-                                .catch(e => {
-                                    logger(LOG_TYPE.ERROR, err);
-                                    res.status(500).send({
-                                        error: "Invalid user or request"
-                                    });
+                        .catch(async err => {
+                            logger(LOG_TYPE.ERROR, err);
+                            try {
+                                await StagingAreaTools.removeStagingItem(stagingItem);
+                            } catch (e) {
+                                logger(LOG_TYPE.ERROR, e);
+                            } finally {
+                                res.status(500).send({
+                                    error: "Invalid user or request"
                                 });
+                            }
                         });
+
                 } else {
                     StagingAreaTools.removeStagingItem(stagingItem)
                         .then(() => {
@@ -319,20 +314,23 @@ appRoute.route("/shelters/confirm/:id").put(async function(req, res) {
         } else if (req.body.new) {
             const id = new ObjectId();
             const newShelter: any = { _id: id };
-            StagingAreaTools.addItemAndSend(
-                {
-                    watchDog: new Date(Date.now()),
-                    shelter: newShelter,
-                    files: null,
-                    newItem: true
-                },
-                req.session,
-                item => res.status(200).send({ id: id }),
-                err => {
-                    logger(LOG_TYPE.ERROR, err);
-                    res.status(500).send({ error: "Invalid user or request" });
-                }
-            );
+
+            const stagingItem = {
+                watchDog: new Date(Date.now()),
+                shelter: newShelter,
+                files: null,
+                newItem: true
+            };
+
+            try {
+                const item = await StagingAreaTools.addStagingItem(stagingItem, req.session);
+                res.status(200).send({ id: id })
+            } catch (e) {
+                logger(LOG_TYPE.ERROR, e);
+                res.status(500).send({
+                    error: "Invalid user or request"
+                });
+            }
         } else {
             res.status(500).send({ error: "Invalid user or request" });
         }
@@ -341,43 +339,37 @@ appRoute.route("/shelters/confirm/:id").put(async function(req, res) {
     }
 });
 
-appRoute.route("/shelters/confirm/:section/:id").put(async function(req, res) {
+appRoute.route("/shelters/confirm/:section/:id").put(async function (req, res) {
     try {
         try {
             const stagingItem = await StagingAreaTools.getStaginItemByShelId(
                 req.params.id
             );
-            stagingItem.shelter[req.params.section] =
-                req.body[req.params.section];
-            stagingItem.watchDog = new Date(Date.now());
-            stagingItem.save(err => {
-                if (!err) {
-                    res.status(200).send(true);
-                } else {
-                    logger(LOG_TYPE.ERROR, err);
-                    res.status(500).send({ error: "Invalid user or request" });
-                }
-            });
+
+            await StagingAreaTools.updateStagingAreaShelterSection(req.params.id, req.body[req.params.section], req.params.section)
+            res.status(200).send(true);
+            
         } catch (err) {
             if (!err) {
                 const newShelter: IShelterExtended = req.body;
                 newShelter._id = req.params.id;
 
-                StagingAreaTools.addItemAndSend(
-                    {
-                        watchDog: new Date(Date.now()),
-                        shelter: newShelter,
-                        files: null
-                    },
-                    req.session,
-                    item => res.status(200).send(true),
-                    e => {
-                        logger(LOG_TYPE.ERROR, e);
-                        res.status(500).send({
-                            error: "Invalid user or request"
-                        });
-                    }
-                );
+                const stagingItem = {
+                    watchDog: new Date(Date.now()),
+                    shelter: newShelter,
+                    files: null
+                };
+
+                try {
+                    const item = await StagingAreaTools.addStagingItem(stagingItem, req.session);
+                    res.status(200).send(true)
+                } catch (e) {
+                    logger(LOG_TYPE.ERROR, e);
+                    res.status(500).send({
+                        error: "Invalid user or request"
+                    });
+                }
+
             } else {
                 logger(LOG_TYPE.ERROR, err);
             }
@@ -387,9 +379,9 @@ appRoute.route("/shelters/confirm/:section/:id").put(async function(req, res) {
     }
 });
 
-appRoute.route("/shelters/page/:pageSize").get(function(req, res) {
+appRoute.route("/shelters/page/:pageSize").get(function (req, res) {
     try {
-        queryShelPage(0, req.params.pageSize)
+        getShelPage(0, req.params.pageSize)
             .then(ris => {
                 res.status(200).send(ris);
             })
@@ -401,9 +393,9 @@ appRoute.route("/shelters/page/:pageSize").get(function(req, res) {
     }
 });
 
-appRoute.route("/shelters/page/:pageNumber/:pageSize").get(function(req, res) {
+appRoute.route("/shelters/page/:pageNumber/:pageSize").get(function (req, res) {
     try {
-        queryShelPage(req.params.pageNumber, req.params.pageSize)
+        getShelPage(req.params.pageNumber, req.params.pageSize)
             .then(ris => {
                 res.status(200).send(ris);
             })
@@ -415,12 +407,12 @@ appRoute.route("/shelters/page/:pageNumber/:pageSize").get(function(req, res) {
     }
 });
 
-appRoute.route("/shelters/csv/list").get(function(req, res) {
+appRoute.route("/shelters/csv/list").get(function (req, res) {
     if (
         req.session &&
         req.session.role &&
         Auth_Permissions.Visualization.CSVPermission.indexOf(req.session.role) >
-            -1
+        -1
     ) {
         queryAllSheCSV()
             .then(shelters => createCSV(shelters))
@@ -438,14 +430,14 @@ appRoute.route("/shelters/csv/list").get(function(req, res) {
     }
 });
 
-appRoute.route("/shelters/csv/:id").get(function(req, res) {
+appRoute.route("/shelters/csv/:id").get(function (req, res) {
     if (
         req.session &&
         req.session.role &&
         Auth_Permissions.Visualization.CSVPermission.indexOf(req.session.role) >
-            -1
+        -1
     ) {
-        queryShelById(req.params.id)
+        getShelterById(req.params.id)
             .then(shelters => createCSV([shelters]))
             .then(csv => {
                 const buff = Buffer.from(csv);
@@ -463,7 +455,7 @@ appRoute.route("/shelters/csv/:id").get(function(req, res) {
 
 appRoute
     .route("/shelters/:id/:name")
-    .get(async function(req, res) {
+    .get(async function (req, res) {
         try {
             let stagingItem = null;
             try {
@@ -475,23 +467,31 @@ appRoute
                     (!Array.isArray(stagingItem.shelter[req.params.name]) ||
                         stagingItem.shelter[req.params.name].lenght === 0)
                 ) {
-                    stagingItem.watchDog = new Date(Date.now());
-                    stagingItem.save(err => {
-                        if (!err) {
+
+                    StagingAreaTools.updateWatchDog(req.params.id)
+                        .then((updatedItem) => {
                             res.status(200).send(stagingItem.shelter);
-                        } else {
+                        })
+                        .catch(err => {
                             logger(LOG_TYPE.ERROR, err);
                             res.status(500).send({
                                 error: "Invalid user or request"
                             });
-                        }
-                    });
+                        });
                 } else {
-                    throw null;
+                    const shel = await getShelSectionById(
+                        req.params.id,
+                        req.params.name
+                    );
+                    if (shel != null) {
+                        res.status(200).send(shel);
+                    } else {
+                        res.status(200).send({ _id: req.params.id });
+                    }
                 }
             } catch (err) {
                 try {
-                    const shel = await queryShelSectionById(
+                    const shel = await getShelSectionById(
                         req.params.id,
                         req.params.name
                     );
@@ -510,7 +510,7 @@ appRoute
             res.status(500).send({ error: "Invalid user or request" });
         }
     })
-    .delete(function(req, res) {
+    .delete(function (req, res) {
         deleteService(req.params.name)
             .then(() => {
                 res.status(200).send(true);

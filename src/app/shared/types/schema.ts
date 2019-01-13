@@ -168,7 +168,9 @@ export namespace BCSchema {
         attachments: [fileRefSchema],
         value: Number,
         accepted: Boolean,
-        type: { type: Enums.Contribution_Type }
+        type: { type: Enums.Contribution_Type },
+        relatedFileId: String,
+        fileCreated: { type: Boolean, default: false }
     });
 
     export const shelterSchema = new Schema({

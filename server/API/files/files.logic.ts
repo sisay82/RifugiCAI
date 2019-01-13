@@ -319,7 +319,7 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExten
                             if (images.length < MAX_IMAGES &&
                                 (!stagingItem.files || images.length + stagingItem.files.length < MAX_IMAGES)
                             ) {
-                                return StagingAreaTools.addFileAndSave(file, stagingItem);
+                                return StagingAreaTools.addFileAndSave(file, stagingItem, user);
                             } else {
                                 reject('Max ' + MAX_IMAGES + ' images');
                             }
@@ -327,7 +327,7 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExten
                         .then(fid => { resolve(fid) })
                         .catch(err => { reject(err) });
                 } else {
-                    StagingAreaTools.addFileAndSave(file, stagingItem)
+                    StagingAreaTools.addFileAndSave(file, stagingItem, user)
                         .then(fid => { resolve(fid) })
                         .catch(err => { reject(err) });
                 }
@@ -339,7 +339,7 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExten
                             .then(files => {
                                 const images = files.filter(obj => obj.type === Files_Enum.File_Type.image);
                                 if (images.length < MAX_IMAGES) {
-                                    const newShelter: StagingInterfaces.StagingItem = {
+                                    const newShelter = {
                                         shelter: { _id: shelId },
                                         watchDog: new Date(Date.now()),
                                         files: [file]
@@ -350,20 +350,23 @@ export function resolveStagingAreaFiles(file: StagingInterfaces.StagingFileExten
                                 }
                             })
                             .catch(error => {
-                                return StagingAreaTools.addStagingItem({
+                                const stagingItem = {
                                     watchDog: new Date(Date.now()),
                                     shelter: { _id: shelId },
                                     files: [file]
-                                }, user);
+                                };
+                                return StagingAreaTools.addStagingItem(stagingItem, user);
                             })
                             .then(item => { resolve(item.files[0].id) })
                             .catch(err => { reject(err) });
                     } else {
-                        StagingAreaTools.addStagingItem({
+                        const stagingItem = {
                             watchDog: new Date(Date.now()),
                             shelter: { _id: shelId },
                             files: [file]
-                        }, user)
+                        };
+
+                        StagingAreaTools.addStagingItem(stagingItem, user)
                             .then(item => {
                                 resolve(item.files[0].id)
                             })

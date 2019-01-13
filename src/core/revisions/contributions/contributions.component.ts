@@ -203,20 +203,37 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
     }
 
     initForm(shelter: IShelter) {
-        const contributions = shelter.contributions;
-        this.data["contributions"] = contributions;
-        const attachments = contributions.attachments;
-        delete (contributions["attachments"]);
+        let contribution = shelter.contributions ?
+            shelter.contributions.filter(c => !c.accepted).reduce((acc, val) => {
+                if (val.year > acc.year) {
+                    acc = val;
+                }
+                return acc;
+            }, { year: 0 })
+            : null;
+
+        this.data["contributions"] = shelter.contributions;
+        let attachments: IFileRef[];
+
+        if (contribution) {
+            if (contribution.accepted) {
+                contribution = null;
+            } else {
+                attachments = contribution.attachments;
+                delete (contribution["attachments"]);
+            }
+        }
+
         if (this.checkRole()) {
-            if (this.checkPermission && contributions && !contributions.accepted) {
-                for (const control in contributions.data) {
+            if (this.checkPermission && contribution && !contribution.accepted) {
+                for (const control in contribution.data) {
                     if (this.contrForm.contains(control)) {
-                        this.contrForm.get(control).setValue(contributions.data[control] || null);
+                        this.contrForm.get(control).setValue(contribution.data[control] || null);
                     }
                 }
-                for (const control in contributions) {
+                for (const control in contribution) {
                     if (this.contrForm.contains(control)) {
-                        this.contrForm.get(control).setValue(contributions[control] || null);
+                        this.contrForm.get(control).setValue(contribution[control] || null);
                     }
                 }
                 this.contrForm.get('totWorks').setValue(this.getTotalWorks());
@@ -239,7 +256,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
 
     save(confirm) {
         if (!confirm || this.contrForm.valid) {
-            const shelter: IShelter = { _id: this._id };
+            const shelter: IShelter = { _id: this._id, contributions: this.data.contributions };
             const contr: IContribution = {
                 year: (new Date()).getFullYear(),
                 value: this.roundValue(this.getRedValue()),
@@ -258,7 +275,19 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
             contr.data.red = this.getRedValue();
             contr.value = this.roundValue(this.getRedValue());
 
-            shelter.contributions = contr;
+            if (!shelter.contributions) {
+                shelter.contributions = [contr];
+            } else {
+                const contribIndex = shelter.contributions ? shelter.contributions.findIndex(c => !c.accepted && c.year === contr.year) : -1;
+                console.log(contribIndex);
+                if (contribIndex >= 0) {
+                    shelter.contributions.splice(contribIndex, 1);
+                }
+                shelter.contributions.push(contr);
+            }
+
+            console.log(shelter.contributions)
+
             this.processSavePromise(shelter, "contributions")
                 .then(() => {
                     this.displayError = false;
