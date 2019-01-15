@@ -169,6 +169,7 @@ export namespace StagingAreaTools {
 
         try {
             const updatedStagingItem = await updateStagingItem(<string>updatingItem.shelter._id, updatingItem);
+            updatedStagingItem.shelter.updateDate = new Date(Date.now());
             updatedStagingItem.shelter.updateSubject = <any>Enums.Auth_Permissions.UserTypeName[user.role];
             updatedStagingItem.watchDog = new Date(Date.now());
 

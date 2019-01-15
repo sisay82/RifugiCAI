@@ -28,6 +28,21 @@ import {
 } from "../../inputs/input_base";
 import { RevisionBase } from "../shared/revision_base";
 
+function uniqueTypeValidator(val: AbstractControl, openings?: AbstractControl[]): ValidationErrors {
+    if(!openings) {
+        openings = (<FormArray>(
+            this.contactForm.controls.openingTime
+        )).controls
+    }
+    const newOpening = this && this.newOpeningForm ? this.newOpeningForm.controls['newOpeningType'] : null;
+        
+    const count = openings.reduce((acc, v) => {
+        return (<any>v).controls.type.value === val.value ? acc + 1 : acc;
+    }, newOpening && newOpening.value === val.value ? 1 : 0);
+    
+    return count >= 2 ? { unique: false } : null;
+}
+
 @Component({
     moduleId: module.id,
     selector: "bc-contacts-revision",
@@ -87,12 +102,12 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             newOpeningEndDate: ["", customDateValidator],
             newOpeningType: [
                 "",
-                Validators.compose([
+                [
                     Validators.pattern(
                         CUSTOM_PATTERN_VALIDATORS.stringValidator
                     ),
-                    this.uniqueTypeValidator.bind(this)
-                ])
+                    uniqueTypeValidator.bind(this)
+                ]
             ]
         });
 
@@ -148,12 +163,15 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         this.openingChange = true;
         const openingStartDate = this.newOpeningForm.get("newOpeningStartDate");
         const openingEndDate = this.newOpeningForm.get("newOpeningEndDate");
-        const openigType = this.newOpeningForm.get("newOpeningType");
+        const openingType = this.newOpeningForm.get("newOpeningType");
 
         if (
             openingStartDate.valid &&
             openingEndDate.valid &&
-            openigType.valid
+            openingType.valid &&
+            uniqueTypeValidator(openingType,(<FormArray>(
+                this.contactForm.controls.openingTime
+            )).controls) === null
         ) {
             let startDate = null;
             let endDate = null;
@@ -161,39 +179,23 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                 openingStartDate.value != null &&
                 openingStartDate.value !== ""
             ) {
-                startDate = parseDate(
-                    openingStartDate.value
-                );
+                startDate = parseDate(openingStartDate.value);
             }
-            if (
-                openingEndDate.value != null &&
-                openingEndDate.value !== ""
-            ) {
-                endDate = parseDate(
-                    openingEndDate.value
-                );
+            if (openingEndDate.value != null && openingEndDate.value !== "") {
+                endDate = parseDate(openingEndDate.value);
             }
             this.invalid = false;
             const control = <FormArray>this.contactForm.get("openingTime");
             const opening: IOpening = {
                 startDate: startDate,
                 endDate: endDate,
-                type: openigType.value
+                type: openingType.value
             };
             control.push(this.initOpening(opening));
             this.resetOpeningForm();
         } else {
             this.invalid = true;
         }
-    }
-
-    uniqueTypeValidator(val: AbstractControl): ValidationErrors {
-        const count = (<FormArray>(
-            this.contactForm.controls.openingTime
-        )).controls.reduce((acc, v) => {
-            return (<any>v).controls.type.value === val.value ? acc + 1 : acc;
-        }, 0);
-        return count >= 2 ? { unique: false } : null;
     }
 
     resetOpeningForm() {
@@ -206,7 +208,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                     Validators.pattern(
                         CUSTOM_PATTERN_VALIDATORS.stringValidator
                     ),
-                    this.uniqueTypeValidator.bind(this)
+                    uniqueTypeValidator.bind(this)
                 ])
             ]
         });
@@ -223,7 +225,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                     Validators.pattern(
                         CUSTOM_PATTERN_VALIDATORS.stringValidator
                     ),
-                    this.uniqueTypeValidator.bind(this)
+                    uniqueTypeValidator.bind(this)
                 ])
             ]
         });

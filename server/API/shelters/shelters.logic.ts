@@ -535,9 +535,7 @@ export async function updateShelter(
 ): Promise<boolean> {
     const options: any = { upsert: newItem || false, new: true, setDefaultsOnInsert: true };
 
-    if (!updateObj.updateDate) {
-        updateObj.updateDate = new Date(Date.now());
-    }
+    updateObj.updateDate = new Date(Date.now());
 
     const updateData = cleanDataBeforeSave(updateObj);
     const services = updateObj.services;

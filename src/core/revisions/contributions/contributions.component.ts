@@ -62,8 +62,8 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
             totCharges: [""],
             IVAincluded: [""],
             totalProjectCost: [""],
-            externalFinancing: ["", [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator), createValueValidator(0, null, 0)]],
-            selfFinancing: ["", [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator), createValueValidator(0, null, 0)]],
+            externalFinancing: ["", [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator), createValueValidator(0, null, 0), Validators.required]],
+            selfFinancing: ["", [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.numberValidator), createValueValidator(0, null, 0), Validators.required]],
             red: [""],
             attachments: fb.array([]),
             type: ["", Validators.required],
@@ -83,7 +83,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
         });
 
         this.maskSaveSub = shared.maskSave$.subscribe(() => {
-            if (!this.maskError && this.contrForm.valid) {
+            if (!this.maskError && (this.contrForm.valid || !this.accepted)) {
                 if (this.statusChange || this.contrForm.dirty) {
                     this.disableSave = true;
                     this.save(true);
@@ -150,7 +150,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
     }
 
     accept(confirm) {
-        if (this.contrForm.valid) {
+        if (!confirm || this.contrForm.valid) {
             this.loading = true;
             this.accepted = confirm;
             this.statusChange = true;
@@ -247,6 +247,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
                     }
                 }
             }
+            this.contrForm.updateValueAndValidity();
         } else {
             this.contrForm.disable();
             this.newAttachmentForm.disable();
@@ -255,7 +256,7 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
     }
 
     save(confirm) {
-        if (!confirm || this.contrForm.valid) {
+        if (!confirm || !this.accepted || this.contrForm.valid) {
             const shelter: IShelter = { _id: this._id, contributions: this.data.contributions };
             const contr: IContribution = {
                 year: (new Date()).getFullYear(),
@@ -279,14 +280,11 @@ export class BcContributionRevision extends RevisionBase implements OnDestroy {
                 shelter.contributions = [contr];
             } else {
                 const contribIndex = shelter.contributions ? shelter.contributions.findIndex(c => !c.accepted && c.year === contr.year) : -1;
-                console.log(contribIndex);
                 if (contribIndex >= 0) {
                     shelter.contributions.splice(contribIndex, 1);
                 }
                 shelter.contributions.push(contr);
             }
-
-            console.log(shelter.contributions)
 
             this.processSavePromise(shelter, "contributions")
                 .then(() => {
