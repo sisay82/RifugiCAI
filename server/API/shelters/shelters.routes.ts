@@ -390,10 +390,10 @@ appRoute.route("/shelters/page/:pageSize").get(function (req, res) {
                 res.status(200).send(ris);
             })
             .catch(err => {
-                res.status(500).send(err);
+                res.status(500).send({ error: err });
             });
     } catch (e) {
-        res.status(500).send({ error: "Invalid user or request" });
+        res.status(500).send({ error: e });
     }
 });
 

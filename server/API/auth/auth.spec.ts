@@ -290,14 +290,14 @@ describe('AuthLogic', () => {
             })).toBe('9216001');
             expect(getCode(Enums.Auth_Permissions.User_Type.central, {
                 regionaleGroupCode: "9216001"
-            })).toBe('9216001');
+            })).toBe('9300000');
             expect(getCode(null, {
                 regionaleGroupCode: "9216001"
             })).toBe(null);
             expect(getCode(Enums.Auth_Permissions.User_Type.central, null)).toBe(null);
             expect(getCode(Enums.Auth_Permissions.User_Type.central, {
                 sectionCode: "9216001"
-            })).toBe(null);
+            })).toBe('9300000');
         });
 
         it('Should get user permissions from json description -> sectional', () => {
@@ -405,7 +405,7 @@ describe('AuthLogic', () => {
         checkUserAuthorizations(testUUID)
             .then(val => {
                 expect(val.role).toBe(Enums.Auth_Permissions.User_Type.central);
-                expect(val.code).toBe("9300100");
+                expect(val.code).toBe("9300000");
                 done();
             })
             .catch(err => {
