@@ -120,10 +120,6 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
         if (this.newSubjectForm.valid) {
             const control = <FormArray>this.managForm.get('subjects');
             const subject: ISubject = this.getFormValues(this.newSubjectForm);
-            subject.contract_start_date = subject.contract_start_date ?
-                (parseDate(this.newSubjectForm.get("contract_start_date").value) || null) : null;
-            subject.contract_end_date = subject.contract_end_date ?
-                (parseDate(this.newSubjectForm.get("contract_start_date").value) || null) : null;
             control.push(this.initSubject(subject));
             this.resetSubjectForm();
         } else {

@@ -1,21 +1,11 @@
-import {
-    Component,
-    Input,
-    OnInit,
-    OnDestroy
-} from '@angular/core';
-import {
-    ActivatedRoute,
-    Router
-} from '@angular/router';
+import { Component, Input, OnInit, OnDestroy } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
     IOpening,
     IContacts,
     IShelter
-} from '../../../app/shared/types/interfaces'
-import {
-    Enums
-} from '../../../app/shared/types/enums'
+} from "../../../app/shared/types/interfaces";
+import { Enums } from "../../../app/shared/types/enums";
 import {
     FormGroup,
     FormBuilder,
@@ -24,37 +14,25 @@ import {
     Validators,
     ValidationErrors,
     AbstractControl
-} from '@angular/forms';
-import {
-    ShelterService
-} from '../../../app/shelter/shelter.service'
-import {
-    BcRevisionsService
-} from '../revisions.service';
-import {
-    BcSharedService
-} from '../../../app/shared/shared.service';
-import {
-    Subscription
-} from 'rxjs';
-import {
-    BcAuthService
-} from '../../../app/shared/auth.service';
+} from "@angular/forms";
+import { ShelterService } from "../../../app/shelter/shelter.service";
+import { BcRevisionsService } from "../revisions.service";
+import { BcSharedService } from "../../../app/shared/shared.service";
+import { Subscription } from "rxjs";
+import { BcAuthService } from "../../../app/shared/auth.service";
 import {
     trimYear,
     parseDate,
     CUSTOM_PATTERN_VALIDATORS,
     customDateValidator
-} from '../../inputs/input_base';
-import {
-    RevisionBase
-} from '../shared/revision_base';
+} from "../../inputs/input_base";
+import { RevisionBase } from "../shared/revision_base";
 
 @Component({
     moduleId: module.id,
-    selector: 'bc-contacts-revision',
-    templateUrl: 'contacts.component.html',
-    styleUrls: ['contacts.component.scss'],
+    selector: "bc-contacts-revision",
+    templateUrl: "contacts.component.html",
+    styleUrls: ["contacts.component.scss"],
     providers: [ShelterService]
 })
 export class BcContactsRevision extends RevisionBase implements OnDestroy {
@@ -62,33 +40,63 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
     private newOpeningForm: FormGroup;
     private openingChange = false;
     private hiddenOpening = true;
-    constructor(shared: BcSharedService,
+    constructor(
+        shared: BcSharedService,
         shelterService: ShelterService,
         authService: BcAuthService,
         router: Router,
         _route: ActivatedRoute,
         private fb: FormBuilder,
-        revisionService: BcRevisionsService) {
-        super(shelterService, shared, revisionService, _route, router, authService);
+        revisionService: BcRevisionsService
+    ) {
+        super(
+            shelterService,
+            shared,
+            revisionService,
+            _route,
+            router,
+            authService
+        );
         this.contactForm = fb.group({
-            fixedPhone: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)],
-            mobilePhone: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.telephoneValidator)],
+            fixedPhone: [
+                "",
+                Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator)
+            ],
+            mobilePhone: [
+                "",
+                Validators.pattern(CUSTOM_PATTERN_VALIDATORS.telephoneValidator)
+            ],
             role: [""],
-            emailAddress: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.mailValidator)],
-            prenotation_link: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.urlValidator)],
-            webAddress: ["", Validators.pattern(CUSTOM_PATTERN_VALIDATORS.urlValidator)],
+            emailAddress: [
+                "",
+                Validators.pattern(CUSTOM_PATTERN_VALIDATORS.mailValidator)
+            ],
+            prenotation_link: [
+                "",
+                Validators.pattern(CUSTOM_PATTERN_VALIDATORS.urlValidator)
+            ],
+            webAddress: [
+                "",
+                Validators.pattern(CUSTOM_PATTERN_VALIDATORS.urlValidator)
+            ],
             openingTime: fb.array([])
         });
 
         this.newOpeningForm = fb.group({
             newOpeningStartDate: ["", customDateValidator],
             newOpeningEndDate: ["", customDateValidator],
-            newOpeningType: ["", Validators.compose(
-                [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator), this.uniqueTypeValidator.bind(this)]
-            )]
+            newOpeningType: [
+                "",
+                Validators.compose([
+                    Validators.pattern(
+                        CUSTOM_PATTERN_VALIDATORS.stringValidator
+                    ),
+                    this.uniqueTypeValidator.bind(this)
+                ])
+            ]
         });
 
-        this.formValidSub = this.contactForm.statusChanges.subscribe((value) => {
+        this.formValidSub = this.contactForm.statusChanges.subscribe(value => {
             if (value === "VALID") {
                 if (!this.maskError) {
                     this.displayError = false;
@@ -102,7 +110,9 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                     this.disableSave = true;
                     this.save(true);
                 } else {
-                    this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.contacts);
+                    this.shared.onMaskConfirmSave(
+                        Enums.Routes.Routed_Component.contacts
+                    );
                 }
             } else {
                 this.abortSave();
@@ -130,34 +140,46 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
 
     removeOpening(index) {
         this.openingChange = true;
-        const control = <FormArray>this.contactForm.get('openingTime');
+        const control = <FormArray>this.contactForm.get("openingTime");
         control.removeAt(index);
     }
 
     addNewOpening() {
         this.openingChange = true;
-        if (this.newOpeningForm.get('newOpeningStartDate').valid
-            && this.newOpeningForm.get('newOpeningEndDate').valid
-            && this.newOpeningForm.get('newOpeningType').valid) {
-            let startDate;
-            let endDate;
-            if (this.newOpeningForm.get('newOpeningStartDate').value != null
-                && this.newOpeningForm.get('newOpeningStartDate').value !== ""
-                && this.newOpeningForm.get('newOpeningEndDate').value != null
-                && this.newOpeningForm.get('newOpeningEndDate').value !== "") {
-                startDate = parseDate(this.newOpeningForm.get('newOpeningStartDate').value);
-                endDate = parseDate(this.newOpeningForm.get('newOpeningEndDate').value);
-            } else {
-                startDate = null;
-                endDate = null;
+        const openingStartDate = this.newOpeningForm.get("newOpeningStartDate");
+        const openingEndDate = this.newOpeningForm.get("newOpeningEndDate");
+        const openigType = this.newOpeningForm.get("newOpeningType");
+
+        if (
+            openingStartDate.valid &&
+            openingEndDate.valid &&
+            openigType.valid
+        ) {
+            let startDate = null;
+            let endDate = null;
+            if (
+                openingStartDate.value != null &&
+                openingStartDate.value !== ""
+            ) {
+                startDate = parseDate(
+                    openingStartDate.value
+                );
+            }
+            if (
+                openingEndDate.value != null &&
+                openingEndDate.value !== ""
+            ) {
+                endDate = parseDate(
+                    openingEndDate.value
+                );
             }
             this.invalid = false;
-            const control = <FormArray>this.contactForm.get('openingTime');
+            const control = <FormArray>this.contactForm.get("openingTime");
             const opening: IOpening = {
                 startDate: startDate,
                 endDate: endDate,
-                type: this.newOpeningForm.get('newOpeningType').value
-            }
+                type: openigType.value
+            };
             control.push(this.initOpening(opening));
             this.resetOpeningForm();
         } else {
@@ -166,7 +188,9 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
     }
 
     uniqueTypeValidator(val: AbstractControl): ValidationErrors {
-        const count = (<FormArray>this.contactForm.controls.openingTime).controls.reduce((acc, v) => {
+        const count = (<FormArray>(
+            this.contactForm.controls.openingTime
+        )).controls.reduce((acc, v) => {
             return (<any>v).controls.type.value === val.value ? acc + 1 : acc;
         }, 0);
         return count >= 2 ? { unique: false } : null;
@@ -176,9 +200,15 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         this.newOpeningForm = this.fb.group({
             newOpeningStartDate: ["", customDateValidator],
             newOpeningEndDate: ["", customDateValidator],
-            newOpeningType: ["", Validators.compose(
-                [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator), this.uniqueTypeValidator.bind(this)]
-            )]
+            newOpeningType: [
+                "",
+                Validators.compose([
+                    Validators.pattern(
+                        CUSTOM_PATTERN_VALIDATORS.stringValidator
+                    ),
+                    this.uniqueTypeValidator.bind(this)
+                ])
+            ]
         });
         this.toggleOpenings();
     }
@@ -187,9 +217,15 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         return this.fb.group({
             startDate: [trimYear(opening.startDate)],
             endDate: [trimYear(opening.endDate)],
-            type: [opening.type, Validators.compose(
-                [Validators.pattern(CUSTOM_PATTERN_VALIDATORS.stringValidator), this.uniqueTypeValidator.bind(this)]
-            )]
+            type: [
+                opening.type,
+                Validators.compose([
+                    Validators.pattern(
+                        CUSTOM_PATTERN_VALIDATORS.stringValidator
+                    ),
+                    this.uniqueTypeValidator.bind(this)
+                ])
+            ]
         });
     }
 
@@ -200,8 +236,12 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                 name: this.name
             };
 
-            const contacts: IContacts = this.getFormNotArrayValues(this.contactForm);
-            const op = this.getFormArrayValues(<FormArray>this.contactForm.get('openingTime'));
+            const contacts: IContacts = this.getFormNotArrayValues(
+                this.contactForm
+            );
+            const op = this.getFormArrayValues(<FormArray>(
+                this.contactForm.get("openingTime")
+            ));
             const openings = op.map(val => {
                 if (val) {
                     if (val.startDate) {
@@ -221,17 +261,18 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
                 .then(() => {
                     this.displayError = false;
                     if (confirm) {
-                        this.shared.onMaskConfirmSave(Enums.Routes.Routed_Component.contacts);
+                        this.shared.onMaskConfirmSave(
+                            Enums.Routes.Routed_Component.contacts
+                        );
                     }
                 })
-                .catch((err) => {
+                .catch(err => {
                     this.abortSave();
                     console.log(err);
                 });
         } else {
             this.abortSave();
         }
-
     }
 
     initForm(shelter) {
@@ -239,10 +280,15 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         this.data["openingTime"] = shelter.openingTime;
         if (this.data.contacts) {
             for (const prop in this.data.contacts) {
-                if (this.data.contacts.hasOwnProperty(prop) && this.data.contacts[prop]) {
+                if (
+                    this.data.contacts.hasOwnProperty(prop) &&
+                    this.data.contacts[prop]
+                ) {
                     if (this.contactForm.contains(prop)) {
                         try {
-                            this.contactForm.get(prop).setValue(this.data.contacts[prop]);
+                            this.contactForm
+                                .get(prop)
+                                .setValue(this.data.contacts[prop]);
                         } catch (e) {
                             console.log(prop);
                             console.error(e);
@@ -252,7 +298,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             }
         }
         if (this.data.openingTime) {
-            const control = <FormArray>this.contactForm.get('openingTime');
+            const control = <FormArray>this.contactForm.get("openingTime");
             for (const opening of this.data.openingTime) {
                 control.push(this.initOpening(opening));
             }
@@ -283,11 +329,10 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         Promise.all([
             this.getData(shelId, "contacts"),
             this.getData(shelId, "openingTime")
-        ])
-            .then(values => {
-                const shelter = Object.assign({}, ...values);
-                this.initForm(shelter);
-            });
+        ]).then(values => {
+            const shelter = Object.assign({}, ...values);
+            this.initForm(shelter);
+        });
     }
 
     getEmptyObjData(section) {
