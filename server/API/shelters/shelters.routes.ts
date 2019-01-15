@@ -23,7 +23,7 @@ import {
     confirmShelter,
     deleteShelter,
     getShelPage,
-    queryAllSheCSV,
+    queryAllShelters,
     getShelSectionById,
     deleteService,
     getShelterHeadById,
@@ -372,9 +372,13 @@ appRoute.route("/shelters/confirm/:section/:id").put(async function (req, res) {
 
             } else {
                 logger(LOG_TYPE.ERROR, err);
+                res.status(500).send({
+                    error: "Invalid user or request"
+                });
             }
         }
     } catch (e) {
+        logger(LOG_TYPE.ERROR, e);
         res.status(500).send({ error: "Invalid user or request" });
     }
 });
@@ -414,7 +418,7 @@ appRoute.route("/shelters/csv/list").get(function (req, res) {
         Auth_Permissions.Visualization.CSVPermission.indexOf(req.session.role) >
         -1
     ) {
-        queryAllSheCSV()
+        queryAllShelters()
             .then(shelters => createCSV(shelters))
             .then(csv => {
                 const buff = Buffer.from(csv);

@@ -104,8 +104,8 @@ export class CasAuth {
 
     private _handleBasicAuth(req: Request): boolean {
         const user = auth(req);
-        if (ENV_CONFIG.DEV) {
-            logger(LOG_TYPE.INFO, "Soft block user authentication", user);
+        if (ENV_CONFIG.DEV && user && user.name) {
+            logger(LOG_TYPE.INFO, "Soft block user authentication", user.name);
         }
         if (
             !user ||

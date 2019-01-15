@@ -155,7 +155,7 @@ export function createValidationFunction(validator: string) {
 }
 
 export const CUSTOM_PATTERN_VALIDATORS = {
-    stringValidator: <RegExp>/^([A-Za-z0-99À-ÿ� ,.:/';+!?|)(_\n-]*)*$/,
+    stringValidator: <RegExp>/^([A-Za-z0-99À-ÿ� ,.:/';+!\*?|)(_\n-]*)*$/,
     telephoneValidator: <RegExp>/^([+]([0-9][0-9][\s])?)?([0-9]*(\s)?[0-9]*)$/,
     mailValidator: <RegExp>/(^$|^.*@.*\..*$)/,
     numberValidator: <RegExp>/^(-)?[0-9]*([.][0-9]*)?$/,

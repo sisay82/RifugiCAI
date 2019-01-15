@@ -2,6 +2,8 @@ import { CSV_FIELDS, CSV_UNWINDS, CSV_ALIASES, CSV_UNWINDS_ALIASES } from '../..
 import { IShelterExtended, toTitleCase, getPropertySafe } from '../../tools/common';
 
 const FIELD_SEPARATOR = '->';
+const CSV_SEPARATOR = ',';
+const CSV_ENCAPSULE_CHAR = '"';
 
 function concatPropNames(father: String, props: String[]): String[] {
     return props.map(prop => father + '.' + prop);
@@ -38,20 +40,6 @@ function getAllSchemaNames(obj: any): String[] {
     return names;
 }
 
-export function getCSVFields(obj): String[] {
-    if (obj && obj.schema && obj.schema.obj) {
-        const originalObjSchema = obj.schema.obj;
-        return [...getAllSchemaNames(originalObjSchema)];
-    }
-    return null;
-}
-
-export function trimStr(str: String, c): string {
-    const start = str.startsWith(c) ? 1 : 0;
-    const end = str[str.length - 1] === c ? str.length - 1 : str.length;
-    return str.slice(start, end);
-}
-
 export function getAliasForPartialField(field: String, aliases = CSV_ALIASES) {
     const parts = field.split('\.');
     return parts.reduce((acc, val) => {
@@ -70,28 +58,6 @@ export function getAliasForField(field: String, aliases = CSV_ALIASES) {
     }
 }
 
-export function replaceCSVHeader(csvFile, fields) {
-    const rows = csvFile.split('\n');
-    const header = rows[0].slice(0, rows[0].length - 2);
-
-    if (header && fields) {
-        return header.split(',')
-            .map(field => ('"' + getAliasForField(trimStr(field, '"'), fields) + '"') || field)
-            .join(',') + "\n" + rows.join('\n');
-    }
-}
-
-
-function flattenArray(arr) {
-    return arr.reduce((acc, val, index) => {
-        const uniqueKeyObj = Object.keys(val).reduce((o, k) => {
-            o["k" + index + '.' + k] = val[k];
-            return o;
-        }, {});
-        return Object.assign({}, acc, uniqueKeyObj);
-    }, {})
-}
-
 export function getFieldNameLastFragment(fieldName: string): string[][] {
     const fields = CSV_FIELDS
         .filter(f => f.indexOf(fieldName) > -1)
@@ -106,13 +72,9 @@ export function getFieldNameLastFragment(fieldName: string): string[][] {
 export function processServicesFields(services) {
     const ret = {};
     for (const cat of services) {
-        // let tags = "";
         cat.tags.forEach(tag => {
             ret["services." + <string>cat.category + "." + tag.key] = tag.value;
-            // tags += tag.key + ": " + tag.value + "|";
         });
-
-        // ret[<string>cat.name] = tags;
     }
     return ret;
 }
@@ -284,11 +246,11 @@ export function parseCSVLines(dict) {
                             if (typeof v === 'object' && !isNaN(new Date(v).getTime())) {
                                 v = new Date(v).toISOString()
                             }
-                            acc.lines[index] += String(v);
+                            acc.lines[index] += CSV_ENCAPSULE_CHAR + String(v) + CSV_ENCAPSULE_CHAR;
                         }
-                        acc.lines[index] += ","
+                        acc.lines[index] += CSV_SEPARATOR
                     }
-                    acc.header += ","
+                    acc.header += CSV_SEPARATOR
                 }
             })
         }

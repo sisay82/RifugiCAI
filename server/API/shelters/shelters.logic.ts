@@ -193,7 +193,7 @@ export function getShelterById(id): Promise<IShelterExtended> {
     });
 }
 
-export function queryAllSheCSV(): Promise<IShelterExtended[]> {
+export function queryAllShelters(): Promise<IShelterExtended[]> {
     return new Promise<IShelterExtended[]>((resolve, reject) => {
         Shelters.find()
             .populate("services")
