@@ -28,18 +28,29 @@ import {
 } from "../../inputs/input_base";
 import { RevisionBase } from "../shared/revision_base";
 
-function uniqueTypeValidator(val: AbstractControl, openings?: AbstractControl[]): ValidationErrors {
-    if(!openings) {
-        openings = (<FormArray>(
-            this.contactForm.controls.openingTime
-        )).controls
+function uniqueTypeValidator(
+    val: AbstractControl,
+    openings?: AbstractControl[]
+): ValidationErrors {
+    if (!openings) {
+        openings = (<FormArray>this.contactForm.controls.openingTime).controls;
     }
-    const newOpening = this && this.newOpeningForm ? this.newOpeningForm.controls['newOpeningType'] : null;
-        
-    const count = openings.reduce((acc, v) => {
-        return (<any>v).controls.type.value === val.value ? acc + 1 : acc;
-    }, newOpening && newOpening.value === val.value ? 1 : 0);
-    
+    const newOpening =
+        this && this.newOpeningForm
+            ? this.newOpeningForm.controls["newOpeningType"]
+            : null;
+
+    const count = openings.reduce(
+        (acc, v) => {
+            return (<any>v).controls.type.value === val.value ? acc + 1 : acc;
+        },
+        newOpening &&
+            newOpening.value != "" &&
+            newOpening.value != null &&
+            newOpening.value === val.value
+            ? 1
+            : 0
+    );
     return count >= 2 ? { unique: false } : null;
 }
 
@@ -166,12 +177,21 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         const openingType = this.newOpeningForm.get("newOpeningType");
 
         if (
+            (openingType.value == "" || openingType.value == null) &&
+            (openingEndDate.value == "" || openingEndDate.value == null) &&
+            (openingStartDate.value == "" || openingStartDate.value == null)
+        ) {
+            return;
+        }
+
+        if (
             openingStartDate.valid &&
             openingEndDate.valid &&
             openingType.valid &&
-            uniqueTypeValidator(openingType,(<FormArray>(
-                this.contactForm.controls.openingTime
-            )).controls) === null
+            uniqueTypeValidator(
+                openingType,
+                (<FormArray>this.contactForm.controls.openingTime).controls
+            ) === null
         ) {
             let startDate = null;
             let endDate = null;
@@ -221,12 +241,12 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             endDate: [trimYear(opening.endDate)],
             type: [
                 opening.type,
-                Validators.compose([
+                [
                     Validators.pattern(
                         CUSTOM_PATTERN_VALIDATORS.stringValidator
                     ),
                     uniqueTypeValidator.bind(this)
-                ])
+                ]
             ]
         });
     }
