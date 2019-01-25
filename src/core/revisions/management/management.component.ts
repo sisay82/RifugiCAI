@@ -27,6 +27,7 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
     private property: ISubject;
     private subjectChange = false;
     private hiddenSubject = true;
+    showNewSubjectError = false;
     constructor(shared: BcSharedService,
         authService: BcAuthService,
         shelterService: ShelterService,
@@ -117,13 +118,18 @@ export class BcManagementRevision extends RevisionBase implements OnDestroy {
 
     addNewSubject() {
         this.subjectChange = true;
+
+        if(this.checkEmptyForm(this.newSubjectForm)) {
+            return;
+        }
+
         if (this.newSubjectForm.valid) {
             const control = <FormArray>this.managForm.get('subjects');
             const subject: ISubject = this.getFormValues(this.newSubjectForm);
             control.push(this.initSubject(subject));
             this.resetSubjectForm();
         } else {
-            this.invalid = true;
+            this.showNewSubjectError = true;
         }
     }
 

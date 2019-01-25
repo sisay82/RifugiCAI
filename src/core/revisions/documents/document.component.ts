@@ -57,7 +57,6 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
     docs: IFile[] = [];
     maps: IFile[] = [];
     private filesChange = false;
-    invalid = false;
     private docFormValidSub: Subscription;
     private mapFormValidSub: Subscription;
     private invoicesFormValidSub: Subscription;
@@ -118,7 +117,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
                         this.newMapForm.invalid &&
                         this.invoicesForm.invalid
                     ) {
-                        this.setDisplayError(false);
+                        this.displayError = false;
                     }
                 }
             }
@@ -133,7 +132,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
                         this.newMapForm.invalid &&
                         this.invoicesForm.invalid
                     ) {
-                        this.setDisplayError(false);
+                        this.displayError = false;
                     }
                 }
             }
@@ -148,7 +147,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
                         this.newMapForm.invalid &&
                         this.newDocForm.invalid
                     ) {
-                        this.setDisplayError(false);
+                        this.displayError = false;
                     }
                 }
             }
@@ -163,7 +162,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
                         this.newDocForm.invalid &&
                         this.invoicesForm.invalid
                     ) {
-                        this.setDisplayError(false);
+                        this.displayError = false;
                     }
                 }
             }
@@ -441,7 +440,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
         const f = <File>(<FormGroup>form.get("file")).value;
         if (f && form.valid && this.checkDocName(f.name)) {
             this.uploading = true;
-            this.setDisplayError(false);
+            this.displayError = false;
             const fi = <File>(<FormGroup>form.get("file")).value;
             const file: IFile = {
                 name: f.name,
@@ -473,7 +472,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
             };
             fileReader.readAsArrayBuffer(f);
         } else {
-            this.setDisplayError(true);
+            this.displayError = true;
         }
     }
 
@@ -501,7 +500,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
             this.filesChange ||
             (this.invoicesForm.valid && this.invoicesForm.dirty)
         ) {
-            this.setDisplayError(false);
+            this.displayError = false;
             let i = 0;
             if (this.invoicesForm.dirty) {
                 const filesToUpdate = (<FormArray>(
@@ -570,7 +569,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
                     }
                 }
             } else {
-                this.setDisplayError(false);
+                this.displayError = false;
                 if (confirm) {
                     this.shared.onMaskConfirmSave(
                         Enums.Routes.Routed_Component.documents

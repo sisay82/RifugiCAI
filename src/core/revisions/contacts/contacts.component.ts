@@ -28,18 +28,29 @@ import {
 } from "../../inputs/input_base";
 import { RevisionBase } from "../shared/revision_base";
 
-function uniqueTypeValidator(val: AbstractControl, openings?: AbstractControl[]): ValidationErrors {
-    if(!openings) {
-        openings = (<FormArray>(
-            this.contactForm.controls.openingTime
-        )).controls
+function uniqueTypeValidator(
+    val: AbstractControl,
+    openings?: AbstractControl[]
+): ValidationErrors {
+    if (!openings) {
+        openings = (<FormArray>this.contactForm.controls.openingTime).controls;
     }
-    const newOpening = this && this.newOpeningForm ? this.newOpeningForm.controls['newOpeningType'] : null;
-        
-    const count = openings.reduce((acc, v) => {
-        return (<any>v).controls.type.value === val.value ? acc + 1 : acc;
-    }, newOpening && newOpening.value === val.value ? 1 : 0);
-    
+    const newOpening =
+        this && this.newOpeningForm
+            ? this.newOpeningForm.controls["newOpeningType"]
+            : null;
+
+    const count = openings.reduce(
+        (acc, v) => {
+            return (<any>v).controls.type.value === val.value ? acc + 1 : acc;
+        },
+        newOpening &&
+            newOpening.value != "" &&
+            newOpening.value != null &&
+            newOpening.value === val.value
+            ? 1
+            : 0
+    );
     return count >= 2 ? { unique: false } : null;
 }
 
@@ -55,6 +66,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
     private newOpeningForm: FormGroup;
     private openingChange = false;
     private hiddenOpening = true;
+    showNewOpeningError = false;
     constructor(
         shared: BcSharedService,
         shelterService: ShelterService,
@@ -165,13 +177,18 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         const openingEndDate = this.newOpeningForm.get("newOpeningEndDate");
         const openingType = this.newOpeningForm.get("newOpeningType");
 
+        if(this.checkEmptyForm(this.newOpeningForm)) {
+            return;
+        }
+
         if (
             openingStartDate.valid &&
             openingEndDate.valid &&
             openingType.valid &&
-            uniqueTypeValidator(openingType,(<FormArray>(
-                this.contactForm.controls.openingTime
-            )).controls) === null
+            uniqueTypeValidator(
+                openingType,
+                (<FormArray>this.contactForm.controls.openingTime).controls
+            ) === null
         ) {
             let startDate = null;
             let endDate = null;
@@ -184,7 +201,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             if (openingEndDate.value != null && openingEndDate.value !== "") {
                 endDate = parseDate(openingEndDate.value);
             }
-            this.invalid = false;
+            this.showNewOpeningError = false;
             const control = <FormArray>this.contactForm.get("openingTime");
             const opening: IOpening = {
                 startDate: startDate,
@@ -194,7 +211,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             control.push(this.initOpening(opening));
             this.resetOpeningForm();
         } else {
-            this.invalid = true;
+            this.showNewOpeningError = true;
         }
     }
 
@@ -221,12 +238,12 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             endDate: [trimYear(opening.endDate)],
             type: [
                 opening.type,
-                Validators.compose([
+                [
                     Validators.pattern(
                         CUSTOM_PATTERN_VALIDATORS.stringValidator
                     ),
                     uniqueTypeValidator.bind(this)
-                ])
+                ]
             ]
         });
     }

@@ -18,7 +18,6 @@ export abstract class RevisionBase implements OnInit {
     protected _id: String;
     protected name: String;
     protected displayTagError = false;
-    protected invalid = false;
     protected disableSave = false;
     protected maskSaveSub: Subscription;
     protected data: any = {};
@@ -135,12 +134,8 @@ export abstract class RevisionBase implements OnInit {
     }
 
     protected abortSave() {
-        this.setDisplayError(true);
+        this.displayError = true;
         this.shared.onMaskConfirmSave(null);
-    }
-
-    protected setDisplayError(value) {
-        this.displayError = value;
     }
 
     protected processSavePromise(shelter, section): Promise<any> {
@@ -190,6 +185,12 @@ export abstract class RevisionBase implements OnInit {
             }
         }
         return obj;
+    }
+
+    protected checkEmptyForm(form: FormGroup) {
+        return Object.keys(form.controls).reduce((acc, val) => {
+            return acc && (form.get(val).value == null || form.get(val).value == "");
+        }, true);
     }
 
     protected getFormValues(form: FormGroup): any {
