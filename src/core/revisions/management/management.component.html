@@ -132,61 +132,61 @@
     <form [formGroup]="newSubjectForm">
         <div style="display: flex;flex-direction:row;align-items:center">
             <div class="bc-revision-management">
-                <bc-text-input placeholder="Nome gestore o custode" formControlName="name" title="Nome" [displayError]="invalid"></bc-text-input>
+                <bc-text-input placeholder="Nome gestore o custode" formControlName="name" title="Nome" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input placeholder="Cognome gestore o custode" formControlName="surname" title="Cognome" [displayError]="invalid"></bc-text-input>
+                <bc-text-input placeholder="Cognome gestore o custode" formControlName="surname" title="Cognome" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input placeholder="Es: +39 0522 652347" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="fixedPhone"
-                    title="Telefono" [displayError]="invalid"></bc-text-input>
+                    title="Telefono" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
             <bc-icon tooltip="Aggiungi" (click)="addNewSubject()" class="bc-revision-management-add-tag" name="check" size=s></bc-icon>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input placeholder="Es: +39 335 6745896" errorMessage="Inserire sono numeri." enableBlock="true" formControlName="mobilePhone"
-                    title="Cellulare" [displayError]="invalid"></bc-text-input>
+                    title="Cellulare" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: custode@info.it" formControlName="email"
-                    title="Mail" [displayError]="invalid"></bc-text-input>
+                    title="Mail" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo email valido." placeholder="Es: custode@pec.it" formControlName="pec"
-                    title="PEC" [displayError]="invalid"></bc-text-input>
+                    title="PEC" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire indirizzo sito web valido." placeholder="Es: www.gestoreimmobile.it"
-                    formControlName="webSite" title="Sito web" [displayError]="invalid"></bc-text-input>
+                    formControlName="webSite" title="Sito web" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input placeholder="Custodia o gestione" formControlName="type" title="Tipo" [displayError]="invalid"></bc-text-input>
+                <bc-text-input placeholder="Custodia o gestione" formControlName="type" title="Tipo" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
-                <bc-text-input placeholder="Es: 00449700020 (solo numeri)" formControlName="taxCode" title="P.IVA" [displayError]="invalid"></bc-text-input>
+                <bc-text-input placeholder="Es: 00449700020 (solo numeri)" formControlName="taxCode" title="P.IVA" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire sono numeri." placeholder="Es: 10000" formControlName="contract_fee"
-                    title="Canone annuale (€, da contratto)" [displayError]="displayError"></bc-text-input>
+                    title="Canone annuale (€, da contratto)" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
             <div class="bc-revision-management">
                 <bc-select-input defaultContent="Selezionare tipo possesso" enumName="Possession_Type" formControlName="possession_type" title="Tipo possesso"
-                    [displayError]="displayError"></bc-select-input>
+                    [displayError]="showNewSubjectError"></bc-select-input>
             </div>
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm/aaaa" formControlName="contract_start_date"
-                    title="Data di inizio contratto" [displayError]="displayError"></bc-text-input>
+                    title="Data di inizio contratto" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
         </div>
         <div style="display: flex;flex-direction:row">
             <div class="bc-revision-management">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm/aaaa" formControlName="contract_end_date"
-                    title="Data di fine contratto" [displayError]="displayError"></bc-text-input>
+                    title="Data di fine contratto" [displayError]="showNewSubjectError"></bc-text-input>
             </div>
         </div>
     </form>

@@ -174,7 +174,7 @@ export class BcImgRevision extends RevisionBase implements OnDestroy {
       }
       fileReader.readAsArrayBuffer(f);
     } else {
-      this.setDisplayError(true);
+      this.displayError = true;
     }
   }
 

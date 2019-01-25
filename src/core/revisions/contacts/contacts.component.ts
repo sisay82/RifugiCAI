@@ -66,6 +66,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
     private newOpeningForm: FormGroup;
     private openingChange = false;
     private hiddenOpening = true;
+    showNewOpeningError = false;
     constructor(
         shared: BcSharedService,
         shelterService: ShelterService,
@@ -176,11 +177,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
         const openingEndDate = this.newOpeningForm.get("newOpeningEndDate");
         const openingType = this.newOpeningForm.get("newOpeningType");
 
-        if (
-            (openingType.value == "" || openingType.value == null) &&
-            (openingEndDate.value == "" || openingEndDate.value == null) &&
-            (openingStartDate.value == "" || openingStartDate.value == null)
-        ) {
+        if(this.checkEmptyForm(this.newOpeningForm)) {
             return;
         }
 
@@ -204,7 +201,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             if (openingEndDate.value != null && openingEndDate.value !== "") {
                 endDate = parseDate(openingEndDate.value);
             }
-            this.invalid = false;
+            this.showNewOpeningError = false;
             const control = <FormArray>this.contactForm.get("openingTime");
             const opening: IOpening = {
                 startDate: startDate,
@@ -214,7 +211,7 @@ export class BcContactsRevision extends RevisionBase implements OnDestroy {
             control.push(this.initOpening(opening));
             this.resetOpeningForm();
         } else {
-            this.invalid = true;
+            this.showNewOpeningError = true;
         }
     }
 

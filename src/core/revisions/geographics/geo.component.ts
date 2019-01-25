@@ -141,15 +141,15 @@ export class BcGeoRevisionComponent extends RevisionBase implements OnDestroy {
             const control = <FormArray>this.geoForm.get('tags');
             for (const c of control.controls) {
                 if (c.value.key.toLowerCase().indexOf(this.newTagForm.get("newKey").value.toLowerCase()) > -1) {
-                    this.invalid = true;
+                    this.displayError = true;
                     return;
                 }
             }
-            this.invalid = false;
+            this.displayError = false;
             control.push(this.initTag(this.newTagForm.get("newKey").value, this.newTagForm.get("newValue").value));
             this.resetTagForm();
         } else {
-            this.invalid = true;
+            this.displayError = true;
         }
     }
 

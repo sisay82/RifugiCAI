@@ -57,15 +57,15 @@
     <form [formGroup]="newOpeningForm">
         <div style="display:flex;flex-direction:row;align-items:center">
             <div class="bc-revision-contact">
-                <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="newOpeningType" [displayError]="invalid"></bc-text-input>
+                <bc-text-input placeholder="Es: Apertura estiva, natalizia ecc." formControlName="newOpeningType" [displayError]="showNewOpeningError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="newOpeningStartDate"
-                    removeYear="true" [displayError]="invalid"></bc-text-input>
+                    removeYear="true" [displayError]="showNewOpeningError"></bc-text-input>
             </div>
             <div class="bc-revision-contact">
                 <bc-text-input enableBlock="true" errorMessage="Inserire date nel formato richiesto." placeholder="Formato: gg/mm" formControlName="newOpeningEndDate"
-                    removeYear="true" [displayError]="invalid"></bc-text-input>
+                    removeYear="true" [displayError]="showNewOpeningError"></bc-text-input>
             </div>
             <bc-icon tooltip="Aggiungi" (click)="addNewOpening()" class="bc-revision-contact-add-tag" name="check" size=s></bc-icon>
         </div>
