@@ -655,7 +655,7 @@ export class BcDocRevision extends RevisionBase implements OnDestroy {
             ])
         ]).then(values => {
             this.initData(values[1]);
-            if (values[0].economy) {
+            if (values[0].economy && Array.isArray(values[0].economy)) {
                 this.updateInvalidYearsInvoice(
                     values[0].economy.filter(obj => obj.confirm)
                 );

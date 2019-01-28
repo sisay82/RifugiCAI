@@ -86,6 +86,7 @@ export namespace StagingAreaTools {
                 : baseItem['shelter'] = <any>updatingShelter;
 
             baseItem.files = <any>updatingItem.files;
+            baseItem.newItem = updatingItem.newItem;
 
             return Promise.resolve(baseItem);
 
@@ -100,7 +101,8 @@ export namespace StagingAreaTools {
                 const item = createStagingItem({
                     shelter: updatedShelter,
                     files: updatingItem.files,
-                    watchDog: new Date(Date.now())
+                    watchDog: new Date(Date.now()),
+                    newItem: updatingItem.newItem
                 });
 
                 return Promise.resolve(item);
