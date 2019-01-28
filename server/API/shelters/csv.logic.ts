@@ -2,43 +2,8 @@ import { CSV_FIELDS, CSV_UNWINDS, CSV_ALIASES, CSV_UNWINDS_ALIASES } from '../..
 import { IShelterExtended, toTitleCase, getPropertySafe } from '../../tools/common';
 
 const FIELD_SEPARATOR = '->';
-const CSV_SEPARATOR = ',';
+const CSV_SEPARATOR = '$';
 const CSV_ENCAPSULE_CHAR = '"';
-
-function concatPropNames(father: String, props: String[]): String[] {
-    return props.map(prop => father + '.' + prop);
-}
-
-function getAllSchemaNames(obj: any): String[] {
-    const names = [];
-    for (const prop in obj) {
-        if (obj.hasOwnProperty(prop) && obj[prop] != null) {
-            if (typeof obj[prop] === 'function') {
-                names.push(prop);
-            } else {
-                if (obj[prop].type) {
-                    if (obj[prop].type.obj) {
-                        const subNames = getAllSchemaNames(obj[prop].type.obj);
-                        names.push(
-                            ...concatPropNames(prop, subNames)
-                        );
-                    } else {
-                        names.push(prop);
-                    }
-                } else if (Array.isArray(obj[prop])) {
-                    for (const p of obj[prop]) {
-                        const subNames = getAllSchemaNames(p.obj);
-                        names.push(
-                            ...concatPropNames(prop, subNames)
-                        );
-                    }
-                }
-            }
-
-        }
-    }
-    return names;
-}
 
 export function getAliasForPartialField(field: String, aliases = CSV_ALIASES) {
     const parts = field.split('\.');
@@ -79,6 +44,19 @@ export function processServicesFields(services) {
     return ret;
 }
 
+export function getSubfieldAliases(doc, aliases: {[key: string]: string}[]) {
+    return Object.keys(aliases).reduce((acc, val) => {
+        const name = aliases[val];
+        const value = getPropertySafe(doc, val);
+
+        if (name) {
+            acc[name] = value;
+        }
+    
+        return acc;
+    }, {});
+}
+
 export function processArrayField(baseField, objs, useFields?) {
     const fields = useFields == null ? getFieldNameLastFragment(baseField) : useFields;
 
@@ -86,15 +64,33 @@ export function processArrayField(baseField, objs, useFields?) {
         const uniqueKeyObj = fields.reduce((o, k) => {
             if (Array.isArray(k) && k.length !== 1) {
                 o = k.reduce((a, subK) => {
-                    const subfields = processArrayField(
-                        baseField + index + '.' + subK, val[subK],
-                        getFieldNameLastFragment(baseField + '.' + subK)
-                    );
+                    let subfields = {};
+
+                    if(val[subK]){
+                        if (!Array.isArray(val[subK])) {
+                            subfields = getSubfieldAliases(
+                                val[subK],
+                                getPropertySafe(CSV_UNWINDS_ALIASES, baseField + '.' + subK)
+                            );
+                        } else {
+                            subfields = processArrayField(
+                                baseField + index + '.' + subK, val[subK],
+                                getFieldNameLastFragment(baseField + '.' + subK)
+                            );
+                        }
+                    }
+                    
                     return Object.assign({}, a, subfields);
                 }, o)
             } else {
                 const key = Array.isArray(k) ? k[0] : k;
-                o[baseField + index + '.' + key] = val[key];
+                if (typeof(val[key])==="object"){
+                    for (const prop in val[key]) {
+                        o[baseField + index + '.' + prop] = val[key][prop];
+                    }
+                }else{
+                    o[baseField + index + '.' + key] = val[key];
+                }
             }
 
             return o;
@@ -235,7 +231,7 @@ export function parseCSVLines(dict) {
         if (val) {
             val.map(dictVal => {
                 if (dict[dictVal]) {
-                    acc.header += dictVal;
+                    acc.header += CSV_ENCAPSULE_CHAR + dictVal + CSV_ENCAPSULE_CHAR;
                     for (let index = 0; index < lines; index++) {
 
                         let v = dict[dictVal][index];

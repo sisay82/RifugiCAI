@@ -39,6 +39,7 @@ export const CSV_UNWINDS = {
     'services': [],
     'openingTime': ["Apertura"],
     'management.subject': [null, "Subject"],
+    'contributions': ["Contributo"]
     // 'economy',
     // 'use',
     // 'contributions.attachments'
@@ -105,6 +106,29 @@ export const CSV_UNWINDS_ALIASES = {
         "startDate": "Apertura (inizio)",
         "endDate": "Apertura (fine)",
         "type": "Tipo apertura"
+    },
+    "contributions": {
+        "year": "Anno (Richiesta contributo)",
+        "data": {
+            "handWorks": "Lavori a corpo (€)",
+            "customizedWorks": "Lavori a misura (€)",
+            "safetyCharges": "Oneri di sicurezza (€)",
+            "totWorks": "TOTALE LAVORI (€)",
+            "surveyorsCharges": "Spese per indagini - rilievi - ecc. (€)",
+            "connectionsCharges": "Spese per allacciamenti a reti di distribuzione (€)",
+            "technicalCharges": "Spese tecniche (€)",
+            "testCharges": "Spese di collaudo (€)",
+            "taxes": "Tasse e oneri (€)",
+            "totCharges": "TOTALE SPESE (€)",
+            "IVAincluded": "IVA compresa perché non recuperabile",
+            "totalProjectCost": "COSTO TOTALE DEL PROGETTO (€)",
+            "externalFinancing": "Finanziamento esterno (€)",
+            "selfFinancing": "Autofinanziamento (€)",
+            "red": "SCOPERTO (€)",
+        },
+        "value": "RICHIESTO (€)",
+        "accepted": "Contributo accettato",
+        "type": "Tipo di contributo richiesto"
     }
 }
 
@@ -188,29 +212,6 @@ export const CSV_ALIASES = {
         "water_type": "Acqua",
         "water_availability": "Disponibilità acqua",
         "droughts": "Periodi di siccità",
-    },
-    "contributions": {
-        "year": "Anno (Richiesta contributo)",
-        "data": {
-            "handWorks": "Lavori a corpo (€)",
-            "customizedWorks": "Lavori a misura (€)",
-            "safetyCharges": "Oneri di sicurezza (€)",
-            "totWorks": "TOTALE LAVORI (€)",
-            "surveyorsCharges": "Spese per indagini - rilievi - ecc. (€)",
-            "connectionsCharges": "Spese per allacciamenti a reti di distribuzione (€)",
-            "technicalCharges": "Spese tecniche (€)",
-            "testCharges": "Spese di collaudo (€)",
-            "taxes": "Tasse e oneri (€)",
-            "totCharges": "TOTALE SPESE (€)",
-            "IVAincluded": "IVA compresa perché non recuperabile",
-            "totalProjectCost": "COSTO TOTALE DEL PROGETTO (€)",
-            "externalFinancing": "Finanziamento esterno (€)",
-            "selfFinancing": "Autofinanziamento (€)",
-            "red": "SCOPERTO (€)",
-        },
-        "value": "RICHIESTO (€)",
-        "accepted": "Contributo accettato",
-        "type": "Tipo di contributo richiesto"
     }
 }
 
@@ -300,21 +301,7 @@ export const CSV_FIELDS = [
     "drain.water_availability",
     "drain.droughts",
     "contributions.year",
-    "contributions.data.handWorks",
-    "contributions.data.customizedWorks",
-    "contributions.data.safetyCharges",
-    "contributions.data.totWorks",
-    "contributions.data.surveyorsCharges",
-    "contributions.data.connectionsCharges",
-    "contributions.data.technicalCharges",
-    "contributions.data.testCharges",
-    "contributions.data.taxes",
-    "contributions.data.totCharges",
-    "contributions.data.IVAincluded",
-    "contributions.data.totalProjectCost",
-    "contributions.data.externalFinancing",
-    "contributions.data.selfFinancing",
-    "contributions.data.red",
+    "contributions.data",
     "contributions.value",
     "contributions.accepted",
     "contributions.type",
