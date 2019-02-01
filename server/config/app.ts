@@ -15,7 +15,9 @@ const app = express();
 const MongoStore = ConnectMongo(session);
 const ALLOWED_ORIGINS = [
     "https://infomont-cai.herokuapp.com",
-    "https://rifugi.cai.it"
+    "https://rifugi.cai.it",
+    "http://unico.rifugi.cai.it",
+    "https://unico.rifugi.cai.it"
 ];
 
 export const store = new MongoStore({
