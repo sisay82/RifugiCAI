@@ -1,0 +1,6 @@
+<div style="flex:1">
+    <div *ngFor="let tag of item.tags" class="bc-detail-service-content" style="display: flex;flex-direction:row;align-items:center">
+        <div *ngIf="tag.value!=undefined&&tag.value!=''" class="bc-body-strong" style="margin-right:4px">{{tag.key | titleCase}}</div>
+        <div *ngIf="tag.value!=undefined&&tag.value!=''" class="bc-body">: {{tag.value | capitalize}}</div>
+    </div>
+</div>

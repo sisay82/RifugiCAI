@@ -1,0 +1,44 @@
+@import '../../style/typography';
+@import '../../style/theme';
+
+@mixin bc-fruition-detail($theme){
+    $accent: map-get($theme, accent);
+
+    &-fruition{
+        &-title{
+            font-weight: 500 !important;
+            white-space: nowrap;
+            color:bc-color($accent);
+        }
+    
+        &-tab{
+            &:hover{
+                border:1px solid;
+                color:bc-color($accent);
+                border-color: $black-12alpha;
+                border-radius:4px;
+            }
+    
+            &-active{
+                border:1px solid;
+                color:bc-color($accent);
+                border-radius:4px;
+                border-color: $black-12alpha;
+            }
+        }
+    
+        &-body{
+            white-space:nowrap;
+            position: relative;
+            padding:0;
+        }
+    
+        &-container{
+            margin-top:2.5%;
+            max-width:90%;
+            width:auto;
+            margin-left:5%;
+            margin-right:5%;
+        }
+    }
+}

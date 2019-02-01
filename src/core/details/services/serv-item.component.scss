@@ -1,0 +1,15 @@
+@import '../../style/typography';
+
+@mixin bc-service-item-detail ($theme){
+    &-title{
+        font-weight: 500;
+    }
+    
+    &-content{
+        position: relative;
+        margin-left: 1%;
+        display: flex;
+        flex-direction:row;
+    }
+    
+}

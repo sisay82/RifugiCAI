@@ -1,0 +1,18 @@
+<div class="btn-group btn-group-justified">
+    <ul class="nav navbar-nav" style="width:100%">
+        <li class="navbar-item" *ngFor="let obj of data">
+            <div [active]="isActive(obj.year)" (click)="showTab(obj.year)" style="padding:15px" class="btn bc-body bc-detail-contributions-tab">
+                {{obj.year}}
+            </div>
+        </li>
+    </ul>
+</div>
+<div style="margin-top:2.5%" class="bc-h6 bc-detail-contributions-title">Contributi richiesti</div>
+<div *ngIf="activeTab!=undefined">
+    <div *ngFor="let contr of activeTab.contributions">
+        <div (click)="downloadFile(contr._id)" class="bc-detail-contributions-icon" style="display: inline-block">
+            <bc-icon name="file-pdf-o" size=s></bc-icon>
+            <div style="display:inline" class="bc-body"> {{contr?(contr.name):'----'}}</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+@import '../../style/typography';
+@import '../../style/theme';
+
+@mixin bc-file-input-theme ($theme){
+  $warn: map-get($theme, warn);
+  $danger:map-get($theme, danger);
+
+  .invalid{
+    border-left: 5px solid bc-color($warn);
+  }
+  
+  input{
+    &[disabled]{
+      input{
+        pointer-events: none;
+        cursor: default;
+      }
+    }
+  }
+
+  .bc-alert{
+    color:bc-color($danger);
+  }
+
+  .bc-file-input{
+    position: relative;
+    align-items: baseline;
+    width:100%;
+
+    &-title{
+      white-space: nowrap;
+      margin-right:2px;
+    };
+
+    &[one-line]{
+      display: flex;
+      flex-direction: row;
+    };
+    &[title-bold]{
+      .bc-file-input-title{
+        font-weight: bold;
+      }
+    };
+  }
+}
+
+@include bc-typography();

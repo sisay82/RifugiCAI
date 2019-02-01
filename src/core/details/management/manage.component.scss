@@ -1,0 +1,19 @@
+@import '../../style/typography';
+@import '../../style/theme';
+
+@mixin bc-management-detail ($theme){
+    $accent: map-get($theme, accent);
+
+    &-management{
+        &-title{
+            margin-bottom: 4px;
+            color:bc-color($accent);
+        }
+        
+        &-link{
+            &:hover{
+                cursor: pointer;
+            }
+        }
+    }
+}

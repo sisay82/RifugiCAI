@@ -1,0 +1,12 @@
+<div class="bc-h6 bc-detail-img-title">Immagini</div>
+<div class="bc-body-strong" *ngIf="downloading">(Caricamento...)</div>
+<div style="display:flex;flex-direction:row;flex-wrap:wrap">
+    <div *ngFor="let img of data" style="margin-left:1%;width:17.5%">
+        <div [full-screen]="isFullScreen(img.file._id)" style="height: 100%;width:100%;outline:none" (click)="enlargeImage(img.file._id)">
+            <div class="bc-detail-img-container">
+                <img class="img-rounded bc-detail-img" [src]="img.url">
+            </div>
+            <div *ngIf="img.file.description" class="bc-body bc-detail-img-description">{{img.file.description}}</div>
+        </div>
+    </div>
+</div>

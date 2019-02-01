@@ -1,29 +1,36 @@
-<bc-content>
+<bc-content *ngIf="getAuth()">
   <bc-content-header>
     <bc-navbar>
-      <ul class="nav navbar-nav">
-        <li class="navbar-item">
-          <a href="#" class="btn btn-default"><i class="fa fa-th-list" aria-hidden="true"></i> List View</a>
-        </li>
-        <li class="navbar-item">
-          <a href="#" class="btn btn-default"><i class="fa fa-map" aria-hidden="true"></i>  Map View</a>
-        </li>
-      </ul>
+      <a href="list" data-bc-button data-type="solid">
+        <bc-icon data-name="list" data-size="xs"></bc-icon> Lista
+      </a>
+      <a href="map" data-bc-button data-type="solid">
+        <bc-icon data-name="map" data-size="xs"></bc-icon> Mappa
+      </a>
+      <a *ngIf="isCentral" (click)="createShel()" data-bc-button data-type="solid">
+        <bc-icon data-name="plus" data-size="xs"></bc-icon> Aggiungi rifugio
+      </a>
+      <div *ngIf="isCentral" (click)="getCSV()" data-bc-button data-type="solid">
+        <bc-icon tooltip="Scarica CSV" class="bc-mask-icon" name="arrow-down" size=s></bc-icon> Scarica CSV
+      </div>
       <span class="bc-navbar-filler"></span>
       <div>
-        <input type="text" name="filterList" class="form-control" style="text-overflow: ellipsis; font-family: FontAwesome; font-style: normal; font-weight: normal; text-decoration: inherit;"
-          placeholder="&#xF002; Search for shelter, municipality" [(ngModel)]="filterText" (keyup)="filterChanged(filterText)"
+        <input type="text" name="filterList" class="bc-body form-control" style="text-overflow: ellipsis;"
+          placeholder="Cerca rifugio, Comune, Regione ecc." [(ngModel)]="filterText" (keyup)="filterChanged(filterText)"
         />
       </div>
     </bc-navbar>
-  </bc-content-header>
-  <bc-content-section>
-    <bc-list>
-      <a bc-list-item *ngFor="let item of rifugiSample">
+    </bc-content-header>
+    <bc-content-section>
+      <bc-list color="accent">
+        <a bc-list-item *ngFor="let item of filteredShelter" [href]="'shelter/'+item._id+'/(content:geographic)'">
           <div bc-line>{{item.name}}</div>
           <div bc-line style="display:flex; flex-direction:row;">
             <div style="flex:1">{{item.type}}</div>
+            <div style="flex:1">{{item.owner}}</div>
             <div style="flex:1">{{item.branch}}</div>
+            <div style="flex:1">{{item.geoData?(item.geoData.location?(item.geoData.location.region):''):''}}</div>
+            <div style="flex:1">{{item.geoData?(item.geoData.location?(item.geoData.location.locality):''):''}}</div>
           </div>
       </a>
     </bc-list>

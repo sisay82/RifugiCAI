@@ -2,7 +2,8 @@ import {NgModule} from '@angular/core';
 import {BcPageNotFound} from './pageNotFound.component';
 
 @NgModule({
-  imports: [BcPageNotFound],
+ // imports: [BcPageNotFound],
+  declarations:[BcPageNotFound],
   exports: [BcPageNotFound]
 })
 export class PageNotFoundModule {}

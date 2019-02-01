@@ -1,0 +1,58 @@
+<div class="btn-group btn-group-justified">
+  <ul class="nav navbar-nav" style="width:100%">
+      <li class="navbar-item" *ngFor="let obj of economy">
+          <div [active]="isActive(obj.year)" (click)="showTab(obj.year)" style="padding:15px" class="btn bc-body bc-detail-economy-tab">
+              {{obj.year}}
+          </div>
+      </li>
+  </ul>
+</div>
+<div style="margin-top:2.5%" *ngIf="activeTab!=undefined">
+  <div class="bc-h6">
+    <span class="bc-detail-economy-title">Stato patrimoniale: </span>
+    <span>{{balanceSheet | formatcurrency}}</span>
+  </div>
+  <bc-divider></bc-divider>
+  <p class="bc-h6 bc-detail-economy-title">Contributi</p>
+  <div *ngFor="let type of getEnumNames()">
+    <div class="bc-body" style="display: flex;flex-direction:row">
+      <div class="bc-body" style="font-weight: bold">{{type}}:</div>
+      <div style="margin-left:2px">{{getContributionSumPerType(type) | formatcurrency}}</div>
+    </div>
+  </div>
+  <bc-divider></bc-divider>  
+  <div style="display:flex; flex-direction:row;">
+    <div style="flex:1">
+      <bc-list color="accent">
+        <bc-list-header><span>Attività</span><span>Totale: {{revenues | formatcurrency}}</span></bc-list-header>
+        <bc-list-item *ngFor="let item of getFilesByYear(revenuesFiles)">
+          <div bc-line style="display:flex; flex-direction:row;">
+            <a style="flex:1; text-decoration: none;">{{item.name}}</a>
+            <span>Totale: </span><span>{{getTotal(item.value,item.invoice_tax) | formatcurrency}}</span>
+          </div>
+          <div bc-line>Tipo contributo: {{item.contribution_type}}</div>
+          <div bc-line style="display:flex; flex-direction:row;">
+            <div style="flex:1">Imponibile: {{item.value | formatcurrency}}</div>
+            <div style="flex:1">IVA: {{item.invoice_tax }}%</div>
+          </div>
+        </bc-list-item>
+      </bc-list>
+    </div>
+    <div style="flex:1">
+      <bc-list>
+        <bc-list-header><span>Passività</span><span>Totale: {{outgos | formatcurrency}}</span></bc-list-header>
+        <bc-list-item *ngFor="let item of getFilesByYear(outgosFiles)">
+            <div bc-line style="display:flex; flex-direction:row;">
+                <a style="flex:1; text-decoration: none;">{{item.name}}</a>
+                <span>Totale: </span><span>{{getTotal(item.value,item.invoice_tax) | formatcurrency}}</span>
+            </div>
+            <div bc-line>Tipo contributo: {{item.contribution_type}}</div>
+            <div bc-line style="display:flex; flex-direction:row;">
+              <div style="flex:1">Imponibile: {{item.value | formatcurrency}}</div>
+              <div style="flex:1">IVA: {{item.invoice_tax}}%</div>
+            </div>
+        </bc-list-item>
+      </bc-list>
+    </div>
+  </div>
+</div>

@@ -8,15 +8,16 @@ import {
     ViewEncapsulation,
     ContentChildren,
     QueryList,
-    OnDestroy
+    OnDestroy,
+    AfterContentInit,
+    AfterViewInit
 } from '@angular/core';
 
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
+import { Subscription, Subject } from 'rxjs';
 
 import { BcStyler } from '../../shared/types/bc-styler';
 
-let _nextListItemId: number = 0;
+let _nextListItemId = 0;
 
 @Injectable()
 export class ListItemService {
@@ -55,7 +56,7 @@ export class BcListItemDisableStyler {
     private _DisableItem: boolean;
     @Input('bc-disable-item')
     set disableItem(value: string) {
-        this._DisableItem = value==="true";
+        this._DisableItem = value === "true";
     }
 }
 
@@ -84,14 +85,14 @@ export class BcLineStyler {
     templateUrl: 'list-item.component.html',
     encapsulation: ViewEncapsulation.None
 })
-export class BcListItem extends BcStyler implements OnDestroy {
+export class BcListItem extends BcStyler implements OnDestroy, AfterContentInit, AfterViewInit {
     readonly listItemId: number;
     private _linesSubcription: Subscription;
     private isNavItem: boolean = false;
     private _linesClass: string;
-
+    @ContentChildren(BcLineStyler) _lines: QueryList<BcListItem>;
     public listItemUniqueName: string;
-    public active: boolean = false;
+    public active = false;
 
     constructor(private elementRef: ElementRef, _renderer2: Renderer2, private _ListItemService: ListItemService) {
         super(elementRef, _renderer2);
@@ -99,14 +100,13 @@ export class BcListItem extends BcStyler implements OnDestroy {
         this.listItemId = _nextListItemId++;
     }
 
-    @ContentChildren(BcLineStyler) _lines: QueryList<BcListItem>;
 
     ngAfterContentInit(): void {
-        let newClassName: string = this._lines.length > 1 ? "bc-multi-line" : null;
+        const newClassName: string = this._lines.length > 1 ? "bc-multi-line" : null;
         this.updateClass("_linesClass", newClassName);
         this._linesSubcription = this._lines.changes.subscribe((lines) => {
-            let newClassName: string = this._lines.length > 1 ? "bc-multi-line" : null;
-            this.updateClass("_linesClass", newClassName);
+            const newClassN: string = this._lines.length > 1 ? "bc-multi-line" : null;
+            this.updateClass("_linesClass", newClassN);
         });
     }
 

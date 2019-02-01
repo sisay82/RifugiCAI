@@ -1,0 +1,35 @@
+@import '../../style/typography';
+@import '../../style/theme';
+
+@mixin bc-contributions-detail ($theme){
+    $accent: map-get($theme, accent);
+    
+    &-contributions{
+        &-tab{
+            &:hover{
+                color:bc-color($accent);
+                border:1px solid;
+                border-color: $black-12alpha;
+                border-radius:4px;
+            }
+
+            &-active{
+                color:bc-color($accent);
+                border:1px solid;
+                border-radius:4px;
+                border-color: $black-12alpha;
+            }
+        }
+
+        &-title{
+            color:bc-color($accent);
+        }
+
+        &-icon{
+            &:hover{
+                color:bc-color($accent);
+                cursor: pointer;
+            }
+        }
+    }
+}

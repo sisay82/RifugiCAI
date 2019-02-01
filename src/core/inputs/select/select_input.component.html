@@ -1,0 +1,9 @@
+<div class="bc-body bc-select-input-title">{{title}}
+    <div *ngIf="required" class="bc-select-input-required">*</div>
+</div>
+<select [bc-enable-error]="invalid" [disabled]="isDisabled" (change)="onChange($event)" style="text-overflow: ellipsis; text-decoration: inherit;"
+    class="form-control" >
+    <option [selected]="checkEnumValue(undefined)" value="">-- {{defaultContent || title}} --</option>
+    <option *ngFor="let name of getEnumNames()" [selected]="checkEnumValue(name)" [value]="name">{{name}}</option>
+</select>
+<div [hidden]="!(displayError&&enableBlock&&invalid)" class="bc-alert">{{errorMessage||'Invalid!'}}</div>

@@ -1,19 +1,20 @@
 <bc-content>
   <bc-content-header>
     <bc-navbar data-color="primary">
-      <img src="../assets/images/logo_32x28.png" alt="logo" />
-      <span class="bc-h4">Infomont rifugi</span>
+      <img  src="../assets/images/logo_32x28.png" alt="logo" />
+      <span class="bc-h4">UnicoCAI rifugi</span>
       <span class="bc-navbar-filler"></span>
-      <span class="button"><a href="#" class=""><i class="fa fa-sign-in" aria-hidden="true"></i> login</a></span>
+      <a data-bc-button data-type="clear" href="/logout"><bc-icon data-name="sign-out" data-size="s"></bc-icon> Logout</a>
     </bc-navbar>
   </bc-content-header>
   <!-- Routed views go here -->
   <bc-content-section>
-    <router-outlet></router-outlet>
+    <router-outlet name="access-denied"></router-outlet>
+    <router-outlet name="primary"></router-outlet>
   </bc-content-section>
   <bc-content-footer>
     <bc-navbar data-color="primary">
-      <span class="bc-small">Copyright © 2017 Breadcrumb. All rights reserved.</span>
+      <span class="bc-small">Copyright © 2017 all rights reserved.</span>
     </bc-navbar>
   </bc-content-footer>
   <!--<bc-spinner></bc-spinner>

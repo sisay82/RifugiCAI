@@ -1,0 +1,14 @@
+@import '../../style/typography';
+@import '../../style/theme';
+
+@mixin bc-geo-detail ($theme){
+    $accent: map-get($theme, accent);
+
+    &-geo-title{
+        margin-top:4px;
+        margin-bottom: 4px;
+        color:bc-color($accent);
+    }
+}
+
+@include bc-typography();

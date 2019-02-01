@@ -1,0 +1,10 @@
+@import '../../style/typography';
+@import '../../style/theme';
+
+@mixin bc-catastal-detail ($theme){
+    $accent: map-get($theme, accent);
+    &-catastal-title{
+        margin-bottom: 4px;
+        color: bc-color($accent);
+    }
+}

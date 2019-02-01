@@ -1,0 +1,21 @@
+@import '../../style/palette';
+@import '../../style/typography';
+@import '../../style/constants';
+
+@mixin bc-mask-revision ($theme){
+    .disabled{
+        pointer-events: none;
+        cursor: default;
+    }
+    
+    input, select{
+        font-family: $bc-font-family;
+    }
+    
+    .bc-mask{
+        &-revision-control{
+            width:auto;
+            margin-right:2%;
+        }
+    }
+}

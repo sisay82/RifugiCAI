@@ -1,0 +1,16 @@
+@import '../../style/typography';
+@import '../../style/theme';
+@import "./serv-item.component";
+
+@mixin bc-service-detail ($theme){
+    $accent: map-get($theme, accent);
+    
+    &-service{
+        @include bc-service-item-detail($theme);
+        
+        &-title{
+            color:bc-color($accent);
+        }
+    }
+    
+}

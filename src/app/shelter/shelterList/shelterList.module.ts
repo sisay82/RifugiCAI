@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { CoreModule } from '../../../core/core.module';
 
@@ -13,11 +13,11 @@ import { BcShelterList } from './shelterList.component';
   imports: [
     FormsModule,
     BrowserModule,
-    HttpModule,
+    HttpClientModule,
     CoreModule,
-    ShelterListRoutingModule
+    ShelterListRoutingModule,
   ],
   declarations: [BcShelterList],
-  exports: [BrowserModule, CoreModule, BcShelterList]
+  /*exports: [BrowserModule, CoreModule, BcShelterList]*/
 })
 export class ShelterListModule { }

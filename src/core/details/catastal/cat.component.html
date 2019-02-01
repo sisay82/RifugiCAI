@@ -1,0 +1,142 @@
+<div style="display:block;margin-left:4px;background:white">
+    <div class="bc-h6 bc-detail-catastal-title">Dati catastali e certificazioni</div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Anno di costruzione:</div>
+            <div class="bc-body">{{catastal?(catastal.buildYear||'----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Anno di ristrutturazione:</div>
+            <div class="bc-body">{{catastal?(catastal.rebuildYear||'----'):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Codice catastale:</div>
+            <div class="bc-body">{{catastal?(catastal.code||'----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Classe catastale:</div>
+            <div class="bc-body">{{catastal?(catastal.class||'----'):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Regolarità antincendio:</div>
+            <div class="bc-body">{{catastal?(catastal.fireRegulation||'----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Coerenza tipologica:</div>
+            <div class="bc-body">{{catastal?(catastal.typologicalCoherence||'----'):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Consistenza corpo principale:</div>
+            <div class="bc-body">{{catastal?(catastal.mainBody || '----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Consistenza corpi secondari:</div>
+            <div class="bc-body">{{catastal?(catastal.secondaryBody || '----'):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="catastal.buildingRegulation!=null&&catastal.buildingRegulation==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.buildingRegulation==null||catastal.buildingRegulation==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Regolarità urbanistica</div>
+        </div>
+        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="catastal.cityPlanRegulation!=null&&catastal.cityPlanRegulation==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.cityPlanRegulation==null||catastal.cityPlanRegulation==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Regolarità edilizia</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="catastal.ISO14001!=null&&catastal.ISO14001==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.ISO14001==null||catastal.ISO14001==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Certificazione ISO 14001</div>
+        </div>
+        <div *ngIf="catastal!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="catastal.matericalCoherence!=null&&catastal.matericalCoherence==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="catastal.matericalCoherence==null||catastal.matericalCoherence==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Coerenza materica</div>
+        </div>
+    </div>
+    <bc-divider></bc-divider>
+    <div class="bc-h6 bc-detail-catastal-title">Energia e riscaldamento</div>
+    <div style="display: flex;flex-direction:row">
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Classe energetica:</div>
+            <div class="bc-body">{{energy?(energy.class || '----'):'----'}}</div>
+        </div>        
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Quantità (KW):</div>
+            <div class="bc-body">{{energy?(energy.energy || '----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Tipo di riscaldamento:</div>
+            <div class="bc-body">{{energy?(energy.heating_type || '----'):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div *ngIf="energy!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="energy.photovoltaic!=null&&energy.photovoltaic==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="energy.photovoltaic==null||energy.photovoltaic==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Fotovoltaico</div>
+        </div>
+        <div *ngIf="energy!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="energy.powerGenerator!=null&&energy.powerGenerator==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="energy.powerGenerator==null||energy.powerGenerator==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Generatore diesel</div>
+        </div>
+        <div *ngIf="energy!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="energy.greenCertification!=null&&energy.greenCertification==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="energy.greenCertification==null||energy.greenCertification==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Green</div>
+        </div>  
+    </div>
+    <bc-divider></bc-divider>
+    <div class="bc-h6 bc-detail-catastal-title">Scarico e acqua</div>
+    <div style="display: flex;flex-direction:row">   
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Tipo di scarico:</div>
+            <div class="bc-body">{{drain?(drain.type || '----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Acqua:</div>
+            <div class="bc-body">{{drain?(drain.water_type || '----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Disponibilità acqua:</div>
+            <div class="bc-body">{{drain?(drain.water_availability || '----'):'----'}}</div>
+        </div>
+        <div style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <div class="bc-body-strong" style="margin-right:4px">Periodi di siccità:</div>
+            <div class="bc-body">{{drain?(drain.droughts || '----'):'----'}}</div>
+        </div>
+    </div>
+    <div style="display: flex;flex-direction:row">
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.recycling!=null&&drain.recycling==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.recycling==null||drain.recycling==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Riciclo</div>
+        </div>  
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.regulation!=null&&drain.regulation==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.regulation==null||drain.regulation==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Scarico a norma</div>
+        </div>  
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.oilSeparator!=null&&drain.oilSeparator==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.oilSeparator==null||drain.oilSeparator==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Disoleatore</div>
+        </div>  
+        <div *ngIf="drain!=undefined" style="align-items:center;flex:1;display:flex;flex-direction:row">
+            <bc-icon *ngIf="drain.water_certification!=null&&drain.water_certification==true" name="check-square-o" size=s></bc-icon>
+            <bc-icon *ngIf="drain.water_certification==null||drain.water_certification==false" name="square-o" size=s></bc-icon>
+            <div class="bc-body-strong" style="margin-right:4px">Captazione certificata</div>
+        </div> 
+    </div>
+</div>

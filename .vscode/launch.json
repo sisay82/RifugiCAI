@@ -1,20 +1,44 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Node: Test Server",
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "npm: build-server:test",
+            "program": "${workspaceRoot}\\node_modules\\jasmine\\bin\\jasmine.js",
+            "args": [
+                "--config=${workspaceRoot}\\server\\spec\\jasmine.json"
+            ],
+            "env": {
+                "NODE_PATH": ".",
+                "NODE_ENV": "test"
+            }
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Node: Attach by Process ID",
+            "processId": "${command:PickProcess}"
+        },
         {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:4200",
-            "webRoot": "${workspaceRoot}"
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceRoot}",
+            "env": {
+                "PORT": 8000
+            }
         },
         {
             "type": "chrome",
             "request": "attach",
-            "name": "Attach to Chrome",
-            "port": 9222,
-            "webRoot": "${workspaceRoot}"
+            "name": "Test: Attach to Chrome",
+            "address": "localhost",
+            "port": 9333,
+            "webRoot": "${workspaceRoot}",
         }
     ]
 }

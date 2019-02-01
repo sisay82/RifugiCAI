@@ -1,148 +1,247 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes } from '@angular/router';
-import { Enums } from './enums'
+import { Enums } from './enums';
+import { LatLng } from 'leaflet';
+import { Buffer } from 'buffer';
 
 export interface IPagedResults<T> {
     totalRecords: number;
     results: T;
 }
 
+export interface IMarker {
+    latLng: LatLng;
+    popup: string;
+    optional?: any;
+}
+
 export interface IMenuElement {
-    name: String,
-    icon: String,
-    link: String,
-    default?: boolean
+    name: String;
+    icon: String;
+    link: any;
+    default?: boolean;
 }
 
 export interface IMenuLayer {
-    layerName?: String,
-    elements: [IMenuElement]
+    layerName?: String;
+    elements: IMenuElement[];
 }
 
 export interface IMenu {
-    layers: [IMenuLayer];
+    layers: IMenuLayer[];
 }
 
-export interface IRegistry {
-    shelter_type?: Enums.Shelter_Type,
-    regional_type?: Enums.Regional_Type,
-    category?: Enums.Shelter_Category,
-    address: {
-        via: { type: String, required: true },
-        number: { type: Number, required: true },
-        cap: { type: Number, required: true },
-        city: { type: String, required: true },
-        country: { type: String, required: true }
-    },
-    fixed_phone?: [String],
-    mobile_phone?: [String],
-    email_address?: [String],
-    web_address?: String,
-    description?: String,
-    insert_date?: Date,
-    custody_type?: Enums.Custody_Type,
-    custodian?: String,//ObjectID
-    owner?: String
-}
-
-export interface IOpening {
-    opening_date: Date,
-    closure_date: Date,
-    opening_type: String
-}
-
-
-export interface ILog {
-    state: String,
-    user: String,
-    update_date?: Date
-}
-
-export interface IGeographic {
-    valley?: String,
-    mountain_community?: String,
-    mountain_group?: String,
-    quote?: Number,
-    coordinates?: {
-        latitude: Number,
-        longitude: Number
-    },
-    additional_data?: [{
-        key: String,
-        value: String
-    }]
-}
-
-export interface ICadastral {
-    construction_reg?: Boolean,
-    construction_year?: Number,
-    typological_consistency?: { type: Enums.Typo_consistency },
-    material_consistency?: Boolean,
-    urban_regularity?: Boolean,
-    main_body_consistency?: String,
-    secondary_body_consistency?: String,
-    cadastral_class?: String,
-    fire_regulation?: Boolean,
-    energy_class?: String,
-    certification?: String,
-    necessary_energy?: Number,
-    green_certification?: Boolean,
-    garbage_disposal?: String,
-    recycling?: Boolean,
-    waste_disposal?: String,
-    waste_adjustment?: Boolean,
-    resources_sources?: [{
-        type: { type: Enums.Source_Type },
-        source_name: String,
-        description?: String,
-        value?: Number
-    }]
-}
-
-export interface IAdministrative {
-    shelter_code: Number,
-    contract_start_date?: Date,
-    contract_end_date?: Date,
-    contract_duration?: Number,
-    contract_fee?: Number,
-    possession_title?: String,
-    section_code?: String
-}
-
-export interface IShelter {
-    id: Number,
-    name: String,
-    registry: IRegistry,
-    administrative?: IAdministrative,
-    openings?: [{ IOpening }],
-    geographic_data?: IGeographic,
-    cadastral_data?: ICadastral,
-    logs?: [{ ILog }],
-    services?: [{ IService }]
+export interface ILocation {
+    region?: String;
+    province?: String;
+    municipality?: String;
+    locality?: String;
+    ownerRegion?: Enums.Auth_Permissions.Region_Code;
+    regional_commission?: String;
+    authorityJurisdiction?: String;
+    altitude?: Number;
+    latitude?: Number;
+    longitude?: Number;
+    massif?: String;
+    valley?: String;
+    ski_area?: String;
+    protected_area?: String;
+    site?: String;
 }
 
 export interface ITag {
     key: String;
-    value: String;
+    value?: String;
+    type?: String;
+}
+
+export interface IGeographic {
+    location?: ILocation;
+    tags?: ITag[];
 }
 
 export interface IService {
-    service_name: String;
-    service_category?: String;
+    _id?: String;
+    name?: String;
+    category?: String;
     description?: String;
-    tags?: [ITag];
+    tags?: ITag[];
 }
 
-export interface IUser {
+export interface IOpening {
+    startDate?: Date;
+    endDate?: Date;
+    type?: String;
+}
+
+export interface IContacts {
+    name?: String;
+    role?: Enums.Owner_Type;
+    fixedPhone?: String;
+    mobilePhone?: String;
+    prenotation_link?: String;
+    mailPec?: String;
+    emailAddress?: String;
+    webAddress?: String;
+}
+
+export interface ISubject {
+    name?: String;
+    surname?: String;
+    taxCode?: String;
+    fixedPhone?: String;
+    mobilePhone?: String;
+    pec?: String;
+    email?: String;
+    webSite?: String;
+    type?: String;
+    contract_start_date?: Date;
+    contract_end_date?: Date;
+    contract_duration?: String;
+    contract_fee?: Number;
+    possession_type?: Enums.Possession_Type;
+}
+
+export interface IManagement {
+    rentType?: Enums.Custody_Type;
+    reference?: String;
+    webSite?: String;
+    self_management?: Boolean;
+    valuta?: String;
+    pickupKey?: Boolean;
+    subject?: ISubject[];
+}
+
+export interface ICatastal {
+    buildingRegulation?: Boolean;
+    buildYear?: Number;
+    rebuildYear?: Number;
+    class?: String;
+    code?: String;
+    typologicalCoherence?: Enums.Typo_consistency;
+    matericalCoherence?: Boolean;
+    cityPlanRegulation?: Boolean;
+    mainBody?: String;
+    secondaryBody?: String;
+    fireRegulation?: Enums.Fire_Regulation_Type;
+    ISO14001?: Boolean;
+}
+
+export interface IEnergy {
+    class?: Enums.Energy_Class_Type;
+    energy?: Number;
+    greenCertification?: Boolean;
+    powerGenerator?: Boolean;
+    photovoltaic?: Boolean;
+    heating_type?: Enums.Heating_Type;
+    sourceType?: Enums.Source_Type;
+    sourceName?: String;
+}
+
+export interface IDrain {
+    type?: Enums.Drain_Type;
+    regulation?: Boolean;
+    oilSeparator?: Boolean;
+    water_certification?: Boolean;
+    recycling?: Boolean;
+    water_type?: Enums.Water_Type;
+    water_availability?: Enums.Water_Availability;
+    droughts?: Enums.Seasons;
+}
+
+export interface IEconomy {
+    year: Number;
+    confirm?: Boolean;
+    accepted?: Boolean;
+}
+
+export interface IUse {
+    year: Number;
+    stay_count_associate?: Number;
+    stay_count_reciprocity?: Number;
+    stay_count?: Number;
+    transit_count_associate?: Number;
+    transit_count_reciprocity?: Number;
+    transit_count?: Number;
+}
+
+export interface IFileRef {
     name: String;
-    value: String;
+    id: String;
 }
 
-export interface IButton {
-    ref: string;
-    icon?: string;
-    dark_theme?: Boolean;
-    text?: string;
-    enabled?: Boolean;
-    action?: Function;
+export interface IContributionData {
+    handWorks?: Number;
+    customizedWorks?: Number;
+    safetyCharges?: Number;
+    totWorks?: Number;
+    surveyorsCharges?: Number;
+    connectionsCharges?: Number;
+    technicalCharges?: Number;
+    testCharges?: Number;
+    taxes?: Number;
+    totCharges?: Number;
+    IVAincluded?: Boolean;
+    totalProjectCost?: Number;
+    externalFinancing?: Number;
+    selfFinancing?: Number;
+    red?: Number;
+}
+
+export interface IContribution {
+    year: Number;
+    data?: IContributionData;
+    attachments?: IFileRef[];
+    value?: Number;
+    accepted?: Boolean;
+    type?: Enums.Contribution_Type;
+    relatedFileId?: String;
+    fileCreated?: Boolean;
+}
+
+export interface IShelter {
+    _id?: String;
+    name?: String;
+    alias?: String;
+    idCai?: String;
+    type?: Enums.Shelter_Type;
+    status?: Enums.Shelter_Status;
+    branch?: String;
+    owner?: String;
+    category?: Enums.Shelter_Category;
+    regional_type?: Enums.Regional_Type;
+    insertDate?: Date;
+    updateDate?: Date;
+    updateSubject?: Enums.Auth_Permissions.User_Type;
+
+    geoData?: IGeographic;
+    services?: IService[];
+    contacts?: IContacts;
+    openingTime?: IOpening[];
+    management?: IManagement;
+    catastal?: ICatastal;
+    energy?: IEnergy;
+    drain?: IDrain;
+    economy?: IEconomy[];
+    use?: IUse[];
+    contributions?: [IContribution];
+}
+
+export interface IFile {
+    _id?: String;
+    size?: Number;
+    shelterId?: String;
+    uploadDate?: Date;
+    md5?: String;
+    name?: String;
+    data?: Buffer;
+    invoice_type?: Enums.Invoice_Type;
+    invoice_tax?: Number;
+    invoice_year?: Number;
+    invoice_confirmed?: Boolean;
+    contribution_type?: Enums.Contribution_Type;
+    contentType?: String;
+    type?: Enums.Files.File_Type;
+    description?: String;
+    value?: Number;
 }

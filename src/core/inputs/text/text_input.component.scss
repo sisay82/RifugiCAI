@@ -1,0 +1,50 @@
+@import '../../style/typography';
+@import '../../style/theme';
+@mixin bc-text-input-theme ($theme) {
+  $warn: map-get($theme, warn);
+  $danger: map-get($theme, danger);
+  .invalid {
+    border-left: 5px solid bc-color($warn);
+  }
+  .single-line {
+    white-space: nowrap;
+  }
+  textarea {
+    &[disabled] {
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+  .bc-alert {
+    color: bc-color($danger);
+  }
+  .bc-text-input {
+    position: relative;
+    width: 100%;
+    &-title {
+      white-space: nowrap;
+      margin-right: 2px;
+    }
+    &-required {
+      display: inline;
+      color: red;
+      margin-right: 2px;
+    }
+    &-content {
+      align-items: baseline;
+    }
+    &[one-line] {
+      .bc-text-input-content {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+    &[title-bold] {
+      .bc-text-input-title {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+@include bc-typography();

@@ -1,0 +1,60 @@
+<div class="bc-mask-container">
+    <form [formGroup]="maskForm" style="position:relative;height:100%;width:100%">
+        <div class="bc-mask-line">
+            <bc-icon tooltip="Torna alla lista" (click)="return()" class="bc-mask-icon" style="display: inline;margin-left:1%" name="arrow-left" size=s></bc-icon>
+            <bc-icon *ngIf="checkWinPlatform()" (click)="toggleMenu()" class="bc-mask-icon" name="bars" size=s></bc-icon>
+            <div class="bc-mask-revision-control" style="margin-right:1%;width:30%">
+                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio" placeholder="Es: Rifugio Capanna Gnifetti Giovanni" one-line formControlName="name" title="Nome" [displayError]="displayError"></bc-text-input>
+            </div>
+            <div class="bc-mask-revision-control" style="margin-right:1%;width:30%">
+                <bc-text-input placeholder="Es: Capanna Gnifetti" one-line formControlName="alias" title="Nome comune" [displayError]="displayError"></bc-text-input>
+            </div>
+            <div style="display: inline;margin-left:auto;margin-right:1%;white-space:nowrap">
+                <bc-icon tooltip="Annulla e torna indietro" (click)="cancel()" class="bc-mask-icon" name="times" size=s></bc-icon>
+                <bc-icon tooltip="Salva le modifiche" *ngIf="!saveDisabled" (click)="save()" class="bc-mask-icon" name="floppy-o" size=s></bc-icon>
+                <bc-icon tooltip="Elimina rifugio" *ngIf="!newShelter&&isCentral" (click)="remove()" class="bc-mask-icon" name="trash" size=s></bc-icon>
+            </div>
+        </div>
+        <div class="bc-mask-line" style="margin-left:10px">
+            <div class="bc-mask-revision-control">
+                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio; inserire solo numeri" placeholder="ID assegnato dal CAI" one-line formControlName="idCai" title="ID" [displayError]="displayError"></bc-text-input>
+            </div>
+            <div class="bc-mask-revision-control">
+                <bc-select-input enableBlock="true" errorMessage="Campo obbligatorio" defaultContent="Selezionare una tipologia" one-line [displayError]="displayError" enumName="Shelter_Type" formControlName="type" title="Tipo"></bc-select-input>
+            </div>
+            <div class="bc-mask-revision-control">
+                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio" placeholder="Es: CAI Varallo" one-line formControlName="branch" title="Sezione CAI" [displayError]="displayError"></bc-text-input>
+            </div>
+
+            <div class="bc-mask-revision-control">
+                <bc-text-input enableBlock="true" errorMessage="Campo obbligatorio" placeholder="Es: CAI" one-line formControlName="owner" title="Proprietà" [displayError]="displayError"></bc-text-input>
+            </div>
+        </div>
+        <div class="bc-mask-line" style="margin-left:15px">
+            <div class="bc-mask-revision-control">
+                <bc-select-input one-line enumName="Shelter_Category" [displayError]="displayError" defaultContent="Selezionare una categoria" formControlName="category" title="Categoria"></bc-select-input>
+            </div>
+            <div class="bc-mask-revision-control">
+                <bc-select-input one-line enumName="Regional_Type" [displayError]="displayError" defaultContent="Selezionare categoria per la Regione" formControlName="regional_type" title="Categoria per la Regione"></bc-select-input>
+            </div>
+            <div class="bc-mask-revision-control">
+                <bc-select-input one-line enumName="Shelter_Status" [displayError]="displayError" defaultContent="Seleziona stato struttura" formControlName="status" title="Stato"></bc-select-input>
+            </div>
+        </div>
+        <div class="bc-mask-line" style="margin-left:15px">
+            <div class="bc-mask-line-content">
+                <div class="bc-mask-title bc-body-strong" style="white-space: nowrap;margin-right:1%">Inserito il:</div>
+                <div class="bc-mask-content bc-body">{{shelter?(shelter.insertDate?(shelter.insertDate | date:"dd/MM/yy"):'----'): '----'}}</div>
+            </div>
+            <div class="bc-mask-line-content">
+                <div class="bc-mask-title bc-body-strong" style="white-space: nowrap;margin-right:1%">Aggiornato il:</div>
+                <div class="bc-mask-content bc-body">{{shelter?(shelter.updateDate?(shelter.updateDate | date:"dd/MM/yy"):'----'): '----'}}</div>
+            </div>
+            <div class="bc-mask-line-content">
+                <div class="bc-mask-title  bc-body-strong">Aggiornato da:</div>
+                <div class="bc-mask-element bc-body">{{shelter?.updateSubject || '----'}}</div>
+            </div>
+        </div>
+        <bc-divider style="margin:0"></bc-divider>
+    </form>
+</div>
