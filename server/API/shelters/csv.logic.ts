@@ -84,9 +84,13 @@ export function processArrayField(baseField, objs, useFields?) {
                 }, o)
             } else {
                 const key = Array.isArray(k) ? k[0] : k;
-                if (typeof(val[key])==="object"){
-                    for (const prop in val[key]) {
-                        o[baseField + index + '.' + prop] = val[key][prop];
+                if (val[key] != null && typeof(val[key]) === "object") {
+                    if (Object.keys(val[key]).length > 0) {
+                        for (const prop in val[key]) {
+                            o[baseField + index + '.' + prop] = val[key][prop];
+                        }
+                    } else {
+                        o[baseField + index + '.' + key] = val[key];
                     }
                 }else{
                     o[baseField + index + '.' + key] = val[key];
